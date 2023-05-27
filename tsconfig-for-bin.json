@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "module": "CommonJS",
+    "target": "ES5",
+    "lib": ["ES2015"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@ROOT/*": ["./*"]
+    }
+  },
+  "include": ["src/**/*.ts", "bin/**/*.ts"]
+}

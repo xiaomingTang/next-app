@@ -1,0 +1,66 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("MYSQLDB_URI")
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+model User {
+  id             Int              @id @default(autoincrement())
+  name           String
+  email          String           @unique
+  password       String
+  role           Role             @default(USER)
+  ShortUrl       ShortUrl[]
+  ChapterHistory ChapterHistory[]
+}
+
+model Novel {
+  hash      String    @id
+  driver    String
+  remoteUrl String    @unique
+  title     String
+  author    String?
+  chapters  Chapter[]
+}
+
+model Chapter {
+  id             Int              @id @default(autoincrement())
+  index          Int
+  driver         String
+  remoteUrl      String           @unique
+  title          String
+  content        String?          @db.VarChar(20000)
+  novelHash      String
+  novel          Novel            @relation(fields: [novelHash], references: [hash])
+  ChapterHistory ChapterHistory[]
+}
+
+model ChapterHistory {
+  id        Int      @id @default(autoincrement())
+  chapterId Int
+  chapter   Chapter  @relation(fields: [chapterId], references: [id])
+  createdAt DateTime @default(now())
+  creatorId Int
+  creator   User     @relation(fields: [creatorId], references: [id])
+}
+
+model ShortUrl {
+  id        Int      @id @default(autoincrement())
+  hash      String   @unique
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  creatorId Int?
+  creator   User?    @relation(fields: [creatorId], references: [id])
+}

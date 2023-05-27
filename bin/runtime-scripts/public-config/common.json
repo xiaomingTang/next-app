@@ -1,0 +1,12 @@
+{
+  "//": {
+    "description": "this is comments"
+  },
+  "ua": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36",
+  "cookies": [
+    {
+      "url": "https://m.bqg113.com/",
+      "cookie": "Hm_lvt_5d5aa19afa19be9ba1b757fdac0b33df=1681654904; Hm_lpvt_5d5aa19afa19be9ba1b757fdac0b33df=1681655907"
+    }
+  ]
+}
