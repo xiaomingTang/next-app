@@ -1,5 +1,14 @@
 'use client'
 
+/**
+ * 服务端默认 dark, 客户端默认 light;
+ *
+ * 因为 ssg 没法处理客户端才有的 theme,
+ * (必然会出现闪屏, 只有 ssr 才能处理);
+ * 所以让服务端默认 dark, 客户端默认 light,
+ * 从黑到白更自然一些(没那么突兀);
+ */
+
 import { withStatic } from '@/utils/withStatic'
 
 import { create } from 'zustand'
@@ -8,8 +17,6 @@ import { useEffect } from 'react'
 import type { PaletteMode } from '@mui/material'
 
 const PREFERS_COLOR_SCHEMA = 'prefers-color-schema'
-
-// 服务端默认 dark, 客户端默认 light
 
 export function getPrefersColorSchema(): PaletteMode {
   if (typeof window === 'undefined') {
