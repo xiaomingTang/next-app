@@ -17,4 +17,5 @@ export const ENV_CONFIG = {
   manifest,
 }
 
-console.log(`[env: ${ENV_CONFIG.public.appEnv}]`)
+// 颜色见 https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
+console.log(`\x1b[32m[appEnv: ${ENV_CONFIG.public.appEnv}]\x1b[0m`)

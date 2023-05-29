@@ -1,14 +1,10 @@
 import type { HTMLAttributes } from 'react'
 import type { PrismaClient, User } from '@prisma/client'
 import type toast from 'react-hot-toast'
-import type commonConfig from '@ROOT/bin/runtime-scripts/public-config/common.json'
 import { PaletteMode } from '@mui/material'
 
 declare global {
   type AppEnv = 'production' | 'preprod'
-  var __ENV_CONFIG__: typeof commonConfig & {
-    appEnv: AppEnv
-  }
 
   type SimpleUser = Omit<User, 'password' | 'email'> &
     Pick<Partial<User>, 'password' | 'email'>

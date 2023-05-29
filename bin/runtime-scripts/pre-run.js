@@ -12,7 +12,7 @@ function requireJsonOrCatch(f) {
   try {
     return require(f)
   } catch (e) {
-    console.warn(`config file not found: ${f}`)
+    console.warn(`\x1b[33mconfig file not found: ${f}\x1b[0m`)
     return {}
   }
 }
@@ -33,12 +33,21 @@ function writeEnv(env) {
     getEnvConfig(env)
   )};\n`
   fs.writeFileSync(jsFile, jsContent)
-  console.log(`env config written into ${jsFile}: 【${jsContent}】`)
+  console.log(`\x1b[32menv config written into ${jsFile}\x1b[0m`)
 
   const typeFile = path.resolve(process.cwd(), 'public/__ENV_CONFIG__.d.ts')
-  const typeContent = `declare const __ENV_CONFIG__: any;\nexport {};\n`
+  const typeContent = `const VALUE_OF__ENV_CONFIG__ = ${JSON.stringify(
+    getEnvConfig(env)
+  )};
+declare global {
+  var __ENV_CONFIG__: typeof VALUE_OF__ENV_CONFIG__ & {
+    appEnv: "preprod" | "production";
+  };
+}
+export {};
+`
   fs.writeFileSync(typeFile, typeContent)
-  console.log(`env config type written into ${typeFile}: 【${typeContent}】`)
+  console.log(`\x1b[32menv config type written into ${typeFile}\x1b[0m`)
 }
 
 function main() {
