@@ -72,14 +72,14 @@ export const seo = {
       description: seo.description(props?.description),
       siteName: manifest.name,
       url: ENV_CONFIG.public.origin,
-      images: `${origin}/pwa/apple-touch-icon.png`,
+      images: `${ENV_CONFIG.public.origin}/pwa/apple-touch-icon.png`,
     },
     twitter: {
       card: 'summary',
       title: seo.title(props?.title),
       description: seo.description(props?.description),
       creator: '@xiaomin58135718',
-      images: `${origin}/pwa/android-chrome-192x192.png`,
+      images: `${ENV_CONFIG.public.origin}/pwa/android-chrome-192x192.png`,
     },
   }),
 }
