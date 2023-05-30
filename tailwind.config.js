@@ -28,9 +28,18 @@ const semanticColors = Object.fromEntries(
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  darkMode: ['class', '[data-theme="dark"]'],
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {
+      zIndex: {
+        header: 1000,
+        infinity: 9999,
+      },
+      screens: {
+        tablet: '640px', // => @media (min-width: 640px) { ... }
+        desktop: '1024px', // => @media (min-width: 1024px) { ... }
+      },
       colors: semanticColors,
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

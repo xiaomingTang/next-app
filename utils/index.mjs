@@ -21,6 +21,25 @@ export function hashOnlyIdent(context, _, exportName) {
   ).replace(/^(-?\d|--)/, '_$1')
 }
 
+/**
+ * https://github.com/Schular/next-with-pwa/blob/main/next.config.js
+ */
+const generateAppDirEntry = (entry) => {
+  const registerJs = resolveRoot('node_modules/next-pwa/register.js')
+
+  return entry().then((entries) => {
+    // Register SW on App directory, solution: https://github.com/shadowwalker/next-pwa/pull/427
+    if (entries['main-app'] && !entries['main-app'].includes(registerJs)) {
+      if (Array.isArray(entries['main-app'])) {
+        entries['main-app'].unshift(registerJs)
+      } else if (typeof entries['main-app'] === 'string') {
+        entries['main-app'] = [registerJs, entries['main-app']]
+      }
+    }
+    return entries
+  })
+}
+
 /** @type {import('next').NextConfig['webpack']} */
 export const webpackConfig = (config, { dev }) => {
   // svg loader
@@ -69,5 +88,7 @@ export const webpackConfig = (config, { dev }) => {
         })
       })
   }
+  const entry = generateAppDirEntry(config.entry)
+  config.entry = () => entry
   return config
 }

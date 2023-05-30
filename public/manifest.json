@@ -7,6 +7,7 @@
   "theme_color": "#eee",
   "background_color": "#eee",
   "start_url": "/",
+  "scope": ".",
   "display": "standalone",
   "orientation": "natural",
   "shortcuts": [
@@ -18,6 +19,12 @@
     }
   ],
   "icons": [
+    {
+      "url": "/pwa/android-chrome-96x96.png",
+      "src": "/pwa/android-chrome-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
     {
       "url": "/pwa/android-chrome-192x192.png",
       "src": "/pwa/android-chrome-192x192.png",

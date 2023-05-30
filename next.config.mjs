@@ -23,6 +23,8 @@ const withPWA = nextPwa({
     // @WARNING: 会阻止 precache 所有 js/css 文件
     // 是一个 trade off (关于首次加载资源量)
     // /chunks\/.*$/,
+    // Solution: https://github.com/shadowwalker/next-pwa/issues/424#issuecomment-1399683017
+    'app-build-manifest.json',
   ],
 })
 

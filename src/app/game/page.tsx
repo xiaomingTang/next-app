@@ -1,4 +1,4 @@
-import { Comp } from './ClientComp'
+import { Comp } from '../ClientComp'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
