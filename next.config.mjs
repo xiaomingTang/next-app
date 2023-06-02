@@ -1,4 +1,5 @@
 import nextPwa from 'next-pwa'
+import runtimeCaching from 'next-pwa/cache.js'
 import { webpackConfig } from './utils/index.mjs'
 import imageConfig from './next-image.config.js'
 import NextBundleAnalyzer from '@next/bundle-analyzer'
@@ -26,6 +27,7 @@ const withPWA = nextPwa({
     // Solution: https://github.com/shadowwalker/next-pwa/issues/424#issuecomment-1399683017
     'app-build-manifest.json',
   ],
+  runtimeCaching,
 })
 
 /** @type {import('next').NextConfig} */
