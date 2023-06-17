@@ -12,7 +12,6 @@
 import { withStatic } from '@/utils/withStatic'
 
 import { create } from 'zustand'
-import { useEffect } from 'react'
 
 import type { PaletteMode } from '@mui/material'
 
@@ -69,11 +68,3 @@ export const usePrefersColorSchema = withStatic(useRawPrefersColorSchema, {
     })
   },
 })
-
-export function InitPrefersColorSchema() {
-  useEffect(() => {
-    usePrefersColorSchema.init()
-  }, [])
-
-  return <></>
-}

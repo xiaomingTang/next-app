@@ -38,6 +38,9 @@ const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   images: imageConfig.images,
   webpack: webpackConfig,
+  experimental: {
+    serverActions: true,
+  },
 }
 
 export default withBundleAnalyzer(withPWA(nextConfig))

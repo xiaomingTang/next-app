@@ -17,6 +17,22 @@ export const metadata = seo.defaults({
   title: 'home',
 })
 
+function serverErrorHandler() {
+  if (typeof process === 'undefined') {
+    return
+  }
+  process.on('uncaughtException', (e, origin) => {
+    // pass
+    console.log(e, origin)
+  })
+  process.on('unhandledRejection', (reason, promise) => {
+    // pass
+    console.log(reason, promise)
+  })
+}
+
+serverErrorHandler()
+
 export default function RootLayout({
   children,
 }: {

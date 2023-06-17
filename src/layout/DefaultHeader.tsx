@@ -1,16 +1,13 @@
 'use client'
 
-import { useUser } from '@/hooks/useUser'
+import { NovelSearchButton } from './CornerButtons/NovelSearchButton'
+import { UserButton } from './CornerButtons/UserButton'
+import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
 
+import { Button } from '@mui/material'
 import Link from 'next/link'
-import { Button, IconButton, NoSsr } from '@mui/material'
-import { Person, PersonOutline, SearchOutlined } from '@mui/icons-material'
-import router from 'next/router'
-import { usePathname } from 'next/navigation'
 
 export function DefaultRawHeader() {
-  const user = { id: 0 }
-  const pathname = usePathname()
   return (
     <header className='fixed w-full flex-none z-header h-10 md:h-14 backdrop-blur bg-gray-300 bg-opacity-60 dark:bg-gray-700 dark:bg-opacity-60'>
       <div className='max-w-screen-desktop m-auto flex justify-center items-center px-2 h-full'>
@@ -46,47 +43,11 @@ export function DefaultRawHeader() {
             小游戏
           </Button>
         </div>
-
-        <NoSsr>
-          <div className='flex-0 whitespace-nowrap'>
-            {/* 直达搜索页 */}
-            {!!user.id && (
-              <>
-                <IconButton
-                  className='text-primary-main'
-                  aria-label='搜索小说'
-                  onClick={() => {
-                    router.push(`/novel/s/d1`)
-                  }}
-                >
-                  <SearchOutlined />
-                </IconButton>
-              </>
-            )}
-            {/* 登录按钮 */}
-            {!user.id && pathname !== '/auth/login' && (
-              <IconButton
-                aria-label='登录'
-                onClick={() => {
-                  useUser.routeToLogin()
-                }}
-              >
-                <PersonOutline />
-              </IconButton>
-            )}
-            {/* 退出登录按钮 */}
-            {!!user.id && (
-              <IconButton
-                aria-label='个人中心'
-                onClick={() => {
-                  router.push('/user/profile')
-                }}
-              >
-                <Person color='primary' />
-              </IconButton>
-            )}
-          </div>
-        </NoSsr>
+        <div className='flex-0 whitespace-nowrap'>
+          <NovelSearchButton />
+          <UserButton />
+          <ThemeToggleButton />
+        </div>
       </div>
     </header>
   )

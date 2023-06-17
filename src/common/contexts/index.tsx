@@ -1,12 +1,20 @@
 'use client'
 
-import { InitPrefersColorSchema } from './PrefersColorSchema'
+import { usePrefersColorSchema } from './PrefersColorSchema'
 import { ToastContext } from './ToastContext'
 
+import { useUser } from '@/user'
+
+import { useEffect } from 'react'
+
 export default function Contexts() {
+  useEffect(() => {
+    useUser.init()
+    usePrefersColorSchema.init()
+  }, [])
+
   return (
     <>
-      <InitPrefersColorSchema />
       <ToastContext />
     </>
   )

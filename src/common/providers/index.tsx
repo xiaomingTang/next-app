@@ -6,6 +6,7 @@ import { usePrefersColorSchema } from '../contexts/PrefersColorSchema'
 
 import { ThemeProvider, createTheme } from '@mui/material'
 import { useMemo } from 'react'
+import NiceModal from '@ebay/nice-modal-react'
 
 function useMuiTheme() {
   const { mode } = usePrefersColorSchema()
@@ -38,7 +39,9 @@ export default function Providers({
   const theme = useMuiTheme()
   return (
     <EmotionProvider>
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+      <ThemeProvider theme={theme}>
+        <NiceModal.Provider>{children}</NiceModal.Provider>
+      </ThemeProvider>
     </EmotionProvider>
   )
 }
