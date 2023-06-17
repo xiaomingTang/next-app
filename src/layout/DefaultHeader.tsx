@@ -6,19 +6,12 @@ import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
 
 import { usePrefersColorSchema } from '@/common/contexts/PrefersColorSchema'
 
-import {
-  AppBar,
-  Button,
-  Slide,
-  alpha,
-  useScrollTrigger,
-  useTheme,
-} from '@mui/material'
+import { grey } from '@mui/material/colors'
+import { AppBar, Button, Slide, alpha, useScrollTrigger } from '@mui/material'
 import Link from 'next/link'
 
 export function DefaultRawHeader() {
   const trigger = useScrollTrigger()
-  const theme = useTheme()
   const { mode } = usePrefersColorSchema()
 
   return (
@@ -26,10 +19,7 @@ export function DefaultRawHeader() {
       <AppBar
         className='w-full z-header h-10 md:h-14 backdrop-blur'
         sx={{
-          backgroundColor: alpha(
-            theme.palette.grey[mode === 'dark' ? 900 : 300],
-            0.6
-          ),
+          backgroundColor: alpha(grey[mode === 'dark' ? 900 : 300], 0.6),
           boxShadow: 'none',
         }}
       >
