@@ -4,52 +4,76 @@ import { NovelSearchButton } from './CornerButtons/NovelSearchButton'
 import { UserButton } from './CornerButtons/UserButton'
 import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
 
-import { Button } from '@mui/material'
+import { usePrefersColorSchema } from '@/common/contexts/PrefersColorSchema'
+
+import {
+  AppBar,
+  Button,
+  Slide,
+  alpha,
+  useScrollTrigger,
+  useTheme,
+} from '@mui/material'
 import Link from 'next/link'
 
 export function DefaultRawHeader() {
+  const trigger = useScrollTrigger()
+  const theme = useTheme()
+  const { mode } = usePrefersColorSchema()
+
   return (
-    <header className='fixed w-full flex-none z-header h-10 md:h-14 backdrop-blur bg-gray-300 bg-opacity-60 dark:bg-gray-700 dark:bg-opacity-60'>
-      <div className='max-w-screen-desktop m-auto flex justify-center items-center px-2 h-full'>
-        <div className='flex-1 whitespace-nowrap overflow-x-auto h-full'>
-          <Button
-            variant='text'
-            LinkComponent={Link}
-            href='/'
-            aria-label='首页'
-            className='px-2'
-            sx={{
-              fontWeight: 'bold',
-              fontSize: '1em',
-              minWidth: 0,
-              height: '100%',
-            }}
-          >
-            首页
-          </Button>
-          <Button
-            variant='text'
-            LinkComponent={Link}
-            href='/game'
-            aria-label='小游戏'
-            className='px-2'
-            sx={{
-              fontWeight: 'bold',
-              fontSize: '1em',
-              minWidth: 0,
-              height: '100%',
-            }}
-          >
-            小游戏
-          </Button>
+    <Slide appear={false} direction='down' in={!trigger}>
+      <AppBar
+        className='w-full z-header h-10 md:h-14 backdrop-blur'
+        sx={{
+          backgroundColor: alpha(
+            theme.palette.grey[mode === 'dark' ? 900 : 300],
+            0.6
+          ),
+          boxShadow: 'none',
+        }}
+      >
+        <div className='w-full max-w-screen-desktop m-auto flex justify-center items-center px-2 h-full'>
+          <div className='flex-1 whitespace-nowrap overflow-x-auto h-full'>
+            <Button
+              variant='text'
+              LinkComponent={Link}
+              href='/'
+              aria-label='首页'
+              className='px-2'
+              sx={{
+                fontWeight: 'bold',
+                fontSize: '1em',
+                minWidth: 0,
+                height: '100%',
+              }}
+            >
+              首页
+            </Button>
+            <Button
+              variant='text'
+              LinkComponent={Link}
+              href='/game'
+              aria-label='小游戏'
+              className='px-2'
+              sx={{
+                fontWeight: 'bold',
+                fontSize: '1em',
+                minWidth: 0,
+                height: '100%',
+              }}
+            >
+              小游戏
+            </Button>
+          </div>
+          <div className='flex-0 whitespace-nowrap'>
+            <NovelSearchButton />
+            <UserButton />
+            <ThemeToggleButton />
+          </div>
         </div>
-        <div className='flex-0 whitespace-nowrap'>
-          <NovelSearchButton />
-          <UserButton />
-          <ThemeToggleButton />
-        </div>
-      </div>
-    </header>
+      </AppBar>
+    </Slide>
   )
 }
 

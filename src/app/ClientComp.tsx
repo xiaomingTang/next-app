@@ -11,6 +11,7 @@ export function Comp() {
     <>
       <p>pathname: {pathname}</p>
       <p>user: {user.name}</p>
+      <div style={{ height: '200vh' }}></div>
     </>
   )
 }
