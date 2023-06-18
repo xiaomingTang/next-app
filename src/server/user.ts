@@ -1,16 +1,14 @@
 'use server'
 
 import { SA } from '@/errors/utils'
+import { prisma } from '@/request/prisma'
+import { generatePassword } from '@/utils/password'
 
-import { Role } from '@prisma/client'
+import Boom from '@hapi/boom'
 
 import type { User } from '@prisma/client'
 
 export const createUser = SA.encode(async (userId: User['id']) => {
-  console.log(userId)
-})
-
-export const readUser = SA.encode(async (userId: User['id']) => {
   console.log(userId)
 })
 
@@ -29,16 +27,24 @@ interface LoginProps {
 
 export const login = SA.encode(
   async ({ email, password }: LoginProps): Promise<User> => {
-    console.log({
-      email,
-      password,
+    const user = await prisma.user.findFirst({
+      where: {
+        email,
+        password: generatePassword(password),
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+      },
     })
+    if (!user) {
+      throw Boom.unauthorized('账号或密码不正确')
+    }
     return {
-      email,
+      ...user,
       password: '',
-      id: 11,
-      name: 'name-11',
-      role: Role.ADMIN,
     }
   }
 )

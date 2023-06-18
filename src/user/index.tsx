@@ -3,7 +3,6 @@
 import { LoginModal } from './LoginModal'
 
 import { withStatic } from '@/utils/withStatic'
-import { sleepMs } from '@/utils/time'
 
 import NiceModal from '@ebay/nice-modal-react'
 import { Role } from '@prisma/client'
@@ -68,8 +67,7 @@ export const useUser = withStatic(useRawUser, {
     })
   },
   async logout() {
-    await sleepMs(1500)
-    throw new Error('暂时不允许退出登录')
+    // @TODO: 后端退出登录
     localStorage.removeItem(USER_STORAGE_KEY)
     useRawUser.setState(defaultUser)
   },
