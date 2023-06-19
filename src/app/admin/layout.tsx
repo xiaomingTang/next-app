@@ -2,6 +2,7 @@
 
 import { menuTree, useActiveMenu } from './menu/constants'
 import { NestedListItem } from './menu'
+import { AdminLoggedButton } from './AdminLoggedButton'
 
 import { AuthRequired } from '@/components/AuthRequired'
 import { Forbidden } from '@/components/Forbidden'
@@ -75,9 +76,15 @@ function RawAdminLayout({ children }: { children: React.ReactNode }) {
             >
               <MenuOutlined />
             </IconButton>
-            <Typography variant='h6' noWrap component='div'>
+            <Typography
+              variant='h6'
+              noWrap
+              component='div'
+              sx={{ flexGrow: 1 }}
+            >
               {title}
             </Typography>
+            <AdminLoggedButton />
           </Toolbar>
         </AppBar>
       </Slide>

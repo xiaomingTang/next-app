@@ -1,22 +1,15 @@
-'use client'
-
-import { useUser } from '@/user'
 import { useLoading } from '@/hooks/useLoading'
 import { SvgLoading } from '@/svg'
+import { useUser } from '@/user'
 
-import { IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material'
-import {
-  Logout,
-  Person,
-  PersonOutline,
-  VerifiedUser,
-} from '@mui/icons-material'
-import { toast } from 'react-hot-toast'
-import { useState } from 'react'
+import { Person, VerifiedUser, Logout } from '@mui/icons-material'
+import { IconButton, Menu, MenuItem, ListItemIcon } from '@mui/material'
 import { Role } from '@prisma/client'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
 
-function LoggedButton() {
+export function AdminLoggedButton() {
   const user = useUser()
   const router = useRouter()
   const { loading, withLoading } = useLoading()
@@ -40,12 +33,9 @@ function LoggedButton() {
         aria-controls={open ? 'logout-menu' : undefined}
         onClick={handleClick}
         disabled={loading}
+        color='inherit'
       >
-        {loading ? (
-          <SvgLoading className='animate-spin' />
-        ) : (
-          <Person color='primary' />
-        )}
+        {loading ? <SvgLoading className='animate-spin' /> : <Person />}
       </IconButton>
       <Menu
         id='logout-menu'
@@ -67,13 +57,13 @@ function LoggedButton() {
             divider
             onClick={() => {
               handleClose()
-              router.push('/admin')
+              router.push('/')
             }}
           >
             <ListItemIcon>
               <VerifiedUser fontSize='small' />
             </ListItemIcon>
-            管理员界面
+            前台首页
           </MenuItem>
         )}
         <MenuItem
@@ -88,33 +78,6 @@ function LoggedButton() {
           退出登录
         </MenuItem>
       </Menu>
-    </>
-  )
-}
-
-function LoginButton() {
-  const user = useUser()
-  if (user.id) {
-    return <></>
-  }
-
-  return (
-    <IconButton
-      aria-label='登录'
-      onClick={() => {
-        useUser.login().catch((err) => toast.error(err.message))
-      }}
-    >
-      <PersonOutline />
-    </IconButton>
-  )
-}
-
-export function UserButton() {
-  return (
-    <>
-      <LoginButton />
-      <LoggedButton />
     </>
   )
 }
