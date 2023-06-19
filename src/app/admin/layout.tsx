@@ -6,6 +6,7 @@ import { AdminLoggedButton } from './AdminLoggedButton'
 
 import { AuthRequired } from '@/components/AuthRequired'
 import { Forbidden } from '@/components/Forbidden'
+import { ThemeToggleButton } from '@/layout/CornerButtons/ThemeToggleButton'
 
 import { MenuOutlined } from '@mui/icons-material'
 import {
@@ -85,6 +86,7 @@ function RawAdminLayout({ children }: { children: React.ReactNode }) {
               {title}
             </Typography>
             <AdminLoggedButton />
+            <ThemeToggleButton />
           </Toolbar>
         </AppBar>
       </Slide>

@@ -20,6 +20,7 @@ export function DefaultRawHeader() {
         className='w-full z-header h-10 md:h-14 backdrop-blur'
         sx={{
           backgroundColor: alpha(grey[mode === 'dark' ? 900 : 300], 0.6),
+          color: grey[mode === 'dark' ? 200 : 800],
           boxShadow: 'none',
         }}
       >

@@ -37,6 +37,7 @@ function LoggedButton() {
     <>
       <IconButton
         aria-label='退出登录'
+        color='inherit'
         aria-controls={open ? 'logout-menu' : undefined}
         onClick={handleClick}
         disabled={loading}
