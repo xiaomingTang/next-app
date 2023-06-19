@@ -4,6 +4,9 @@ import { Fade, LinearProgress } from '@mui/material'
 import router from 'next/router'
 import { useEffect, useState } from 'react'
 
+/**
+ * 艹了 next.js 不抛出 events 了...
+ */
 export function GlobalRouteChangeProgressBar() {
   const [isRouteChanging, setIsRouteChanging] = useState(false)
 

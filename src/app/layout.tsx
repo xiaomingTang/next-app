@@ -44,8 +44,8 @@ export default function RootLayout({
         <script src='/__ENV_CONFIG__.js' />
       </head>
       <body className={clsx(inter.className, 'min-h-screen')}>
-        <GlobalRouteChangeProgressBar />
         <Providers>
+          <GlobalRouteChangeProgressBar />
           <Polyfills />
           <Contexts />
           {children}
