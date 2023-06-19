@@ -1,9 +1,6 @@
-import {
-  ExpandLess,
-  ExpandMore,
-  PersonOffOutlined,
-  PersonOutline,
-} from '@mui/icons-material'
+import { useActiveMenu } from './constants'
+
+import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
   Collapse,
   IconButton,
@@ -18,65 +15,14 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
-interface MenuItemProps {
-  name: string
-  path?: string
-  onClick?: () => void
-  icon?: React.ReactElement
-  children?: MenuItemProps[]
-}
+import type { NestedMenu } from './MenuTree'
 
-export const menuList: MenuItemProps[] = [
-  {
-    name: '用户管理',
-    path: '/admin/user',
-    icon: <PersonOutline />,
-    children: [...new Array(5)].map((_, i) => ({
-      name: `测试 nested ---- list-${i}`,
-      path: '/admin/nested-user',
-      icon: i % 2 ? <PersonOutline /> : <PersonOffOutlined />,
-    })),
-  },
-  {
-    name: '用户管理-2',
-    path: '/admin/user',
-    icon: <PersonOutline />,
-    children: [
-      ...[...new Array(5)].map((_, i) => ({
-        name: `测试 nested ---- list-${i}`,
-        path: '/admin/nested-user',
-        icon: i % 2 ? <PersonOutline /> : <PersonOffOutlined />,
-      })),
-      {
-        name: '用户管理-3',
-        path: '/admin/user',
-        icon: <PersonOutline />,
-        children: [...new Array(5)].map((_, i) => ({
-          name: `测试 nested ---- list-${i}`,
-          path: '/admin/nested-user',
-          icon: i % 2 ? <PersonOutline /> : <PersonOffOutlined />,
-        })),
-      },
-    ],
-  },
-]
-
-export const flattenMenuList = (function flatMenuList(
-  list: MenuItemProps[],
-  flatten: MenuItemProps[]
-): MenuItemProps[] {
-  list.forEach(({ children, ...item }) => {
-    flatten.push(item)
-    if (children && children.length > 0) {
-      flatMenuList(children, flatten)
-    }
-  })
-  return flatten
-})(menuList, [])
-
-export function NestedListItem(props: MenuItemProps) {
+export function NestedListItem(props: NestedMenu) {
   const pathname = usePathname()
-  const [open, setOpen] = useState(false)
+  const activeMenu = useActiveMenu()
+  const [open, setOpen] = useState(
+    () => !!activeMenu?.parents?.find((item) => item.path === props.path)
+  )
 
   const clickableItem = (
     <ListItemButton

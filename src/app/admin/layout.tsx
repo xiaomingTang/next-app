@@ -1,6 +1,10 @@
 'use client'
 
-import { NestedListItem, flattenMenuList, menuList } from './menu'
+import { menuTree, useActiveMenu } from './menu/constants'
+import { NestedListItem } from './menu'
+
+import { AuthRequired } from '@/components/AuthRequired'
+import { Forbidden } from '@/components/Forbidden'
 
 import { MenuOutlined } from '@mui/icons-material'
 import {
@@ -15,30 +19,25 @@ import {
   Typography,
   useScrollTrigger,
 } from '@mui/material'
-import { useEffect, useMemo, useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { Role } from '@prisma/client'
 
 const drawerWidth = 240
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const pathname = usePathname()
+function RawAdminLayout({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const trigger = useScrollTrigger()
-  const title = useMemo(() => {
-    const menuItem = flattenMenuList.find((item) => item.path === pathname)
-    if (menuItem) {
-      return menuItem.name
-    }
-    return '小明的后台管理'
-  }, [pathname])
+  const activeMenu = useActiveMenu()
+  const title = activeMenu?.name ?? '小明的后台管理'
 
   useEffect(() => {
     document.title = title
   }, [title])
+
+  useEffect(() => {
+    // 路由变化时关闭 Drawer
+    setMobileOpen(false)
+  }, [activeMenu])
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen)
@@ -49,7 +48,7 @@ export default function AdminLayout({
       <Toolbar />
       <Divider />
       <List>
-        {menuList.map((item) => (
+        {menuTree.children.map((item) => (
           <NestedListItem {...item} key={item.name} />
         ))}
       </List>
@@ -132,5 +131,17 @@ export default function AdminLayout({
         {children}
       </Box>
     </Box>
+  )
+}
+
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <AuthRequired roles={[Role.ADMIN]} fallback={<Forbidden />}>
+      <RawAdminLayout>{children}</RawAdminLayout>
+    </AuthRequired>
   )
 }

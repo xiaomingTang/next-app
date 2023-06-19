@@ -22,6 +22,8 @@ const USER_STORAGE_KEY = 'user'
 
 const useRawUser = create(() => defaultUser)
 
+let promise: Promise<User> | null = null
+
 export const useUser = withStatic(useRawUser, {
   getUser() {
     try {
@@ -35,6 +37,7 @@ export const useUser = withStatic(useRawUser, {
   updateUser(u: Partial<User>) {
     const newUser = {
       ...defaultUser,
+      ...useUser.getUser(),
       ...u,
     }
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser))
@@ -49,22 +52,28 @@ export const useUser = withStatic(useRawUser, {
    * - new Error('用户取消登录')
    */
   async login(): Promise<User> {
+    if (promise) {
+      return promise
+    }
     const user = useUser.getUser()
     if (user.id > 0) {
       useUser.updateUser({})
       return user
     }
-    return new Promise((resolve, reject) => {
+    promise = new Promise((resolve, reject) => {
       NiceModal.show(LoginModal, {
         onSuccess(u) {
           useUser.updateUser(u)
+          promise = null
           resolve(u)
         },
         onCancel() {
+          promise = null
           reject(new Error('用户取消登录'))
         },
       })
     })
+    return promise
   },
   async logout() {
     // @TODO: 后端退出登录
