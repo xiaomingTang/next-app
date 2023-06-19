@@ -4,7 +4,8 @@ import { webpackConfig } from './utils/index.mjs'
 import imageConfig from './next-image.config.js'
 import NextBundleAnalyzer from '@next/bundle-analyzer'
 const withBundleAnalyzer = NextBundleAnalyzer({
-  enabled: process.env.ANALYZE === 'true',
+  enabled:
+    process.env.ANALYZE === 'true' && process.env.NODE_ENV === 'production',
 })
 
 const withPWA = nextPwa({
