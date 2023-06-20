@@ -1,7 +1,7 @@
 'use client'
 
 import { useLoading } from '@/hooks/useLoading'
-import { login } from '@/server/user'
+import { login } from '@/user/server'
 import { SA } from '@/errors/utils'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
