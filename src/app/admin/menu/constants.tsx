@@ -1,6 +1,6 @@
 import { MenuTree } from './MenuTree'
 
-import { PersonOutline } from '@mui/icons-material'
+import { PersonOutline, FeedOutlined } from '@mui/icons-material'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
@@ -14,6 +14,11 @@ export const menuList: NestedMenu[] = [
     name: '用户管理',
     path: '/admin/user',
     icon: <PersonOutline />,
+  },
+  {
+    name: '博客管理',
+    path: '/admin/blog',
+    icon: <FeedOutlined />,
   },
 ]
 
