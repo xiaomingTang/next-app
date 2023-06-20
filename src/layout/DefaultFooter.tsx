@@ -1,5 +1,3 @@
-'use client'
-
 import Anchor from '@/components/Anchor'
 import { ENV_CONFIG } from '@/config'
 import { SvgGithub } from '@/svg'

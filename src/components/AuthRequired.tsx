@@ -1,3 +1,5 @@
+'use client'
+
 import { useUser } from '@/user'
 
 import { NoSsr } from '@mui/material'
