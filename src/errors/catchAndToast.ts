@@ -1,9 +1,14 @@
+'use client'
+
 import { toError } from './utils'
 
 import { toast } from 'react-hot-toast'
 
 import type { Func } from './utils'
 
+/**
+ * catch and toast
+ */
 export function cat<Args extends unknown[], Ret>(
   callback: Func<Args, Ret>
 ): Func<Args, Promise<Ret | undefined>> {
@@ -13,11 +18,7 @@ export function cat<Args extends unknown[], Ret>(
       return ret
     } catch (catchError) {
       const error = toError(catchError)
-      const toastMessage =
-        error.code && error.code < 500
-          ? error.message
-          : '服务器错误，请稍后访问'
-      toast.error(toastMessage)
+      toast.error(error.message ?? '服务器错误，请稍后再试')
       return undefined
     }
   }

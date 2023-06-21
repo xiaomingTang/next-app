@@ -33,6 +33,16 @@ export function toPlainError(err: Error): PlainError {
   }
 }
 
+function filterServerError(err: PlainError): PlainError {
+  if (err.code < 500) {
+    return err
+  }
+  return {
+    ...err,
+    message: '服务器错误, 请稍后再试',
+  }
+}
+
 export function isPlainError(err: unknown): err is PlainError {
   return !!err && !!(err as PlainError).code && !!(err as PlainError).message
 }
@@ -75,7 +85,7 @@ function serverActionEncoder<Args extends unknown[], Ret>(
     } catch (error) {
       return {
         data: undefined,
-        error: toPlainError(toError(error)),
+        error: filterServerError(toPlainError(toError(error))),
       }
     }
   }

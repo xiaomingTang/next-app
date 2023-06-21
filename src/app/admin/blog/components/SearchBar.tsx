@@ -4,6 +4,7 @@ import { getBlogs, getTags } from './server'
 
 import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
+import { cat } from '@/errors/catchAndToast'
 
 import useSWR from 'swr'
 import { Controller, useForm } from 'react-hook-form'
@@ -57,27 +58,27 @@ export function useBlogEditorSearchBar() {
     <>
       <form
         onSubmit={handleSubmit(
-          withLoading(async (e) => {
-            await getBlogs({
-              title: {
-                contains: e.title,
-              },
-              tags: {
-                some: {
-                  OR: e.tags.map((t) => ({
-                    hash: t,
-                  })),
+          withLoading(
+            cat(async (e) => {
+              await getBlogs({
+                title: {
+                  contains: e.title,
                 },
-              },
-            })
-              .then(SA.decode)
-              .then((res) => {
-                setBlogs(res)
+                tags: {
+                  some: {
+                    OR: e.tags.map((t) => ({
+                      hash: t,
+                    })),
+                  },
+                },
               })
-              .catch((err) => {
-                toast.error(err.message)
-              })
-          }, 300)
+                .then(SA.decode)
+                .then((res) => {
+                  setBlogs(res)
+                })
+            }),
+            300
+          )
         )}
       >
         <Stack
