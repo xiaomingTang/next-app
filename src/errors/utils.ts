@@ -3,7 +3,7 @@ import httpStatus from 'http-status'
 
 export type Func<Args extends unknown[], Ret> = (...args: Args) => Ret
 
-interface PlainError {
+export interface PlainError {
   code: number
   message: string
 }
