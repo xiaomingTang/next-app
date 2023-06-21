@@ -3,8 +3,6 @@
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 
-import Boom from '@hapi/boom'
-
 import type { Prisma } from '@prisma/client'
 
 export const getBlog = SA.encode(async (props: Prisma.BlogWhereUniqueInput) =>
@@ -38,6 +36,37 @@ export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
   })
 )
 
-export const willThrowError = SA.encode(async () => {
-  throw Boom.forbidden('你无权浏览')
-})
+export const getTag = SA.encode(async (props: Prisma.TagWhereUniqueInput) =>
+  prisma.tag.findUnique({
+    where: props,
+    select: {
+      hash: true,
+      name: true,
+      description: true,
+      createdAt: true,
+      updatedAt: true,
+      creator: true,
+      _count: {
+        select: {
+          blogs: true,
+        },
+      },
+    },
+  })
+)
+
+export const getTags = SA.encode(async (props: Prisma.TagWhereInput) =>
+  prisma.tag.findMany({
+    where: props,
+    select: {
+      hash: true,
+      name: true,
+      description: true,
+      _count: {
+        select: {
+          blogs: true,
+        },
+      },
+    },
+  })
+)
