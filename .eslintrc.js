@@ -59,5 +59,13 @@ module.exports = {
       },
     ],
     'no-underscore-dangle': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+        destructuredArrayIgnorePattern: '^_',
+      },
+    ],
   },
 }
