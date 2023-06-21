@@ -132,6 +132,8 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           flexGrow: 1,
           p: 3,
           width: { sm: `calc(100% - ${drawerWidth}px)` },
+          minWidth: '800px',
+          overflow: 'auto',
         }}
       >
         <Toolbar />

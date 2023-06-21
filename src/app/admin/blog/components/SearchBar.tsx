@@ -101,6 +101,7 @@ export function useBlogEditorSearchBar() {
                 label='标题'
                 helperText={error?.message ?? ' '}
                 error={!!error}
+                sx={{ minWidth: 200, maxWidth: 500 }}
               />
             )}
             rules={{
@@ -161,6 +162,7 @@ export function useBlogEditorSearchBar() {
             type='submit'
             sx={{
               height: '40px',
+              whiteSpace: 'nowrap',
             }}
             startIcon={<SearchOutlined />}
           >
@@ -170,6 +172,7 @@ export function useBlogEditorSearchBar() {
             variant='outlined'
             sx={{
               height: '40px',
+              whiteSpace: 'nowrap',
             }}
             startIcon={<AddOutlined />}
           >
