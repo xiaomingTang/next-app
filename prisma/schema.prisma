@@ -15,6 +15,17 @@ enum Role {
   USER
 }
 
+enum BlogType {
+  // 公开 已发布
+  PUBLIC_PUBLISHED
+  // 公开 未发布(即 草稿)
+  PUBLIC_UNPUBLISHED
+  // 私有 已发布
+  PRIVATE_PUBLISHED
+  // 私有 未发布(即 草稿)
+  PRIVATE_UNPUBLISHED
+}
+
 model User {
   id               Int              @id @default(autoincrement())
   name             String
@@ -58,8 +69,7 @@ model ChapterHistory {
 }
 
 model ShortUrl {
-  id        Int      @id @default(autoincrement())
-  hash      String   @unique
+  hash      String   @id
   url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -68,8 +78,7 @@ model ShortUrl {
 }
 
 model Tag {
-  id          Int      @id @default(autoincrement())
-  hash        String   @unique
+  hash        String   @id
   name        String   @unique
   description String
   createdAt   DateTime @default(now())
@@ -80,8 +89,8 @@ model Tag {
 }
 
 model Blog {
-  id        Int      @id @default(autoincrement())
-  hash      String   @unique
+  hash      String   @id
+  type      BlogType
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   title     String
