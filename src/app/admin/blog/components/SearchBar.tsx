@@ -23,7 +23,7 @@ import {
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import { toast } from 'react-hot-toast'
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { AddOutlined, SearchOutlined } from '@mui/icons-material'
 
 interface SearchProps {
@@ -37,7 +37,7 @@ interface SearchProps {
   tags: string[]
 }
 
-type Blogs = NonNullable<Awaited<ReturnType<typeof getBlogs>>['data']>
+export type Blogs = NonNullable<Awaited<ReturnType<typeof getBlogs>>['data']>
 
 export function useBlogEditorSearchBar() {
   const {
@@ -54,33 +54,44 @@ export function useBlogEditorSearchBar() {
   const { loading, withLoading } = useLoading()
   const [blogs, setBlogs] = useState<Blogs>([])
 
+  const onSubmit = useMemo(
+    () =>
+      handleSubmit(
+        withLoading(
+          cat(async (e) => {
+            await getBlogs({
+              title: {
+                contains: e.title,
+              },
+              tags: {
+                some: {
+                  OR: e.tags.map((t) => ({
+                    hash: t,
+                  })),
+                },
+              },
+            })
+              .then(SA.decode)
+              .then((res) => {
+                setBlogs(res)
+                if (res.length === 0) {
+                  toast.error('暂无数据')
+                }
+              })
+          }),
+          300
+        )
+      ),
+    [handleSubmit, withLoading]
+  )
+
+  useEffect(() => {
+    onSubmit()
+  }, [onSubmit])
+
   const elem = (
     <>
-      <form
-        onSubmit={handleSubmit(
-          withLoading(
-            cat(async (e) => {
-              await getBlogs({
-                title: {
-                  contains: e.title,
-                },
-                tags: {
-                  some: {
-                    OR: e.tags.map((t) => ({
-                      hash: t,
-                    })),
-                  },
-                },
-              })
-                .then(SA.decode)
-                .then((res) => {
-                  setBlogs(res)
-                })
-            }),
-            300
-          )
-        )}
-      >
+      <form onSubmit={onSubmit}>
         <Stack
           spacing={1}
           direction='row'
