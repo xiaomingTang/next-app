@@ -1,6 +1,7 @@
 'use client'
 
 import { getBlogs, getTags } from './server'
+import { useEditBlog } from './NewBlog'
 
 import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
@@ -40,6 +41,7 @@ interface SearchProps {
 export type Blogs = NonNullable<Awaited<ReturnType<typeof getBlogs>>['data']>
 
 export function useBlogEditorSearchBar() {
+  const { elem: editElem, edit } = useEditBlog()
   const {
     data: allTags = [],
     error: fetchAllTagsError,
@@ -90,105 +92,110 @@ export function useBlogEditorSearchBar() {
   }, [onSubmit])
 
   const elem = (
-    <form onSubmit={onSubmit}>
-      <Stack
-        spacing={1}
-        direction='row'
-        sx={{
-          p: 2,
-          borderRadius: 1,
-          marginBottom: 2,
-          background: (theme) => theme.palette.background.paper,
-        }}
-      >
-        <Controller
-          name='title'
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <TextField
-              {...field}
-              size='small'
-              label='标题'
-              helperText={error?.message ?? ' '}
-              error={!!error}
-              sx={{ minWidth: 200, maxWidth: 500 }}
-            />
-          )}
-          rules={{
-            maxLength: {
-              value: 100,
-              message: '最多 100 个字',
-            },
+    <>
+      {editElem}
+      <form onSubmit={onSubmit}>
+        <Stack
+          spacing={1}
+          direction='row'
+          sx={{
+            p: 2,
+            borderRadius: 1,
+            marginBottom: 2,
+            background: (theme) => theme.palette.background.paper,
           }}
-        />
-        <Controller
-          name='tags'
-          control={control}
-          render={({ field, fieldState: { error } }) => (
-            <FormControl size='small' sx={{ minWidth: 200, maxWidth: 500 }}>
-              <InputLabel>标签</InputLabel>
-              <Select
+        >
+          <Controller
+            name='title'
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
                 {...field}
-                multiple
-                error={!!error || fetchAllTagsError}
-                input={<OutlinedInput label='标签' />}
-                renderValue={(hashes) => (
-                  <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                    {hashes.map((hash) => (
-                      <Chip
-                        size='small'
-                        key={hash}
-                        label={
-                          allTags.find((t) => t.hash === hash)?.name ?? hash
-                        }
-                      />
-                    ))}
-                  </Box>
-                )}
-              >
-                {allTags.map((tag) => (
-                  <MenuItem key={tag.hash} value={tag.hash}>
-                    {tag.name}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>
-                {[
-                  error?.message,
-                  fetchALlTagsIsValidating && '加载中...',
-                  fetchAllTagsError && `加载出错: ${fetchAllTagsError.message}`,
-                ]
-                  .filter(Boolean)
-                  .join(' + ')}
-                &nbsp;
-              </FormHelperText>
-            </FormControl>
-          )}
-        />
-        <LoadingButton
-          loading={loading}
-          variant='contained'
-          type='submit'
-          sx={{
-            height: '40px',
-            whiteSpace: 'nowrap',
-          }}
-          startIcon={<SearchOutlined />}
-        >
-          搜索
-        </LoadingButton>
-        <Button
-          variant='outlined'
-          sx={{
-            height: '40px',
-            whiteSpace: 'nowrap',
-          }}
-          startIcon={<AddOutlined />}
-        >
-          新建
-        </Button>
-      </Stack>
-    </form>
+                size='small'
+                label='标题'
+                helperText={error?.message ?? ' '}
+                error={!!error}
+                sx={{ minWidth: 200, maxWidth: 500 }}
+              />
+            )}
+            rules={{
+              maxLength: {
+                value: 100,
+                message: '最多 100 个字',
+              },
+            }}
+          />
+          <Controller
+            name='tags'
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <FormControl size='small' sx={{ minWidth: 200, maxWidth: 500 }}>
+                <InputLabel>标签</InputLabel>
+                <Select
+                  {...field}
+                  multiple
+                  error={!!error || fetchAllTagsError}
+                  input={<OutlinedInput label='标签' />}
+                  renderValue={(hashes) => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                      {hashes.map((hash) => (
+                        <Chip
+                          size='small'
+                          key={hash}
+                          label={
+                            allTags.find((t) => t.hash === hash)?.name ?? hash
+                          }
+                        />
+                      ))}
+                    </Box>
+                  )}
+                >
+                  {allTags.map((tag) => (
+                    <MenuItem key={tag.hash} value={tag.hash}>
+                      {tag.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormHelperText>
+                  {[
+                    error?.message,
+                    fetchALlTagsIsValidating && '加载中...',
+                    fetchAllTagsError &&
+                      `加载出错: ${fetchAllTagsError.message}`,
+                  ]
+                    .filter(Boolean)
+                    .join(' + ')}
+                  &nbsp;
+                </FormHelperText>
+              </FormControl>
+            )}
+          />
+          <LoadingButton
+            loading={loading}
+            variant='contained'
+            type='submit'
+            sx={{
+              height: '40px',
+              whiteSpace: 'nowrap',
+            }}
+            startIcon={<SearchOutlined />}
+          >
+            搜索
+          </LoadingButton>
+          <Button
+            variant='outlined'
+            sx={{
+              height: '40px',
+              whiteSpace: 'nowrap',
+            }}
+            startIcon={<AddOutlined />}
+            onClick={() => edit()}
+          >
+            新建
+          </Button>
+        </Stack>
+      </form>
+    </>
   )
 
   return {
