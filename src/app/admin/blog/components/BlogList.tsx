@@ -1,14 +1,20 @@
 'use client'
 
+import { formatTime } from '@/utils/formatTime'
+
 import {
   Button,
+  ButtonGroup,
+  Chip,
   Paper,
+  Stack,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
 } from '@mui/material'
 
 import type { Blogs } from './SearchBar'
@@ -20,10 +26,10 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
         <TableHead>
           <TableRow>
             <TableCell>标题</TableCell>
-            <TableCell align='right'>发布时间</TableCell>
-            <TableCell align='right'>更新时间</TableCell>
-            <TableCell align='right'>标签</TableCell>
-            <TableCell align='right'>操作</TableCell>
+            <TableCell>发布时间</TableCell>
+            <TableCell>更新时间</TableCell>
+            <TableCell>标签</TableCell>
+            <TableCell>操作</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -35,22 +41,26 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
               <TableCell component='th' scope='row'>
                 {blog.title}
               </TableCell>
-              <TableCell align='right'>
-                {blog.createdAt.toLocaleString()}
+              <TableCell>{formatTime(blog.createdAt)}</TableCell>
+              <TableCell>{formatTime(blog.updatedAt)}</TableCell>
+              <TableCell>
+                <Stack spacing={1} direction='row'>
+                  {blog.tags.map((tag) => (
+                    <Tooltip
+                      key={tag.hash}
+                      title={tag.description}
+                      placement='bottom-start'
+                    >
+                      <Chip label={tag.name} />
+                    </Tooltip>
+                  ))}
+                </Stack>
               </TableCell>
-              <TableCell align='right'>
-                {blog.updatedAt.toLocaleString()}
-              </TableCell>
-              <TableCell align='right'>
-                {blog.tags.map((tag) => tag.name)}
-              </TableCell>
-              <TableCell align='right'>
-                <Button size='small' variant='contained'>
-                  编辑
-                </Button>
-                <Button size='small' variant='contained' color='error'>
-                  删除
-                </Button>
+              <TableCell>
+                <ButtonGroup size='small' variant='contained'>
+                  <Button>编辑</Button>
+                  <Button color='error'>删除</Button>
+                </ButtonGroup>
               </TableCell>
             </TableRow>
           ))}

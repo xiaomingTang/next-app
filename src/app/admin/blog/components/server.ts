@@ -5,38 +5,56 @@ import { prisma } from '@/request/prisma'
 import { getSelf } from '@/user/server'
 
 import { BlogType } from '@prisma/client'
+import { pick } from 'lodash-es'
 
 import type { Prisma } from '@prisma/client'
+
+const blogSelect = {
+  hash: true,
+  type: true,
+  createdAt: true,
+  updatedAt: true,
+  title: true,
+  content: true,
+  tags: {
+    select: {
+      hash: true,
+      name: true,
+      description: true,
+    },
+  },
+  creator: true,
+}
 
 export const getBlog = SA.encode(async (props: Prisma.BlogWhereUniqueInput) =>
   prisma.blog.findUnique({
     where: props,
-    select: {
-      hash: true,
-      type: true,
-      createdAt: true,
-      updatedAt: true,
-      title: true,
-      content: true,
-      tags: true,
-      creator: true,
-    },
+    select: blogSelect,
   })
 )
 
 export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
   prisma.blog.findMany({
     where: props,
-    select: {
-      hash: true,
-      type: true,
-      createdAt: true,
-      updatedAt: true,
-      title: true,
-      tags: true,
-      creator: true,
-    },
+    select: blogSelect,
   })
+)
+
+export const saveBlog = SA.encode(
+  async (
+    hash: string,
+    props: Pick<Prisma.BlogUpdateInput, 'content' | 'title' | 'tags' | 'type'>
+  ) =>
+    prisma.blog.update({
+      where: {
+        hash,
+      },
+      data: {
+        ...pick(props, 'content', 'title', 'tags', 'type'),
+        updatedAt: new Date(),
+      },
+      select: blogSelect,
+    })
 )
 
 export const getTag = SA.encode(async (props: Prisma.TagWhereUniqueInput) =>
@@ -89,5 +107,6 @@ export const createNewBlog = SA.encode(async () => {
       type: BlogType.PRIVATE_UNPUBLISHED,
     },
     update: {},
+    select: blogSelect,
   })
 })

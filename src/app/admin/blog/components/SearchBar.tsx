@@ -11,7 +11,6 @@ import useSWR from 'swr'
 import { Controller, useForm } from 'react-hook-form'
 import {
   Box,
-  Button,
   Chip,
   FormControl,
   FormHelperText,
@@ -53,25 +52,31 @@ export function useBlogEditorSearchBar() {
       tags: [],
     },
   })
-  const { loading, withLoading } = useLoading()
+  const { loading: searchLoading, withLoading: withSearchLoading } =
+    useLoading()
+  const { loading: editLoading, withLoading: withEditLoading } = useLoading()
   const [blogs, setBlogs] = useState<Blogs>([])
 
   const onSubmit = useMemo(
     () =>
       handleSubmit(
-        withLoading(
+        withSearchLoading(
           cat(async (e) => {
             await getBlogs({
               title: {
                 contains: e.title,
               },
-              tags: {
-                some: {
-                  OR: e.tags.map((t) => ({
-                    hash: t,
-                  })),
-                },
-              },
+              // todo: 貌似 OR 有问题, A OR B 不能筛选出 仅 A
+              tags:
+                e.tags.length === 0
+                  ? {}
+                  : {
+                      some: {
+                        OR: e.tags.map((t) => ({
+                          hash: t,
+                        })),
+                      },
+                    },
             })
               .then(SA.decode)
               .then((res) => {
@@ -84,7 +89,7 @@ export function useBlogEditorSearchBar() {
           300
         )
       ),
-    [handleSubmit, withLoading]
+    [handleSubmit, withSearchLoading]
   )
 
   useEffect(() => {
@@ -171,7 +176,7 @@ export function useBlogEditorSearchBar() {
             )}
           />
           <LoadingButton
-            loading={loading}
+            loading={searchLoading}
             variant='contained'
             type='submit'
             sx={{
@@ -182,17 +187,26 @@ export function useBlogEditorSearchBar() {
           >
             搜索
           </LoadingButton>
-          <Button
+          <LoadingButton
+            loading={editLoading}
             variant='outlined'
             sx={{
               height: '40px',
               whiteSpace: 'nowrap',
             }}
             startIcon={<AddOutlined />}
-            onClick={() => edit()}
+            onClick={() =>
+              withEditLoading(
+                cat(async () => {
+                  await edit()
+                  await onSubmit()
+                }),
+                300
+              )()
+            }
           >
             新建
-          </Button>
+          </LoadingButton>
         </Stack>
       </form>
     </>
