@@ -1,12 +1,12 @@
 'use client'
 
+import { cat } from '@/errors/catchAndToast'
 import { useLoading } from '@/hooks/useLoading'
 import { useUser } from '@/user'
 
 import { LoadingButton } from '@mui/lab'
 import { Box } from '@mui/material'
 import { noop } from 'lodash-es'
-import { toast } from 'react-hot-toast'
 
 export function Forbidden() {
   const user = useUser()
@@ -25,10 +25,12 @@ export function Forbidden() {
           variant='contained'
           size='small'
           sx={{ marginLeft: '0.5em' }}
-          onClick={withLoading(async () => {
-            await useUser.logout().catch((err) => toast.error(err.message))
-            await useUser.login().catch(noop)
-          })}
+          onClick={withLoading(
+            cat(async () => {
+              await useUser.logout()
+              await useUser.login().catch(noop)
+            })
+          )}
         >
           切换登录
         </LoadingButton>

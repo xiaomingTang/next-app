@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken'
 import { cookies, headers } from 'next/headers'
 import Boom from '@hapi/boom'
 import { omit } from 'lodash-es'
+import { Role } from '@prisma/client'
 
 import type { User } from '@prisma/client'
 
@@ -61,6 +62,10 @@ export const login = SA.encode(
   }
 )
 
+export const logout = SA.encode(async () => {
+  cookies().delete(authorizationKey)
+})
+
 /**
  * @warning 未登录调用该方法时, 默认抛 401,
  * 如有必要, 需要手动 catch
@@ -96,4 +101,35 @@ export const getSelf = async (strict = false) => {
     console.error(error)
     throw Boom.unauthorized('该用户不存在')
   }
+}
+
+type AuthValidateProps = {
+  /**
+   * roles 之间、与 userIds 之间, 均为 或 关系;
+   * 即: 只要满足任一条件即可;
+   */
+  roles?: Role[]
+  /**
+   * roles 之间、与 userIds 之间, 均为 或 关系;
+   * 即: 只要满足任一条件即可;
+   */
+  userIds?: User['id'][]
+  strict?: boolean
+}
+
+export async function authValidate(
+  user: Pick<User, 'role' | 'id'>,
+  { roles = [Role.USER], userIds = [] }: AuthValidateProps
+) {
+  if (!user.id) {
+    throw Boom.unauthorized('用户未登录')
+  }
+  if (
+    user.role === Role.ADMIN ||
+    roles.includes(user.role) ||
+    userIds.includes(user.id)
+  ) {
+    return
+  }
+  throw Boom.forbidden('权限不足')
 }

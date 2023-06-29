@@ -1,8 +1,10 @@
 'use client'
 
 import { LoginModal } from './LoginModal'
+import { logout } from './server'
 
 import { withStatic } from '@/utils/withStatic'
+import { SA } from '@/errors/utils'
 
 import NiceModal from '@ebay/nice-modal-react'
 import { Role } from '@prisma/client'
@@ -76,7 +78,7 @@ export const useUser = withStatic(useRawUser, {
     return promise
   },
   async logout() {
-    // @TODO: 后端退出登录
+    await logout().then(SA.decode)
     localStorage.removeItem(USER_STORAGE_KEY)
     useRawUser.setState(defaultUser)
   },

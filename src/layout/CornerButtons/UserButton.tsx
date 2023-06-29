@@ -3,6 +3,7 @@
 import { useUser } from '@/user'
 import { useLoading } from '@/hooks/useLoading'
 import { SvgLoading } from '@/svg'
+import { cat } from '@/errors/catchAndToast'
 
 import { IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material'
 import {
@@ -11,7 +12,6 @@ import {
   PersonOutline,
   VerifiedUser,
 } from '@mui/icons-material'
-import { toast } from 'react-hot-toast'
 import { useState } from 'react'
 import { Role } from '@prisma/client'
 import { useRouter } from 'next/navigation'
@@ -78,10 +78,12 @@ function LoggedButton() {
           </MenuItem>
         )}
         <MenuItem
-          onClick={withLoading(async () => {
-            handleClose()
-            await useUser.logout().catch((err) => toast.error(err.message))
-          })}
+          onClick={withLoading(
+            cat(async () => {
+              handleClose()
+              await useUser.logout()
+            })
+          )}
         >
           <ListItemIcon>
             <Logout fontSize='small' />
@@ -102,9 +104,9 @@ function LoginButton() {
   return (
     <IconButton
       aria-label='登录'
-      onClick={() => {
-        useUser.login().catch((err) => toast.error(err.message))
-      }}
+      onClick={cat(async () => {
+        await useUser.login()
+      })}
     >
       <PersonOutline />
     </IconButton>

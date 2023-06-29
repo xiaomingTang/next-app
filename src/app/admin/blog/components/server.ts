@@ -2,14 +2,14 @@
 
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
-import { getSelf } from '@/user/server'
+import { authValidate, getSelf } from '@/user/server'
 
-import { BlogType } from '@prisma/client'
+import { BlogType, Role } from '@prisma/client'
 import { pick } from 'lodash-es'
 
 import type { Prisma } from '@prisma/client'
 
-const blogSelect = {
+const blogSelect: Prisma.BlogSelect = {
   hash: true,
   type: true,
   createdAt: true,
@@ -44,8 +44,12 @@ export const saveBlog = SA.encode(
   async (
     hash: string,
     props: Pick<Prisma.BlogUpdateInput, 'content' | 'title' | 'tags' | 'type'>
-  ) =>
-    prisma.blog.update({
+  ) => {
+    const self = await getSelf()
+    await authValidate(self, {
+      roles: [Role.ADMIN],
+    })
+    return prisma.blog.update({
       where: {
         hash,
       },
@@ -55,6 +59,7 @@ export const saveBlog = SA.encode(
       },
       select: blogSelect,
     })
+  }
 )
 
 export const getTag = SA.encode(async (props: Prisma.TagWhereUniqueInput) =>
@@ -94,6 +99,9 @@ export const getTags = SA.encode(async (props: Prisma.TagWhereInput) =>
 
 export const createNewBlog = SA.encode(async () => {
   const self = await getSelf()
+  await authValidate(self, {
+    roles: [Role.ADMIN],
+  })
   const hash = `${self.id}_DRAFT`
   return prisma.blog.upsert({
     where: {
