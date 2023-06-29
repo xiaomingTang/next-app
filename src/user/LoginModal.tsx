@@ -89,7 +89,7 @@ export const LoginModal = NiceModal.create(
                   })
                   .catch((err) => {
                     setError('password', {
-                      message: `邮箱或密码有误: ${err.message}`,
+                      message: `登录失败: ${err.message}`,
                     })
                   })
               }, 300)
