@@ -9,7 +9,7 @@ import { pick } from 'lodash-es'
 
 import type { Prisma } from '@prisma/client'
 
-const blogSelect: Prisma.BlogSelect = {
+const blogSelect = {
   hash: true,
   type: true,
   createdAt: true,
