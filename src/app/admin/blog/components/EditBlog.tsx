@@ -108,8 +108,7 @@ export function useEditBlog() {
                     },
                   }).then(SA.decode)
                   handleClose()
-                }),
-                300
+                })
               )}
             >
               保存

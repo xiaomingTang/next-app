@@ -1,7 +1,7 @@
 'use client'
 
 import { getBlogs, getTags } from './server'
-import { useEditBlog } from './NewBlog'
+import { useEditBlog } from './EditBlog'
 
 import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
@@ -25,6 +25,7 @@ import { LoadingButton } from '@mui/lab'
 import { toast } from 'react-hot-toast'
 import { useEffect, useMemo, useState } from 'react'
 import { AddOutlined, SearchOutlined } from '@mui/icons-material'
+import { useRouter } from 'next/navigation'
 
 interface SearchProps {
   /**
@@ -40,6 +41,7 @@ interface SearchProps {
 export type Blogs = NonNullable<Awaited<ReturnType<typeof getBlogs>>['data']>
 
 export function useBlogEditorSearchBar() {
+  const router = useRouter()
   const { elem: editElem, edit } = useEditBlog()
   const {
     data: allTags = [],
@@ -85,8 +87,7 @@ export function useBlogEditorSearchBar() {
                   toast.error('暂无数据')
                 }
               })
-          }),
-          300
+          })
         )
       ),
     [handleSubmit, withSearchLoading]
@@ -195,15 +196,13 @@ export function useBlogEditorSearchBar() {
               whiteSpace: 'nowrap',
             }}
             startIcon={<AddOutlined />}
-            onClick={() =>
-              withEditLoading(
-                cat(async () => {
-                  await edit()
-                  await onSubmit()
-                }),
-                300
-              )()
-            }
+            onClick={withEditLoading(
+              cat(async () => {
+                await edit()
+                // @TODO onSubmit(for refresh) not working
+                await onSubmit()
+              })
+            )}
           >
             新建
           </LoadingButton>

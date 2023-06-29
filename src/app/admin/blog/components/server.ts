@@ -62,6 +62,29 @@ export const saveBlog = SA.encode(
   }
 )
 
+export const deleteBlogs = SA.encode(async (blogHashes: string[]) => {
+  const self = await getSelf(true)
+  if (self.role === Role.ADMIN) {
+    // ADMIN 可以直接删除博文
+    return prisma.blog.deleteMany({
+      where: {
+        hash: {
+          in: blogHashes,
+        },
+      },
+    })
+  }
+  // 否则, 只有作者才能删除对应博文
+  return prisma.blog.deleteMany({
+    where: {
+      hash: {
+        in: blogHashes,
+      },
+      creatorId: self.id,
+    },
+  })
+})
+
 export const getTag = SA.encode(async (props: Prisma.TagWhereUniqueInput) =>
   prisma.tag.findUnique({
     where: props,

@@ -92,7 +92,7 @@ export const LoginModal = NiceModal.create(
                       message: `登录失败: ${err.message}`,
                     })
                   })
-              }, 300)
+              })
             )}
           >
             <Controller
