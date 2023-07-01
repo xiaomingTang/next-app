@@ -8,6 +8,7 @@ import {
   saveBlog,
 } from './server'
 import { BlogTypeMap } from './constants'
+import { editMarkdown } from './editMarkdown'
 
 import { SA } from '@/errors/utils'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
@@ -146,7 +147,27 @@ export function useEditBlog() {
             >
               保存
             </CustomLoadingButton>
-            <IconButton sx={{ color: 'inherit' }} size='small' edge='end'>
+            <IconButton
+              sx={{ color: 'inherit' }}
+              size='small'
+              edge='end'
+              onClick={() => {
+                if (!blog) {
+                  throw new Error('文章不存在')
+                }
+                editMarkdown({
+                  name: blog?.title,
+                  content: {
+                    text: blog?.content,
+                  },
+                }).then((content) => {
+                  setBlog({
+                    ...blog,
+                    content,
+                  })
+                })
+              }}
+            >
               <Visibility />
             </IconButton>
           </Toolbar>
