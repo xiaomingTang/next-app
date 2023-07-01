@@ -4,7 +4,6 @@ import './globals.css'
 import Contexts from '@/common/contexts'
 import Polyfills from '@/common/polyfills'
 import Providers from '@/common/providers'
-import { GlobalRouteChangeProgressBar } from '@/components/GlobalRouteChangeProgressBar'
 import PWAStaleTip from '@/pwa/PWAStaleTip'
 import { seo } from '@/utils/seo'
 
@@ -45,7 +44,6 @@ export default function RootLayout({
       </head>
       <body className={clsx(inter.className, 'min-h-screen')}>
         <Providers>
-          <GlobalRouteChangeProgressBar />
           <Polyfills />
           <Contexts />
           {children}
