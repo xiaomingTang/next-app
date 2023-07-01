@@ -8,6 +8,7 @@ import { formatTime } from '@/utils/formatTime'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'
+import { SA } from '@/errors/utils'
 
 import {
   ButtonGroup,
@@ -88,7 +89,7 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
                             `你确定删除博文【${blog.title}】吗？`
                           ))
                         ) {
-                          await deleteBlogs([blog.hash])
+                          await deleteBlogs([blog.hash]).then(SA.decode)
                           // @TODO refresh not working
                           router.refresh()
                         }
