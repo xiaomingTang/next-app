@@ -1,7 +1,5 @@
-import type { HTMLAttributes } from 'react'
-import type { PrismaClient, User } from '@prisma/client'
+import type { User } from '@prisma/client'
 import type toast from 'react-hot-toast'
-import { PaletteMode } from '@mui/material'
 
 declare global {
   type AppEnv = 'production' | 'preprod'
