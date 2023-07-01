@@ -9,6 +9,7 @@ import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'
 import { SA } from '@/errors/utils'
+import Anchor from '@/components/Anchor'
 
 import {
   ButtonGroup,
@@ -24,6 +25,7 @@ import {
   Tooltip,
 } from '@mui/material'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 import type { Blogs } from './SearchBar'
 
@@ -50,7 +52,11 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component='th' scope='row'>
-                  {BlogTypeMap[blog.type].name} {blog.title}
+                  <Link passHref legacyBehavior href={`/blog/${blog.hash}`}>
+                    <Anchor>
+                      {BlogTypeMap[blog.type].name} {blog.title}
+                    </Anchor>
+                  </Link>
                 </TableCell>
                 <TableCell>{formatTime(blog.createdAt)}</TableCell>
                 <TableCell>{formatTime(blog.updatedAt)}</TableCell>

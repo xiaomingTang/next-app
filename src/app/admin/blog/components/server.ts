@@ -73,6 +73,10 @@ export const getBlog = SA.encode(async (props: Prisma.BlogWhereUniqueInput) =>
     .then(filterBlogWithAuth)
 )
 
+export type BlogWithTags = NonNullable<
+  Awaited<ReturnType<typeof getBlog>>['data']
+>
+
 export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
   prisma.blog
     .findMany({

@@ -39,6 +39,7 @@ import {
 } from '@mui/material'
 import { noop } from 'lodash-es'
 
+import type { BlogWithTags } from './server'
 import type { TransitionProps } from '@mui/material/transitions'
 import type { BlogType } from '@prisma/client'
 
@@ -52,8 +53,6 @@ function RawTransition(
 }
 
 const Transition = forwardRef(RawTransition)
-
-type BlogWithTags = NonNullable<Awaited<ReturnType<typeof getBlog>>['data']>
 
 interface EditBlogPromise {
   resolve: (blog: BlogWithTags) => void
