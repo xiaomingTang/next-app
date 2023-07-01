@@ -3,7 +3,7 @@
 import { createNewBlog, getBlog, getTags, saveBlog } from './server'
 
 import { SA } from '@/errors/utils'
-import { useLoading } from '@/hooks/useLoading'
+import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 
@@ -29,9 +29,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import { LoadingButton } from '@mui/lab'
 
-import type { Blog, Tag } from '@prisma/client'
 import type { TransitionProps } from '@mui/material/transitions'
 
 function RawTransition(
@@ -50,7 +48,6 @@ type BlogWithTags = NonNullable<Awaited<ReturnType<typeof getBlog>>['data']>
 export function useEditBlog() {
   const [open, setOpen] = useState(false)
   const [blog, setBlog] = useState<BlogWithTags | null>(null)
-  const { loading: saveLoading, withLoading: withSaveLoading } = useLoading()
   const {
     data: allTags = [],
     error: fetchAllTagsError,
@@ -91,28 +88,25 @@ export function useEditBlog() {
                 </Tooltip>
               )}
             </Box>
-            <LoadingButton
-              loading={saveLoading}
+            <CustomLoadingButton
               color='inherit'
-              onClick={withSaveLoading(
-                cat(async () => {
-                  if (!blog) {
-                    throw new Error('文章不存在')
-                  }
-                  await saveBlog(blog.hash, {
-                    ...blog,
-                    tags: {
-                      set: blog.tags.map((t) => ({
-                        hash: t.hash,
-                      })),
-                    },
-                  }).then(SA.decode)
-                  handleClose()
-                })
-              )}
+              onClick={cat(async () => {
+                if (!blog) {
+                  throw new Error('文章不存在')
+                }
+                await saveBlog(blog.hash, {
+                  ...blog,
+                  tags: {
+                    set: blog.tags.map((t) => ({
+                      hash: t.hash,
+                    })),
+                  },
+                }).then(SA.decode)
+                handleClose()
+              })}
             >
               保存
-            </LoadingButton>
+            </CustomLoadingButton>
             <IconButton sx={{ color: 'inherit' }} edge='end'>
               <Visibility />
             </IconButton>

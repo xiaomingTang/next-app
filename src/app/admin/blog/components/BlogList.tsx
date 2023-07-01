@@ -4,7 +4,7 @@ import { useEditBlog } from './EditBlog'
 import { deleteBlogs } from './server'
 
 import { formatTime } from '@/utils/formatTime'
-import { useLoading } from '@/hooks/useLoading'
+import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'
 
@@ -21,16 +21,12 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material'
-import { LoadingButton } from '@mui/lab'
 import { useRouter } from 'next/navigation'
 
 import type { Blogs } from './SearchBar'
 
 export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
   const { elem, edit } = useEditBlog()
-  const { loading: editLoading, withLoading: withEditLoading } = useLoading()
-  const { loading: deleteLoading, withLoading: withDeleteLoading } =
-    useLoading()
   const router = useRouter()
   return (
     <>
@@ -71,39 +67,33 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
                 </TableCell>
                 <TableCell>
                   <ButtonGroup size='small'>
-                    <LoadingButton
-                      loading={editLoading}
+                    <CustomLoadingButton
                       variant='contained'
-                      onClick={withEditLoading(
-                        cat(async () => {
-                          await edit(blog.hash)
-                          // @TODO refresh not working
-                          router.refresh()
-                        })
-                      )}
+                      onClick={cat(async () => {
+                        await edit(blog.hash)
+                        // @TODO refresh not working
+                        router.refresh()
+                      })}
                     >
                       编辑
-                    </LoadingButton>
-                    <LoadingButton
+                    </CustomLoadingButton>
+                    <CustomLoadingButton
                       color='error'
-                      loading={deleteLoading}
                       variant='contained'
-                      onClick={withDeleteLoading(
-                        cat(async () => {
-                          if (
-                            await customConfirm(
-                              `你确定删除博文【${blog.title}】吗？`
-                            )
-                          ) {
-                            await deleteBlogs([blog.hash])
-                            // @TODO refresh not working
-                            router.refresh()
-                          }
-                        })
-                      )}
+                      onClick={cat(async () => {
+                        if (
+                          await customConfirm(
+                            `你确定删除博文【${blog.title}】吗？`
+                          )
+                        ) {
+                          await deleteBlogs([blog.hash])
+                          // @TODO refresh not working
+                          router.refresh()
+                        }
+                      })}
                     >
                       删除
-                    </LoadingButton>
+                    </CustomLoadingButton>
                   </ButtonGroup>
                 </TableCell>
               </TableRow>

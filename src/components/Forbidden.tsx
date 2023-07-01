@@ -1,16 +1,15 @@
 'use client'
 
+import { CustomLoadingButton } from './CustomLoadingButton'
+
 import { cat } from '@/errors/catchAndToast'
-import { useLoading } from '@/hooks/useLoading'
 import { useUser } from '@/user'
 
-import { LoadingButton } from '@mui/lab'
 import { Box } from '@mui/material'
 import { noop } from 'lodash-es'
 
 export function Forbidden() {
   const user = useUser()
-  const { loading, withLoading } = useLoading()
   return (
     <Box
       sx={{
@@ -19,34 +18,19 @@ export function Forbidden() {
     >
       {!!user.id && `${user.name} [${user.role}]: `}
       您的权限不足, 您可以
-      {user.id ? (
-        <LoadingButton
-          loading={loading}
-          variant='contained'
-          size='small'
-          sx={{ marginLeft: '0.5em' }}
-          onClick={withLoading(
-            cat(async () => {
-              await useUser.logout()
-              await useUser.login().catch(noop)
-            })
-          )}
-        >
-          切换登录
-        </LoadingButton>
-      ) : (
-        <LoadingButton
-          loading={loading}
-          variant='contained'
-          size='small'
-          sx={{ marginLeft: '0.5em' }}
-          onClick={withLoading(async () => {
-            await useUser.login().catch(noop)
-          })}
-        >
-          登录
-        </LoadingButton>
-      )}
+      <CustomLoadingButton
+        variant='contained'
+        size='small'
+        sx={{ marginLeft: '0.5em' }}
+        onClick={cat(async () => {
+          if (user.id) {
+            await useUser.logout()
+          }
+          await useUser.login().catch(noop)
+        })}
+      >
+        {user.id ? '切换登录' : '登录'}
+      </CustomLoadingButton>
     </Box>
   )
 }

@@ -6,6 +6,7 @@ import { useEditBlog } from './EditBlog'
 import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
 import { cat } from '@/errors/catchAndToast'
+import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 
 import useSWR from 'swr'
 import { Controller, useForm } from 'react-hook-form'
@@ -21,11 +22,9 @@ import {
   Stack,
   TextField,
 } from '@mui/material'
-import { LoadingButton } from '@mui/lab'
 import { toast } from 'react-hot-toast'
 import { useEffect, useMemo, useState } from 'react'
 import { AddOutlined, SearchOutlined } from '@mui/icons-material'
-import { useRouter } from 'next/navigation'
 
 interface SearchProps {
   /**
@@ -41,7 +40,6 @@ interface SearchProps {
 export type Blogs = NonNullable<Awaited<ReturnType<typeof getBlogs>>['data']>
 
 export function useBlogEditorSearchBar() {
-  const router = useRouter()
   const { elem: editElem, edit } = useEditBlog()
   const {
     data: allTags = [],
@@ -56,7 +54,6 @@ export function useBlogEditorSearchBar() {
   })
   const { loading: searchLoading, withLoading: withSearchLoading } =
     useLoading()
-  const { loading: editLoading, withLoading: withEditLoading } = useLoading()
   const [blogs, setBlogs] = useState<Blogs>([])
 
   const onSubmit = useMemo(
@@ -176,7 +173,7 @@ export function useBlogEditorSearchBar() {
               </FormControl>
             )}
           />
-          <LoadingButton
+          <CustomLoadingButton
             loading={searchLoading}
             variant='contained'
             type='submit'
@@ -187,25 +184,22 @@ export function useBlogEditorSearchBar() {
             startIcon={<SearchOutlined />}
           >
             搜索
-          </LoadingButton>
-          <LoadingButton
-            loading={editLoading}
+          </CustomLoadingButton>
+          <CustomLoadingButton
             variant='outlined'
             sx={{
               height: '40px',
               whiteSpace: 'nowrap',
             }}
             startIcon={<AddOutlined />}
-            onClick={withEditLoading(
-              cat(async () => {
-                await edit()
-                // @TODO onSubmit(for refresh) not working
-                await onSubmit()
-              })
-            )}
+            onClick={cat(async () => {
+              await edit()
+              // @TODO onSubmit(for refresh) not working
+              await onSubmit()
+            })}
           >
             新建
-          </LoadingButton>
+          </CustomLoadingButton>
         </Stack>
       </form>
     </>
