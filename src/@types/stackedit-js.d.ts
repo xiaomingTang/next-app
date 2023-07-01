@@ -1,5 +1,5 @@
 declare module 'stackedit-js' {
-  interface BuiltInEvents {
+  export interface BuiltInEvents {
     fileChange: {
       id: string
       name: string
@@ -30,6 +30,10 @@ declare module 'stackedit-js' {
     openFile(file?: OpenFileProps, silent?: boolean): void
     close(): void
     on<K extends keyof BuiltInEvents>(
+      eventName: K,
+      callback: (e: BuiltInEvents[K]) => void
+    ): void
+    off<K extends keyof BuiltInEvents>(
       eventName: K,
       callback: (e: BuiltInEvents[K]) => void
     ): void
