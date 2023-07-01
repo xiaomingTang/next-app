@@ -83,9 +83,10 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
                       variant='contained'
                       onClick={cat(async () => {
                         if (
-                          await customConfirm(
+                          !blog.content ||
+                          (await customConfirm(
                             `你确定删除博文【${blog.title}】吗？`
-                          )
+                          ))
                         ) {
                           await deleteBlogs([blog.hash])
                           // @TODO refresh not working
