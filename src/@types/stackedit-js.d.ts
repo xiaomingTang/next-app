@@ -14,7 +14,7 @@ declare module 'stackedit-js' {
     close: void
   }
 
-  interface OpenFileProps {
+  export interface OpenFileProps {
     name?: string
     content?: {
       text?: string
