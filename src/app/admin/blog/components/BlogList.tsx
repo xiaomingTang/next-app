@@ -2,6 +2,7 @@
 
 import { useEditBlog } from './EditBlog'
 import { deleteBlogs } from './server'
+import { BlogTypeMap } from './constants'
 
 import { formatTime } from '@/utils/formatTime'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
@@ -48,7 +49,7 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component='th' scope='row'>
-                  {blog.title}
+                  {BlogTypeMap[blog.type].name} {blog.title}
                 </TableCell>
                 <TableCell>{formatTime(blog.createdAt)}</TableCell>
                 <TableCell>{formatTime(blog.updatedAt)}</TableCell>
