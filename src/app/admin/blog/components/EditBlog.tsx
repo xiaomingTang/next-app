@@ -1,6 +1,7 @@
 'use client'
 
 import { createNewBlog, getBlog, getTags, saveBlog } from './server'
+import { BlogTypeMap } from './constants'
 
 import { SA } from '@/errors/utils'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
@@ -8,7 +9,7 @@ import { cat } from '@/errors/catchAndToast'
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 
 import { Visibility } from '@mui/icons-material'
-import { forwardRef, useState } from 'react'
+import { forwardRef, useRef, useState } from 'react'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -20,7 +21,6 @@ import {
   Box,
   Chip,
   FormControl,
-  FormHelperText,
   InputLabel,
   MenuItem,
   OutlinedInput,
@@ -29,8 +29,10 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
+import { noop } from 'lodash-es'
 
 import type { TransitionProps } from '@mui/material/transitions'
+import type { BlogType } from '@prisma/client'
 
 function RawTransition(
   props: TransitionProps & {
@@ -45,25 +47,33 @@ const Transition = forwardRef(RawTransition)
 
 type BlogWithTags = NonNullable<Awaited<ReturnType<typeof getBlog>>['data']>
 
+interface EditBlogPromise {
+  resolve: (blog: BlogWithTags) => void
+  reject: (reason: Error) => void
+}
+
+const defaultPromise: EditBlogPromise = {
+  resolve: noop,
+  reject: noop,
+}
+
 export function useEditBlog() {
   const [open, setOpen] = useState(false)
   const [blog, setBlog] = useState<BlogWithTags | null>(null)
-  const {
-    data: allTags = [],
-    error: fetchAllTagsError,
-    isValidating: fetchALlTagsIsValidating,
-  } = useSWR('getTags', () => getTags({}).then(SA.decode))
-
-  const handleClose = () => {
-    setOpen(false)
-  }
+  const { data: allTags = [], error: fetchAllTagsError } = useSWR(
+    'getTags',
+    () => getTags({}).then(SA.decode)
+  )
+  const promiseRef = useRef(defaultPromise)
 
   const elem = (
     <>
       <Dialog
         fullScreen
         open={open}
-        onClose={handleClose}
+        onClose={() => {
+          promiseRef.current.reject(new Error('取消编辑'))
+        }}
         TransitionComponent={Transition}
       >
         <AppBar sx={{ position: 'relative' }}>
@@ -71,7 +81,9 @@ export function useEditBlog() {
             <IconButton
               edge='start'
               color='inherit'
-              onClick={handleClose}
+              onClick={() => {
+                promiseRef.current.reject(new Error('取消编辑'))
+              }}
               aria-label='close'
             >
               <CloseIcon />
@@ -94,7 +106,7 @@ export function useEditBlog() {
                 if (!blog) {
                   throw new Error('文章不存在')
                 }
-                await saveBlog(blog.hash, {
+                const res = await saveBlog(blog.hash, {
                   ...blog,
                   tags: {
                     set: blog.tags.map((t) => ({
@@ -102,7 +114,7 @@ export function useEditBlog() {
                     })),
                   },
                 }).then(SA.decode)
-                handleClose()
+                promiseRef.current.resolve(res)
               })}
             >
               保存
@@ -138,7 +150,37 @@ export function useEditBlog() {
           />
           <FormControl
             size='small'
-            sx={{ minWidth: 200, maxWidth: 500, marginTop: 2 }}
+            sx={{ minWidth: 200, maxWidth: 500, marginTop: 2, marginRight: 2 }}
+          >
+            <InputLabel>状态</InputLabel>
+            <Select
+              value={blog?.type}
+              input={<OutlinedInput label='状态' />}
+              onChange={(e) => {
+                setBlog((prev) => {
+                  if (!prev) {
+                    return null
+                  }
+                  return {
+                    ...prev,
+                    type: e.target.value as BlogType,
+                  }
+                })
+              }}
+              renderValue={(type) => (
+                <>{!type ? '-' : BlogTypeMap[type].name}</>
+              )}
+            >
+              {Object.keys(BlogTypeMap).map((type) => (
+                <MenuItem key={type} value={type}>
+                  {BlogTypeMap[type as BlogType].name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl
+            size='small'
+            sx={{ minWidth: 200, maxWidth: 500, marginTop: 2, marginRight: 2 }}
           >
             <InputLabel>标签</InputLabel>
             <Select
@@ -180,15 +222,6 @@ export function useEditBlog() {
                 </MenuItem>
               ))}
             </Select>
-            <FormHelperText>
-              {[
-                fetchALlTagsIsValidating && '加载中...',
-                fetchAllTagsError && `加载出错: ${fetchAllTagsError.message}`,
-              ]
-                .filter(Boolean)
-                .join(' + ')}
-              &nbsp;
-            </FormHelperText>
           </FormControl>
           <TextField
             label='内容'
@@ -224,7 +257,7 @@ export function useEditBlog() {
   )
 
   // todo: 保存之后才能 return
-  const edit = async (blogHash = '') => {
+  const edit = async (blogHash = ''): Promise<BlogWithTags> => {
     const res = blogHash
       ? await getBlog({
           hash: blogHash,
@@ -232,6 +265,18 @@ export function useEditBlog() {
       : await createNewBlog().then(SA.decode)
     setBlog(res)
     setOpen(true)
+    return new Promise((resolve, reject) => {
+      promiseRef.current = {
+        resolve: (_blog) => {
+          resolve(_blog)
+          setOpen(false)
+        },
+        reject: (_reason) => {
+          reject(_reason)
+          setOpen(false)
+        },
+      }
+    })
   }
 
   return {

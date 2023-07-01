@@ -4,10 +4,12 @@ import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { authValidate, getSelf } from '@/user/server'
 
+import { nanoid } from 'nanoid'
 import { BlogType, Role } from '@prisma/client'
-import { pick } from 'lodash-es'
+import { noop, pick } from 'lodash-es'
+import Boom from '@hapi/boom'
 
-import type { Prisma } from '@prisma/client'
+import type { Prisma, User } from '@prisma/client'
 
 const blogSelect = {
   hash: true,
@@ -26,18 +28,58 @@ const blogSelect = {
   creator: true,
 }
 
+async function filterBlogWithAuth<
+  B extends {
+    type: BlogType
+    creator: Pick<User, 'id'>
+  }
+>(blog?: B | null) {
+  if (!blog) {
+    throw Boom.notFound('该博客不存在')
+  }
+  if (blog.type === BlogType.PUBLIC_PUBLISHED) {
+    return blog
+  }
+  const self = await getSelf()
+  if (self.role === Role.ADMIN || blog.creator.id === self.id) {
+    return blog
+  }
+  throw Boom.forbidden('你无权浏览该博客')
+}
+
+async function filterBlogsWithAuth<
+  B extends {
+    type: BlogType
+    creator: Pick<User, 'id'>
+  }
+>(blogs: B[]) {
+  const res: B[] = []
+  for (let i = 0; i < blogs.length; i += 1) {
+    filterBlogWithAuth(blogs[i])
+      .then((b) => {
+        res.push(b)
+      })
+      .catch(noop)
+  }
+  return res
+}
+
 export const getBlog = SA.encode(async (props: Prisma.BlogWhereUniqueInput) =>
-  prisma.blog.findUnique({
-    where: props,
-    select: blogSelect,
-  })
+  prisma.blog
+    .findUnique({
+      where: props,
+      select: blogSelect,
+    })
+    .then(filterBlogWithAuth)
 )
 
 export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
-  prisma.blog.findMany({
-    where: props,
-    select: blogSelect,
-  })
+  prisma.blog
+    .findMany({
+      where: props,
+      select: blogSelect,
+    })
+    .then((blogs) => filterBlogsWithAuth(blogs))
 )
 
 export const saveBlog = SA.encode(
@@ -46,19 +88,43 @@ export const saveBlog = SA.encode(
     props: Pick<Prisma.BlogUpdateInput, 'content' | 'title' | 'tags' | 'type'>
   ) => {
     const self = await getSelf()
-    await authValidate(self, {
-      roles: [Role.ADMIN],
-    })
-    return prisma.blog.update({
+    if (self.role === Role.ADMIN) {
+      return prisma.blog
+        .update({
+          where: {
+            hash,
+          },
+          data: {
+            ...pick(props, 'content', 'title', 'tags', 'type'),
+            updatedAt: new Date(),
+          },
+          select: blogSelect,
+        })
+        .then(filterBlogWithAuth)
+    }
+    const { count } = await prisma.blog.updateMany({
       where: {
-        hash,
+        AND: {
+          hash,
+          creatorId: self.id,
+        },
       },
       data: {
         ...pick(props, 'content', 'title', 'tags', 'type'),
         updatedAt: new Date(),
       },
-      select: blogSelect,
     })
+    if (count > 0) {
+      return prisma.blog
+        .findUnique({
+          where: {
+            hash,
+          },
+          select: blogSelect,
+        })
+        .then(filterBlogWithAuth)
+    }
+    throw Boom.notFound('文章不存在或权限不足')
   }
 )
 
@@ -125,19 +191,14 @@ export const createNewBlog = SA.encode(async () => {
   await authValidate(self, {
     roles: [Role.ADMIN],
   })
-  const hash = `${self.id}_DRAFT`
-  return prisma.blog.upsert({
-    where: {
-      hash,
-    },
-    create: {
-      hash,
+  return prisma.blog.create({
+    data: {
+      hash: nanoid(12),
       content: '',
       title: '',
       creatorId: self.id,
       type: BlogType.PRIVATE_UNPUBLISHED,
     },
-    update: {},
     select: blogSelect,
   })
 })
