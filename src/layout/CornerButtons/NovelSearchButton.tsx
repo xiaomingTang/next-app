@@ -4,10 +4,11 @@ import { useUser } from '@/user'
 
 import { IconButton } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
-import router from 'next/router'
+import { useRouter } from 'next/navigation'
 
 export function NovelSearchButton() {
   const user = useUser()
+  const router = useRouter()
   if (!user.id) {
     return <></>
   }
