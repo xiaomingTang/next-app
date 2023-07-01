@@ -1,12 +1,19 @@
 'use client'
 
-import { createNewBlog, getBlog, getTags, saveBlog } from './server'
+import {
+  createNewBlog,
+  deleteBlogs,
+  getBlog,
+  getTags,
+  saveBlog,
+} from './server'
 import { BlogTypeMap } from './constants'
 
 import { SA } from '@/errors/utils'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
+import { customConfirm } from '@/utils/customConfirm'
 
 import { Visibility } from '@mui/icons-material'
 import { forwardRef, useRef, useState } from 'react'
@@ -101,7 +108,27 @@ export function useEditBlog() {
               )}
             </Box>
             <CustomLoadingButton
+              color='error'
+              size='small'
+              variant='contained'
+              onClick={cat(async () => {
+                if (!blog) {
+                  throw new Error('文章不存在')
+                }
+                if (
+                  !blog.content ||
+                  (await customConfirm(`你确定删除博文【${blog.title}】吗？`))
+                ) {
+                  await deleteBlogs([blog.hash]).then(SA.decode)
+                  promiseRef.current.reject(new Error('文章已删除'))
+                }
+              })}
+            >
+              删除
+            </CustomLoadingButton>
+            <CustomLoadingButton
               color='inherit'
+              size='small'
               onClick={cat(async () => {
                 if (!blog) {
                   throw new Error('文章不存在')
@@ -119,7 +146,7 @@ export function useEditBlog() {
             >
               保存
             </CustomLoadingButton>
-            <IconButton sx={{ color: 'inherit' }} edge='end'>
+            <IconButton sx={{ color: 'inherit' }} size='small' edge='end'>
               <Visibility />
             </IconButton>
           </Toolbar>
