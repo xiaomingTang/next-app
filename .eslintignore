@@ -1,6 +1,5 @@
 **/*.js
 **/*.mjs
-**/*.d.ts
 **/*.stories.tsx
 **/*.md
 **/*.mdx
