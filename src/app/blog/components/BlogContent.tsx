@@ -1,33 +1,94 @@
-import { friendlyFormatTime } from '@/utils/formatTime'
+'use client'
 
-import clsx from 'clsx'
+import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
+import Anchor from '@/components/Anchor'
 
+import { MDXRemote } from 'next-mdx-remote'
+import { Box, Button, Chip, Stack, Tooltip, Typography } from '@mui/material'
+import { useState } from 'react'
+import Link from 'next/link'
+
+import type { MDXComponents } from 'mdx/types'
+import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import type { BlogWithTags } from '@/app/admin/blog/components/server'
 
+import './styles/markdown-overrides.scss'
+
+const components: MDXComponents = {
+  Button,
+  a: (props) => (
+    <Link href={props.href || '.'} passHref legacyBehavior>
+      <Anchor {...props} ref={null} />
+    </Link>
+  ),
+}
+
+function Time({ blog }: { blog: BlogWithTags }) {
+  const [step, setStep] = useState(0)
+
+  return (
+    <Typography
+      component='time'
+      onClick={() => {
+        setStep((prev) => (prev + 1) % 3)
+      }}
+      sx={{
+        cursor: 'pointer',
+        userSelect: 'none',
+        color: 'InactiveCaptionText',
+        fontSize: '0.9em',
+      }}
+    >
+      {step === 0 && `更新于 ${friendlyFormatTime(blog.updatedAt)}`}
+      {step === 1 && `更新于 ${formatTime(blog.updatedAt)}`}
+      {step === 2 && `发布于 ${formatTime(blog.createdAt)}`}
+    </Typography>
+  )
+}
+
 export function BlogContent({
-  className,
+  source,
   ...blog
 }: BlogWithTags & {
-  className?: string
+  source: MDXRemoteSerializeResult
 }) {
   return (
-    <div
-      className={clsx('flex flex-col flex-1 p-2 overflow-x-auto', className)}
-    >
-      <h3 className='font-bold flex-none text-lg text-primary-dark'>
-        {blog.title}
-      </h3>
-      <div className='text-sm flex-auto  text-primary-light'>
-        {blog.content}
-      </div>
-      <div className='text-xs scrollbar-thin scrollbar-track-b-100 flex-none flex justify-start items-center text-primary-light px-[2px] overflow-x-auto'>
-        <time
-          dateTime={friendlyFormatTime(blog.updatedAt)}
-          className='mr-2 whitespace-nowrap'
+    <Box>
+      <Stack direction='column' spacing={1} sx={{ mb: 2 }}>
+        <Time blog={blog} />
+        <Stack direction='row' spacing={1}>
+          {blog.tags.map((tag) => (
+            <Tooltip
+              key={tag.hash}
+              title={tag.description}
+              placement='bottom-start'
+            >
+              <Chip label={tag.name} size='small' color='primary' />
+            </Tooltip>
+          ))}
+        </Stack>
+      </Stack>
+      <Typography
+        component='article'
+        className='markdown-body'
+        sx={{
+          p: 2,
+          borderRadius: 1,
+          overflow: 'auto',
+        }}
+      >
+        <Typography
+          component='h1'
+          sx={{
+            textAlign: 'center',
+            fontSize: '2em',
+            fontWeight: 'bold',
+          }}
         >
-          {friendlyFormatTime(blog.updatedAt)}
-        </time>
-      </div>
-    </div>
+          {blog.title}
+        </Typography>
+        <MDXRemote {...source} components={components} />
+      </Typography>
+    </Box>
   )
 }

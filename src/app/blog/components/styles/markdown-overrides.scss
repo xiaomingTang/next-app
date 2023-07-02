@@ -1,0 +1,21 @@
+@import './github-markdown.scss';
+@import './hightlight.js.scss';
+
+.markdown-body {
+  img {
+    margin: auto;
+  }
+  ol {
+    list-style-type: decimal;
+  }
+  ul {
+    list-style-type: disc;
+  }
+  code,
+  tt {
+    border-radius: 4px;
+  }
+  button > p {
+    margin-bottom: 0;
+  }
+}
