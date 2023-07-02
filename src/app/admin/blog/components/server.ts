@@ -2,7 +2,7 @@
 
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
-import { authValidate, getSelf } from '@/user/server'
+import { getSelf } from '@/user/server'
 
 import { nanoid } from 'nanoid'
 import { BlogType, Role } from '@prisma/client'
@@ -82,6 +82,9 @@ export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
     .findMany({
       where: props,
       select: blogSelect,
+      orderBy: {
+        updatedAt: 'desc',
+      },
     })
     .then((blogs) => filterBlogsWithAuth(blogs))
 )
@@ -92,34 +95,9 @@ export const saveBlog = SA.encode(
     props: Pick<Prisma.BlogUpdateInput, 'content' | 'title' | 'tags' | 'type'>
   ) => {
     const self = await getSelf()
-    if (self.role === Role.ADMIN) {
-      return prisma.blog
-        .update({
-          where: {
-            hash,
-          },
-          data: {
-            ...pick(props, 'content', 'title', 'tags', 'type'),
-            updatedAt: new Date(),
-          },
-          select: blogSelect,
-        })
-        .then(filterBlogWithAuth)
-    }
-    const { count } = await prisma.blog.updateMany({
-      where: {
-        AND: {
-          hash,
-          creatorId: self.id,
-        },
-      },
-      data: {
-        ...pick(props, 'content', 'title', 'tags', 'type'),
-        updatedAt: new Date(),
-      },
-    })
-    if (count > 0) {
-      return prisma.blog
+    if (self.role !== Role.ADMIN) {
+      // 非 admin 则需要请求者是作者
+      await prisma.blog
         .findUnique({
           where: {
             hash,
@@ -128,7 +106,18 @@ export const saveBlog = SA.encode(
         })
         .then(filterBlogWithAuth)
     }
-    throw Boom.notFound('文章不存在或权限不足')
+    return prisma.blog
+      .update({
+        where: {
+          hash,
+        },
+        data: {
+          ...pick(props, 'content', 'title', 'tags', 'type'),
+          updatedAt: new Date(),
+        },
+        select: blogSelect,
+      })
+      .then(filterBlogWithAuth)
   }
 )
 
@@ -192,9 +181,6 @@ export const getTags = SA.encode(async (props: Prisma.TagWhereInput) =>
 
 export const createNewBlog = SA.encode(async () => {
   const self = await getSelf()
-  await authValidate(self, {
-    roles: [Role.ADMIN],
-  })
   return prisma.blog.create({
     data: {
       hash: nanoid(12),

@@ -1,6 +1,9 @@
+import type { Role } from '@prisma/client'
+
 export interface MenuItemProps {
   name: string
   path?: string
+  roles?: Role[]
   onClick?: () => void
   icon?: React.ReactElement
 }
@@ -14,6 +17,8 @@ export class MenuTree implements MenuItemProps {
 
   path?: string
 
+  roles?: Role[]
+
   onClick?: () => void
 
   icon?: React.ReactElement
@@ -25,6 +30,7 @@ export class MenuTree implements MenuItemProps {
   constructor(props?: NestedMenu) {
     this.name = props?.name ?? 'unknown'
     this.path = props?.path
+    this.roles = props?.roles
     this.onClick = props?.onClick
     this.icon = props?.icon
     this.children =

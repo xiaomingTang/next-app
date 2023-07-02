@@ -10,6 +10,7 @@ import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'
 import { SA } from '@/errors/utils'
 import Anchor from '@/components/Anchor'
+import { AuthRequired } from '@/components/AuthRequired'
 
 import {
   ButtonGroup,
@@ -26,6 +27,7 @@ import {
 } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Role } from '@prisma/client'
 
 import type { Blogs } from './SearchBar'
 
@@ -39,6 +41,9 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
           <TableHead>
             <TableRow>
               <TableCell>标题</TableCell>
+              <AuthRequired roles={[Role.ADMIN]}>
+                <TableCell>作者</TableCell>
+              </AuthRequired>
               <TableCell>发布时间</TableCell>
               <TableCell>更新时间</TableCell>
               <TableCell>标签</TableCell>
@@ -58,6 +63,11 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
                     </Anchor>
                   </Link>
                 </TableCell>
+                <AuthRequired roles={[Role.ADMIN]}>
+                  <TableCell>
+                    [{blog.creator.role}]{blog.creator.name}
+                  </TableCell>
+                </AuthRequired>
                 <TableCell>{formatTime(blog.createdAt)}</TableCell>
                 <TableCell>{formatTime(blog.updatedAt)}</TableCell>
                 <TableCell>

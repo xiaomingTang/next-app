@@ -7,6 +7,7 @@ import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
 import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
+import { useUser } from '@/user'
 
 import useSWR from 'swr'
 import { Controller, useForm } from 'react-hook-form'
@@ -25,6 +26,7 @@ import {
 import { toast } from 'react-hot-toast'
 import { useEffect, useMemo, useState } from 'react'
 import { AddOutlined, SearchOutlined } from '@mui/icons-material'
+import { Role } from '@prisma/client'
 
 interface SearchProps {
   /**
@@ -55,6 +57,7 @@ export function useBlogEditorSearchBar() {
   const { loading: searchLoading, withLoading: withSearchLoading } =
     useLoading()
   const [blogs, setBlogs] = useState<Blogs>([])
+  const user = useUser()
 
   const onSubmit = useMemo(
     () =>
@@ -65,6 +68,9 @@ export function useBlogEditorSearchBar() {
               title: {
                 contains: e.title,
               },
+              // admin 用户展示所有人的博客
+              // 普通用户仅展示自己的博客
+              creatorId: user.role === Role.ADMIN ? undefined : user.id,
               // todo: 貌似 OR 有问题, A OR B 不能筛选出 仅 A
               tags:
                 e.tags.length === 0
@@ -87,7 +93,7 @@ export function useBlogEditorSearchBar() {
           })
         )
       ),
-    [handleSubmit, withSearchLoading]
+    [handleSubmit, user.id, user.role, withSearchLoading]
   )
 
   useEffect(() => {

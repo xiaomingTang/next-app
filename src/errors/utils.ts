@@ -37,6 +37,7 @@ function filterServerError(err: PlainError): PlainError {
   if (err.code < 500) {
     return err
   }
+  console.error(err.message)
   return {
     ...err,
     message: '服务器错误, 请稍后再试',

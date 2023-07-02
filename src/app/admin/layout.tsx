@@ -11,7 +11,7 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <AuthRequired roles={[Role.ADMIN]} fallback={<Forbidden />}>
+    <AuthRequired roles={[Role.ADMIN, Role.USER]} fallback={<Forbidden />}>
       <RawAdminLayout>{children}</RawAdminLayout>
     </AuthRequired>
   )

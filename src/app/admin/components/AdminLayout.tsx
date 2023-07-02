@@ -6,6 +6,7 @@ import { menuTree, useActiveMenu } from '../menu/constants'
 import { NestedListItem } from '../menu'
 
 import { ThemeToggleButton } from '@/layout/CornerButtons/ThemeToggleButton'
+import { AuthRequired } from '@/components/AuthRequired'
 
 import { MenuOutlined } from '@mui/icons-material'
 import {
@@ -49,7 +50,9 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
       <Divider />
       <List>
         {menuTree.children.map((item) => (
-          <NestedListItem {...item} key={item.name} />
+          <AuthRequired key={item.name} roles={item.roles}>
+            <NestedListItem {...item} />
+          </AuthRequired>
         ))}
       </List>
     </div>

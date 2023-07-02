@@ -5,7 +5,7 @@ import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import DefaultLayout from '@/layout/DefaultLayout'
 import { seo } from '@/utils/seo'
 
-import { redirect, notFound } from 'next/navigation'
+import { redirect } from 'next/navigation'
 
 interface Props {
   params: { hash: string }
