@@ -111,10 +111,7 @@ export const saveBlog = SA.encode(
         where: {
           hash,
         },
-        data: {
-          ...pick(props, 'content', 'title', 'tags', 'type'),
-          updatedAt: new Date(),
-        },
+        data: pick(props, 'content', 'title', 'tags', 'type'),
         select: blogSelect,
       })
       .then(filterBlogWithAuth)
