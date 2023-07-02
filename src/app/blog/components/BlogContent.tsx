@@ -7,6 +7,7 @@ import { MDXRemote } from 'next-mdx-remote'
 import { Box, Button, Chip, Stack, Tooltip, Typography } from '@mui/material'
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 import type { MDXComponents } from 'mdx/types'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
@@ -21,6 +22,16 @@ const components: MDXComponents = {
       <Anchor {...props} ref={null} />
     </Link>
   ),
+  // TODO: preview
+  // TODO: 仅支持的域才使用 next/image
+  img: (props) => (
+    <Image
+      src={props.src ?? '/pwa/android-chrome-512x512.png'}
+      width={512}
+      height={512}
+      alt={props.alt ?? ''}
+    />
+  ),
 }
 
 function Time({ blog }: { blog: BlogWithTags }) {
@@ -33,6 +44,7 @@ function Time({ blog }: { blog: BlogWithTags }) {
         setStep((prev) => (prev + 1) % 3)
       }}
       sx={{
+        display: 'inline-block',
         cursor: 'pointer',
         userSelect: 'none',
         color: 'InactiveCaptionText',
@@ -53,9 +65,23 @@ export function BlogContent({
   source: MDXRemoteSerializeResult
 }) {
   return (
-    <Box>
+    <Box component='article'>
+      {/* 标题 */}
+      <Typography
+        component='h1'
+        sx={{
+          textAlign: 'center',
+          fontSize: '2em',
+          fontWeight: 'bold',
+        }}
+      >
+        {blog.title}
+      </Typography>
+      {/* meta: time & tags */}
       <Stack direction='column' spacing={1} sx={{ mb: 2 }}>
-        <Time blog={blog} />
+        <Box>
+          <Time blog={blog} />
+        </Box>
         <Stack direction='row' spacing={1}>
           {blog.tags.map((tag) => (
             <Tooltip
@@ -63,11 +89,17 @@ export function BlogContent({
               title={tag.description}
               placement='bottom-start'
             >
-              <Chip label={tag.name} size='small' color='primary' />
+              <Chip
+                label={tag.name}
+                size='small'
+                color='primary'
+                sx={{ userSelect: 'none' }}
+              />
             </Tooltip>
           ))}
         </Stack>
       </Stack>
+      {/* content */}
       <Typography
         component='article'
         className='markdown-body'
@@ -77,16 +109,6 @@ export function BlogContent({
           overflow: 'auto',
         }}
       >
-        <Typography
-          component='h1'
-          sx={{
-            textAlign: 'center',
-            fontSize: '2em',
-            fontWeight: 'bold',
-          }}
-        >
-          {blog.title}
-        </Typography>
         <MDXRemote {...source} components={components} />
       </Typography>
     </Box>
