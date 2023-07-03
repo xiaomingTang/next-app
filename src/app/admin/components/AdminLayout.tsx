@@ -7,6 +7,7 @@ import { NestedListItem } from '../menu'
 
 import { ThemeToggleButton } from '@/layout/CornerButtons/ThemeToggleButton'
 import { AuthRequired } from '@/components/AuthRequired'
+import { seo } from '@/utils/seo'
 
 import { MenuOutlined } from '@mui/icons-material'
 import {
@@ -30,10 +31,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   const trigger = useScrollTrigger()
   const activeMenu = useActiveMenu()
   const title = activeMenu?.name ?? '小明的后台管理'
-
-  useEffect(() => {
-    document.title = title
-  }, [title])
+  document.title = seo.title(title)
 
   useEffect(() => {
     // 路由变化时关闭 Drawer
