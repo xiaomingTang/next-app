@@ -4,6 +4,7 @@ import { useUser } from '@/user'
 import { useLoading } from '@/hooks/useLoading'
 import { SvgLoading } from '@/svg'
 import { cat } from '@/errors/catchAndToast'
+import { RoleNameMap } from '@/constants'
 
 import { IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material'
 import {
@@ -59,8 +60,8 @@ function LoggedButton() {
         }}
       >
         <MenuItem disabled divider>
+          {user.role === Role.ADMIN && ` [${RoleNameMap[user.role]}]`}
           {user.name}
-          {user.role === Role.ADMIN && ` [${user.role}]`}
         </MenuItem>
         {/* MUI 有 bug, 这儿不能用 AuthRequired 组件, 否则会导致键盘导航出问题 */}
         {user.role === Role.ADMIN && (

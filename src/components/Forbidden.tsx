@@ -2,6 +2,7 @@
 
 import { CustomLoadingButton } from './CustomLoadingButton'
 
+import { RoleNameMap } from '@/constants'
 import { cat } from '@/errors/catchAndToast'
 import { useUser } from '@/user'
 
@@ -16,7 +17,7 @@ export function Forbidden() {
         padding: '0.5em',
       }}
     >
-      {!!user.id && `${user.name} [${user.role}]: `}
+      {!!user.id && `${user.name} [${RoleNameMap[user.role]}]: `}
       您的权限不足, 您可以
       <CustomLoadingButton
         variant='contained'

@@ -5,6 +5,7 @@ import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'
 import { SA } from '@/errors/utils'
+import { RoleNameMap } from '@/constants'
 
 import {
   ButtonGroup,
@@ -46,7 +47,7 @@ export function UserEditUserList({
               >
                 <TableCell>{user.name}</TableCell>
                 <TableCell>{user.email}</TableCell>
-                <TableCell>{user.role}</TableCell>
+                <TableCell>{RoleNameMap[user.role]}</TableCell>
                 <TableCell>
                   <ButtonGroup size='small'>
                     <CustomLoadingButton

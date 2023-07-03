@@ -8,6 +8,7 @@ import { customConfirm } from '@/utils/customConfirm'
 import { SA } from '@/errors/utils'
 import { AuthRequired } from '@/components/AuthRequired'
 import { ENV_CONFIG } from '@/config'
+import { RoleNameMap } from '@/constants'
 
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import {
@@ -66,7 +67,7 @@ export function UrlEditUrlList({
                 </CopyToClipboard>
                 <AuthRequired roles={[Role.ADMIN]}>
                   <TableCell>
-                    [{url.creator.role}]{url.creator.name}
+                    [{RoleNameMap[url.creator.role]}]{url.creator.name}
                   </TableCell>
                 </AuthRequired>
                 <CopyToClipboard

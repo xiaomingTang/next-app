@@ -9,6 +9,7 @@ import { customConfirm } from '@/utils/customConfirm'
 import { SA } from '@/errors/utils'
 import Anchor from '@/components/Anchor'
 import { AuthRequired } from '@/components/AuthRequired'
+import { RoleNameMap } from '@/constants'
 
 import {
   ButtonGroup,
@@ -67,7 +68,7 @@ export function BlogEditorBlogList({
                 </TableCell>
                 <AuthRequired roles={[Role.ADMIN]}>
                   <TableCell>
-                    [{blog.creator.role}]{blog.creator.name}
+                    [{RoleNameMap[blog.creator.role]}]{blog.creator.name}
                   </TableCell>
                 </AuthRequired>
                 <TableCell>{formatTime(blog.updatedAt)}</TableCell>
