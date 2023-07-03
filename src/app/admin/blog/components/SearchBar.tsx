@@ -69,7 +69,6 @@ export function useBlogEditorSearchBar() {
               // admin 用户展示所有人的博客
               // 普通用户仅展示自己的博客
               creatorId: user.role === Role.ADMIN ? undefined : user.id,
-              // todo: 貌似 OR 有问题, A OR B 不能筛选出 仅 A
               tags:
                 e.tags.length === 0
                   ? {}
