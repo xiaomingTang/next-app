@@ -4,11 +4,15 @@ import { saveUser } from './server'
 
 import { useLoading } from '@/hooks/useLoading'
 import { SA } from '@/errors/utils'
+import { RoleNameMap } from '@/constants'
+import { ENV_CONFIG } from '@/config'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
 import {
+  Alert,
   AppBar,
+  Box,
   Dialog,
   DialogContent,
   FormControl,
@@ -25,6 +29,8 @@ import {
 import { LoadingButton } from '@mui/lab'
 import { CloseOutlined } from '@mui/icons-material'
 import { Role } from '@prisma/client'
+import CopyToClipboard from 'react-copy-to-clipboard'
+import { toast } from 'react-hot-toast'
 
 import type { PickAndPartial } from '@/utils/type'
 import type { User } from '@prisma/client'
@@ -43,6 +49,50 @@ const defaultEmptyUser: PartialUser = {
   password: '',
   role: Role.USER,
 }
+
+const UserTip = NiceModal.create(({ user }: { user: User }) => {
+  const modal = useModal()
+  const texts = [
+    `网站: ${ENV_CONFIG.public.origin}`,
+    `用户名: ${user.name}`,
+    `密码: ${user.password}`,
+    `角色: ${RoleNameMap[user.role]}`,
+  ]
+  return (
+    <Dialog {...muiDialogV5(modal)}>
+      <AppBar position='relative' sx={{ paddingRight: '0' }}>
+        <Toolbar>
+          <Typography sx={{ flex: 1 }} variant='h6' component='div'>
+            新建用户信息展示
+          </Typography>
+          <IconButton
+            edge='end'
+            color='inherit'
+            onClick={() => {
+              modal.hide()
+            }}
+            aria-label='close'
+          >
+            <CloseOutlined />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <Alert severity='warning'>请记住你的用户名和密码, 仅会展示这一次</Alert>
+      <DialogContent>
+        <CopyToClipboard
+          text={texts.join('\n')}
+          onCopy={() => toast.success('复制成功')}
+        >
+          <Box>
+            {texts.map((t) => (
+              <Typography key={t}>{t}</Typography>
+            ))}
+          </Box>
+        </CopyToClipboard>
+      </DialogContent>
+    </Dialog>
+  )
+})
 
 const EditUserModal = NiceModal.create(
   ({ onSuccess, onCancel, user }: EditUserModalProps) => {
@@ -86,6 +136,15 @@ const EditUserModal = NiceModal.create(
                 await saveUser(e)
                   .then(SA.decode)
                   .then((u) => {
+                    if (!user.id) {
+                      // 创建用户时, 提示用户名及密码
+                      NiceModal.show(UserTip, {
+                        user: {
+                          ...u,
+                          ...e,
+                        },
+                      })
+                    }
                     onSuccess?.(u)
                     modal.hide()
                   })
@@ -187,10 +246,10 @@ const EditUserModal = NiceModal.create(
                     input={<OutlinedInput label='role' />}
                   >
                     <MenuItem key={Role.ADMIN} value={Role.ADMIN}>
-                      管理员
+                      {RoleNameMap[Role.ADMIN]}
                     </MenuItem>
                     <MenuItem key={Role.USER} value={Role.USER}>
-                      普通用户
+                      {RoleNameMap[Role.USER]}
                     </MenuItem>
                   </Select>
                   <FormHelperText>{error?.message ?? ' '}</FormHelperText>
