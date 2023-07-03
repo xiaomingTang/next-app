@@ -9,12 +9,16 @@ import { Box } from '@mui/material'
 // https://stackedit.io/app#origin=https://benweet.github.io&fileName=MarkdownWithStackEdit&contentText=Hello
 
 export default function BlogEditor() {
-  const { data: blogs, elem: BlogEditorSearchBar } = useBlogEditorSearchBar()
+  const {
+    data: blogs,
+    elem: BlogEditorSearchBar,
+    search,
+  } = useBlogEditorSearchBar()
 
   return (
     <Box>
       {BlogEditorSearchBar}
-      <BlogEditorBlogList blogs={blogs} />
+      <BlogEditorBlogList blogs={blogs} onChange={search} />
     </Box>
   )
 }

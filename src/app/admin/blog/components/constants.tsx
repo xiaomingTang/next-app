@@ -1,5 +1,3 @@
-'use client'
-
 import LockIcon from '@mui/icons-material/Lock'
 import PublicIcon from '@mui/icons-material/Public'
 import { BlogType } from '@prisma/client'

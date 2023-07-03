@@ -1,7 +1,5 @@
-'use client'
-
 import { getBlogs, getTags } from './server'
-import { useEditBlog } from './EditBlog'
+import { defaultEmptyBlog, useEditBlog } from './EditBlog'
 
 import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
@@ -199,8 +197,7 @@ export function useBlogEditorSearchBar() {
             }}
             startIcon={<AddOutlined />}
             onClick={cat(async () => {
-              await edit()
-              // @TODO onSubmit(for refresh) not working
+              await edit(defaultEmptyBlog)
               await onSubmit()
             })}
           >
@@ -214,5 +211,6 @@ export function useBlogEditorSearchBar() {
   return {
     elem,
     data: blogs,
+    search: onSubmit,
   }
 }

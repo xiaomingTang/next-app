@@ -1,5 +1,3 @@
-'use client'
-
 import { useEditBlog } from './EditBlog'
 import { deleteBlogs } from './server'
 import { BlogTypeMap } from './constants'
@@ -25,15 +23,19 @@ import {
   TableRow,
   Tooltip,
 } from '@mui/material'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Role } from '@prisma/client'
 
 import type { Blogs } from './SearchBar'
 
-export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
+export function BlogEditorBlogList({
+  blogs,
+  onChange,
+}: {
+  blogs: Blogs
+  onChange: () => void
+}) {
   const { elem, edit } = useEditBlog()
-  const router = useRouter()
   return (
     <>
       <TableContainer component={Paper}>
@@ -44,8 +46,8 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
               <AuthRequired roles={[Role.ADMIN]}>
                 <TableCell>作者</TableCell>
               </AuthRequired>
-              <TableCell>发布时间</TableCell>
               <TableCell>更新时间</TableCell>
+              <TableCell>发布时间</TableCell>
               <TableCell>标签</TableCell>
               <TableCell>操作</TableCell>
             </TableRow>
@@ -68,8 +70,8 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
                     [{blog.creator.role}]{blog.creator.name}
                   </TableCell>
                 </AuthRequired>
-                <TableCell>{formatTime(blog.createdAt)}</TableCell>
                 <TableCell>{formatTime(blog.updatedAt)}</TableCell>
+                <TableCell>{formatTime(blog.createdAt)}</TableCell>
                 <TableCell>
                   <Stack spacing={1} direction='row'>
                     {blog.tags.map((tag) => (
@@ -88,9 +90,8 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
                     <CustomLoadingButton
                       variant='contained'
                       onClick={cat(async () => {
-                        await edit(blog.hash)
-                        // @TODO refresh not working
-                        router.refresh()
+                        await edit(blog)
+                        onChange()
                       })}
                     >
                       编辑
@@ -106,8 +107,7 @@ export function BlogEditorBlogList({ blogs }: { blogs: Blogs }) {
                           ))
                         ) {
                           await deleteBlogs([blog.hash]).then(SA.decode)
-                          // @TODO refresh not working
-                          router.refresh()
+                          onChange()
                         }
                       })}
                     >

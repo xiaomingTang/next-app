@@ -6,7 +6,7 @@ import { getSelf } from '@/user/server'
 
 import { nanoid } from 'nanoid'
 import { BlogType, Role } from '@prisma/client'
-import { noop, pick } from 'lodash-es'
+import { noop } from 'lodash-es'
 import Boom from '@hapi/boom'
 
 import type { Prisma, User } from '@prisma/client'
@@ -82,6 +82,7 @@ export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
     .findMany({
       where: props,
       select: blogSelect,
+      // TODO: orderBy not working
       orderBy: {
         updatedAt: 'desc',
       },
@@ -90,11 +91,46 @@ export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
 )
 
 export const saveBlog = SA.encode(
-  async (
-    hash: string,
-    props: Pick<Prisma.BlogUpdateInput, 'content' | 'title' | 'tags' | 'type'>
-  ) => {
+  async ({
+    hash,
+    content,
+    title,
+    type,
+    tags,
+  }: {
+    /**
+     * hash 为空则是新建
+     */
+    hash?: string
+    title: string
+    content: string
+    type: BlogType
+    /**
+     * Array<tag hash>
+     */
+    tags: string[]
+  }) => {
+    // 注册用户才能访问
     const self = await getSelf()
+    if (!hash) {
+      // 所有人都能新建
+      return prisma.blog.create({
+        data: {
+          hash: nanoid(12),
+          content,
+          title,
+          type,
+          tags: {
+            connect: tags.map((tagHash) => ({
+              hash: tagHash,
+            })),
+          },
+          creatorId: self.id,
+        },
+        select: blogSelect,
+      })
+    }
+    // 以下是保存
     if (self.role !== Role.ADMIN) {
       // 非 admin 则需要请求者是作者
       await prisma.blog
@@ -111,7 +147,16 @@ export const saveBlog = SA.encode(
         where: {
           hash,
         },
-        data: pick(props, 'content', 'title', 'tags', 'type'),
+        data: {
+          content,
+          title,
+          type,
+          tags: {
+            connect: tags.map((tagHash) => ({
+              hash: tagHash,
+            })),
+          },
+        },
         select: blogSelect,
       })
       .then(filterBlogWithAuth)
@@ -175,17 +220,3 @@ export const getTags = SA.encode(async (props: Prisma.TagWhereInput) =>
     },
   })
 )
-
-export const createNewBlog = SA.encode(async () => {
-  const self = await getSelf()
-  return prisma.blog.create({
-    data: {
-      hash: nanoid(12),
-      content: '',
-      title: '',
-      creatorId: self.id,
-      type: BlogType.PRIVATE_UNPUBLISHED,
-    },
-    select: blogSelect,
-  })
-})
