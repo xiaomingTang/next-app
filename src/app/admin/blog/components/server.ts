@@ -53,15 +53,13 @@ async function filterBlogsWithAuth<
     creator: Pick<User, 'id'>
   }
 >(blogs: B[]) {
-  const res: B[] = []
-  for (let i = 0; i < blogs.length; i += 1) {
-    filterBlogWithAuth(blogs[i])
-      .then((b) => {
-        res.push(b)
-      })
-      .catch(noop)
-  }
-  return res
+  const self = await getSelf().catch(noop)
+  return blogs.filter((b) => {
+    if (b.type === BlogType.PUBLIC_PUBLISHED) {
+      return true
+    }
+    return !!self && (self.role === Role.ADMIN || b.creator.id === self.id)
+  })
 }
 
 export const getBlog = SA.encode(async (props: Prisma.BlogWhereUniqueInput) =>
@@ -82,10 +80,14 @@ export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
     .findMany({
       where: props,
       select: blogSelect,
-      // TODO: orderBy not working
-      orderBy: {
-        updatedAt: 'desc',
-      },
+      orderBy: [
+        {
+          creatorId: 'desc',
+        },
+        {
+          updatedAt: 'desc',
+        },
+      ],
     })
     .then((blogs) => filterBlogsWithAuth(blogs))
 )
