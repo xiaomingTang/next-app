@@ -47,7 +47,7 @@ export function BlogEditorBlogList({
                 <TableCell>作者</TableCell>
               </AuthRequired>
               <TableCell>更新时间</TableCell>
-              <TableCell>发布时间</TableCell>
+              <TableCell>创建时间</TableCell>
               <TableCell>标签</TableCell>
               <TableCell>操作</TableCell>
             </TableRow>
