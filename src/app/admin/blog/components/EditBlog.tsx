@@ -80,6 +80,8 @@ export function useEditBlog() {
     <>
       <Dialog
         fullScreen
+        // 编辑(hash 非空)或有内容时, 禁用 esc close
+        disableEscapeKeyDown={!!(blog.hash || blog.content)}
         open={open}
         onClose={() => {
           promiseRef.current.reject(new Error('取消编辑'))
