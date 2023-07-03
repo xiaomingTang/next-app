@@ -95,20 +95,6 @@ const EditUrlModal = NiceModal.create(
             )}
           >
             <Controller
-              name='hash'
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <TextField
-                  {...field}
-                  disabled
-                  size='small'
-                  label='hash'
-                  helperText={error?.message ?? ' '}
-                  error={!!error}
-                />
-              )}
-            />
-            <Controller
               name='url'
               control={control}
               render={({ field, fieldState: { error } }) => (
