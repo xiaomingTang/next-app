@@ -123,10 +123,10 @@ const EditUrlModal = NiceModal.create(
               rules={{
                 required: {
                   value: true,
-                  message: 'required',
+                  message: '必填项',
                 },
                 pattern: {
-                  value: /^https?:\/\/\w+.+$/i,
+                  value: /^(http|ws)s?:\/\/.+\..+$/,
                   message: '无效 url',
                 },
               }}
