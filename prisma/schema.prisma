@@ -89,13 +89,14 @@ model Tag {
 }
 
 model Blog {
-  hash      String   @id
-  type      BlogType
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  content   String   @db.VarChar(20000)
-  tags      Tag[]
-  creatorId Int
-  creator   User     @relation(fields: [creatorId], references: [id])
+  hash        String   @id
+  type        BlogType
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  title       String   @default("")
+  content     String   @default("") @db.Text()
+  description String   @default("") @db.VarChar(1000)
+  tags        Tag[]
+  creatorId   Int
+  creator     User     @relation(fields: [creatorId], references: [id])
 }

@@ -2,7 +2,7 @@
 
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
-import { getSelf } from '@/user/server'
+import { authValidate, getSelf } from '@/user/server'
 
 import { nanoid } from 'nanoid'
 import { BlogType, Role } from '@prisma/client'
@@ -18,6 +18,7 @@ const blogSelect = {
   updatedAt: true,
   title: true,
   content: true,
+  description: true,
   tags: {
     select: {
       hash: true,
@@ -75,27 +76,44 @@ export type BlogWithTags = NonNullable<
   Awaited<ReturnType<typeof getBlog>>['data']
 >
 
-export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
-  prisma.blog
-    .findMany({
-      where: props,
-      select: blogSelect,
-      orderBy: [
-        {
-          creatorId: 'desc',
-        },
-        {
-          updatedAt: 'desc',
-        },
-      ],
-    })
-    .then((blogs) => filterBlogsWithAuth(blogs))
+/**
+ * withContent 需要 ADMIN 权限
+ */
+export const getBlogs = SA.encode(
+  async (props: Prisma.BlogWhereInput, config?: { withContent?: boolean }) => {
+    if (config?.withContent) {
+      authValidate(await getSelf(), {
+        roles: [Role.ADMIN],
+      })
+    }
+    return prisma.blog
+      .findMany({
+        where: props,
+        select: blogSelect,
+        orderBy: [
+          {
+            creatorId: 'desc',
+          },
+          {
+            updatedAt: 'desc',
+          },
+        ],
+      })
+      .then((blogs) => filterBlogsWithAuth(blogs))
+      .then((blogs) =>
+        blogs.map((blog) => ({
+          ...blog,
+          content: config?.withContent ? blog.content : '',
+        }))
+      )
+  }
 )
 
 export const saveBlog = SA.encode(
   async ({
     hash,
     content,
+    description,
     title: inputTitle,
     type,
     tags,
@@ -106,6 +124,7 @@ export const saveBlog = SA.encode(
     hash?: string
     title: string
     content: string
+    description: string
     type: BlogType
     /**
      * Array<tag hash>
@@ -122,6 +141,7 @@ export const saveBlog = SA.encode(
         data: {
           hash: nanoid(12),
           content,
+          description,
           title,
           type,
           tags: {
@@ -153,6 +173,7 @@ export const saveBlog = SA.encode(
         },
         data: {
           content,
+          description,
           title,
           type,
           tags: {

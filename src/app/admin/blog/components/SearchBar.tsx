@@ -62,24 +62,27 @@ export function useBlogEditorSearchBar() {
       handleSubmit(
         withSearchLoading(
           cat(async (e) => {
-            await getBlogs({
-              title: {
-                contains: e.title,
-              },
-              // admin 用户展示所有人的博客
-              // 普通用户仅展示自己的博客
-              creatorId: user.role === Role.ADMIN ? undefined : user.id,
-              tags:
-                e.tags.length === 0
-                  ? {}
-                  : {
-                      some: {
-                        OR: e.tags.map((t) => ({
-                          hash: t,
-                        })),
+            await getBlogs(
+              {
+                title: {
+                  contains: e.title,
+                },
+                // admin 用户展示所有人的博客
+                // 普通用户仅展示自己的博客
+                creatorId: user.role === Role.ADMIN ? undefined : user.id,
+                tags:
+                  e.tags.length === 0
+                    ? {}
+                    : {
+                        some: {
+                          OR: e.tags.map((t) => ({
+                            hash: t,
+                          })),
+                        },
                       },
-                    },
-            })
+              },
+              { withContent: true }
+            )
               .then(SA.decode)
               .then((res) => {
                 setBlogs(res)

@@ -53,6 +53,7 @@ type PartialBlog = PickAndPartial<
 export const defaultEmptyBlog: PartialBlog = {
   title: '',
   content: '',
+  description: '',
   type: BlogType.PRIVATE_UNPUBLISHED,
 }
 
@@ -81,7 +82,7 @@ export function useEditBlog() {
       <Dialog
         fullScreen
         // 编辑(hash 非空)或有内容时, 禁用 esc close
-        disableEscapeKeyDown={!!(blog.hash || blog.content)}
+        disableEscapeKeyDown={!!(blog.hash || blog.content || blog.description)}
         open={open}
         onClose={() => {
           promiseRef.current.reject(new Error('取消编辑'))
@@ -102,10 +103,7 @@ export function useEditBlog() {
             </IconButton>
             <Box sx={{ flex: 1 }}>
               {blog.hash && blog.updatedAt ? (
-                <Tooltip
-                  title={formatTime(blog.updatedAt)}
-                  placement='bottom-start'
-                >
+                <Tooltip title={formatTime(blog.updatedAt)}>
                   <Typography component='span'>
                     上次编辑于 {friendlyFormatTime(blog.updatedAt)}
                   </Typography>
@@ -236,7 +234,30 @@ export function useEditBlog() {
             </Select>
           </FormControl>
           <TextField
-            label='内容'
+            label='简介'
+            size='small'
+            value={blog?.description ?? ''}
+            onChange={(e) => {
+              setBlog((prev) => ({
+                ...prev,
+                description: e.target.value,
+              }))
+            }}
+            multiline
+            minRows={4}
+            maxRows={30}
+            sx={{
+              marginTop: 2,
+              display: 'flex',
+            }}
+            inputProps={{
+              style: {
+                overflow: 'auto',
+              },
+            }}
+          />
+          <TextField
+            label='内容 (markdown 语法)'
             size='small'
             value={blog?.content ?? ''}
             onChange={(e) => {
@@ -246,7 +267,7 @@ export function useEditBlog() {
               }))
             }}
             multiline
-            minRows={4}
+            minRows={8}
             maxRows={30}
             sx={{
               marginTop: 2,

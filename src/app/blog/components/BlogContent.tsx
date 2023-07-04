@@ -84,11 +84,7 @@ export function BlogContent({
         </Box>
         <Stack direction='row' spacing={1}>
           {blog.tags.map((tag) => (
-            <Tooltip
-              key={tag.hash}
-              title={tag.description}
-              placement='bottom-start'
-            >
+            <Tooltip key={tag.hash} title={tag.description}>
               <Chip
                 label={tag.name}
                 size='small'

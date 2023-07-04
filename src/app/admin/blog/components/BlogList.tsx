@@ -23,6 +23,7 @@ import {
   TableHead,
   TableRow,
   Tooltip,
+  Typography,
 } from '@mui/material'
 import Link from 'next/link'
 import { Role } from '@prisma/client'
@@ -60,9 +61,16 @@ export function BlogEditorBlogList({
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component='th' scope='row'>
-                  <Link passHref legacyBehavior href={`/blog/${blog.hash}`}>
+                  <Link href={`/blog/${blog.hash}`}>
                     <Anchor>
-                      {BlogTypeMap[blog.type].name} {blog.title}
+                      <Tooltip title={blog.description}>
+                        <Typography
+                          component='span'
+                          sx={{ fontSize: 'inherit' }}
+                        >
+                          {BlogTypeMap[blog.type].name} {blog.title}
+                        </Typography>
+                      </Tooltip>
                     </Anchor>
                   </Link>
                 </TableCell>
@@ -76,11 +84,7 @@ export function BlogEditorBlogList({
                 <TableCell>
                   <Stack spacing={1} direction='row'>
                     {blog.tags.map((tag) => (
-                      <Tooltip
-                        key={tag.hash}
-                        title={tag.description}
-                        placement='bottom-start'
-                      >
+                      <Tooltip key={tag.hash} title={tag.description}>
                         <Chip label={tag.name} />
                       </Tooltip>
                     ))}
