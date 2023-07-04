@@ -27,6 +27,18 @@ function useMuiTheme() {
               placement: 'bottom-start',
             },
           },
+          MuiChip: {
+            defaultProps: {
+              size: 'small',
+              color: 'primary',
+            },
+            styleOverrides: {
+              root: {
+                fontFamily: 'inherit',
+                fontSize: '0.75rem',
+              },
+            },
+          },
         },
         palette: {
           mode,
