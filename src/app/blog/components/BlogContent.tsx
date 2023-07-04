@@ -48,7 +48,7 @@ function Time({ blog }: { blog: BlogWithTags }) {
         cursor: 'pointer',
         userSelect: 'none',
         color: 'InactiveCaptionText',
-        fontSize: '0.9em',
+        fontSize: '0.825rem',
       }}
     >
       {step === 0 && `更新于 ${friendlyFormatTime(blog.updatedAt)}`}
@@ -71,7 +71,7 @@ export function BlogContent({
         component='h1'
         sx={{
           textAlign: 'center',
-          fontSize: '2em',
+          fontSize: '2rem',
           fontWeight: 'bold',
         }}
       >
@@ -85,12 +85,7 @@ export function BlogContent({
         <Stack direction='row' spacing={1}>
           {blog.tags.map((tag) => (
             <Tooltip key={tag.hash} title={tag.description}>
-              <Chip
-                label={tag.name}
-                size='small'
-                color='primary'
-                sx={{ userSelect: 'none' }}
-              />
+              <Chip label={tag.name} />
             </Tooltip>
           ))}
         </Stack>

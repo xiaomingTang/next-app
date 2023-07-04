@@ -218,7 +218,6 @@ export function useEditBlog() {
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                   {tags.map((hash) => (
                     <Chip
-                      size='small'
                       key={hash}
                       label={allTags.find((t) => t.hash === hash)?.name ?? hash}
                     />

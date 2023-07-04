@@ -149,7 +149,6 @@ export function useBlogEditorSearchBar() {
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
                       {hashes.map((hash) => (
                         <Chip
-                          size='small'
                           key={hash}
                           label={
                             allTags.find((t) => t.hash === hash)?.name ?? hash

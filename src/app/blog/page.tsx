@@ -1,4 +1,4 @@
-import { BlogItem } from './components/BlogItem'
+import { BlogList } from './components/BlogList'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
@@ -20,9 +20,7 @@ export default async function Home() {
   return (
     <DefaultLayout>
       <DefaultBodyContainer>
-        {blogs.map((blog) => (
-          <BlogItem key={blog.hash} {...blog} />
-        ))}
+        <BlogList blogs={blogs} />
       </DefaultBodyContainer>
     </DefaultLayout>
   )

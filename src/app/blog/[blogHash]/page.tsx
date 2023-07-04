@@ -1,5 +1,6 @@
 import { BlogContent } from '../components/BlogContent'
-import { BlogItem } from '../components/BlogItem'
+import { BlogList } from '../components/BlogList'
+import { RecommendSep } from '../components/RecommendSep'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
@@ -56,11 +57,8 @@ export default async function Home({ params: { blogHash } }: Props) {
         ) : (
           <Error {...fetchBlogError} />
         )}
-        {recs ? (
-          recs.map((rec) => <BlogItem key={rec.hash} {...rec} />)
-        ) : (
-          <Error {...fetchRecsError} />
-        )}
+        <RecommendSep />
+        {recs ? <BlogList blogs={recs} /> : <Error {...fetchRecsError} />}
       </DefaultBodyContainer>
     </DefaultLayout>
   )
