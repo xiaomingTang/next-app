@@ -22,6 +22,11 @@ function useMuiTheme() {
               },
             },
           },
+          MuiTooltip: {
+            defaultProps: {
+              placement: 'bottom-start',
+            },
+          },
         },
         palette: {
           mode,
