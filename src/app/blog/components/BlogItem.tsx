@@ -9,10 +9,9 @@ import { grey } from '@mui/material/colors'
 
 import type { BlogWithTags } from '@/app/admin/blog/components/server'
 
-// TODO: 美化
-// header 跳转路由
-// tag 页
-// 滚动器加到各个页面(如 /blog 页, 博客内容页 等)
+// TODO: header 跳转路由
+// TODO: tag 页
+// TODO: 滚动器加到各个页面(如 /blog 页, 博客内容页 等)
 export function BlogItem({
   className,
   ...blog

@@ -2,6 +2,7 @@
 
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import Anchor from '@/components/Anchor'
+import { ScrollToTop } from '@/components/ScrollToTop'
 
 import { MDXRemote } from 'next-mdx-remote'
 import { Box, Button, Chip, Stack, Tooltip, Typography } from '@mui/material'
@@ -65,7 +66,7 @@ export function BlogContent({
   source: MDXRemoteSerializeResult
 }) {
   return (
-    <Box component='article'>
+    <ScrollToTop>
       {/* 标题 */}
       <Typography
         component='h1'
@@ -102,6 +103,6 @@ export function BlogContent({
       >
         <MDXRemote {...source} components={components} />
       </Typography>
-    </Box>
+    </ScrollToTop>
   )
 }
