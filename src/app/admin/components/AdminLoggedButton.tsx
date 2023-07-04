@@ -52,21 +52,18 @@ export function AdminLoggedButton() {
           {user.role === Role.ADMIN && `[${RoleNameMap[user.role]}]`}
           {user.name}
         </MenuItem>
-        {/* MUI 有 bug, 这儿不能用 AuthRequired 组件, 否则会导致键盘导航出问题 */}
-        {user.role === Role.ADMIN && (
-          <MenuItem
-            divider
-            onClick={() => {
-              handleClose()
-              router.push('/')
-            }}
-          >
-            <ListItemIcon>
-              <VerifiedUser fontSize='small' />
-            </ListItemIcon>
-            前台首页
-          </MenuItem>
-        )}
+        <MenuItem
+          divider
+          onClick={() => {
+            handleClose()
+            router.push('/')
+          }}
+        >
+          <ListItemIcon>
+            <VerifiedUser fontSize='small' />
+          </ListItemIcon>
+          前台首页
+        </MenuItem>
         <MenuItem
           onClick={withLoading(async () => {
             handleClose()
