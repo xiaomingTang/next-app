@@ -6,7 +6,7 @@ import { getSelf } from '@/user/server'
 
 import { nanoid } from 'nanoid'
 import { BlogType, Role } from '@prisma/client'
-import { noop } from 'lodash-es'
+import { noop, omit } from 'lodash-es'
 import Boom from '@hapi/boom'
 
 import type { Prisma, User } from '@prisma/client'
@@ -35,7 +35,7 @@ async function filterBlogWithAuth<
   }
 >(blog?: B | null) {
   if (!blog) {
-    throw Boom.notFound('该博客不存在')
+    throw Boom.notFound('该博客不存在或已删除')
   }
   if (blog.type === BlogType.PUBLIC_PUBLISHED) {
     return blog
@@ -222,3 +222,117 @@ export const getTags = SA.encode(async (props: Prisma.TagWhereInput) =>
     },
   })
 )
+
+function getPrefix(sentence: string) {
+  // 取前三分之二(最少 4 个字)
+  return sentence.slice(0, Math.max(4, sentence.length * 0.666))
+}
+
+export const getRecommendBlogs = SA.encode(async (hash: string) => {
+  if (!hash || typeof hash !== 'string') {
+    // 非法请求, 直接返回最新的几篇
+    return prisma.blog.findMany({
+      take: 3,
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      select: blogSelect,
+    })
+  }
+  const inputBlog = await prisma.blog.findUnique({
+    where: {
+      hash,
+    },
+    select: omit(blogSelect, 'content'),
+  })
+  if (!inputBlog) {
+    // 未知博客, 直接返回最新的几篇
+    return prisma.blog.findMany({
+      take: 3,
+      orderBy: {
+        updatedAt: 'desc',
+      },
+      select: blogSelect,
+    })
+  }
+  const { title, createdAt } = inputBlog
+  const tags = inputBlog.tags.map((t) => t.hash)
+  const selectedBlogHashes = [hash]
+  // 取标题相似的、发布时间在该博客前、且是最晚的
+  // 认为其为系列文章的前一篇
+  const prevBlog = await prisma.blog.findFirst({
+    where: {
+      type: BlogType.PUBLIC_PUBLISHED,
+      title: {
+        startsWith: getPrefix(title),
+      },
+      hash: {
+        notIn: selectedBlogHashes,
+      },
+      createdAt: {
+        lt: createdAt,
+      },
+    },
+    select: blogSelect,
+    orderBy: [
+      {
+        updatedAt: 'desc',
+      },
+    ],
+  })
+  if (prevBlog) {
+    selectedBlogHashes.push(prevBlog.hash)
+  }
+  // 取标题相似的、发布时间在该博客后、且是最早的
+  // 认为其为系列文章的后一篇
+  const nextBlog = await prisma.blog.findFirst({
+    where: {
+      type: BlogType.PUBLIC_PUBLISHED,
+      title: {
+        startsWith: getPrefix(title),
+      },
+      hash: {
+        notIn: selectedBlogHashes,
+      },
+      createdAt: {
+        gt: createdAt,
+      },
+    },
+    select: blogSelect,
+    orderBy: [
+      {
+        updatedAt: 'asc',
+      },
+    ],
+  })
+  if (nextBlog) {
+    selectedBlogHashes.push(nextBlog.hash)
+  }
+  // 取含相同标签的、最近更新的, 作为相似博客
+  const similarBlogs = await prisma.blog.findMany({
+    take: 4 - selectedBlogHashes.length,
+    where: {
+      type: BlogType.PUBLIC_PUBLISHED,
+      hash: {
+        notIn: selectedBlogHashes,
+      },
+      tags: {
+        some: {
+          hash: {
+            in: tags,
+          },
+        },
+      },
+    },
+    select: blogSelect,
+    orderBy: [
+      {
+        updatedAt: 'desc',
+      },
+    ],
+  })
+
+  // 这里可以忽略 non-null check, 因为后面 filter Boolean 了
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  return [nextBlog!, prevBlog!, ...similarBlogs].filter(Boolean)
+})

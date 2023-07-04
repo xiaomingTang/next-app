@@ -1,8 +1,9 @@
 import { BlogContent } from '../components/BlogContent'
+import { BlogItem } from '../components/BlogItem'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
-import { getBlog } from '@/app/admin/blog/components/server'
+import { getBlog, getRecommendBlogs } from '@/app/admin/blog/components/server'
 import { Error } from '@/components/Error'
 import { seo } from '@/utils/seo'
 
@@ -33,7 +34,7 @@ export async function generateMetadata({
 }
 
 export default async function Home({ params: { blogHash } }: Props) {
-  const { data: blog, error } = await getBlog({
+  const { data: blog, error: fetchBlogError } = await getBlog({
     hash: blogHash,
   })
   const source = await serialize(blog?.content ?? '', {
@@ -43,6 +44,9 @@ export default async function Home({ params: { blogHash } }: Props) {
       format: 'md',
     },
   })
+  const { data: recs, error: fetchRecsError } = await getRecommendBlogs(
+    blog?.hash ?? ''
+  )
 
   return (
     <DefaultLayout>
@@ -50,7 +54,12 @@ export default async function Home({ params: { blogHash } }: Props) {
         {blog ? (
           <BlogContent {...blog} source={source} />
         ) : (
-          <Error {...error} />
+          <Error {...fetchBlogError} />
+        )}
+        {recs ? (
+          recs.map((rec) => <BlogItem key={rec.hash} {...rec} />)
+        ) : (
+          <Error {...fetchRecsError} />
         )}
       </DefaultBodyContainer>
     </DefaultLayout>
