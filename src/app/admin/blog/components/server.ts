@@ -96,7 +96,7 @@ export const saveBlog = SA.encode(
   async ({
     hash,
     content,
-    title,
+    title: inputTitle,
     type,
     tags,
   }: {
@@ -112,6 +112,8 @@ export const saveBlog = SA.encode(
      */
     tags: string[]
   }) => {
+    // 移除标题的前后空格
+    const title = inputTitle.trim()
     // 注册用户才能访问
     const self = await getSelf()
     if (!hash) {
