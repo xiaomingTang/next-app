@@ -1,13 +1,21 @@
 'use client'
 
 import { friendlyFormatTime } from '@/utils/formatTime'
-import { usePrefersColorSchema } from '@/common/contexts/PrefersColorSchema'
+import { DiffMode } from '@/components/Diff'
 
 import Link from 'next/link'
-import { ButtonBase, Chip, Stack, Typography } from '@mui/material'
-import { grey } from '@mui/material/colors'
+import { ButtonBase, Chip, Stack, Typography, alpha } from '@mui/material'
+import { common, blue } from '@mui/material/colors'
 
 import type { BlogWithTags } from '@/app/admin/blog/components/server'
+
+function boxShadow(size: 'small' | 'medium', color: string) {
+  const sizeMap = {
+    small: '8px',
+    medium: '12px',
+  }
+  return `0 0 ${sizeMap[size]} ${color}`
+}
 
 // TODO: header 跳转路由
 // TODO: tag 页
@@ -18,7 +26,6 @@ export function BlogItem({
 }: Omit<BlogWithTags, 'content'> & {
   className?: string
 }) {
-  const { mode } = usePrefersColorSchema()
   return (
     <ButtonBase
       sx={{ width: '100%', textAlign: 'start' }}
@@ -34,28 +41,59 @@ export function BlogItem({
           sx={{
             p: 2,
             borderRadius: 1,
-            backgroundColor: mode === 'dark' ? grey[800] : '#ffffff',
-            boxShadow: mode === 'dark' ? '0 0 8px #424242' : '0 0 12px #ffffff',
-            ':hover': {
-              backgroundColor: mode === 'dark' ? grey[700] : grey[100],
-              boxShadow:
-                mode === 'dark' ? '0 0 8px #616161' : '0 0 12px #f5f5f5',
-            },
+            ...DiffMode({
+              dark: {
+                backgroundColor: alpha(common.black, 0.55),
+                boxShadow: boxShadow('small', alpha(common.black, 0.55)),
+                ':hover': {
+                  backgroundColor: alpha(common.black, 0.35),
+                  boxShadow: boxShadow('medium', alpha(common.black, 0.35)),
+                },
+              },
+              light: {
+                backgroundColor: common.white,
+                boxShadow: boxShadow('small', common.white),
+                ':hover': {
+                  backgroundColor: alpha(blue[100], 0.66),
+                  boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
+                },
+              },
+            }),
           }}
         >
-          <Typography component='h2'>{blog.title}</Typography>
-          <Stack direction='row' spacing={1}>
-            <time
+          <Typography component='h2' sx={{ fontWeight: 'bold' }}>
+            {blog.title}
+          </Typography>
+          <Typography
+            sx={{
+              backgroundColor: DiffMode({
+                dark: alpha(common.white, 0.025),
+                light: alpha(common.black, 0.025),
+              }),
+              p: 1,
+              borderRadius: 1,
+              fontSize: '0.8em',
+            }}
+          >
+            {blog.description}
+          </Typography>
+          <Stack
+            direction='row'
+            alignItems='center'
+            spacing={1}
+            fontSize='0.8em'
+          >
+            <Typography
+              component='time'
               dateTime={friendlyFormatTime(blog.updatedAt)}
-              className='mr-2 whitespace-nowrap'
+              sx={{ fontSize: 'inherit', color: 'InactiveCaptionText' }}
             >
               {friendlyFormatTime(blog.updatedAt)}
-            </time>
+            </Typography>
             {blog.tags.map((tag) => (
               <Chip key={tag.hash} label={tag.name} />
             ))}
           </Stack>
-          <Typography>{blog.description}</Typography>
         </Stack>
       </Link>
     </ButtonBase>
