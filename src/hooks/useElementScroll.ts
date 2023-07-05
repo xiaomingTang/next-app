@@ -26,7 +26,12 @@ export function useElementScroll({ elem, scrollElem }: Props) {
           return
         }
         const rect = realElem.getBoundingClientRect()
-        setPercent(clamp(rect.top / (window.innerHeight - rect.height), 0, 1))
+        // 大于 0 说明还没滚到视野中
+        if (rect.top > 0) {
+          setPercent(0)
+        } else {
+          setPercent(clamp(rect.top / (window.innerHeight - rect.height), 0, 1))
+        }
       },
       300,
       {
