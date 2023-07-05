@@ -28,74 +28,66 @@ export function BlogItem({
 }) {
   return (
     <ButtonBase
-      sx={{ width: '100%', textAlign: 'start' }}
+      sx={{
+        p: 2,
+        textAlign: 'start',
+        borderRadius: 1,
+        ':focus-visible': {
+          outline: `1px solid ${blue[700]}`,
+        },
+        ...DiffMode({
+          dark: {
+            backgroundColor: alpha(common.black, 0.55),
+            boxShadow: boxShadow('small', alpha(common.black, 0.55)),
+            ':hover': {
+              backgroundColor: alpha(common.black, 0.35),
+              boxShadow: boxShadow('medium', alpha(common.black, 0.35)),
+            },
+          },
+          light: {
+            backgroundColor: common.white,
+            boxShadow: boxShadow('small', common.white),
+            ':hover': {
+              backgroundColor: alpha(blue[100], 0.66),
+              boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
+            },
+          },
+        }),
+      }}
       className={className}
+      LinkComponent={Link}
+      href={`/blog/${blog.hash}`}
     >
-      <Link
-        href={`/blog/${blog.hash}`}
-        style={{ display: 'inline-block', width: '100%' }}
-      >
-        <Stack
-          direction='column'
-          spacing={1}
+      <Stack direction='column' spacing={1} sx={{ width: '100%' }}>
+        <Typography component='h2' sx={{ fontWeight: 'bold' }}>
+          {blog.title}
+        </Typography>
+        <Typography
           sx={{
-            p: 2,
-            borderRadius: 1,
-            ...DiffMode({
-              dark: {
-                backgroundColor: alpha(common.black, 0.55),
-                boxShadow: boxShadow('small', alpha(common.black, 0.55)),
-                ':hover': {
-                  backgroundColor: alpha(common.black, 0.35),
-                  boxShadow: boxShadow('medium', alpha(common.black, 0.35)),
-                },
-              },
-              light: {
-                backgroundColor: common.white,
-                boxShadow: boxShadow('small', common.white),
-                ':hover': {
-                  backgroundColor: alpha(blue[100], 0.66),
-                  boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
-                },
-              },
+            backgroundColor: DiffMode({
+              dark: alpha(common.white, 0.025),
+              light: alpha(common.black, 0.025),
             }),
+            p: 1,
+            borderRadius: 1,
+            fontSize: '0.8em',
           }}
         >
-          <Typography component='h2' sx={{ fontWeight: 'bold' }}>
-            {blog.title}
-          </Typography>
+          {blog.description}
+        </Typography>
+        <Stack direction='row' alignItems='center' spacing={1} fontSize='0.8em'>
           <Typography
-            sx={{
-              backgroundColor: DiffMode({
-                dark: alpha(common.white, 0.025),
-                light: alpha(common.black, 0.025),
-              }),
-              p: 1,
-              borderRadius: 1,
-              fontSize: '0.8em',
-            }}
+            component='time'
+            dateTime={friendlyFormatTime(blog.updatedAt)}
+            sx={{ fontSize: 'inherit', color: 'InactiveCaptionText' }}
           >
-            {blog.description}
+            {friendlyFormatTime(blog.updatedAt)}
           </Typography>
-          <Stack
-            direction='row'
-            alignItems='center'
-            spacing={1}
-            fontSize='0.8em'
-          >
-            <Typography
-              component='time'
-              dateTime={friendlyFormatTime(blog.updatedAt)}
-              sx={{ fontSize: 'inherit', color: 'InactiveCaptionText' }}
-            >
-              {friendlyFormatTime(blog.updatedAt)}
-            </Typography>
-            {blog.tags.map((tag) => (
-              <Chip key={tag.hash} label={tag.name} />
-            ))}
-          </Stack>
+          {blog.tags.map((tag) => (
+            <Chip key={tag.hash} label={tag.name} />
+          ))}
         </Stack>
-      </Link>
+      </Stack>
     </ButtonBase>
   )
 }
