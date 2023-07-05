@@ -14,6 +14,11 @@ function useMuiTheme() {
   const muiTheme = useMemo(
     () =>
       createTheme({
+        v: {
+          screens: {
+            desktop: 1024,
+          },
+        },
         components: {
           MuiButton: {
             styleOverrides: {
