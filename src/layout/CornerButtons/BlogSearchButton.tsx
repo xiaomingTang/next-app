@@ -6,7 +6,8 @@ import { IconButton } from '@mui/material'
 import { SearchOutlined } from '@mui/icons-material'
 import { useRouter } from 'next/navigation'
 
-export function NovelSearchButton() {
+// TODO: 博客搜索
+export function BlogSearchButton() {
   const user = useUser()
   const router = useRouter()
   if (!user.id) {

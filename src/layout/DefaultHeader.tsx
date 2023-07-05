@@ -1,85 +1,90 @@
 'use client'
 
-import { NovelSearchButton } from './CornerButtons/NovelSearchButton'
 import { UserButton } from './CornerButtons/UserButton'
 import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
+import { BlogEntry, HomeEntry } from './CornerButtons/Entries'
 
 import { DiffMode } from '@/components/Diff'
 
 import { grey } from '@mui/material/colors'
-import { AppBar, Button, Slide, alpha, useScrollTrigger } from '@mui/material'
-import Link from 'next/link'
+import {
+  AppBar,
+  Box,
+  Slide,
+  Stack,
+  alpha,
+  useScrollTrigger,
+  useTheme,
+} from '@mui/material'
 
 export function DefaultRawHeader() {
   const trigger = useScrollTrigger()
+  const theme = useTheme()
 
   return (
     <Slide appear={false} direction='down' in={!trigger}>
       <AppBar
-        className='w-full z-header h-10 md:h-14 backdrop-blur'
         sx={{
-          backgroundColor: DiffMode({
-            dark: alpha(grey[900], 0.6),
-            light: alpha(grey[300], 0.6),
-          }),
-          color: DiffMode({
-            dark: grey[200],
-            light: grey[800],
-          }),
           boxShadow: 'none',
+          zIndex: theme.zIndex.appBar,
+          height: '56px',
+          [theme.breakpoints.down('sm')]: {
+            height: '40px',
+          },
+          backdropFilter: 'blur(8px)',
+          ...DiffMode({
+            dark: {
+              backgroundColor: alpha(grey[900], 0.6),
+              color: grey[200],
+            },
+            light: {
+              backgroundColor: alpha(grey[300], 0.6),
+              color: grey[800],
+            },
+          }),
         }}
       >
-        <div className='w-full max-w-screen-desktop m-auto flex justify-center items-center px-2 h-full'>
-          <div className='flex-1 whitespace-nowrap overflow-x-auto h-full'>
-            <Button
-              variant='text'
-              LinkComponent={Link}
-              href='/'
-              aria-label='首页'
-              className='px-2'
-              sx={{
-                fontWeight: 'bold',
-                fontSize: '1em',
-                minWidth: 0,
-                height: '100%',
-              }}
-            >
-              首页
-            </Button>
-            <Button
-              variant='text'
-              LinkComponent={Link}
-              href='/game'
-              aria-label='小游戏'
-              className='px-2'
-              sx={{
-                fontWeight: 'bold',
-                fontSize: '1em',
-                minWidth: 0,
-                height: '100%',
-              }}
-            >
-              小游戏
-            </Button>
-          </div>
-          <div className='flex-0 whitespace-nowrap'>
-            <NovelSearchButton />
+        <Stack
+          direction='row'
+          sx={{
+            height: '100%',
+            width: '100%',
+            px: 1,
+            alignItems: 'center',
+            maxWidth: theme.v.screens.desktop,
+            m: 'auto',
+          }}
+        >
+          <Stack direction='row' sx={{ height: '100%', flex: '1 1 0%' }}>
+            <HomeEntry />
+            <BlogEntry />
+          </Stack>
+          <Stack direction='row'>
             <UserButton />
             <ThemeToggleButton />
-          </div>
-        </div>
+          </Stack>
+        </Stack>
       </AppBar>
     </Slide>
   )
 }
 
 export function DefaultHeader() {
+  const theme = useTheme()
   return (
     <>
       <DefaultRawHeader />
-      <div className='py-2 md:py-4 flex-none pointer-events-none select-none'>
-        &nbsp;
-      </div>
+      <Box
+        sx={{
+          height: '56px',
+          [theme.breakpoints.down('sm')]: {
+            height: '40px',
+          },
+          flex: 'none',
+          pointerEvents: 'none',
+          userSelect: 'none',
+        }}
+      />
     </>
   )
 }
