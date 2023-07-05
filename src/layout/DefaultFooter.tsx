@@ -39,7 +39,7 @@ export function DefaultFooter() {
           flexGrow: 1,
         }}
       >
-        <Stack spacing={1} direction='row'>
+        <Stack spacing={1} direction='row' justifyContent='center'>
           <Typography aria-label={`版权声明: ${year} 年`}>© {year}</Typography>
           <Anchor
             href='https://github.com/xiaomingTang'
