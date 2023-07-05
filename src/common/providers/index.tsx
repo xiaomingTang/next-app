@@ -30,7 +30,7 @@ function useMuiTheme() {
           MuiChip: {
             defaultProps: {
               size: 'small',
-              color: 'primary',
+              color: 'default',
             },
             styleOverrides: {
               root: {
