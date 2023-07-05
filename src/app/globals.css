@@ -17,3 +17,8 @@ body {
   color: #eee;
   background-color: #1a2027;
 }
+
+*:focus-visible {
+  /* blue[700] */
+  outline: 1px solid #1976d2;
+}
