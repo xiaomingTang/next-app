@@ -8,6 +8,7 @@ import {
   Fab,
   Fade,
   circularProgressClasses,
+  useTheme,
 } from '@mui/material'
 import { useRef } from 'react'
 import { KeyboardArrowUp } from '@mui/icons-material'
@@ -18,6 +19,7 @@ export function ScrollToTop({
 }: {
   children: React.ReactElement | React.ReactElement[]
 }) {
+  const theme = useTheme()
   const elemRef = useRef<HTMLDivElement>(null)
   const scrollStarterRef = useRef<HTMLDivElement>(null)
   const { percent } = useElementScroll({ elem: elemRef })
@@ -32,7 +34,14 @@ export function ScrollToTop({
         {children}
       </Box>
       <Fade in={percent > 0}>
-        <Box sx={{ position: 'fixed', bottom: 48, right: 16 }}>
+        <Box
+          sx={{
+            position: 'fixed',
+            bottom: 48,
+            right: 16,
+            zIndex: theme.zIndex.fab,
+          }}
+        >
           <CircularProgress
             variant='determinate'
             size={46}
