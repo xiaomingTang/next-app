@@ -4,7 +4,7 @@ import { NovelSearchButton } from './CornerButtons/NovelSearchButton'
 import { UserButton } from './CornerButtons/UserButton'
 import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
 
-import { usePrefersColorSchema } from '@/common/contexts/PrefersColorSchema'
+import { DiffMode } from '@/components/Diff'
 
 import { grey } from '@mui/material/colors'
 import { AppBar, Button, Slide, alpha, useScrollTrigger } from '@mui/material'
@@ -12,15 +12,20 @@ import Link from 'next/link'
 
 export function DefaultRawHeader() {
   const trigger = useScrollTrigger()
-  const { mode } = usePrefersColorSchema()
 
   return (
     <Slide appear={false} direction='down' in={!trigger}>
       <AppBar
         className='w-full z-header h-10 md:h-14 backdrop-blur'
         sx={{
-          backgroundColor: alpha(grey[mode === 'dark' ? 900 : 300], 0.6),
-          color: grey[mode === 'dark' ? 200 : 800],
+          backgroundColor: DiffMode({
+            dark: alpha(grey[900], 0.6),
+            light: alpha(grey[300], 0.6),
+          }),
+          color: DiffMode({
+            dark: grey[200],
+            light: grey[800],
+          }),
           boxShadow: 'none',
         }}
       >

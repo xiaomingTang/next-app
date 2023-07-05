@@ -1,13 +1,11 @@
 'use client'
 
-import { usePrefersColorSchema } from './PrefersColorSchema'
-
+import { DiffMode } from '@/components/Diff'
 import { SvgError, SvgLoading, SvgSuccess } from '@/svg'
 
 import { Toaster } from 'react-hot-toast'
 
 export function ToastContext() {
-  const { mode } = usePrefersColorSchema()
   return (
     <Toaster
       gutter={8}
@@ -15,7 +13,10 @@ export function ToastContext() {
         style: {
           borderRadius: '4px',
           padding: '4px 8px',
-          backgroundColor: mode === 'dark' ? '#ccc' : 'white',
+          backgroundColor: DiffMode({
+            dark: '#ccc',
+            light: 'white',
+          }),
         },
         success: {
           icon: <SvgSuccess className='fill-primary-light text-[18px]' />,
