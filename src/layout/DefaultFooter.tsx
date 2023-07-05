@@ -18,7 +18,6 @@ export function DefaultFooter() {
             <SvgGithub className='text-base' />
             小明
           </Anchor>
-          <Anchor href='/'>{ENV_CONFIG.manifest.short_name}</Anchor>
         </div>
         <Anchor
           href='https://beian.miit.gov.cn/'
