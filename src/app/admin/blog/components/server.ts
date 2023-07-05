@@ -3,12 +3,15 @@
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { authValidate, getSelf } from '@/user/server'
+import { validateRequest } from '@/request/validator'
 
 import { nanoid } from 'nanoid'
 import { BlogType, Role } from '@prisma/client'
 import { noop, omit } from 'lodash-es'
 import Boom from '@hapi/boom'
+import { Type } from '@sinclair/typebox'
 
+import type { Static } from '@sinclair/typebox'
 import type { Prisma, User } from '@prisma/client'
 
 const blogSelect = {
@@ -245,6 +248,37 @@ export const getTags = SA.encode(async (props: Prisma.TagWhereInput) =>
     },
   })
 )
+
+const saveTagDto = Type.Object({
+  name: Type.String(),
+  description: Type.Optional(Type.String()),
+})
+
+export const saveTag = SA.encode(async (props: Static<typeof saveTagDto>) => {
+  validateRequest(saveTagDto, props)
+  const self = await getSelf()
+  return prisma.tag.create({
+    data: {
+      hash: nanoid(12),
+      name: props.name,
+      description: props.description ?? props.name,
+      creatorId: self.id,
+    },
+    select: {
+      hash: true,
+      name: true,
+      description: true,
+      createdAt: true,
+      updatedAt: true,
+      creator: true,
+      _count: {
+        select: {
+          blogs: true,
+        },
+      },
+    },
+  })
+})
 
 function getPrefix(sentence: string) {
   // 取前三分之二(最少 4 个字)

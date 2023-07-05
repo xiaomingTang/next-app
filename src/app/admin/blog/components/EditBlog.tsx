@@ -1,11 +1,13 @@
-import { getTags, saveBlog } from './server'
+import { getTags, saveBlog, saveTag } from './server'
 import { BlogTypeMap, sortedBlogTypes } from './constants'
 import { editMarkdown } from './editMarkdown'
+import { MultiSelect } from './TagsSelect'
 
 import { SA } from '@/errors/utils'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
+import { useLoading } from '@/hooks/useLoading'
 
 import { Visibility } from '@mui/icons-material'
 import { forwardRef, useRef, useState } from 'react'
@@ -18,7 +20,6 @@ import Slide from '@mui/material/Slide'
 import useSWR from 'swr'
 import {
   Box,
-  Chip,
   FormControl,
   InputLabel,
   MenuItem,
@@ -71,11 +72,14 @@ const Transition = forwardRef(RawTransition)
 export function useEditBlog() {
   const [open, setOpen] = useState(false)
   const [blog, setBlog] = useState<PartialBlog>(defaultEmptyBlog)
-  const { data: allTags = [], error: fetchAllTagsError } = useSWR(
-    'getTags',
-    () => getTags({}).then(SA.decode)
-  )
+  const {
+    data: allTags = [],
+    mutate: mutateAllTags,
+    error: fetchAllTagsError,
+  } = useSWR('getTags', () => getTags({}).then(SA.decode))
   const promiseRef = useRef(defaultPromise)
+  const { loading: addTagLoading, withLoading: withAddTagLoading } =
+    useLoading()
 
   const elem = (
     <>
@@ -191,44 +195,43 @@ export function useEditBlog() {
           <FormControl
             size='small'
             sx={{ minWidth: 200, maxWidth: 500, marginTop: 2, marginRight: 2 }}
+            error={!!fetchAllTagsError}
           >
-            <InputLabel>标签</InputLabel>
-            <Select
-              multiple
-              error={fetchAllTagsError}
-              value={(blog?.tags ?? []).map((t) => t.hash)}
-              input={<OutlinedInput label='标签' />}
-              onChange={(e) => {
+            <MultiSelect
+              label={`标签${addTagLoading ? ' 添加中...' : ''}`}
+              value={blog.tags?.map((t) => t.hash)}
+              selectList={allTags.map((t) => ({
+                label: t.name,
+                value: t.hash,
+              }))}
+              onChange={(selected) => {
+                setBlog((prev) => ({
+                  ...prev,
+                  tags: allTags.filter((tag) => selected.includes(tag.hash)),
+                }))
+              }}
+              onNoMatch={withAddTagLoading(async (s) => {
+                if (!s) {
+                  return
+                }
+                const newTag = await saveTag({
+                  name: s,
+                }).then(SA.decode)
+                const newAllTags = (await mutateAllTags()) ?? allTags
                 setBlog((prev) => {
-                  const newVal = e.target.value
-                  const newTagHashes =
-                    typeof newVal === 'string' ? [newVal] : newVal
+                  const prevTagHashes = (prev.tags ?? []).map((t) => t.hash)
+                  const nextTagHashes = [...prevTagHashes, newTag.hash]
                   return {
                     ...prev,
-                    tags: allTags.filter((tag) =>
-                      newTagHashes.includes(tag.hash)
+                    tags: newAllTags.filter((tag) =>
+                      nextTagHashes.includes(tag.hash)
                     ),
                   }
                 })
-              }}
-              renderValue={(tags) => (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {tags.map((hash) => (
-                    <Chip
-                      key={hash}
-                      label={allTags.find((t) => t.hash === hash)?.name ?? hash}
-                    />
-                  ))}
-                </Box>
-              )}
-            >
-              {allTags.map((tag) => (
-                <MenuItem key={tag.hash} value={tag.hash}>
-                  {tag.name}
-                </MenuItem>
-              ))}
-            </Select>
+              })}
+            />
           </FormControl>
+
           <TextField
             label='简介'
             size='small'
