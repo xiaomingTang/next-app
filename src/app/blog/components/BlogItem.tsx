@@ -79,7 +79,7 @@ export function BlogItem({
           <Typography
             component='time'
             dateTime={friendlyFormatTime(blog.updatedAt)}
-            sx={{ fontSize: 'inherit', color: 'InactiveCaptionText' }}
+            sx={{ color: 'InactiveCaptionText' }}
           >
             {friendlyFormatTime(blog.updatedAt)}
           </Typography>

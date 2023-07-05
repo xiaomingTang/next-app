@@ -17,7 +17,6 @@ export function BlogSearchButton() {
     <>
       <IconButton
         className='text-primary-main'
-        color='inherit'
         aria-label='搜索小说'
         onClick={() => {
           router.push(`/novel/s/d1`)

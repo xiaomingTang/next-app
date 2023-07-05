@@ -52,6 +52,8 @@ const EditUrlModal = NiceModal.create(
     return (
       <Dialog
         {...muiDialogV5(modal)}
+        fullWidth
+        maxWidth='xs'
         onClose={() => {
           onCancel?.()
           modal.hide()
@@ -64,7 +66,6 @@ const EditUrlModal = NiceModal.create(
             </Typography>
             <IconButton
               edge='end'
-              color='inherit'
               onClick={() => {
                 onCancel?.()
                 modal.hide()

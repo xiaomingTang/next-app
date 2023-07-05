@@ -1,5 +1,9 @@
+'use client'
+
 import { DefaultFooter } from './DefaultFooter'
 import { DefaultHeader } from './DefaultHeader'
+
+import { Box } from '@mui/material'
 
 export default function DefaultLayout({
   children,
@@ -8,10 +12,10 @@ export default function DefaultLayout({
 }) {
   return (
     <>
-      <div className='w-full min-h-screen'>
+      <Box sx={{ width: '100%', minHeight: '100vh' }}>
         <DefaultHeader />
         {children}
-      </div>
+      </Box>
       <DefaultFooter />
     </>
   )

@@ -65,7 +65,6 @@ export const LoginModal = NiceModal.create(
             </Typography>
             <IconButton
               edge='end'
-              color='inherit'
               onClick={() => {
                 onCancel?.()
                 modal.hide()

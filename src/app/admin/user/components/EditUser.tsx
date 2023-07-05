@@ -67,7 +67,6 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
           </Typography>
           <IconButton
             edge='end'
-            color='inherit'
             onClick={() => {
               modal.hide()
             }}
@@ -105,6 +104,8 @@ const EditUserModal = NiceModal.create(
     return (
       <Dialog
         {...muiDialogV5(modal)}
+        fullWidth
+        maxWidth='xs'
         onClose={() => {
           onCancel?.()
           modal.hide()
@@ -117,7 +118,6 @@ const EditUserModal = NiceModal.create(
             </Typography>
             <IconButton
               edge='end'
-              color='inherit'
               onClick={() => {
                 onCancel?.()
                 modal.hide()

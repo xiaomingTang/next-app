@@ -1,5 +1,5 @@
 import { getTags, saveBlog } from './server'
-import { BlogTypeMap } from './constants'
+import { BlogTypeMap, sortedBlogTypes } from './constants'
 import { editMarkdown } from './editMarkdown'
 
 import { SA } from '@/errors/utils'
@@ -93,7 +93,6 @@ export function useEditBlog() {
           <Toolbar variant='dense'>
             <IconButton
               edge='start'
-              color='inherit'
               aria-label='取消编辑'
               onClick={() => {
                 promiseRef.current.reject(new Error('取消编辑'))
@@ -113,7 +112,6 @@ export function useEditBlog() {
               )}
             </Box>
             <CustomLoadingButton
-              color='inherit'
               size='small'
               onClick={cat(async () => {
                 const res = await saveBlog({
@@ -126,7 +124,6 @@ export function useEditBlog() {
               保存
             </CustomLoadingButton>
             <IconButton
-              sx={{ color: 'inherit' }}
               size='small'
               edge='end'
               aria-label='预览/可视化编辑'
@@ -184,7 +181,7 @@ export function useEditBlog() {
                 <>{!type ? '-' : BlogTypeMap[type].name}</>
               )}
             >
-              {Object.keys(BlogTypeMap).map((type) => (
+              {sortedBlogTypes.map((type) => (
                 <MenuItem key={type} value={type}>
                   {BlogTypeMap[type as BlogType].name}
                 </MenuItem>

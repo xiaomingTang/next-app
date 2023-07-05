@@ -1,18 +1,26 @@
-import { clsx } from 'clsx'
+'use client'
+
+import { Box, useTheme } from '@mui/material'
 
 type DefaultBodyContainerProps = React.HTMLAttributes<HTMLDivElement>
 
 export function DefaultBodyContainer({
-  className,
   children,
   ...restProps
 }: DefaultBodyContainerProps) {
+  const theme = useTheme()
   return (
-    <div
-      className={clsx('w-full max-w-screen-desktop m-auto p-4', className)}
+    <Box
+      component='main'
+      sx={{
+        width: '100%',
+        maxWidth: theme.v.screens.desktop,
+        mx: 'auto',
+        p: 2,
+      }}
       {...restProps}
     >
       {children}
-    </div>
+    </Box>
   )
 }

@@ -25,7 +25,6 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import Link from 'next/link'
 import { Role } from '@prisma/client'
 
 import type { Blogs } from './SearchBar'
@@ -61,18 +60,13 @@ export function BlogEditorBlogList({
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component='th' scope='row'>
-                  <Link href={`/blog/${blog.hash}`}>
-                    <Anchor>
-                      <Tooltip title={blog.description}>
-                        <Typography
-                          component='span'
-                          sx={{ fontSize: 'inherit' }}
-                        >
-                          {BlogTypeMap[blog.type].name} {blog.title}
-                        </Typography>
-                      </Tooltip>
-                    </Anchor>
-                  </Link>
+                  <Anchor href={`/blog/${blog.hash}`}>
+                    <Tooltip title={blog.description}>
+                      <Typography component='span'>
+                        {BlogTypeMap[blog.type].name} {blog.title}
+                      </Typography>
+                    </Tooltip>
+                  </Anchor>
                 </TableCell>
                 <AuthRequired roles={[Role.ADMIN]}>
                   <TableCell>

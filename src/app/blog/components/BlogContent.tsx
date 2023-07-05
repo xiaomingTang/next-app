@@ -7,7 +7,6 @@ import { ScrollToTop } from '@/components/ScrollToTop'
 import { MDXRemote } from 'next-mdx-remote'
 import { Box, Button, Chip, Stack, Tooltip, Typography } from '@mui/material'
 import { useState } from 'react'
-import Link from 'next/link'
 import Image from 'next/image'
 
 import type { MDXComponents } from 'mdx/types'
@@ -18,11 +17,7 @@ import './styles/markdown-overrides.scss'
 
 const components: MDXComponents = {
   Button,
-  a: (props) => (
-    <Link href={props.href || '.'} passHref legacyBehavior>
-      <Anchor {...props} ref={null} />
-    </Link>
-  ),
+  a: (props) => <Anchor {...props} ref={null} />,
   // TODO: preview
   // TODO: 仅支持的域才使用 next/image
   img: (props) => (

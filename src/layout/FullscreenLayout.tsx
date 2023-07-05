@@ -1,4 +1,8 @@
+'use client'
+
 import { DefaultRawHeader } from './DefaultHeader'
+
+import { Box } from '@mui/material'
 
 export default function FullscreenLayout({
   children,
@@ -6,9 +10,9 @@ export default function FullscreenLayout({
   children: React.ReactNode | React.ReactNode[]
 }) {
   return (
-    <div className='w-full h-screen'>
+    <Box sx={{ width: '100%', minHeight: '100vh' }}>
       <DefaultRawHeader />
       {children}
-    </div>
+    </Box>
   )
 }

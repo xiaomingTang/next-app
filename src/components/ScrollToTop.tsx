@@ -27,7 +27,7 @@ export function ScrollToTop({
   return (
     <>
       <Box ref={elemRef}>
-        <div
+        <Box
           ref={scrollStarterRef}
           className='-translate-y-10 md:-translate-y-14'
         />

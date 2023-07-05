@@ -27,6 +27,11 @@ function useMuiTheme() {
               },
             },
           },
+          MuiIconButton: {
+            defaultProps: {
+              color: 'inherit',
+            },
+          },
           MuiTooltip: {
             defaultProps: {
               placement: 'bottom-start',
@@ -42,6 +47,19 @@ function useMuiTheme() {
                 fontFamily: 'inherit',
                 fontSize: '0.75rem',
               },
+            },
+          },
+          MuiTypography: {
+            defaultProps: {
+              fontSize: 'inherit',
+            },
+          },
+          MuiSvgIcon: {
+            defaultProps: {
+              // 这个鬼东西 fontSize 不能 inherit,
+              // 它应该需要 1.5em, 但是 mui 不允许设置这个值...
+              // fontSize: 'inherit',
+              color: 'inherit',
             },
           },
         },

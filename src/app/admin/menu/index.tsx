@@ -2,6 +2,7 @@ import { useActiveMenu } from './constants'
 
 import { ExpandLess, ExpandMore } from '@mui/icons-material'
 import {
+  Box,
   Collapse,
   IconButton,
   List,
@@ -69,7 +70,7 @@ export function NestedListItem(props: NestedMenu) {
             <NestedListItem {...subItem} key={subItem.name} />
           ))}
           {/* mask */}
-          <div className='absolute w-full h-full top-0 left-0 pointer-events-none bg-black bg-opacity-10' />
+          <Box className='absolute w-full h-full top-0 left-0 pointer-events-none bg-black bg-opacity-10' />
         </List>
       </Collapse>
     </>

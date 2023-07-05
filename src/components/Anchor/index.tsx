@@ -26,17 +26,10 @@ export interface AnchorProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
 const APP_URL = new URL(ENV_CONFIG.public.origin)
 
 /**
- * - 仅用于控制样式及跳转行为
- * - 项目内组件/页面的跳转 请使用 next/link 的 Link 组件包裹该组件
- *
  * ``` typescript
- * // external link
  * <Anchor href='https://example.com/'>external link</Anchor>
- *
- * // inner link
- * <Link href='/' passHref legacyBehavior>
- *   <Anchor>inner link</Anchor>
- * </Link>
+ * // or
+ * <Anchor href='/inner'>inner link</Anchor>
  * ```
  */
 // eslint-disable-next-line prefer-arrow-callback

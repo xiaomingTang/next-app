@@ -43,7 +43,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
   }
 
   const drawer = (
-    <div>
+    <Box>
       <Toolbar />
       <Divider />
       <List>
@@ -53,7 +53,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           </AuthRequired>
         ))}
       </List>
-    </div>
+    </Box>
   )
 
   return (
@@ -68,7 +68,6 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
         >
           <Toolbar>
             <IconButton
-              color='inherit'
               aria-label='打开路由菜单'
               edge='start'
               onClick={handleDrawerToggle}

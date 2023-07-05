@@ -10,7 +10,6 @@ export function ThemeToggleButton() {
   return (
     <IconButton
       aria-label='test-2'
-      color='inherit'
       onClick={() => {
         usePrefersColorSchema.toggle()
       }}

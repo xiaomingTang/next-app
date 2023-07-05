@@ -61,6 +61,8 @@ export const webpackConfig = (config, { dev }) => {
             display: 'inline-block',
             fill: 'currentColor',
             focusable: 'false',
+            color: 'inherit',
+            fontSize: 'inherit',
             'data-generated-svg': '',
           },
         },

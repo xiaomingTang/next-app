@@ -34,7 +34,6 @@ export function AdminLoggedButton() {
         aria-controls={open ? 'logout-menu' : undefined}
         onClick={handleClick}
         disabled={loading}
-        color='inherit'
       >
         {loading ? <SvgLoading className='animate-spin' /> : <Person />}
       </IconButton>

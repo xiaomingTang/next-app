@@ -15,17 +15,11 @@ export const BlogTypeMap: Record<
       <Typography
         component='span'
         sx={{
-          fontSize: 'inherit',
           color: green[800],
           fontWeight: 'bold',
         }}
       >
-        <LockIcon
-          sx={{
-            fontSize: 'inherit',
-          }}
-        />{' '}
-        [私有 - 已发布]
+        <LockIcon fontSize='small' /> [私有 - 已发布]
       </Typography>
     ),
   },
@@ -34,17 +28,11 @@ export const BlogTypeMap: Record<
       <Typography
         component='span'
         sx={{
-          fontSize: 'inherit',
           color: orange[800],
           fontWeight: 'bold',
         }}
       >
-        <LockIcon
-          sx={{
-            fontSize: 'inherit',
-          }}
-        />{' '}
-        [私有 - 未发布]
+        <LockIcon fontSize='small' /> [私有 - 未发布]
       </Typography>
     ),
   },
@@ -53,17 +41,11 @@ export const BlogTypeMap: Record<
       <Typography
         component='span'
         sx={{
-          fontSize: 'inherit',
           color: green[800],
           fontWeight: 'bold',
         }}
       >
-        <PublicIcon
-          sx={{
-            fontSize: 'inherit',
-          }}
-        />{' '}
-        [公开 - 已发布]
+        <PublicIcon fontSize='small' /> [公开 - 已发布]
       </Typography>
     ),
   },
@@ -72,18 +54,19 @@ export const BlogTypeMap: Record<
       <Typography
         component='span'
         sx={{
-          fontSize: 'inherit',
           color: orange[800],
           fontWeight: 'bold',
         }}
       >
-        <PublicIcon
-          sx={{
-            fontSize: 'inherit',
-          }}
-        />{' '}
-        [公开 - 未发布]
+        <PublicIcon fontSize='small' /> [公开 - 未发布]
       </Typography>
     ),
   },
 }
+
+export const sortedBlogTypes: BlogType[] = [
+  BlogType.PUBLIC_PUBLISHED,
+  BlogType.PUBLIC_UNPUBLISHED,
+  BlogType.PRIVATE_PUBLISHED,
+  BlogType.PRIVATE_UNPUBLISHED,
+]

@@ -3,7 +3,7 @@
 import usePWAStatus from './usePWAStatus'
 
 import { useEffect, useState } from 'react'
-import { CircularProgress, IconButton } from '@mui/material'
+import { Box, CircularProgress, IconButton } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 
 export default function PWAStaleTip() {
@@ -49,13 +49,13 @@ export default function PWAStaleTip() {
   }
 
   return (
-    <div className='fixed z-pwaTip bottom-4 right-4 p-2 rounded backdrop-blur bg-primary-200 text-primary-main shadow-lg shadow-b-200'>
+    <Box className='fixed z-pwaTip bottom-4 right-4 p-2 rounded backdrop-blur bg-primary-200 text-primary-main shadow-lg shadow-b-200'>
       {isNewVersionInstalled ? (
-        <div className='text-center'>
+        <Box className='text-center'>
           已为您加载
           <br />
           <b>最新版本</b>
-        </div>
+        </Box>
       ) : (
         <>
           发现新版本
@@ -77,6 +77,6 @@ export default function PWAStaleTip() {
       >
         <CloseIcon className='text-base' />
       </IconButton>
-    </div>
+    </Box>
   )
 }
