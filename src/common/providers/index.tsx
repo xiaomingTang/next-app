@@ -31,6 +31,11 @@ function useMuiTheme() {
             defaultProps: {
               color: 'inherit',
             },
+            styleOverrides: {
+              root: {
+                fontSize: 'inherit',
+              },
+            },
           },
           MuiTooltip: {
             defaultProps: {
