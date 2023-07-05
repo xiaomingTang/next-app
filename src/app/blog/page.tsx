@@ -5,6 +5,7 @@ import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { getBlogs } from '@/app/admin/blog/components/server'
 import { SA } from '@/errors/utils'
 import { seo } from '@/utils/seo'
+import { ScrollToTop } from '@/components/ScrollToTop'
 
 import { BlogType } from '@prisma/client'
 
@@ -20,7 +21,9 @@ export default async function Home() {
   return (
     <DefaultLayout>
       <DefaultBodyContainer>
-        <BlogList blogs={blogs} />
+        <ScrollToTop>
+          <BlogList blogs={blogs} />
+        </ScrollToTop>
       </DefaultBodyContainer>
     </DefaultLayout>
   )

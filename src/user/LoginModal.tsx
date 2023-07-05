@@ -49,6 +49,8 @@ export const LoginModal = NiceModal.create(
     return (
       <Dialog
         {...muiDialogV5(modal)}
+        fullWidth
+        maxWidth='xs'
         onClose={(e, reason) => {
           // disable backdrop close
           if (reason === 'backdropClick') {

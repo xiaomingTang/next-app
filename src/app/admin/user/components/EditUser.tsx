@@ -54,12 +54,15 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
   const modal = useModal()
   const texts = [
     `网站: ${ENV_CONFIG.public.origin}`,
-    `用户名: ${user.name}`,
-    `密码: ${user.password}`,
+    `用户名: ${user.name} (用户名仅作为标识, 请使用邮箱登录)`,
     `角色: ${RoleNameMap[user.role]}`,
+    `--- 以下为登录凭证 ---`,
+    `--- 忘记密码可联系管理员重置 ---`,
+    `邮箱: ${user.email}`,
+    `密码: ${user.password}`,
   ]
   return (
-    <Dialog {...muiDialogV5(modal)}>
+    <Dialog {...muiDialogV5(modal)} fullWidth maxWidth='xs'>
       <AppBar position='relative' sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
@@ -76,7 +79,9 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
           </IconButton>
         </Toolbar>
       </AppBar>
-      <Alert severity='warning'>请记住你的用户名和密码, 仅会展示这一次</Alert>
+      <Alert severity='warning'>
+        请记住你的用户名和密码, 仅会展示这一次, 且不可找回 (以下内容可点击复制)
+      </Alert>
       <DialogContent>
         <CopyToClipboard
           text={texts.join('\n')}
