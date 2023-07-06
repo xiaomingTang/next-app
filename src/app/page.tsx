@@ -1,10 +1,5 @@
-import DefaultLayout from '@/layout/DefaultLayout'
-import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-  return (
-    <DefaultLayout>
-      <DefaultBodyContainer>home</DefaultBodyContainer>
-    </DefaultLayout>
-  )
+  redirect('/blog')
 }

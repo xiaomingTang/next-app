@@ -56,7 +56,7 @@ export const defaultEmptyBlog: PartialBlog = {
   title: '',
   content: '',
   description: '',
-  type: BlogType.PRIVATE_UNPUBLISHED,
+  type: BlogType.UNPUBLISHED,
 }
 
 function RawTransition(

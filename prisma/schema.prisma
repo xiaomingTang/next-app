@@ -16,14 +16,10 @@ enum Role {
 }
 
 enum BlogType {
-  // 公开 已发布
-  PUBLIC_PUBLISHED
-  // 公开 未发布(即 草稿)
-  PUBLIC_UNPUBLISHED
-  // 私有 已发布
-  PRIVATE_PUBLISHED
-  // 私有 未发布(即 草稿)
-  PRIVATE_UNPUBLISHED
+  // 已发布
+  PUBLISHED
+  // 未发布(即 草稿)
+  UNPUBLISHED
 }
 
 model User {

@@ -2,7 +2,7 @@
 
 import { UserButton } from './CornerButtons/UserButton'
 import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
-import { BlogEntry, HomeEntry } from './CornerButtons/Entries'
+import { BlogEntry } from './CornerButtons/Entries'
 
 import { DiffMode } from '@/components/Diff'
 
@@ -56,7 +56,6 @@ export function DefaultRawHeader() {
           }}
         >
           <Stack direction='row' sx={{ height: '100%', flex: '1 1 0%' }}>
-            <HomeEntry />
             <BlogEntry />
           </Stack>
           <Stack direction='row'>

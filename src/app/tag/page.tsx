@@ -1,26 +1,18 @@
-import { BlogList } from './components/BlogList'
-
-import { getTags } from '../admin/tag/components/server'
-import { TagList } from '../tag/components/TagList'
+import { TagList } from './components/TagList'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
-import { getBlogs } from '@/app/admin/blog/components/server'
 import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
+import { getTags } from '@/app/admin/tag/components/server'
 import { Error } from '@/components/Error'
 
-import { BlogType } from '@prisma/client'
-
 export const metadata = seo.defaults({
-  title: '博客列表页',
+  title: '标签列表页',
 })
 
 export default async function Home() {
   const tagsRes = await getTags({})
-  const blogsRes = await getBlogs({
-    type: BlogType.PUBLISHED,
-  })
 
   return (
     <DefaultLayout>
@@ -29,10 +21,6 @@ export default async function Home() {
           <>
             {tagsRes?.data && <TagList tags={tagsRes.data} />}
             {tagsRes?.error && <Error {...tagsRes.error} />}
-          </>
-          <>
-            {blogsRes.data && <BlogList blogs={blogsRes.data} />}
-            {blogsRes.error && <Error {...blogsRes.error} />}
           </>
         </ScrollToTop>
       </DefaultBodyContainer>

@@ -17,7 +17,7 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 export function ScrollToTop({
   children,
 }: {
-  children: React.ReactElement | React.ReactElement[]
+  children: React.ReactNode | React.ReactNode[]
 }) {
   const theme = useTheme()
   const elemRef = useRef<HTMLDivElement>(null)

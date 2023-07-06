@@ -38,7 +38,7 @@ async function filterBlogWithAuth<
   if (!blog) {
     throw Boom.notFound('该博客不存在或已删除')
   }
-  if (blog.type === BlogType.PUBLIC_PUBLISHED) {
+  if (blog.type === BlogType.PUBLISHED) {
     return blog
   }
   const self = await getSelf()
@@ -56,7 +56,7 @@ async function filterBlogsWithAuth<
 >(blogs: B[]) {
   const self = await getSelf().catch(noop)
   return blogs.filter((b) => {
-    if (b.type === BlogType.PUBLIC_PUBLISHED) {
+    if (b.type === BlogType.PUBLISHED) {
       return true
     }
     return !!self && (self.role === Role.ADMIN || b.creator.id === self.id)
@@ -250,7 +250,7 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
   // 认为其为系列文章的前一篇
   const prevBlog = await prisma.blog.findFirst({
     where: {
-      type: BlogType.PUBLIC_PUBLISHED,
+      type: BlogType.PUBLISHED,
       title: {
         startsWith: getPrefix(title),
       },
@@ -275,7 +275,7 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
   // 认为其为系列文章的后一篇
   const nextBlog = await prisma.blog.findFirst({
     where: {
-      type: BlogType.PUBLIC_PUBLISHED,
+      type: BlogType.PUBLISHED,
       title: {
         startsWith: getPrefix(title),
       },
@@ -300,7 +300,7 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
   const similarBlogs = await prisma.blog.findMany({
     take: 4 - selectedBlogHashes.length,
     where: {
-      type: BlogType.PUBLIC_PUBLISHED,
+      type: BlogType.PUBLISHED,
       hash: {
         notIn: selectedBlogHashes,
       },
