@@ -27,7 +27,7 @@ import {
   Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import { CloseOutlined } from '@mui/icons-material'
+import CloseIcon from '@mui/icons-material/Close'
 import { Role } from '@prisma/client'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { toast } from 'react-hot-toast'
@@ -75,7 +75,7 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
             }}
             aria-label='close'
           >
-            <CloseOutlined />
+            <CloseIcon />
           </IconButton>
         </Toolbar>
       </AppBar>
@@ -129,7 +129,7 @@ const EditUserModal = NiceModal.create(
               }}
               aria-label='close'
             >
-              <CloseOutlined />
+              <CloseIcon />
             </IconButton>
           </Toolbar>
         </AppBar>

@@ -3,7 +3,9 @@ import { useLoading } from '@/hooks/useLoading'
 import { SvgLoading } from '@/svg'
 import { useUser } from '@/user'
 
-import { Person, VerifiedUser, Logout } from '@mui/icons-material'
+import PersonIcon from '@mui/icons-material/Person'
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
+import LogoutIcon from '@mui/icons-material/Logout'
 import { IconButton, Menu, MenuItem, ListItemIcon } from '@mui/material'
 import { Role } from '@prisma/client'
 import { useRouter } from 'next/navigation'
@@ -35,7 +37,7 @@ export function AdminLoggedButton() {
         onClick={handleClick}
         disabled={loading}
       >
-        {loading ? <SvgLoading className='animate-spin' /> : <Person />}
+        {loading ? <SvgLoading className='animate-spin' /> : <PersonIcon />}
       </IconButton>
       <Menu
         id='logout-menu'
@@ -59,7 +61,7 @@ export function AdminLoggedButton() {
           }}
         >
           <ListItemIcon>
-            <VerifiedUser fontSize='small' />
+            <VerifiedUserIcon fontSize='small' />
           </ListItemIcon>
           前台首页
         </MenuItem>
@@ -70,7 +72,7 @@ export function AdminLoggedButton() {
           })}
         >
           <ListItemIcon>
-            <Logout fontSize='small' />
+            <LogoutIcon fontSize='small' />
           </ListItemIcon>
           退出登录
         </MenuItem>

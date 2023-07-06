@@ -13,7 +13,8 @@ import { Controller, useForm } from 'react-hook-form'
 import { Stack, TextField } from '@mui/material'
 import { toast } from 'react-hot-toast'
 import { useEffect, useMemo, useState } from 'react'
-import { AddOutlined, SearchOutlined } from '@mui/icons-material'
+import AddIcon from '@mui/icons-material/Add'
+import SearchIcon from '@mui/icons-material/Search'
 
 import type { User } from '@prisma/client'
 
@@ -139,7 +140,7 @@ export function useUserEditorSearchBar() {
               height: '40px',
               whiteSpace: 'nowrap',
             }}
-            startIcon={<SearchOutlined />}
+            startIcon={<SearchIcon />}
           >
             搜索
           </CustomLoadingButton>
@@ -149,7 +150,7 @@ export function useUserEditorSearchBar() {
               height: '40px',
               whiteSpace: 'nowrap',
             }}
-            startIcon={<AddOutlined />}
+            startIcon={<AddIcon />}
             onClick={cat(async () => {
               await editUser()
               await onSubmit()

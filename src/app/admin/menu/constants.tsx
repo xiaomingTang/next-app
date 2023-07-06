@@ -1,11 +1,9 @@
 import { MenuTree } from './MenuTree'
 
-import {
-  PersonOutline,
-  FeedOutlined,
-  SellOutlined,
-  LinkOutlined,
-} from '@mui/icons-material'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
+import FeedIcon from '@mui/icons-material/Feed'
+import SellIcon from '@mui/icons-material/Sell'
+import LinkIcon from '@mui/icons-material/Link'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 import { Role } from '@prisma/client'
@@ -20,22 +18,22 @@ export const menuList: NestedMenu[] = [
     name: '用户管理',
     roles: [Role.ADMIN],
     path: '/admin/user',
-    icon: <PersonOutline />,
+    icon: <PersonOutlineIcon />,
   },
   {
     name: '博客管理',
     path: '/admin/blog',
-    icon: <FeedOutlined />,
+    icon: <FeedIcon />,
   },
   {
     name: '标签管理',
     path: '/admin/tag',
-    icon: <SellOutlined />,
+    icon: <SellIcon />,
   },
   {
     name: '短链管理',
     path: '/admin/shortUrl',
-    icon: <LinkOutlined />,
+    icon: <LinkIcon />,
   },
 ]
 

@@ -17,11 +17,9 @@ import {
   Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import {
-  CloseOutlined,
-  VisibilityOffOutlined,
-  VisibilityOutlined,
-} from '@mui/icons-material'
+import CloseIcon from '@mui/icons-material/Close'
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
+import VisibilityIcon from '@mui/icons-material/Visibility'
 import { useState } from 'react'
 
 import type { User } from '@prisma/client'
@@ -73,7 +71,7 @@ export const LoginModal = NiceModal.create(
               }}
               aria-label='close'
             >
-              <CloseOutlined />
+              <CloseIcon />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -139,9 +137,9 @@ export const LoginModal = NiceModal.create(
                           edge='end'
                         >
                           {passwordVisible ? (
-                            <VisibilityOutlined />
+                            <VisibilityIcon />
                           ) : (
-                            <VisibilityOffOutlined />
+                            <VisibilityOffIcon />
                           )}
                         </IconButton>
                       </InputAdornment>

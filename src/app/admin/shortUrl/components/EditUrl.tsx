@@ -17,7 +17,7 @@ import {
   Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import { CloseOutlined } from '@mui/icons-material'
+import CloseIcon from '@mui/icons-material/Close'
 
 import type { ShortUrlWithCreator } from './server'
 import type { ShortUrl } from '@prisma/client'
@@ -72,7 +72,7 @@ const EditUrlModal = NiceModal.create(
               }}
               aria-label='close'
             >
-              <CloseOutlined />
+              <CloseIcon />
             </IconButton>
           </Toolbar>
         </AppBar>

@@ -1,7 +1,5 @@
-import {
-  CheckBox as CheckBoxIcon,
-  CheckBoxOutlineBlank as CheckBoxOutlineBlankIcon,
-} from '@mui/icons-material'
+import CheckBoxIcon from '@mui/icons-material/CheckBox'
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 import { Autocomplete, Checkbox, TextField } from '@mui/material'
 
 import type { BaseTextFieldProps } from '@mui/material'

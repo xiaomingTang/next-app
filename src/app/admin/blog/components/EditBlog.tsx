@@ -10,13 +10,13 @@ import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import { useLoading } from '@/hooks/useLoading'
 import { getTags, saveTag } from '@/app/admin/tag/components/server'
 
-import { Visibility } from '@mui/icons-material'
+import VisibilityIcon from '@mui/icons-material/Visibility'
+import CloseIcon from '@mui/icons-material/Close'
 import { forwardRef, useRef, useState } from 'react'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
-import CloseIcon from '@mui/icons-material/Close'
 import Slide from '@mui/material/Slide'
 import useSWR from 'swr'
 import {
@@ -146,7 +146,7 @@ export function useEditBlog() {
                 })
               })}
             >
-              <Visibility />
+              <VisibilityIcon />
             </IconButton>
           </Toolbar>
         </AppBar>

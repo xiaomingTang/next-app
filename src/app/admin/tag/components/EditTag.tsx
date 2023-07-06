@@ -17,7 +17,7 @@ import {
   Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
-import { CloseOutlined } from '@mui/icons-material'
+import CloseIcon from '@mui/icons-material/Close'
 
 import type { Tag } from '@prisma/client'
 import type { PickAndPartial } from '@/utils/type'
@@ -69,7 +69,7 @@ const EditTagModal = NiceModal.create(
               }}
               aria-label='close'
             >
-              <CloseOutlined />
+              <CloseIcon />
             </IconButton>
           </Toolbar>
         </AppBar>

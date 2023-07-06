@@ -3,7 +3,7 @@
 import { useUser } from '@/user'
 
 import { IconButton } from '@mui/material'
-import { SearchOutlined } from '@mui/icons-material'
+import SearchIcon from '@mui/icons-material/Search'
 import { useRouter } from 'next/navigation'
 
 // TODO: 博客搜索
@@ -22,7 +22,7 @@ export function BlogSearchButton() {
           router.push(`/novel/s/d1`)
         }}
       >
-        <SearchOutlined />
+        <SearchIcon />
       </IconButton>
     </>
   )

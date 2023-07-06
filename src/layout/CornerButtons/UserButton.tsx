@@ -7,12 +7,10 @@ import { cat } from '@/errors/catchAndToast'
 import { RoleNameMap } from '@/constants'
 
 import { IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material'
-import {
-  Logout,
-  Person,
-  PersonOutline,
-  VerifiedUser,
-} from '@mui/icons-material'
+import LogoutIcon from '@mui/icons-material/Logout'
+import PersonIcon from '@mui/icons-material/Person'
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import { useState } from 'react'
 import { Role } from '@prisma/client'
 import { useRouter } from 'next/navigation'
@@ -45,7 +43,7 @@ function LoggedButton() {
         {loading ? (
           <SvgLoading className='animate-spin' />
         ) : (
-          <Person color='primary' />
+          <PersonIcon color='primary' />
         )}
       </IconButton>
       <Menu
@@ -70,7 +68,7 @@ function LoggedButton() {
           }}
         >
           <ListItemIcon>
-            <VerifiedUser fontSize='small' />
+            <VerifiedUserIcon fontSize='small' />
           </ListItemIcon>
           管理后台
         </MenuItem>
@@ -83,7 +81,7 @@ function LoggedButton() {
           )}
         >
           <ListItemIcon>
-            <Logout fontSize='small' />
+            <LogoutIcon fontSize='small' />
           </ListItemIcon>
           退出登录
         </MenuItem>
@@ -105,7 +103,7 @@ function LoginButton() {
         await useUser.login()
       })}
     >
-      <PersonOutline />
+      <PersonOutlineIcon />
     </IconButton>
   )
 }

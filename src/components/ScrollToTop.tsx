@@ -11,7 +11,7 @@ import {
   useTheme,
 } from '@mui/material'
 import { useRef } from 'react'
-import { KeyboardArrowUp } from '@mui/icons-material'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
 // TODO: fix: 不足一屏时, 百分比有误
 export function ScrollToTop({
@@ -65,7 +65,7 @@ export function ScrollToTop({
               })
             }}
           >
-            <KeyboardArrowUp />
+            <KeyboardArrowUpIcon />
           </Fab>
         </Box>
       </Fade>

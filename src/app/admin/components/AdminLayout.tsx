@@ -9,7 +9,7 @@ import { ThemeToggleButton } from '@/layout/CornerButtons/ThemeToggleButton'
 import { AuthRequired } from '@/components/AuthRequired'
 import { seo } from '@/utils/seo'
 
-import { MenuOutlined } from '@mui/icons-material'
+import MenuIcon from '@mui/icons-material/Menu'
 import {
   AppBar,
   Box,
@@ -73,7 +73,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
               onClick={handleDrawerToggle}
               sx={{ mr: 2, display: { sm: 'none' } }}
             >
-              <MenuOutlined />
+              <MenuIcon />
             </IconButton>
             <Typography
               variant='h6'

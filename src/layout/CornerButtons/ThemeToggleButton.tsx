@@ -4,7 +4,8 @@ import { usePrefersColorSchema } from '@/common/contexts/PrefersColorSchema'
 import { DiffMode } from '@/components/Diff'
 
 import { IconButton, Typography } from '@mui/material'
-import { DarkMode, LightMode } from '@mui/icons-material'
+import DarkModeIcon from '@mui/icons-material/DarkMode'
+import LightModeIcon from '@mui/icons-material/LightMode'
 
 export function ThemeToggleButton() {
   return (
@@ -15,7 +16,7 @@ export function ThemeToggleButton() {
       }}
     >
       <Typography>
-        <DiffMode dark={<LightMode />} light={<DarkMode />} />
+        <DiffMode dark={<LightModeIcon />} light={<DarkModeIcon />} />
       </Typography>
     </IconButton>
   )

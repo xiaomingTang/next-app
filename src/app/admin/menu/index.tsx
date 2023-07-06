@@ -1,6 +1,7 @@
 import { useActiveMenu } from './constants'
 
-import { ExpandLess, ExpandMore } from '@mui/icons-material'
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import {
   Box,
   Collapse,
@@ -61,7 +62,7 @@ export function NestedListItem(props: NestedMenu) {
       <ListItem key={props.name} disablePadding>
         {clickableItem}
         <IconButton onClick={() => setOpen((prev) => !prev)}>
-          {open ? <ExpandLess /> : <ExpandMore />}
+          {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </IconButton>
       </ListItem>
       <Collapse in={open} timeout='auto'>
