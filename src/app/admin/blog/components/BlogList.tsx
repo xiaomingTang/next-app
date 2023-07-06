@@ -47,9 +47,9 @@ export function BlogEditorBlogList({
               <AuthRequired roles={[Role.ADMIN]}>
                 <TableCell>作者</TableCell>
               </AuthRequired>
+              <TableCell>标签</TableCell>
               <TableCell>更新时间</TableCell>
               <TableCell>创建时间</TableCell>
-              <TableCell>标签</TableCell>
               <TableCell>操作</TableCell>
             </TableRow>
           </TableHead>
@@ -73,8 +73,6 @@ export function BlogEditorBlogList({
                     [{RoleNameMap[blog.creator.role]}]{blog.creator.name}
                   </TableCell>
                 </AuthRequired>
-                <TableCell>{formatTime(blog.updatedAt)}</TableCell>
-                <TableCell>{formatTime(blog.createdAt)}</TableCell>
                 <TableCell>
                   <Stack spacing={1} direction='row'>
                     {blog.tags.map((tag) => (
@@ -84,6 +82,8 @@ export function BlogEditorBlogList({
                     ))}
                   </Stack>
                 </TableCell>
+                <TableCell>{formatTime(blog.updatedAt)}</TableCell>
+                <TableCell>{formatTime(blog.createdAt)}</TableCell>
                 <TableCell>
                   <ButtonGroup size='small'>
                     <CustomLoadingButton
