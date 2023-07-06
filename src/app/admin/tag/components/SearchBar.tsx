@@ -7,6 +7,7 @@ import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
 import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
+import { obj } from '@/utils/tiny'
 
 import { Controller, useForm } from 'react-hook-form'
 import { Stack, TextField } from '@mui/material'
@@ -16,12 +17,6 @@ import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 
 import type { TagWithCreator } from './server'
-
-function obj<K extends Record<number | string | symbol, unknown>>(
-  rec: K | false | null | undefined | '' | 0
-): Partial<K> {
-  return rec || ({} as Partial<K>)
-}
 
 interface SearchProps {
   hash: string
