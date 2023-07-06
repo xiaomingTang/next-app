@@ -1,4 +1,4 @@
-import { getTags, saveBlog, saveTag } from './server'
+import { saveBlog } from './server'
 import { BlogTypeMap, sortedBlogTypes } from './constants'
 import { editMarkdown } from './editMarkdown'
 import { MultiSelect } from './TagsSelect'
@@ -8,6 +8,7 @@ import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import { useLoading } from '@/hooks/useLoading'
+import { getTags, saveTag } from '@/app/admin/tag/components/server'
 
 import { Visibility } from '@mui/icons-material'
 import { forwardRef, useRef, useState } from 'react'
@@ -117,6 +118,7 @@ export function useEditBlog() {
             </Box>
             <CustomLoadingButton
               size='small'
+              color='inherit'
               onClick={cat(async () => {
                 const res = await saveBlog({
                   ...blog,
@@ -215,7 +217,9 @@ export function useEditBlog() {
                   return
                 }
                 const newTag = await saveTag({
+                  hash: '',
                   name: s,
+                  description: s,
                 }).then(SA.decode)
                 const newAllTags = (await mutateAllTags()) ?? allTags
                 setBlog((prev) => {
