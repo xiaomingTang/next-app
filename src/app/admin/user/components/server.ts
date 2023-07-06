@@ -133,6 +133,8 @@ export const deleteUsers = SA.encode(async (ids: number[]) => {
       id: {
         in: ids,
       },
+      // admin 不通过请求删除, 要删去数据库删吧
+      role: Role.USER,
     },
   })
 })
