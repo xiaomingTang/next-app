@@ -87,7 +87,7 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
           text={texts.join('\n')}
           onCopy={() => toast.success('复制成功')}
         >
-          <Box>
+          <Box sx={{ cursor: 'copy' }}>
             {texts.map((t) => (
               <Typography key={t}>{t}</Typography>
             ))}

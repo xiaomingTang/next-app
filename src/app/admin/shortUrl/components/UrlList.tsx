@@ -61,7 +61,7 @@ export function UrlEditUrlList({
                     toast.success('复制成功')
                   }}
                 >
-                  <TableCell component='th' scope='row'>
+                  <TableCell component='th' scope='row' sx={{ cursor: 'copy' }}>
                     {`${ENV_CONFIG.public.origin}/u/${url.hash}`}
                   </TableCell>
                 </CopyToClipboard>
@@ -76,7 +76,7 @@ export function UrlEditUrlList({
                     toast.success('复制成功')
                   }}
                 >
-                  <TableCell component='th' scope='row'>
+                  <TableCell component='th' scope='row' sx={{ cursor: 'copy' }}>
                     {url.url}
                   </TableCell>
                 </CopyToClipboard>
