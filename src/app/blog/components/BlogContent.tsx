@@ -3,12 +3,16 @@
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import Anchor from '@/components/Anchor'
 import { ScrollToTop } from '@/components/ScrollToTop'
+import { BlogTypeMap } from '@/app/admin/blog/components/constants'
+import { useUser } from '@/user'
 
 import { MDXRemote } from 'next-mdx-remote'
-import { Box, Button, Tooltip, Typography } from '@mui/material'
+import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material'
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { BlogType } from '@prisma/client'
+import BorderColorIcon from '@mui/icons-material/BorderColor'
 
 import type { MDXComponents } from 'mdx/types'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
@@ -61,6 +65,7 @@ export function BlogContent({
 }: BlogWithTags & {
   source: MDXRemoteSerializeResult
 }) {
+  const user = useUser()
   return (
     <ScrollToTop>
       {/* 标题 */}
@@ -72,7 +77,21 @@ export function BlogContent({
           fontWeight: 'bold',
         }}
       >
+        {blog.type === BlogType.UNPUBLISHED && (
+          <>{BlogTypeMap[blog.type].name} </>
+        )}
         {blog.title}
+        {blog.creator.id === user.id && (
+          <IconButton
+            LinkComponent={Link}
+            href='/admin/blog'
+            target='_blank'
+            color='primary'
+            sx={{ verticalAlign: 'baseline' }}
+          >
+            <BorderColorIcon />
+          </IconButton>
+        )}
       </Typography>
       {/* meta: time & tags */}
       <Box sx={{ mb: 1 }}>
