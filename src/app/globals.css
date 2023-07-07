@@ -13,7 +13,7 @@ body {
   background-color: #eee;
 }
 
-[data-theme='dark'] body {
+[data-mui-color-scheme='dark'] body {
   color: #eee;
   background-color: #1a2027;
 }

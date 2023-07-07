@@ -6,7 +6,6 @@ import { SvgLoading } from '@/svg'
 import { cat } from '@/errors/catchAndToast'
 import { RoleNameMap } from '@/constants'
 
-import LockIcon from '@mui/icons-material/Lock'
 import { IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material'
 import LogoutIcon from '@mui/icons-material/Logout'
 import PersonIcon from '@mui/icons-material/Person'

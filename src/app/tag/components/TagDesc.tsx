@@ -8,7 +8,10 @@ import type { Tag } from '@prisma/client'
 export function TagDesc({ tag }: { tag: Tag }) {
   return (
     <Typography sx={{ pb: 2 }}>
-      <Typography component='b' sx={{ fontWeight: 'bold', color: 'Highlight' }}>
+      <Typography
+        component='b'
+        sx={{ fontWeight: 'bold', color: 'primary.main' }}
+      >
         <SellIcon fontSize='inherit' /> {tag.name}
       </Typography>
       : {tag.description}

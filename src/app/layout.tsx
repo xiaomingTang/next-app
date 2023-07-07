@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-sync-scripts */
 import './globals.css'
 
+import { GetInitColorSchemeScript } from './GetColorScheme'
+
 import Contexts from '@/common/contexts'
 import Polyfills from '@/common/polyfills'
 import Providers from '@/common/providers'
@@ -38,11 +40,11 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang='zh-cn' data-theme='dark'>
-      <head>
-        <script src='/__ENV_CONFIG__.js' />
-      </head>
+    <html lang='zh-cn' suppressHydrationWarning>
       <body className={clsx(inter.className, 'min-h-screen')}>
+        {/* TODO: 这个 ENV_CONFIG 的实现可能有问题 */}
+        <script src='/__ENV_CONFIG__.js' />
+        <GetInitColorSchemeScript />
         <Providers>
           <Polyfills />
           <Contexts />

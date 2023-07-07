@@ -4,7 +4,7 @@ import { UserButton } from './CornerButtons/UserButton'
 import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
 import { BlogEntry } from './CornerButtons/Entries'
 
-import { DiffMode } from '@/components/Diff'
+import { dark, light } from '@/utils/theme'
 
 import { grey } from '@mui/material/colors'
 import {
@@ -32,16 +32,14 @@ export function DefaultRawHeader() {
             height: '40px',
           },
           backdropFilter: 'blur(8px)',
-          ...DiffMode({
-            dark: {
-              backgroundColor: alpha(grey[900], 0.6),
-              color: grey[200],
-            },
-            light: {
-              backgroundColor: alpha(grey[300], 0.6),
-              color: grey[800],
-            },
-          }),
+          [dark()]: {
+            backgroundColor: alpha(grey[900], 0.6),
+            color: grey[200],
+          },
+          [light()]: {
+            backgroundColor: alpha(grey[300], 0.6),
+            color: grey[800],
+          },
         }}
       >
         <Stack

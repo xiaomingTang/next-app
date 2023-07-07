@@ -1,7 +1,7 @@
 'use client'
 
 import { friendlyFormatTime } from '@/utils/formatTime'
-import { DiffMode } from '@/components/Diff'
+import { dark, light } from '@/utils/theme'
 
 import Link from 'next/link'
 import { ButtonBase, Chip, Stack, Typography, alpha } from '@mui/material'
@@ -35,24 +35,22 @@ export function BlogItem({
         ':focus-visible': {
           outline: `1px solid ${blue[700]}`,
         },
-        ...DiffMode({
-          dark: {
-            backgroundColor: alpha(common.black, 0.55),
-            boxShadow: boxShadow('small', alpha(common.black, 0.55)),
-            ':hover': {
-              backgroundColor: alpha(common.black, 0.35),
-              boxShadow: boxShadow('medium', alpha(common.black, 0.35)),
-            },
+        [dark()]: {
+          backgroundColor: alpha(common.black, 0.55),
+          boxShadow: boxShadow('small', alpha(common.black, 0.55)),
+          ':hover': {
+            backgroundColor: alpha(common.black, 0.35),
+            boxShadow: boxShadow('medium', alpha(common.black, 0.35)),
           },
-          light: {
-            backgroundColor: common.white,
-            boxShadow: boxShadow('small', common.white),
-            ':hover': {
-              backgroundColor: alpha(blue[100], 0.66),
-              boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
-            },
+        },
+        [light()]: {
+          backgroundColor: common.white,
+          boxShadow: boxShadow('small', common.white),
+          ':hover': {
+            backgroundColor: alpha(blue[100], 0.66),
+            boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
           },
-        }),
+        },
       }}
       className={className}
       LinkComponent={Link}
@@ -64,10 +62,12 @@ export function BlogItem({
         </Typography>
         <Typography
           sx={{
-            backgroundColor: DiffMode({
-              dark: alpha(common.white, 0.025),
-              light: alpha(common.black, 0.025),
-            }),
+            [dark()]: {
+              backgroundColor: alpha(common.white, 0.025),
+            },
+            [light()]: {
+              backgroundColor: alpha(common.black, 0.025),
+            },
             p: 1,
             borderRadius: 1,
             fontSize: '0.8em',

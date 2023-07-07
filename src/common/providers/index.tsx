@@ -2,15 +2,15 @@
 
 import EmotionProvider from './EmotionProvider'
 
-import { usePrefersColorSchema } from '../contexts/PrefersColorSchema'
-
-import { ThemeProvider, createTheme } from '@mui/material'
+import {
+  Experimental_CssVarsProvider as ThemeProvider,
+  experimental_extendTheme as createTheme,
+} from '@mui/material'
 import { useMemo } from 'react'
 import NiceModal from '@ebay/nice-modal-react'
 import { SWRConfig } from 'swr'
 
 function useMuiTheme() {
-  const { mode } = usePrefersColorSchema()
   const muiTheme = useMemo(
     () =>
       createTheme({
@@ -68,11 +68,8 @@ function useMuiTheme() {
             },
           },
         },
-        palette: {
-          mode,
-        },
       }),
-    [mode]
+    []
   )
   return muiTheme
 }
