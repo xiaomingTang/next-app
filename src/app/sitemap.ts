@@ -2,17 +2,11 @@ import { getBlogs } from './admin/blog/components/server'
 import { getTags } from './admin/tag/components/server'
 
 import { SA } from '@/errors/utils'
-import { ENV_CONFIG } from '@/config'
+import { resolvePath } from '@/utils/url'
 
 import { BlogType } from '@prisma/client'
 
 import type { MetadataRoute } from 'next'
-
-function resolve(pathname: string) {
-  const url = new URL('/', ENV_CONFIG.public.origin)
-  url.pathname = pathname
-  return url.href
-}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogs = await getBlogs({
@@ -20,19 +14,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }).then(SA.decode)
 
   const blogRoutes = blogs.map((blog) => ({
-    url: resolve(`/blog/${blog.hash}`),
+    url: resolvePath(`/blog/${blog.hash}`).href,
     lastModified: blog.updatedAt,
   }))
 
   const tags = await getTags({}).then(SA.decode)
 
   const tagRoutes = tags.map((tag) => ({
-    url: resolve(`/tag/${tag.hash}`),
+    url: resolvePath(`/tag/${tag.hash}`).href,
     lastModified: tag.updatedAt,
   }))
 
   const otherRoutes = ['/'].map((route) => ({
-    url: resolve(route),
+    url: resolvePath(route).href,
     lastModified: new Date().toISOString(),
   }))
 

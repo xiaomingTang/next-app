@@ -1,3 +1,5 @@
+import { resolvePath } from './url'
+
 import { ENV_CONFIG } from '@/config'
 
 import type { Metadata } from 'next'
@@ -45,7 +47,7 @@ export const seo = {
     return `${inputKeywords}, ${manifest.keywords}`
   },
   defaults: (props?: SeoProps): Metadata => ({
-    metadataBase: new URL(ENV_CONFIG.public.origin),
+    metadataBase: resolvePath('/'),
     title: seo.title(props?.title),
     description: seo.description(props?.description),
     keywords: seo.keywords(props?.keywords),

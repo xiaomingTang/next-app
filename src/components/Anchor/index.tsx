@@ -1,4 +1,4 @@
-import { ENV_CONFIG } from '@/config'
+import { resolvePath } from '@/utils/url'
 
 import { forwardRef } from 'react'
 import { clsx } from 'clsx'
@@ -23,7 +23,7 @@ export interface AnchorProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   linkProps?: LinkProps
 }
 
-const APP_URL = new URL(ENV_CONFIG.public.origin)
+const APP_URL = resolvePath('/')
 
 /**
  * ``` typescript
@@ -49,7 +49,7 @@ export default forwardRef(function Anchor(
   }: AnchorProps,
   ref: ForwardedRef<HTMLAnchorElement>
 ) {
-  const url = new URL(href || '', APP_URL.origin)
+  const url = resolvePath(href || '')
   const isExternal = !url.hostname.endsWith(APP_URL.hostname)
   const finalTarget = target ?? (isExternal ? '_blank' : '_self')
   const finalRel = rel ?? isExternal ? 'noopener noreferrer' : undefined
