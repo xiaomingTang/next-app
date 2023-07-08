@@ -27,6 +27,8 @@ export function MultiSelect<T extends string | number>({
   onNoMatch,
   ...restProps
 }: MultiSelectProps<T>) {
+  // MD Autocomplete 自己有 bug, Chip 没加 key,
+  // 导致控制台一直报红色 warning 很烦
   return (
     <Autocomplete
       multiple

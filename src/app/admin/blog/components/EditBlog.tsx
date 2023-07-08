@@ -201,7 +201,7 @@ export function useEditBlog() {
           >
             <MultiSelect
               label={`标签${addTagLoading ? ' 添加中...' : ''}`}
-              value={blog.tags?.map((t) => t.hash)}
+              defaultSelectedList={blog.tags?.map((t) => t.hash)}
               selectList={allTags.map((t) => ({
                 label: t.name,
                 value: t.hash,

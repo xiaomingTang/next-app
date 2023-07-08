@@ -180,7 +180,7 @@ export const saveBlog = SA.encode(
           title,
           type,
           tags: {
-            connect: tags.map((tagHash) => ({
+            set: tags.map((tagHash) => ({
               hash: tagHash,
             })),
           },
