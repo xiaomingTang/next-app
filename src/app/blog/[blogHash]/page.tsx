@@ -27,6 +27,7 @@ export async function generateMetadata({
 
   return seo.defaults({
     title: blog?.title,
+    description: blog?.description,
     keywords: [
       ...(blog?.tags.map((tag) => tag.name) ?? []),
       ...(blog?.tags.map((tag) => tag.description) ?? []),

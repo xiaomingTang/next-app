@@ -29,7 +29,10 @@ export async function generateMetadata({
 
   return seo.defaults({
     title: name && `标签: ${name}`,
-    description,
+    description:
+      description &&
+      (name ? `与${name}有关的文章: ${description}` : description),
+    keywords: name,
   })
 }
 
