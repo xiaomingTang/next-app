@@ -17,9 +17,6 @@ function boxShadow(size: 'small' | 'medium', color: string) {
   return `0 0 ${sizeMap[size]} ${color}`
 }
 
-// TODO: header 跳转路由
-// TODO: tag 页
-// TODO: 滚动器加到各个页面(如 /blog 页, 博客内容页 等)
 export function BlogItem({
   className,
   ...blog

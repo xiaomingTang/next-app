@@ -13,7 +13,6 @@ import {
 import { useRef } from 'react'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
-// TODO: fix: 不足一屏时, 百分比有误
 export function ScrollToTop({
   children,
 }: {
