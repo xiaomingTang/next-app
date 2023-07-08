@@ -45,7 +45,7 @@ async function filterBlogWithAuth<
   if (self.role === Role.ADMIN || blog.creator.id === self.id) {
     return blog
   }
-  throw Boom.forbidden('你无权浏览该博客')
+  throw Boom.forbidden('你无权操作该博客')
 }
 
 async function filterBlogsWithAuth<
@@ -53,14 +53,17 @@ async function filterBlogsWithAuth<
     type: BlogType
     creator: Pick<User, 'id'>
   }
->(blogs: B[]) {
+>(blogs: (B | null | undefined)[]) {
   const self = await getSelf().catch(noop)
   return blogs.filter((b) => {
+    if (!b) {
+      return false
+    }
     if (b.type === BlogType.PUBLISHED) {
       return true
     }
     return !!self && (self.role === Role.ADMIN || b.creator.id === self.id)
-  })
+  }) as B[]
 }
 
 export const getBlog = SA.encode(async (props: Prisma.BlogWhereUniqueInput) =>
@@ -219,13 +222,18 @@ function getPrefix(sentence: string) {
 export const getRecommendBlogs = SA.encode(async (hash: string) => {
   if (!hash || typeof hash !== 'string') {
     // 非法请求, 直接返回最新的几篇
-    return prisma.blog.findMany({
-      take: 3,
-      orderBy: {
-        updatedAt: 'desc',
-      },
-      select: blogSelect,
-    })
+    return prisma.blog
+      .findMany({
+        where: {
+          type: BlogType.PUBLISHED,
+        },
+        take: 3,
+        orderBy: {
+          updatedAt: 'desc',
+        },
+        select: blogSelect,
+      })
+      .then(filterBlogsWithAuth)
   }
   const inputBlog = await prisma.blog.findUnique({
     where: {
@@ -233,15 +241,21 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
     },
     select: omit(blogSelect, 'content'),
   })
-  if (!inputBlog) {
-    // 未知博客, 直接返回最新的几篇
-    return prisma.blog.findMany({
-      take: 3,
-      orderBy: {
-        updatedAt: 'desc',
-      },
-      select: blogSelect,
-    })
+  if (!inputBlog || inputBlog.type !== BlogType.PUBLISHED) {
+    // 博客不存在或者非公开, 直接返回最新的几篇
+    // 非公开博客不能推荐(这样他人就能从推荐列表猜测博文内容了)
+    return prisma.blog
+      .findMany({
+        where: {
+          type: BlogType.PUBLISHED,
+        },
+        take: 3,
+        orderBy: {
+          updatedAt: 'desc',
+        },
+        select: blogSelect,
+      })
+      .then(filterBlogsWithAuth)
   }
   const { title, createdAt } = inputBlog
   const tags = inputBlog.tags.map((t) => t.hash)
@@ -320,7 +334,9 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
     ],
   })
 
-  // 这里可以忽略 non-null check, 因为后面 filter Boolean 了
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return [nextBlog!, prevBlog!, ...similarBlogs].filter(Boolean)
+  return filterBlogsWithAuth(
+    // 这里可以忽略 non-null check, 因为后面 filter Boolean 了
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    [nextBlog!, prevBlog!, ...similarBlogs].filter(Boolean)
+  )
 })
