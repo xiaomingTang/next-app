@@ -82,6 +82,8 @@ export function useUrlEditorSearchBar() {
     <>
       <form onSubmit={onSubmit}>
         <Stack
+          useFlexGap
+          flexWrap='wrap'
           spacing={1}
           direction='row'
           sx={{

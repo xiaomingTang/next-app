@@ -74,7 +74,7 @@ export function BlogEditorBlogList({
                   </TableCell>
                 </AuthRequired>
                 <TableCell>
-                  <Stack spacing={1} direction='row'>
+                  <Stack spacing={1} direction='row' useFlexGap flexWrap='wrap'>
                     {blog.tags.map((tag) => (
                       <Tooltip key={tag.hash} title={tag.description}>
                         <Chip label={tag.name} />
