@@ -88,6 +88,7 @@ export function BlogContent({
             target='_blank'
             color='primary'
             sx={{ verticalAlign: 'baseline' }}
+            aria-label='打开后台管理以编辑博客'
           >
             <BorderColorIcon />
           </IconButton>

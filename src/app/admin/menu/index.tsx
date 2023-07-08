@@ -44,7 +44,10 @@ export function NestedListItem(props: NestedMenu) {
       )}
       <ListItemText
         title={props.name}
-        primary={<Typography noWrap>{props.name}</Typography>}
+        primary={props.name}
+        sx={{
+          whiteSpace: 'nowrap',
+        }}
       />
     </ListItemButton>
   )

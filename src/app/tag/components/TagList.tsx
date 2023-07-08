@@ -23,12 +23,18 @@ export function TagList({
                 : 'outlined'
             }
             size='small'
+            aria-label={`标签${tag.name}, 共${tag._count.blogs}篇博客`}
+            aria-labelledby={`标签${tag.name}, 共${tag._count.blogs}篇博客`}
             LinkComponent={Link}
             href={`/tag/${tag.hash}`}
             sx={{ mr: 2, mb: 2, borderRadius: 99 }}
           >
             {tag.name}
-            <Typography component='sup' sx={{ pl: 1, opacity: 0.8 }}>
+            <Typography
+              component='sup'
+              sx={{ pl: 1, opacity: 0.8 }}
+              aria-hidden
+            >
               {tag._count.blogs}
             </Typography>
           </Button>

@@ -54,15 +54,18 @@ export function ScrollToTop({
               },
             }}
             value={percent * 100}
+            aria-hidden
           />
           <Fab
             size='small'
-            aria-label='scroll back to top'
             onClick={() => {
               scrollStarterRef.current?.scrollIntoView({
                 behavior: 'smooth',
               })
             }}
+            aria-label={`当前浏览进度 ${Math.floor(
+              percent * 100
+            )}%，点击滚动到顶部`}
           >
             <KeyboardArrowUpIcon />
           </Fab>

@@ -52,8 +52,11 @@ export function BlogItem({
       className={className}
       LinkComponent={Link}
       href={`/blog/${blog.hash}`}
+      aria-label={`${friendlyFormatTime(blog.updatedAt)}更新的博客《${
+        blog.title
+      }》；简介是：${blog.description}`}
     >
-      <Stack direction='column' spacing={1} sx={{ width: '100%' }}>
+      <Stack direction='column' spacing={1} sx={{ width: '100%' }} aria-hidden>
         <Typography component='h2' sx={{ fontWeight: 'bold' }}>
           {blog.title}
         </Typography>

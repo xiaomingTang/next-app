@@ -64,6 +64,7 @@ export const webpackConfig = (config, { dev }) => {
             color: 'inherit',
             fontSize: 'inherit',
             'data-generated-svg': '',
+            'aria-hidden': 'true',
           },
         },
       },
