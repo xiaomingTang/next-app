@@ -8,7 +8,6 @@ declare global {
     Pick<Partial<User>, 'password' | 'email'>
 
   interface Window {
-    VConsole: new () => any
     toast: typeof toast
   }
 
