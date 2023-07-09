@@ -7,7 +7,6 @@ import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
 import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
-import { useUser } from '@/user'
 
 import { Controller, useForm } from 'react-hook-form'
 import { Stack, TextField } from '@mui/material'
@@ -39,7 +38,6 @@ export function useUserEditorSearchBar() {
   const { loading: searchLoading, withLoading: withSearchLoading } =
     useLoading()
   const [users, setUsers] = useState<User[]>([])
-  const user = useUser()
 
   const onSubmit = useMemo(
     () =>

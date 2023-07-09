@@ -11,7 +11,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Typography,
 } from '@mui/material'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
