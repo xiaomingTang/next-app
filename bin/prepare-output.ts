@@ -1,4 +1,5 @@
 import fs from 'fs-extra'
+import dotenv from 'dotenv'
 
 import path from 'path'
 
@@ -8,13 +9,19 @@ function p(...paths: string[]) {
   return path.normalize(path.join(root, ...paths))
 }
 
+dotenv.config({
+  path: p('.env.local'),
+})
+dotenv.config({
+  path: p('.env'),
+})
+
 async function main() {
   // 清空 out 目录
   fs.removeSync(p('out'))
   fs.mkdirSync(p('out'))
 
   fs.copySync(p('.npmrc'), p('out/.npmrc'))
-  fs.copySync(p('.env'), p('out/.env'))
   // 宝塔读不到 .env.local, 干脆就不复制过去了
   fs.copySync(p('public'), p('out/public'))
   fs.copySync(p('.next/standalone'), p('out'))
@@ -38,6 +45,30 @@ async function main() {
   packageJson.peerDependencies = []
   fs.writeJSONSync(p('out/package.json'), packageJson, {
     spaces: 2,
+  })
+
+  // 读取 .env 文件, 将其所需 key 依次写入到 out/.env 中,
+  // value 为当前环境变量值
+  // 该 .env 文件用于提供运行时环境变量
+  // 同样处理 .env 文件
+  const localEnvStr = fs.readFileSync(p('.env'))
+  // 先清空 .env 文件
+  fs.writeFileSync(p('.env'), '', {
+    flag: 'w',
+  })
+  fs.writeFileSync(p('out/.env'), '', {
+    flag: 'w',
+  })
+  const requiredEnvObj = dotenv.parse(localEnvStr)
+  Object.keys(requiredEnvObj).forEach((k) => {
+    const v = process.env[k] ?? requiredEnvObj[k] ?? ''
+    fs.writeFileSync(p('.env'), `${k}=${v}\n`, {
+      flag: 'a',
+    })
+    fs.writeFileSync(p('out/.env'), `${k}=${v}\n`, {
+      flag: 'a',
+    })
+    console.log('[log .env]', k, v)
   })
 }
 

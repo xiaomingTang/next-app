@@ -12,7 +12,7 @@
     "prebuild": "rimraf .next out && prisma generate && cross-env NEXT_PUBLIC_APP_ENV=production pnpm run beforeRun",
     "build": "cross-env NEXT_PUBLIC_APP_ENV=production next build",
     "prestart": "pnpm run beforeRun",
-    "start": "next start",
+    "start": "cd out && node server.js",
     "server": "node server.js",
     "export": "ts-node --project tsconfig-for-bin.json -r tsconfig-paths/register bin/prepare-output.ts",
     "commit": "git-cz",

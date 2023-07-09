@@ -34,14 +34,14 @@ export function toPlainError(err: Error): PlainError {
 }
 
 function filterServerError(err: PlainError): PlainError {
-  if (err.code < 500) {
-    return err
-  }
-  console.error(err.message)
-  return {
-    ...err,
-    message: '服务器错误, 请稍后再试',
-  }
+  return err
+  // if (err.code < 500) {
+  // }
+  // console.error(err.message)
+  // return {
+  //   ...err,
+  //   message: '服务器错误, 请稍后再试',
+  // }
 }
 
 export function isPlainError(err: unknown): err is PlainError {
@@ -78,6 +78,7 @@ function serverActionEncoder<Args extends unknown[], Ret>(
 ): Func<Args, Promise<ServerResponse<Ret>>> {
   return async (...args) => {
     try {
+      console.log(`[api-log]: in [${process.cwd()}]: `, ...args)
       const ret = await func(...args)
       return {
         data: ret,
