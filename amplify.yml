@@ -11,6 +11,8 @@ backend:
         - pnpm run build
         - pnpm run export
         - cd out
+        - ls
+        - cat .env
         - amplifyPush --simple
         - cd ..
   cache:
@@ -27,6 +29,8 @@ frontend:
       commands:
         - pnpm run build
         - pnpm run export
+        - ls
+        - cat .env
   artifacts:
     baseDirectory: .next
     files:

@@ -1,11 +1,18 @@
 const fs = require('fs')
 const path = require('path')
+const dotenv = require('dotenv')
 
-require('dotenv').config({
-  path: path.resolve(process.cwd(), '.env.local'),
+const root = process.cwd()
+
+function p(...paths) {
+  return path.normalize(path.join(root, ...paths))
+}
+
+dotenv.config({
+  path: p('.env.local'),
 })
-require('dotenv').config({
-  path: path.resolve(process.cwd(), '.env'),
+dotenv.config({
+  path: p('.env'),
 })
 
 function requireJsonOrCatch(f) {
@@ -27,15 +34,31 @@ function getEnvConfig(env) {
   }
 }
 
-function writeEnv(env) {
-  const jsFile = path.resolve(process.cwd(), 'public/__ENV_CONFIG__.js')
+function writeEnvVars() {
+  const localEnvStr = fs.readFileSync(p('.env'))
+  const requiredEnvObj = dotenv.parse(localEnvStr)
+  // 先清空 .env 文件
+  fs.writeFileSync(p('.env'), '', {
+    flag: 'w',
+  })
+  // 再重写 .env 文件(目的是将命令行中的环境变量写入到 .env 文件中)
+  Object.keys(requiredEnvObj).forEach((k) => {
+    const v = process.env[k] ?? requiredEnvObj[k] ?? ''
+    fs.writeFileSync(p('.env'), `${k}=${v}\n`, {
+      flag: 'a',
+    })
+  })
+}
+
+function writeEnvConfig(env) {
+  const jsFile = p('public/__ENV_CONFIG__.js')
   const jsContent = `globalThis.__ENV_CONFIG__ = ${JSON.stringify(
     getEnvConfig(env)
   )};\n`
   fs.writeFileSync(jsFile, jsContent)
   console.log(`env config written into ${jsFile}`)
 
-  const typeFile = path.resolve(process.cwd(), 'public/__ENV_CONFIG__.d.ts')
+  const typeFile = p('public/__ENV_CONFIG__.d.ts')
   const typeContent = `const VALUE_OF__ENV_CONFIG__ = ${JSON.stringify(
     getEnvConfig(env)
   )};
@@ -51,7 +74,8 @@ export {};
 }
 
 function main() {
-  writeEnv(process.env.NEXT_PUBLIC_APP_ENV)
+  writeEnvVars()
+  writeEnvConfig(process.env.NEXT_PUBLIC_APP_ENV)
 }
 
 main()
