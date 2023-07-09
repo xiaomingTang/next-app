@@ -21,6 +21,8 @@ async function main() {
   fs.removeSync(p('out'))
   fs.mkdirSync(p('out'))
 
+  fs.copySync(p('amplify.sh'), p('out/amplify.sh'))
+  fs.copySync(p('amplify.yml'), p('out/amplify.yml'))
   fs.copySync(p('.npmrc'), p('out/.npmrc'))
   // 宝塔读不到 .env.local, 干脆就不复制过去了
   fs.copySync(p('public'), p('out/public'))

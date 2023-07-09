@@ -1,0 +1,36 @@
+version: 1
+
+backend:
+  phases:
+    preBuild:
+      commands:
+        - npm install -g pnpm
+        - pnpm install
+    build:
+      commands:
+        - pnpm run build
+        - pnpm run export
+        - cd out
+        - amplifyPush --simple
+        - cd ..
+  cache:
+    paths:
+      - node_modules/**/*
+
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm install -g pnpm
+        - pnpm install
+    build:
+      commands:
+        - pnpm run build
+        - pnpm run export
+  artifacts:
+    baseDirectory: .next
+    files:
+      - 'out/*'
+  cache:
+    paths:
+      - node_modules/**/*
