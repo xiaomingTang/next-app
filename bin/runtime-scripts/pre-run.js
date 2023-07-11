@@ -75,7 +75,9 @@ export {};
 
 function main() {
   writeEnvVars()
-  writeEnvConfig(process.env.NEXT_PUBLIC_APP_ENV)
+  if (!process.env.DISABLE_WRITE_DOT_ENV) {
+    writeEnvConfig(process.env.NEXT_PUBLIC_APP_ENV)
+  }
 }
 
 main()
