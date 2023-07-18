@@ -15,9 +15,6 @@ backend:
         - cat .env
         - amplifyPush --simple
         - cd ..
-  cache:
-    paths:
-      - node_modules/**/*
 
 frontend:
   phases:
@@ -32,9 +29,6 @@ frontend:
         - ls
         - cat .env
   artifacts:
-    baseDirectory: .next
+    baseDirectory: out
     files:
-      - 'out/*'
-  cache:
-    paths:
-      - node_modules/**/*
+      - '**/*'
