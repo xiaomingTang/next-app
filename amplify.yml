@@ -29,6 +29,6 @@ frontend:
         - ls
         - cat .env
   artifacts:
-    baseDirectory: out
+    baseDirectory: out/.next
     files:
-      - '**/*'
+      - 'out/*'
