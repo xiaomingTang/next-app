@@ -1,8 +1,10 @@
 'use server'
 
 import { SA } from '@/errors/utils'
+import { authValidate, getSelf } from '@/user/server'
 
 import { S3Client, PutObjectCommand, ObjectCannedACL } from '@aws-sdk/client-s3'
+import { Role } from '@prisma/client'
 
 import type { PutObjectCommandInput } from '@aws-sdk/client-s3'
 
@@ -18,6 +20,9 @@ const s3Client = new S3Client({
 
 // TODO: 鉴权、public & private、contentType、参数合法性校验
 export const upload = SA.encode(async (formData: FormData) => {
+  authValidate(await getSelf(), {
+    roles: [Role.USER],
+  })
   const files = formData.getAll('files')
   const f = files[0] as Blob
   const data = Buffer.from(await f.arrayBuffer())
