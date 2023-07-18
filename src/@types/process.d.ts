@@ -11,9 +11,9 @@ declare namespace NodeJS {
     GITHUB_CLIENT_ID: string
     GITHUB_CLIENT_SECRET: string
     NEXTAUTH_SECRET: string
-    AWS_REGION: string
-    AWS_BUCKET: string
-    AWS_ACCESS_KEY_ID: string
-    AWS_SECRET_ACCESS_KEY: string
+    C_AWS_REGION: string
+    C_AWS_BUCKET: string
+    C_AWS_ACCESS_KEY_ID: string
+    C_AWS_SECRET_ACCESS_KEY: string
   }
 }

@@ -9,10 +9,10 @@ import type { PutObjectCommandInput } from '@aws-sdk/client-s3'
 // upload from server: https://www.sammeechward.com/storing-images-in-s3-from-node-server
 // acl: https://stackoverflow.com/a/73551886
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION,
+  region: process.env.C_AWS_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    accessKeyId: process.env.C_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.C_AWS_SECRET_ACCESS_KEY,
   },
 })
 
@@ -23,7 +23,7 @@ export const upload = SA.encode(async (formData: FormData) => {
   const data = Buffer.from(await f.arrayBuffer())
 
   const uploadParams: PutObjectCommandInput = {
-    Bucket: process.env.AWS_BUCKET,
+    Bucket: process.env.C_AWS_BUCKET,
     Body: data,
     Key: `public/2-${f.name}`,
     ContentType: 'text/html',
