@@ -74,10 +74,10 @@ export {};
 }
 
 function main() {
-  writeEnvVars()
   if (process.env.WRITE_DOT_ENV === 'true') {
-    writeEnvConfig(process.env.NEXT_PUBLIC_APP_ENV)
+    writeEnvVars()
   }
+  writeEnvConfig(process.env.NEXT_PUBLIC_APP_ENV)
 }
 
 main()
