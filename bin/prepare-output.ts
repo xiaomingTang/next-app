@@ -13,7 +13,6 @@ async function main() {
   fs.removeSync(p('out'))
   fs.mkdirSync(p('out'))
 
-  fs.copySync(p('amplify.sh'), p('out/amplify.sh'))
   fs.copySync(p('amplify.yml'), p('out/amplify.yml'))
   fs.copySync(p('.env'), p('out/.env'))
   fs.copySync(p('.npmrc'), p('out/.npmrc'))
