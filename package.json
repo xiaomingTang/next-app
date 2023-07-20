@@ -2,6 +2,7 @@
   "$schema": "https://json.schemastore.org/package",
   "name": "next-app",
   "version": "0.1.0",
+  "packageManager": "pnpm@8.6.9",
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
