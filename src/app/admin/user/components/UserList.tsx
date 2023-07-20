@@ -1,5 +1,5 @@
 import { editUser } from './EditUser'
-import { deleteUsers } from './server'
+import { deleteUsers } from '../server'
 
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'

@@ -1,5 +1,5 @@
 import { editTag } from './EditTag'
-import { deleteTags } from './server'
+import { deleteTags } from '../server'
 
 import { formatTime } from '@/utils/formatTime'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@mui/material'
 
-import type { TagWithCreator } from './server'
+import type { TagWithCreator } from '../server'
 
 export function TagEditTagList({
   tags,

@@ -1,5 +1,5 @@
-import { getBlogs } from './admin/blog/components/server'
-import { getTags } from './admin/tag/components/server'
+import { getBlogs } from './admin/blog/server'
+import { getTags } from './admin/tag/server'
 
 import { SA } from '@/errors/utils'
 import { resolvePath } from '@/utils/url'

@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { ButtonBase, Chip, Stack, Typography, alpha } from '@mui/material'
 import { common, blue } from '@mui/material/colors'
 
-import type { BlogWithTags } from '@/app/admin/blog/components/server'
+import type { BlogWithTags } from '@/app/admin/blog/server'
 
 function boxShadow(size: 'small' | 'medium', color: string) {
   const sizeMap = {

@@ -1,6 +1,7 @@
 import { useEditBlog } from './EditBlog'
-import { deleteBlogs } from './server'
 import { BlogTypeMap } from './constants'
+
+import { deleteBlogs } from '../server'
 
 import { formatTime } from '@/utils/formatTime'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'

@@ -1,7 +1,8 @@
 'use client'
 
-import { getShortUrls } from './server'
 import { editShortUrl } from './EditUrl'
+
+import { getShortUrls } from '../server'
 
 import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
@@ -17,7 +18,7 @@ import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 import { Role } from '@prisma/client'
 
-import type { ShortUrlWithCreator } from './server'
+import type { ShortUrlWithCreator } from '../server'
 
 interface SearchProps {
   /**

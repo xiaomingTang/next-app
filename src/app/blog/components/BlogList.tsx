@@ -4,7 +4,7 @@ import { BlogItem } from './BlogItem'
 
 import { Stack, Typography } from '@mui/material'
 
-import type { BlogWithTags } from '@/app/admin/blog/components/server'
+import type { BlogWithTags } from '@/app/admin/blog/server'
 
 export function BlogList({ blogs }: { blogs: BlogWithTags[] }) {
   if (blogs.length === 0) {

@@ -4,7 +4,7 @@ import { RecommendSep } from '../components/RecommendSep'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
-import { getBlog, getRecommendBlogs } from '@/app/admin/blog/components/server'
+import { getBlog, getRecommendBlogs } from '@/app/admin/blog/server'
 import { Error } from '@/components/Error'
 import { seo } from '@/utils/seo'
 

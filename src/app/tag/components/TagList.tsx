@@ -3,7 +3,7 @@
 import { Button, Tooltip, Typography } from '@mui/material'
 import Link from 'next/link'
 
-import type { TagWithCreator } from '@/app/admin/tag/components/server'
+import type { TagWithCreator } from '@/app/admin/tag/server'
 
 export function TagList({
   tags,

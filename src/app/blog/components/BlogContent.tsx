@@ -16,7 +16,7 @@ import BorderColorIcon from '@mui/icons-material/BorderColor'
 
 import type { MDXComponents } from 'mdx/types'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
-import type { BlogWithTags } from '@/app/admin/blog/components/server'
+import type { BlogWithTags } from '@/app/admin/blog/server'
 
 import './styles/markdown-overrides.scss'
 

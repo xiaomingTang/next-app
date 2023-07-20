@@ -1,6 +1,6 @@
 'use client'
 
-import { saveShortUrl } from './server'
+import { saveShortUrl } from '../server'
 
 import { useLoading } from '@/hooks/useLoading'
 import { SA } from '@/errors/utils'
@@ -19,7 +19,7 @@ import {
 import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
 
-import type { ShortUrlWithCreator } from './server'
+import type { ShortUrlWithCreator } from '../server'
 import type { ShortUrl } from '@prisma/client'
 import type { PickAndPartial } from '@/utils/type'
 

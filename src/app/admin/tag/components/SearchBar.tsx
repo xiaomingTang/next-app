@@ -1,6 +1,6 @@
 'use client'
 
-import { getTags } from './server'
+import { getTags } from '../server'
 import { editTag } from './EditTag'
 
 import { SA } from '@/errors/utils'
@@ -16,7 +16,7 @@ import { useEffect, useMemo, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 
-import type { TagWithCreator } from './server'
+import type { TagWithCreator } from '../server'
 
 interface SearchProps {
   hash: string

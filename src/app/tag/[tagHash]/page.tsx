@@ -3,11 +3,11 @@ import { TagList } from '../components/TagList'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
-import { getBlogs } from '@/app/admin/blog/components/server'
+import { getBlogs } from '@/app/admin/blog/server'
 import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { Error } from '@/components/Error'
-import { getTag, getTags } from '@/app/admin/tag/components/server'
+import { getTag, getTags } from '@/app/admin/tag/server'
 import { BlogList } from '@/app/blog/components/BlogList'
 
 import { BlogType } from '@prisma/client'

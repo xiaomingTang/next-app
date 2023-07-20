@@ -1,6 +1,6 @@
 'use client'
 
-import { getUsers } from './server'
+import { getUsers } from '../server'
 import { editUser } from './EditUser'
 
 import { SA } from '@/errors/utils'
