@@ -20,6 +20,7 @@ export const metadata: Metadata = {
   ...seo.defaults({}),
   alternates: {
     types: {
+      // https://taoshu.in/webfeed/lets-webfeed.html
       'application/rss+xml': [{ url: 'rss.xml', title: 'RSS' }],
     },
   },
