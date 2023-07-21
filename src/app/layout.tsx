@@ -8,7 +8,6 @@ import Polyfills from '@/common/polyfills'
 import Providers from '@/common/providers'
 import PWAStaleTip from '@/pwa/PWAStaleTip'
 import { seo } from '@/utils/seo'
-import { resolvePath } from '@/utils/url'
 
 import clsx from 'clsx'
 import { Inter } from 'next/font/google'
@@ -20,7 +19,6 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   ...seo.defaults({}),
   alternates: {
-    canonical: resolvePath('/').href,
     types: {
       'application/rss+xml': [{ url: 'rss.xml', title: 'RSS' }],
     },
