@@ -1,3 +1,5 @@
+import { ENV_CONFIG } from '@/config'
+
 import { PrismaClient } from '@prisma/client'
 
 // 仅 dev 环境下才会写 global, 所以不能覆写 global 的类型,
@@ -11,7 +13,6 @@ type DevGlobal = typeof global & {
 export const prisma: PrismaClient =
   (global as DevGlobal).prisma || new PrismaClient()
 
-// md 暂且试试一律不 new;
-// 因为按官网的 best practice (如下) 仍然会导致 aws rds Too many connects
-// https://www.prisma.io/docs/guides/other/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
-;(global as DevGlobal).prisma = prisma
+if (ENV_CONFIG.public.nodeEnv !== 'production') {
+  ;(global as DevGlobal).prisma = prisma
+}
