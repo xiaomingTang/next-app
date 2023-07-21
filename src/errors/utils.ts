@@ -34,14 +34,14 @@ export function toPlainError(err: Error): PlainError {
 }
 
 function filterServerError(err: PlainError): PlainError {
-  return err
-  // if (err.code < 500) {
-  // }
-  // console.error(err.message)
-  // return {
-  //   ...err,
-  //   message: '服务器错误, 请稍后再试',
-  // }
+  if (err.code < 500) {
+    return err
+  }
+  console.error(err.message)
+  return {
+    ...err,
+    message: '服务器错误, 请稍后再试',
+  }
 }
 
 export function isPlainError(err: unknown): err is PlainError {
