@@ -5,9 +5,10 @@ import Anchor from '@/components/Anchor'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { BlogTypeMap } from '@/app/admin/blog/components/constants'
 import { useUser } from '@/user'
+import { TagItem } from '@/app/tag/components/TagItem'
 
 import { MDXRemote } from 'next-mdx-remote'
-import { Box, Button, IconButton, Tooltip, Typography } from '@mui/material'
+import { Box, Button, IconButton, Typography } from '@mui/material'
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -100,21 +101,7 @@ export function BlogContent({
       </Box>
       <Box>
         {blog.tags.map((tag) => (
-          <Tooltip key={tag.hash} title={tag.description}>
-            <Button
-              variant='outlined'
-              size='small'
-              LinkComponent={Link}
-              href={`/tag/${tag.hash}`}
-              sx={{
-                mr: 1,
-                mb: 1,
-                borderRadius: 99,
-              }}
-            >
-              {tag.name}
-            </Button>
-          </Tooltip>
+          <TagItem key={tag.hash} {...tag} sx={{ mr: 1, mb: 1 }} />
         ))}
       </Box>
       {/* content */}

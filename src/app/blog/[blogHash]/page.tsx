@@ -1,5 +1,5 @@
 import { BlogContent } from '../components/BlogContent'
-import { BlogList } from '../components/BlogList'
+import { BlogList, BlogListLoading } from '../components/BlogList'
 import { RecommendSep } from '../components/RecommendSep'
 
 import DefaultLayout from '@/layout/DefaultLayout'
@@ -7,10 +7,12 @@ import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { getBlog, getRecommendBlogs } from '@/app/admin/blog/server'
 import { Error } from '@/components/Error'
 import { seo } from '@/utils/seo'
+import { ServerComponent } from '@/components/ServerComponent'
 
 import { serialize } from 'next-mdx-remote/serialize'
 import rehypeHighlight from 'rehype-highlight'
 import remarkGfm from 'remark-gfm'
+import { Suspense } from 'react'
 
 import type { Metadata } from 'next'
 
@@ -46,9 +48,6 @@ export default async function Home({ params: { blogHash } }: Props) {
       format: 'md',
     },
   })
-  const { data: recs, error: fetchRecsError } = await getRecommendBlogs(
-    blog?.hash ?? ''
-  )
 
   return (
     <DefaultLayout>
@@ -59,7 +58,14 @@ export default async function Home({ params: { blogHash } }: Props) {
           <Error {...fetchBlogError} />
         )}
         <RecommendSep />
-        {recs ? <BlogList blogs={recs} /> : <Error {...fetchRecsError} />}
+        {/* 推荐列表 */}
+        <Suspense fallback={<BlogListLoading count={3} />}>
+          <ServerComponent
+            api={() => getRecommendBlogs(blogHash)}
+            render={(data) => <BlogList blogs={data} />}
+            errorBoundary={(err) => <Error {...err} />}
+          />
+        </Suspense>
       </DefaultBodyContainer>
     </DefaultLayout>
   )

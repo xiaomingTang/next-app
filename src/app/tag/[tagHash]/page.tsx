@@ -1,5 +1,5 @@
 import { TagDesc } from '../components/TagDesc'
-import { TagList } from '../components/TagList'
+import { TagItem } from '../components/TagItem'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
@@ -8,9 +8,12 @@ import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { Error } from '@/components/Error'
 import { getTag, getTags } from '@/app/admin/tag/server'
-import { BlogList } from '@/app/blog/components/BlogList'
+import { BlogList, BlogListLoading } from '@/app/blog/components/BlogList'
+import { shuffledArray7 } from '@/constants'
+import { ServerComponent } from '@/components/ServerComponent'
 
 import { BlogType } from '@prisma/client'
+import { Suspense } from 'react'
 
 import type { Metadata } from 'next'
 
@@ -37,39 +40,66 @@ export async function generateMetadata({
 }
 
 export default async function Home({ params: { tagHash } }: Props) {
-  const tagsRes = await getTags({})
-
-  const tagRes = await getTag({
-    hash: tagHash,
-  })
-
-  const blogsRes = await getBlogs({
-    type: BlogType.PUBLISHED,
-    tags: {
-      some: {
-        hash: tagHash,
-      },
-    },
-  })
-
   return (
     <DefaultLayout>
       <DefaultBodyContainer>
         <ScrollToTop>
-          <>
-            {tagsRes?.data && (
-              <TagList tags={tagsRes.data} activeTagHash={tagHash} />
-            )}
-            {tagsRes?.error && <Error {...tagsRes.error} />}
-          </>
-          <>
-            {tagRes?.data && <TagDesc tag={tagRes.data} />}
-            {tagRes?.error && <Error {...tagRes.error} />}
-          </>
-          <>
-            {blogsRes.data && <BlogList blogs={blogsRes.data} />}
-            {blogsRes.error && <Error {...blogsRes.error} />}
-          </>
+          {/* tag list */}
+          <Suspense
+            fallback={
+              <>
+                {shuffledArray7.slice(0, 15).map((n, i) => (
+                  <TagItem key={i} loading size={n} sx={{ mr: 1, mb: 1 }} />
+                ))}
+              </>
+            }
+          >
+            <ServerComponent
+              api={() => getTags({})}
+              render={(tags) =>
+                tags.map((tag) => (
+                  <TagItem
+                    key={tag.hash}
+                    {...tag}
+                    active={tag.hash === tagHash}
+                    sx={{ mr: 1, mb: 1 }}
+                  />
+                ))
+              }
+              errorBoundary={(err) => <Error {...err} />}
+            />
+          </Suspense>
+
+          {/* tag desc */}
+          <Suspense fallback={<TagDesc loading size={5} />}>
+            <ServerComponent
+              api={() =>
+                getTag({
+                  hash: tagHash,
+                })
+              }
+              render={(data) => <TagDesc {...data} />}
+              errorBoundary={(err) => <Error {...err} />}
+            />
+          </Suspense>
+
+          {/* blog list */}
+          <Suspense fallback={<BlogListLoading count={8} />}>
+            <ServerComponent
+              api={() =>
+                getBlogs({
+                  type: BlogType.PUBLISHED,
+                  tags: {
+                    some: {
+                      hash: tagHash,
+                    },
+                  },
+                })
+              }
+              render={(data) => <BlogList blogs={data} />}
+              errorBoundary={(err) => <Error {...err} />}
+            />
+          </Suspense>
         </ScrollToTop>
       </DefaultBodyContainer>
     </DefaultLayout>

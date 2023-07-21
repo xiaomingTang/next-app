@@ -1,20 +1,32 @@
 'use client'
 
-import { Typography } from '@mui/material'
+import { Skeleton, Typography } from '@mui/material'
 import SellIcon from '@mui/icons-material/Sell'
 
+import type { LoadingAble } from '@/components/ServerComponent'
 import type { Tag } from '@prisma/client'
 
-export function TagDesc({ tag }: { tag: Tag }) {
+type TagDescProps = LoadingAble<Tag>
+
+export function TagDesc(tag: TagDescProps) {
   return (
     <Typography sx={{ pb: 2 }}>
       <Typography
         component='b'
         sx={{ fontWeight: 'bold', color: 'primary.main' }}
       >
-        <SellIcon fontSize='inherit' /> {tag.name}
+        <SellIcon fontSize='inherit' />{' '}
+        {tag.loading ? (
+          <Skeleton
+            width={tag.size * 16 * 3}
+            height={24}
+            sx={{ display: 'inline-block' }}
+          />
+        ) : (
+          tag.name
+        )}
       </Typography>
-      : {tag.description}
+      {!tag.loading && <>: {tag.description}</>}
     </Typography>
   )
 }
