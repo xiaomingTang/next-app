@@ -9,7 +9,7 @@ function Entry({
   pathname: string
   name: React.ReactNode
 }) {
-  const curPathname = usePathname()
+  const curPathname = usePathname() ?? ''
   const isActive =
     curPathname === pathname ||
     (curPathname.startsWith(pathname) && curPathname.startsWith(`${pathname}/`))
