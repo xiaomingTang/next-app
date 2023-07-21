@@ -1,7 +1,8 @@
 'use client'
 
-import { getUsers } from '../server'
 import { editUser } from './EditUser'
+
+import { getUsers } from '../server'
 
 import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'

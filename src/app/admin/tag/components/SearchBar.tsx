@@ -1,7 +1,8 @@
 'use client'
 
-import { getTags } from '../server'
 import { editTag } from './EditTag'
+
+import { getTags } from '../server'
 
 import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'

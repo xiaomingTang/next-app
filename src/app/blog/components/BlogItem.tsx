@@ -2,7 +2,6 @@
 
 import { friendlyFormatTime } from '@/utils/formatTime'
 import { dark, light } from '@/utils/theme'
-import { TagItem } from '@/app/tag/components/TagItem'
 
 import Link from 'next/link'
 import {
