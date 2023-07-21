@@ -28,12 +28,16 @@ const tagSelector = {
   },
 }
 
-export const getTag = SA.encode(async (props: Prisma.TagWhereUniqueInput) =>
-  prisma.tag.findUnique({
+export const getTag = SA.encode(async (props: Prisma.TagWhereUniqueInput) => {
+  const res = await prisma.tag.findUnique({
     where: props,
     select: tagSelector,
   })
-)
+  if (!res) {
+    throw Boom.notFound('标签不存在')
+  }
+  return res
+})
 
 export const getTags = SA.encode(async (props: Prisma.TagWhereInput) =>
   prisma.tag.findMany({
