@@ -345,7 +345,11 @@ export function Uploader() {
       {/* 高级配置 */}
       <ListItem
         disablePadding
-        secondaryAction={open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        secondaryAction={
+          <IconButton tabIndex={-1} onClick={() => setOpen((prev) => !prev)}>
+            {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </IconButton>
+        }
         sx={{ bgcolor: 'background.paper' }}
       >
         <ListItemButton onClick={() => setOpen((prev) => !prev)}>
