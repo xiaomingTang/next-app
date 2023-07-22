@@ -1,6 +1,6 @@
 'use server'
 
-import { SA } from '@/errors/utils'
+import { SA, pipePromiseAllSettled } from '@/errors/utils'
 import { getSelf } from '@/user/server'
 import { validateRequest } from '@/request/validator'
 import { formatTime } from '@/utils/formatTime'
@@ -82,11 +82,6 @@ export const uploadFiles = SA.encode(async (formData: FormData) => {
     randomFilenameByServer: inputConfig.randomFilenameByServer ?? true,
     dirname: inputConfig.dirname || formatTime(new Date()).slice(0, 10),
   })
-  //   {
-  //   private: formData.get('private') ?? false,
-  //   randomFilenameByServer: formData.get('randomFilenameByServer') ?? true,
-  //   dirname: formData.get('dirname') || formatTime(new Date()).slice(0, 10),
-  // })
   const promise = Promise.allSettled(
     files.map(async (f) => {
       const rootPath = config.private ? 'private' : 'public'
@@ -115,7 +110,7 @@ export const uploadFiles = SA.encode(async (formData: FormData) => {
         url: targetUrl.href,
       }
     })
-  )
+  ).then(pipePromiseAllSettled)
   return promise
 })
 
