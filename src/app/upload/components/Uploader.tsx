@@ -2,7 +2,7 @@
 
 import { deleteFile, uploadFiles } from '../server'
 
-import { SA } from '@/errors/utils'
+import { SA, toPlainError } from '@/errors/utils'
 import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 
@@ -27,6 +27,8 @@ import {
   Button,
   Collapse,
   ListItemButton,
+  Tooltip,
+  Typography,
 } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { useCallback, useMemo, useState } from 'react'
@@ -45,17 +47,39 @@ interface FileInfo {
    * 上传成功才有 key
    */
   url?: string
+  /**
+   * 上传失败的原因
+   */
+  error?: string
 }
 
 function geneKey({ file }: FileInfo) {
   return `${file.name} - ${file.size} - ${file.type} - ${file.lastModified}`
 }
 
-const uploadStatusMap: Record<FileInfo['status'], React.ReactNode> = {
-  'before-upload': <UploadFileIcon color='info' />,
-  succeed: <CheckCircleIcon color='success' />,
-  failed: <WarningIcon color='error' />,
-  pending: <HourglassBottomIcon color='disabled' />,
+const uploadStatusMap: Record<
+  FileInfo['status'],
+  {
+    title: string
+    icon: React.ReactNode
+  }
+> = {
+  'before-upload': {
+    title: '待上传',
+    icon: <UploadFileIcon color='info' />,
+  },
+  succeed: {
+    title: '上传成功',
+    icon: <CheckCircleIcon color='success' />,
+  },
+  failed: {
+    title: '上传失败',
+    icon: <WarningIcon color='error' />,
+  },
+  pending: {
+    title: '上传中',
+    icon: <HourglassBottomIcon color='disabled' />,
+  },
 }
 
 // TODO: 做成弹窗形式 & 简易上传弹窗 & 全屏/轻量/单个文件上传 等
@@ -133,6 +157,10 @@ export function Uploader() {
                   url:
                     resItem.status === 'fulfilled'
                       ? resItem.value.url
+                      : undefined,
+                  error:
+                    resItem.status === 'rejected'
+                      ? toPlainError(resItem.reason).message
                       : undefined,
                 }
               })
@@ -220,14 +248,28 @@ export function Uploader() {
                   删除
                 </CustomLoadingButton>
               )}
-              <IconButton
-                edge='end'
-                aria-label='状态'
-                disabled
-                role='presentation'
-              >
-                {uploadStatusMap[info.status]}
-              </IconButton>
+              {info.status === 'failed' ? (
+                <Tooltip
+                  title={`${uploadStatusMap[info.status].title}: ${
+                    info.error ?? ''
+                  }`}
+                >
+                  <IconButton
+                    edge='end'
+                    aria-label={uploadStatusMap[info.status].title}
+                  >
+                    {uploadStatusMap[info.status].icon}
+                  </IconButton>
+                </Tooltip>
+              ) : (
+                <IconButton
+                  edge='end'
+                  aria-label={uploadStatusMap[info.status].title}
+                  disabled
+                >
+                  {uploadStatusMap[info.status].icon}
+                </IconButton>
+              )}
             </>
           }
         >
@@ -236,10 +278,27 @@ export function Uploader() {
               text={info.url}
               onCopy={() => toast.success('链接复制成功')}
             >
-              <ListItemText primary={info.file.name} sx={{ cursor: 'copy' }} />
+              <ListItemText
+                primary={
+                  <Typography
+                    color={info.status === 'failed' ? 'error' : undefined}
+                  >
+                    {info.file.name}
+                  </Typography>
+                }
+                sx={{ cursor: 'copy' }}
+              />
             </CopyToClipboard>
           ) : (
-            <ListItemText primary={info.file.name} />
+            <ListItemText
+              primary={
+                <Typography
+                  color={info.status === 'failed' ? 'error' : undefined}
+                >
+                  {info.file.name}
+                </Typography>
+              }
+            />
           )}
         </ListItem>
       ))}
