@@ -68,6 +68,9 @@ dependencies:
   material-ui-colors:
     specifier: ^1.0.0
     version: 1.0.0
+  mime-types:
+    specifier: ^2.1.35
+    version: 2.1.35
   nanoid:
     specifier: ^4.0.2
     version: 4.0.2
@@ -163,6 +166,9 @@ devDependencies:
   '@types/lodash-es':
     specifier: ^4.17.7
     version: 4.17.7
+  '@types/mime-types':
+    specifier: ^2.1.1
+    version: 2.1.1
   '@types/node':
     specifier: 20.2.5
     version: 20.2.5
@@ -3972,6 +3978,10 @@ packages:
   /@types/mdx@2.0.5:
     resolution: {integrity: sha512-76CqzuD6Q7LC+AtbPqrvD9AqsN0k8bsYo2bM2J8pmNldP1aIPAbzUQ7QbobyXL4eLr1wK5x8FZFe8eF/ubRuBg==}
     dev: false
+
+  /@types/mime-types@2.1.1:
+    resolution: {integrity: sha512-vXOTGVSLR2jMw440moWTC7H19iUyLtP3Z1YTj7cSsubOICinjMxFeb/V57v9QdyyPGbbWolUFSSmSiRSn94tFw==}
+    dev: true
 
   /@types/minimatch@5.1.2:
     resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
