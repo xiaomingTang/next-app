@@ -283,19 +283,11 @@ export function Uploader() {
 
   return (
     <>
-      {/* 文件列表 */}
-      <List
-        sx={{ width: '400px', maxWidth: '90%', bgcolor: 'background.paper' }}
-      >
-        {filesDisplayElem}
-        {filesActionElem}
-      </List>
-
       {/* 高级配置 */}
       <ListItem
         disablePadding
         secondaryAction={open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-        sx={{ mt: 2, bgcolor: 'background.paper' }}
+        sx={{ bgcolor: 'background.paper' }}
       >
         <ListItemButton onClick={() => setOpen((prev) => !prev)}>
           <ListItemText primary='高级配置' />
@@ -308,6 +300,19 @@ export function Uploader() {
           {randomFilenameElem}
         </Stack>
       </Collapse>
+      {/* 文件列表 */}
+      <List
+        sx={{
+          width: '100%',
+          maxWidth: '400px',
+          mx: 'auto',
+          mt: 2,
+          bgcolor: 'background.paper',
+        }}
+      >
+        {filesDisplayElem}
+        {filesActionElem}
+      </List>
     </>
   )
 }
