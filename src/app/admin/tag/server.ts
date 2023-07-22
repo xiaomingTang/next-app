@@ -28,12 +28,16 @@ const tagSelector = {
   },
 }
 
-export const getTag = SA.encode(async (props: Prisma.TagWhereUniqueInput) =>
-  prisma.tag.findUnique({
+export const getTag = SA.encode(async (props: Prisma.TagWhereUniqueInput) => {
+  const res = await prisma.tag.findUnique({
     where: props,
     select: tagSelector,
   })
-)
+  if (!res) {
+    throw Boom.notFound('标签不存在')
+  }
+  return res
+})
 
 export const getTags = SA.encode(async (props: Prisma.TagWhereInput) =>
   prisma.tag.findMany({
@@ -123,23 +127,32 @@ export const saveTag = SA.encode(async (props: Static<typeof saveTagDto>) => {
 
 export const deleteTags = SA.encode(async (hashes: string[]) => {
   const self = await getSelf(true)
+  let res: Prisma.BatchPayload
   if (self.role === Role.ADMIN) {
     // ADMIN 可以直接删除标签
-    return prisma.tag.deleteMany({
+    res = await prisma.tag.deleteMany({
       where: {
         hash: {
           in: hashes,
         },
       },
     })
-  }
-  // 否则, 只有作者才能删除对应标签
-  return prisma.tag.deleteMany({
-    where: {
-      hash: {
-        in: hashes,
+    if (res.count === 0) {
+      throw Boom.badRequest('待删除的标签不存在')
+    }
+  } else {
+    // 否则, 只有作者才能删除对应标签
+    res = await prisma.tag.deleteMany({
+      where: {
+        hash: {
+          in: hashes,
+        },
+        creatorId: self.id,
       },
-      creatorId: self.id,
-    },
-  })
+    })
+    if (res.count === 0) {
+      throw Boom.badRequest('待删除的标签不存在，或权限不足')
+    }
+  }
+  return res
 })

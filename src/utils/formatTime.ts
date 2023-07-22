@@ -7,8 +7,8 @@ function padTwo(s: string | number) {
  * 一小时内, 显示 "一小时内"
  * 一天内, 显示 "xx 小时前"
  * 一周内, 显示 "xx 天前"
- * 一周以上, 同一年, 显示 "xx-xx"
- * 一周以上, 不同年, 显示 "xxxx-xx-xx"
+ * 一周以上, 同一年, 显示 "x月x日" (显示年月日, 而非 xx-xx, 因为 a11y)
+ * 一周以上, 不同年, 显示 "xxxx年x月x日" (显示年月日, 而非 xxxx-xx-xx, 因为 a11y)
  */
 export function friendlyFormatTime(time: number | string | Date) {
   const date = time instanceof Date ? time : new Date(time)
@@ -24,12 +24,11 @@ export function friendlyFormatTime(time: number | string | Date) {
   if (diff < 7 * 24 * hour) {
     return `${Math.floor(diff / (24 * hour))}天前`
   }
+  const md = `${date.getMonth() + 1}月${date.getDate()}日`
   if (nowDate.getFullYear() === date.getFullYear()) {
-    return `${padTwo(date.getMonth() + 1)}-${padTwo(date.getDate())}`
+    return md
   }
-  return `${date.getFullYear()}-${padTwo(date.getMonth() + 1)}-${padTwo(
-    date.getDate()
-  )}`
+  return `${date.getFullYear()}年${md}`
 }
 
 /**

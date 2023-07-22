@@ -1,18 +1,25 @@
 const fs = require('fs')
 const path = require('path')
+const dotenv = require('dotenv')
 
-require('dotenv').config({
-  path: path.resolve(process.cwd(), '.env.local'),
+const root = process.cwd()
+
+function p(...paths) {
+  return path.normalize(path.join(root, ...paths))
+}
+
+dotenv.config({
+  path: p('.env.local'),
 })
-require('dotenv').config({
-  path: path.resolve(process.cwd(), '.env'),
+dotenv.config({
+  path: p('.env'),
 })
 
 function requireJsonOrCatch(f) {
   try {
     return require(f)
   } catch (e) {
-    console.warn(`\x1b[33mconfig file not found: ${f}\x1b[0m`)
+    console.warn(`config file not found: ${f}`)
     return {}
   }
 }
@@ -27,15 +34,31 @@ function getEnvConfig(env) {
   }
 }
 
-function writeEnv(env) {
-  const jsFile = path.resolve(process.cwd(), 'public/__ENV_CONFIG__.js')
+function writeEnvVars() {
+  const localEnvStr = fs.readFileSync(p('.env'))
+  const requiredEnvObj = dotenv.parse(localEnvStr)
+  // 先清空 .env 文件
+  fs.writeFileSync(p('.env'), '', {
+    flag: 'w',
+  })
+  // 再重写 .env 文件(目的是将命令行中的环境变量写入到 .env 文件中)
+  Object.keys(requiredEnvObj).forEach((k) => {
+    const v = process.env[k] ?? requiredEnvObj[k] ?? ''
+    fs.writeFileSync(p('.env'), `${k}=${v}\n`, {
+      flag: 'a',
+    })
+  })
+}
+
+function writeEnvConfig(env) {
+  const jsFile = p('public/__ENV_CONFIG__.js')
   const jsContent = `globalThis.__ENV_CONFIG__ = ${JSON.stringify(
     getEnvConfig(env)
   )};\n`
   fs.writeFileSync(jsFile, jsContent)
-  console.log(`\x1b[32menv config written into ${jsFile}\x1b[0m`)
+  console.log(`env config written into ${jsFile}`)
 
-  const typeFile = path.resolve(process.cwd(), 'public/__ENV_CONFIG__.d.ts')
+  const typeFile = p('public/__ENV_CONFIG__.d.ts')
   const typeContent = `const VALUE_OF__ENV_CONFIG__ = ${JSON.stringify(
     getEnvConfig(env)
   )};
@@ -47,11 +70,14 @@ declare global {
 export {};
 `
   fs.writeFileSync(typeFile, typeContent)
-  console.log(`\x1b[32menv config type written into ${typeFile}\x1b[0m`)
+  console.log(`env config type written into ${typeFile}`)
 }
 
 function main() {
-  writeEnv(process.env.NEXT_PUBLIC_APP_ENV)
+  if (process.env.WRITE_DOT_ENV === 'true') {
+    writeEnvVars()
+  }
+  writeEnvConfig(process.env.NEXT_PUBLIC_APP_ENV)
 }
 
 main()

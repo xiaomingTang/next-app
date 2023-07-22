@@ -32,6 +32,7 @@ model User {
   chapterHistories ChapterHistory[]
   blogs            Blog[]
   tags             Tag[]
+  uploads          Upload[]
 }
 
 model Novel {
@@ -93,6 +94,15 @@ model Blog {
   content     String   @default("") @db.Text()
   description String   @default("") @db.VarChar(1000)
   tags        Tag[]
+  creatorId   Int
+  creator     User     @relation(fields: [creatorId], references: [id])
+}
+
+model Upload {
+  hash        String   @id
+  description String   @default("") @db.VarChar(100)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   creatorId   Int
   creator     User     @relation(fields: [creatorId], references: [id])
 }

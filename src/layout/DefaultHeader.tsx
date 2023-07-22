@@ -3,6 +3,7 @@
 import { UserButton } from './CornerButtons/UserButton'
 import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
 import { BlogEntry } from './CornerButtons/Entries'
+import { RssButton } from './CornerButtons/RssButton'
 
 import { dark, light } from '@/utils/theme'
 
@@ -59,6 +60,7 @@ export function DefaultRawHeader() {
           <Stack direction='row'>
             <UserButton />
             <ThemeToggleButton />
+            <RssButton />
           </Stack>
         </Stack>
       </AppBar>

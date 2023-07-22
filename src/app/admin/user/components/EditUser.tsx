@@ -1,6 +1,6 @@
 'use client'
 
-import { saveUser } from './server'
+import { saveUser } from '../server'
 
 import { useLoading } from '@/hooks/useLoading'
 import { SA } from '@/errors/utils'

@@ -1,5 +1,7 @@
 'use client'
 
+import { useHydrated } from '@/hooks/useHydrated'
+
 import { useColorScheme } from '@mui/material/styles'
 
 /**
@@ -7,8 +9,9 @@ import { useColorScheme } from '@mui/material/styles'
  */
 export function DiffMode<T>(props: Record<'light' | 'dark', T>) {
   const { mode } = useColorScheme()
-  if (mode === 'dark') {
-    return props.dark
+  const hydrated = useHydrated()
+  if (!hydrated) {
+    return props.light
   }
-  return props.light
+  return mode === 'dark' ? props.dark : props.light
 }

@@ -1,5 +1,6 @@
 import { editShortUrl } from './EditUrl'
-import { deleteShortUrls } from './server'
+
+import { deleteShortUrls } from '../server'
 
 import { formatTime } from '@/utils/formatTime'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
@@ -24,7 +25,7 @@ import {
 import { Role } from '@prisma/client'
 import { toast } from 'react-hot-toast'
 
-import type { ShortUrlWithCreator } from './server'
+import type { ShortUrlWithCreator } from '../server'
 
 export function UrlEditUrlList({
   urls,

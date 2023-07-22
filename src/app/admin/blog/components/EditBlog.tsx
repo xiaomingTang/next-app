@@ -1,14 +1,15 @@
-import { saveBlog } from './server'
 import { BlogTypeMap, sortedBlogTypes } from './constants'
 import { editMarkdown } from './editMarkdown'
 import { MultiSelect } from './TagsSelect'
+
+import { saveBlog } from '../server'
 
 import { SA } from '@/errors/utils'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import { useLoading } from '@/hooks/useLoading'
-import { getTags, saveTag } from '@/app/admin/tag/components/server'
+import { getTags, saveTag } from '@/app/admin/tag/server'
 
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import CloseIcon from '@mui/icons-material/Close'
@@ -33,7 +34,7 @@ import {
 import { noop } from 'lodash-es'
 import { BlogType } from '@prisma/client'
 
-import type { BlogWithTags } from './server'
+import type { BlogWithTags } from '../server'
 import type { TransitionProps } from '@mui/material/transitions'
 import type { PickAndPartial } from '@/utils/type'
 

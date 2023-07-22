@@ -1,5 +1,6 @@
 import { editTag } from './EditTag'
-import { deleteTags } from './server'
+
+import { deleteTags } from '../server'
 
 import { formatTime } from '@/utils/formatTime'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
@@ -7,6 +8,7 @@ import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'
 import { SA } from '@/errors/utils'
 import { RoleNameMap } from '@/constants'
+import { AuthRequired } from '@/components/AuthRequired'
 
 import {
   ButtonGroup,
@@ -18,8 +20,9 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
+import { Role } from '@prisma/client'
 
-import type { TagWithCreator } from './server'
+import type { TagWithCreator } from '../server'
 
 export function TagEditTagList({
   tags,
@@ -60,35 +63,37 @@ export function TagEditTagList({
                 <TableCell>{formatTime(tag.updatedAt)}</TableCell>
                 <TableCell>{formatTime(tag.createdAt)}</TableCell>
                 <TableCell>
-                  <ButtonGroup size='small'>
-                    <CustomLoadingButton
-                      variant='contained'
-                      onClick={cat(async () => {
-                        await editTag(tag)
-                        onChange()
-                      })}
-                    >
-                      编辑
-                    </CustomLoadingButton>
-                    <CustomLoadingButton
-                      color='error'
-                      variant='contained'
-                      onClick={cat(async () => {
-                        const blogLen = tag._count.blogs
-                        if (
-                          blogLen === 0 ||
-                          (await customConfirm(
-                            `你确定删除标签【${tag.name}】吗？它已经有 ${blogLen} 篇博客了哦`
-                          ))
-                        ) {
-                          await deleteTags([tag.hash]).then(SA.decode)
+                  <AuthRequired roles={[Role.ADMIN]} userIds={[tag.creatorId]}>
+                    <ButtonGroup size='small'>
+                      <CustomLoadingButton
+                        variant='contained'
+                        onClick={cat(async () => {
+                          await editTag(tag)
                           onChange()
-                        }
-                      })}
-                    >
-                      删除 ({tag._count.blogs})
-                    </CustomLoadingButton>
-                  </ButtonGroup>
+                        })}
+                      >
+                        编辑
+                      </CustomLoadingButton>
+                      <CustomLoadingButton
+                        color='error'
+                        variant='contained'
+                        onClick={cat(async () => {
+                          const blogLen = tag._count.blogs
+                          if (
+                            blogLen === 0 ||
+                            (await customConfirm(
+                              `你确定删除标签【${tag.name}】吗？它已经有 ${blogLen} 篇博客了哦`
+                            ))
+                          ) {
+                            await deleteTags([tag.hash]).then(SA.decode)
+                            onChange()
+                          }
+                        })}
+                      >
+                        删除 ({tag._count.blogs})
+                      </CustomLoadingButton>
+                    </ButtonGroup>
+                  </AuthRequired>
                 </TableCell>
               </TableRow>
             ))}

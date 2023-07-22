@@ -13,9 +13,9 @@ async function main() {
   fs.removeSync(p('out'))
   fs.mkdirSync(p('out'))
 
-  fs.copySync(p('.npmrc'), p('out/.npmrc'))
+  fs.copySync(p('amplify.yml'), p('out/amplify.yml'))
   fs.copySync(p('.env'), p('out/.env'))
-  // 宝塔读不到 .env.local, 干脆就不复制过去了
+  fs.copySync(p('.npmrc'), p('out/.npmrc'))
   fs.copySync(p('public'), p('out/public'))
   fs.copySync(p('.next/standalone'), p('out'))
   fs.copySync(p('.next/cache'), p('out/.next/cache'))

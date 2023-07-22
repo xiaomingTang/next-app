@@ -1,6 +1,6 @@
 'use client'
 
-import { saveTag } from './server'
+import { saveTag } from '../server'
 
 import { useLoading } from '@/hooks/useLoading'
 import { SA } from '@/errors/utils'

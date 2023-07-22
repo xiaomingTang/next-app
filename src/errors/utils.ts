@@ -78,6 +78,7 @@ function serverActionEncoder<Args extends unknown[], Ret>(
 ): Func<Args, Promise<ServerResponse<Ret>>> {
   return async (...args) => {
     try {
+      console.log(`[api-log]: in [${process.cwd()}]: `, ...args)
       const ret = await func(...args)
       return {
         data: ret,

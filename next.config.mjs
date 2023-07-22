@@ -42,6 +42,37 @@ const nextConfig = {
   experimental: {
     serverActions: true,
   },
+  async headers() {
+    return [
+      {
+        source: '/blog/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/(pwa|scripts|static)/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, must-revalidate',
+          },
+        ],
+      },
+      {
+        source: '/(__ENV_CONFIG__\\.js|manifest\\.json|favicon.ico)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, must-revalidate',
+          },
+        ],
+      },
+    ]
+  },
 }
 
 export default withBundleAnalyzer(withPWA(nextConfig))

@@ -4,10 +4,19 @@ import { friendlyFormatTime } from '@/utils/formatTime'
 import { dark, light } from '@/utils/theme'
 
 import Link from 'next/link'
-import { ButtonBase, Chip, Stack, Typography, alpha } from '@mui/material'
+import {
+  ButtonBase,
+  Chip,
+  Skeleton,
+  Stack,
+  Typography,
+  alpha,
+} from '@mui/material'
 import { common, blue } from '@mui/material/colors'
 
-import type { BlogWithTags } from '@/app/admin/blog/components/server'
+import type { LoadingAble } from '@/components/ServerComponent'
+import type { BlogWithTags } from '@/app/admin/blog/server'
+import type { SxProps, Theme } from '@mui/material'
 
 function boxShadow(size: 'small' | 'medium', color: string) {
   const sizeMap = {
@@ -17,12 +26,71 @@ function boxShadow(size: 'small' | 'medium', color: string) {
   return `0 0 ${sizeMap[size]} ${color}`
 }
 
-export function BlogItem({
-  className,
-  ...blog
-}: Omit<BlogWithTags, 'content'> & {
-  className?: string
-}) {
+type BlogItemProps = LoadingAble<Omit<BlogWithTags, 'content'>> & {
+  sx?: SxProps<Theme>
+}
+
+function BlogTitle(blog: BlogItemProps) {
+  if (blog.loading) {
+    return <Skeleton width={`${blog.size * 10}%`} height={24} />
+  }
+  return (
+    <Typography component='h2' sx={{ fontWeight: 'bold' }}>
+      {blog.title}
+    </Typography>
+  )
+}
+
+function BlogDesc(blog: BlogItemProps) {
+  return (
+    <Typography
+      sx={{
+        [dark()]: {
+          backgroundColor: alpha(common.white, 0.025),
+        },
+        [light()]: {
+          backgroundColor: alpha(common.black, 0.025),
+        },
+        p: 1,
+        borderRadius: 1,
+        fontSize: '0.8em',
+      }}
+    >
+      {blog.loading ? (
+        <>
+          <Skeleton width='100%' height={20} />
+          <Skeleton width={`${blog.size * 10}%`} height={20} />
+        </>
+      ) : (
+        blog.description
+      )}
+    </Typography>
+  )
+}
+
+function BlogTime(blog: BlogItemProps) {
+  return (
+    <Typography
+      component='time'
+      dateTime={blog.loading ? '' : friendlyFormatTime(blog.updatedAt)}
+      sx={{ color: 'InactiveCaptionText' }}
+    >
+      {blog.loading ? (
+        <Skeleton width={16 * 5} height={20} />
+      ) : (
+        friendlyFormatTime(blog.updatedAt)
+      )}
+    </Typography>
+  )
+}
+
+export function BlogItem({ sx, ...blog }: BlogItemProps) {
+  const blogDescAriaLabel = blog.loading
+    ? '加载中'
+    : `${friendlyFormatTime(blog.updatedAt)}更新的博客《${
+        blog.title
+      }》；简介是：${blog.description}`
+
   return (
     <ButtonBase
       sx={{
@@ -48,42 +116,20 @@ export function BlogItem({
             boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
           },
         },
+        ...sx,
       }}
-      className={className}
       LinkComponent={Link}
-      href={`/blog/${blog.hash}`}
-      aria-label={`${friendlyFormatTime(blog.updatedAt)}更新的博客《${
-        blog.title
-      }》；简介是：${blog.description}`}
+      disabled={blog.loading}
+      href={blog.loading ? '/' : `/blog/${blog.hash}`}
+      aria-label={blogDescAriaLabel}
+      role={blog.loading ? 'none' : undefined}
     >
       <Stack direction='column' spacing={1} sx={{ width: '100%' }} aria-hidden>
-        <Typography component='h2' sx={{ fontWeight: 'bold' }}>
-          {blog.title}
-        </Typography>
-        <Typography
-          sx={{
-            [dark()]: {
-              backgroundColor: alpha(common.white, 0.025),
-            },
-            [light()]: {
-              backgroundColor: alpha(common.black, 0.025),
-            },
-            p: 1,
-            borderRadius: 1,
-            fontSize: '0.8em',
-          }}
-        >
-          {blog.description}
-        </Typography>
+        <BlogTitle {...blog} />
+        <BlogDesc {...blog} />
         <Stack direction='row' alignItems='center' spacing={1} fontSize='0.8em'>
-          <Typography
-            component='time'
-            dateTime={friendlyFormatTime(blog.updatedAt)}
-            sx={{ color: 'InactiveCaptionText' }}
-          >
-            {friendlyFormatTime(blog.updatedAt)}
-          </Typography>
-          {blog.tags.map((tag) => (
+          <BlogTime {...blog} />
+          {(blog.tags ?? []).map((tag) => (
             <Chip key={tag.hash} label={tag.name} />
           ))}
         </Stack>
