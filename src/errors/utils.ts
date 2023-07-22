@@ -18,7 +18,21 @@ export type ServerResponse<T> =
       error: PlainError
     }
 
-export function toPlainError(err: Error): PlainError {
+export function toError(err: unknown): Error {
+  if (err instanceof Error) {
+    return err
+  }
+  const message =
+    (err as PlainError)?.message ??
+    (err as PlainError)?.toString() ??
+    '未知错误'
+  const retError = new Error(message)
+  retError.code = (err as PlainError)?.code ?? httpStatus.INTERNAL_SERVER_ERROR
+  return retError
+}
+
+export function toPlainError(inputError: unknown): PlainError {
+  const err = toError(inputError)
   if (Boom.isBoom(err)) {
     const { payload } = err.output
     return {
@@ -33,7 +47,7 @@ export function toPlainError(err: Error): PlainError {
   }
 }
 
-function filterServerError(err: PlainError): PlainError {
+export function filterServerError(err: PlainError): PlainError {
   if (err.code < 500) {
     return err
   }
@@ -44,21 +58,21 @@ function filterServerError(err: PlainError): PlainError {
   }
 }
 
-export function isPlainError(err: unknown): err is PlainError {
-  return !!err && !!(err as PlainError).code && !!(err as PlainError).message
+export function pipePromiseAllSettled<T>(
+  resList: PromiseSettledResult<T>[]
+): PromiseSettledResult<T>[] {
+  return resList.map((res) =>
+    res.status === 'fulfilled'
+      ? res
+      : ({
+          ...res,
+          reason: filterServerError(toPlainError(res.reason)),
+        } as PromiseRejectedResult)
+  )
 }
 
-export function toError(err: unknown): Error {
-  if (err instanceof Error) {
-    return err
-  }
-  const message =
-    (err as PlainError)?.message ??
-    (err as PlainError)?.toString() ??
-    'unknown error'
-  const retError = new Error(message)
-  retError.code = (err as PlainError)?.code ?? httpStatus.INTERNAL_SERVER_ERROR
-  return retError
+export function isPlainError(err: unknown): err is PlainError {
+  return !!err && !!(err as PlainError).code && !!(err as PlainError).message
 }
 
 /**
@@ -87,7 +101,7 @@ function serverActionEncoder<Args extends unknown[], Ret>(
     } catch (error) {
       return {
         data: undefined,
-        error: filterServerError(toPlainError(toError(error))),
+        error: filterServerError(toPlainError(error)),
       }
     }
   }
