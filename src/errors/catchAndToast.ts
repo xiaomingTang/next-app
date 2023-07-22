@@ -19,8 +19,7 @@ export function cat<Args extends unknown[], Ret>(
       const ret = (await callback(...args)) as AwaitedValue<Ret>
       return ret
     } catch (catchError) {
-      const error = toError(catchError)
-      toast.error(error.message ?? '服务器错误，请稍后再试')
+      toast.error(toError(catchError).message ?? '服务器错误，请稍后再试')
       return undefined
     }
   }
