@@ -249,7 +249,7 @@ export function Uploader() {
   const filesActionElem = (
     <ListItem key='actions'>
       <ButtonGroup fullWidth>
-        <Button fullWidth>
+        <Button fullWidth tabIndex={-1}>
           添加文件
           <input
             type='file'
