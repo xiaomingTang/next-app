@@ -48,7 +48,7 @@ export default function PWAStaleTip() {
         <CircularProgress
           aria-label='pwa loading'
           size={16}
-          className='align-middle'
+          sx={{ color: 'inherit', verticalAlign: 'middle' }}
         />
       </IconButton>
     )
@@ -78,7 +78,7 @@ export default function PWAStaleTip() {
           <CircularProgress
             aria-label='pwa loading'
             size={16}
-            className='align-middle'
+            sx={{ color: 'inherit', verticalAlign: 'middle' }}
           />
         </Box>
       )}
