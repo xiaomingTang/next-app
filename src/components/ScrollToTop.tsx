@@ -8,7 +8,6 @@ import {
   Fab,
   Fade,
   circularProgressClasses,
-  useTheme,
 } from '@mui/material'
 import { useRef } from 'react'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
@@ -18,7 +17,6 @@ export function ScrollToTop({
 }: {
   children: React.ReactNode | React.ReactNode[]
 }) {
-  const theme = useTheme()
   const elemRef = useRef<HTMLDivElement>(null)
   const scrollStarterRef = useRef<HTMLDivElement>(null)
   const { percent } = useElementScroll({ elem: elemRef })
@@ -33,43 +31,40 @@ export function ScrollToTop({
         {children}
       </Box>
       <Fade in={percent > 0}>
-        <Box
+        <Fab
+          size='medium'
+          onClick={() => {
+            scrollStarterRef.current?.scrollIntoView({
+              behavior: 'smooth',
+            })
+          }}
+          aria-label={`当前浏览进度 ${Math.floor(
+            percent * 100
+          )}%，点击滚动到顶部`}
           sx={{
             position: 'fixed',
-            bottom: 48,
-            right: 16,
-            zIndex: theme.zIndex.fab,
+            bottom: '48px',
+            right: '16px',
           }}
         >
+          <KeyboardArrowUpIcon color='info' />
           <CircularProgress
             variant='determinate'
-            size={46}
-            color='primary'
+            size={48}
+            color='info'
             sx={{
               position: 'absolute',
-              top: -3,
-              left: -3,
+              top: 0,
+              left: 0,
               [`& .${circularProgressClasses.circle}`]: {
                 strokeLinecap: 'round',
+                backgroundColor: 'red',
               },
             }}
             value={percent * 100}
             aria-hidden
           />
-          <Fab
-            size='small'
-            onClick={() => {
-              scrollStarterRef.current?.scrollIntoView({
-                behavior: 'smooth',
-              })
-            }}
-            aria-label={`当前浏览进度 ${Math.floor(
-              percent * 100
-            )}%，点击滚动到顶部`}
-          >
-            <KeyboardArrowUpIcon />
-          </Fab>
-        </Box>
+        </Fab>
       </Fade>
     </>
   )
