@@ -80,8 +80,7 @@ export function useEditBlog() {
     error: fetchAllTagsError,
   } = useSWR('getTags', () => getTags({}).then(SA.decode))
   const promiseRef = useRef(defaultPromise)
-  const { loading: addTagLoading, withLoading: withAddTagLoading } =
-    useLoading()
+  const [addTagLoading, withAddTagLoading] = useLoading()
 
   const elem = (
     <>

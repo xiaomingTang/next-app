@@ -33,7 +33,7 @@ export const LoginModal = NiceModal.create(
   ({ onSuccess, onCancel }: LoginModalProps) => {
     const modal = useModal()
     const [passwordVisible, setPasswordVisible] = useState(false)
-    const { loading, withLoading } = useLoading()
+    const [loading, withLoading] = useLoading()
     const { handleSubmit, control, setError } = useForm<{
       email: string
       password: string

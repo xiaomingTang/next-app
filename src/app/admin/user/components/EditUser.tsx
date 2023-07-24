@@ -101,7 +101,7 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
 const EditUserModal = NiceModal.create(
   ({ onSuccess, onCancel, user }: EditUserModalProps) => {
     const modal = useModal()
-    const { loading, withLoading } = useLoading()
+    const [loading, withLoading] = useLoading()
     const { handleSubmit, control, setError } = useForm<PartialUser>({
       defaultValues: user,
     })

@@ -55,8 +55,7 @@ export function useBlogEditorSearchBar() {
       tags: [],
     },
   })
-  const { loading: searchLoading, withLoading: withSearchLoading } =
-    useLoading()
+  const [searchLoading, withSearchLoading] = useLoading()
   const [blogs, setBlogs] = useState<Blogs>([])
   const user = useUser()
 

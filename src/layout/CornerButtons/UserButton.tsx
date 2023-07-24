@@ -18,7 +18,7 @@ import { useRouter } from 'next/navigation'
 function LoggedButton() {
   const user = useUser()
   const router = useRouter()
-  const { loading, withLoading } = useLoading()
+  const [loading, withLoading] = useLoading()
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

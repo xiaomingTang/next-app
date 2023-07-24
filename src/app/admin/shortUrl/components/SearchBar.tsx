@@ -35,8 +35,7 @@ export function useUrlEditorSearchBar() {
       hash: '',
     },
   })
-  const { loading: searchLoading, withLoading: withSearchLoading } =
-    useLoading()
+  const [searchLoading, withSearchLoading] = useLoading()
   const [urls, setUrls] = useState<ShortUrlWithCreator[]>([])
   const user = useUser()
 

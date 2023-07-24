@@ -42,7 +42,7 @@ const defaultEmptyShortUrl: PartialShortUrl = {
 const EditUrlModal = NiceModal.create(
   ({ onSuccess, onCancel, shortUrl }: EditUrlModalProps) => {
     const modal = useModal()
-    const { loading, withLoading } = useLoading()
+    const [loading, withLoading] = useLoading()
     const { handleSubmit, control, setError } = useForm<
       Pick<ShortUrl, 'hash' | 'url'>
     >({

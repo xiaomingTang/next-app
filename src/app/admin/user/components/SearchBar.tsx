@@ -36,8 +36,7 @@ export function useUserEditorSearchBar() {
       email: '',
     },
   })
-  const { loading: searchLoading, withLoading: withSearchLoading } =
-    useLoading()
+  const [searchLoading, withSearchLoading] = useLoading()
   const [users, setUsers] = useState<User[]>([])
 
   const onSubmit = useMemo(

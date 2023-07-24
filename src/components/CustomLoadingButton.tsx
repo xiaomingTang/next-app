@@ -7,7 +7,7 @@ import type { LoadingButtonProps } from '@mui/lab'
 export type CustomLoadingButtonProps = LoadingButtonProps
 
 export function CustomLoadingButton(props: CustomLoadingButtonProps) {
-  const { loading, withLoading } = useLoading()
+  const [loading, withLoading] = useLoading()
   return (
     <LoadingButton
       {...props}

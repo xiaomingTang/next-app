@@ -39,7 +39,7 @@ const defaultEmptyTag: PartialTag = {
 const EditTagModal = NiceModal.create(
   ({ onSuccess, onCancel, tag }: EditTagModalProps) => {
     const modal = useModal()
-    const { loading, withLoading } = useLoading()
+    const [loading, withLoading] = useLoading()
     const { handleSubmit, control, setError } = useForm<
       Pick<Tag, 'hash' | 'name' | 'description'>
     >({

@@ -10,7 +10,7 @@ import { useCallback, useState } from 'react'
  * @usage
  * ```tsx
  * function Comp() {
- *   const { loading, withLoading } = useLoading()
+ *   const [loading, withLoading] = useLoading()
  *
  *   const { data } = useSWR('xxx', withLoading(asyncTask1))
  *
@@ -60,8 +60,5 @@ export function useLoading() {
     []
   )
 
-  return {
-    loading: flag > 0,
-    withLoading,
-  }
+  return [flag > 0, withLoading] as const
 }

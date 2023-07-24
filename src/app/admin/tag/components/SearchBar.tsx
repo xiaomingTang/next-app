@@ -39,8 +39,7 @@ export function useTagEditorSearchBar() {
       description: '',
     },
   })
-  const { loading: searchLoading, withLoading: withSearchLoading } =
-    useLoading()
+  const [searchLoading, withSearchLoading] = useLoading()
   const [tags, setTags] = useState<TagWithCreator[]>([])
 
   const onSubmit = useMemo(
