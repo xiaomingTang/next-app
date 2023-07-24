@@ -6,15 +6,17 @@ import { ScrollToTop } from '@/components/ScrollToTop'
 import { BlogTypeMap } from '@/app/admin/blog/components/constants'
 import { useUser } from '@/user'
 import { TagItem } from '@/app/tag/components/TagItem'
+import { SvgLoading } from '@/svg'
 
 import { MDXRemote } from 'next-mdx-remote'
-import { Box, Button, IconButton, Typography } from '@mui/material'
+import { Alert, Box, Button, IconButton, Typography } from '@mui/material'
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { BlogType } from '@prisma/client'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 
+import type { LoadingAble } from '@/components/ServerComponent'
 import type { MDXComponents } from 'mdx/types'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import type { BlogWithTags } from '@/app/admin/blog/server'
@@ -60,13 +62,23 @@ function Time({ blog }: { blog: BlogWithTags }) {
   )
 }
 
-export function BlogContent({
-  source,
-  ...blog
-}: BlogWithTags & {
-  source: MDXRemoteSerializeResult
-}) {
+type BlogContentProps = LoadingAble<
+  BlogWithTags & {
+    source: MDXRemoteSerializeResult
+  }
+>
+
+export function BlogContent(blog: BlogContentProps) {
   const user = useUser()
+
+  if (blog.loading) {
+    return (
+      <Alert icon={<SvgLoading className='animate-spin' />} color='warning'>
+        加载中...
+      </Alert>
+    )
+  }
+
   return (
     <ScrollToTop>
       {/* 标题 */}
@@ -115,7 +127,7 @@ export function BlogContent({
           overflow: 'auto',
         }}
       >
-        <MDXRemote {...source} components={components} />
+        <MDXRemote {...blog.source} components={components} />
       </Typography>
     </ScrollToTop>
   )

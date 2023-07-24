@@ -4,15 +4,17 @@ import { RecommendSep } from '../components/RecommendSep'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
-import { getBlog, getRecommendBlogs } from '@/app/admin/blog/server'
+import {
+  getBlog,
+  getBlogWithSource,
+  getRecommendBlogs,
+} from '@/app/admin/blog/server'
 import { Error } from '@/components/Error'
 import { seo } from '@/utils/seo'
 import { ServerComponent } from '@/components/ServerComponent'
 
-import { serialize } from 'next-mdx-remote/serialize'
-import rehypeHighlight from 'rehype-highlight'
-import remarkGfm from 'remark-gfm'
 import { Suspense } from 'react'
+import { unstable_cache } from 'next/cache'
 
 import type { Metadata } from 'next'
 
@@ -23,9 +25,16 @@ interface Props {
 export async function generateMetadata({
   params: { blogHash },
 }: Props): Promise<Metadata> {
-  const { data: blog } = await getBlog({
-    hash: blogHash,
-  })
+  const { data: blog } = await unstable_cache(
+    () =>
+      getBlog({
+        hash: blogHash,
+      }),
+    ['getBlog', blogHash],
+    {
+      revalidate: 300,
+    }
+  )()
 
   return seo.defaults({
     title: blog?.title,
@@ -38,25 +47,16 @@ export async function generateMetadata({
 }
 
 export default async function Home({ params: { blogHash } }: Props) {
-  const { data: blog, error: fetchBlogError } = await getBlog({
-    hash: blogHash,
-  })
-  const source = await serialize(blog?.content ?? '', {
-    mdxOptions: {
-      rehypePlugins: [rehypeHighlight],
-      remarkPlugins: [remarkGfm],
-      format: 'md',
-    },
-  })
-
   return (
     <DefaultLayout>
       <DefaultBodyContainer>
-        {blog ? (
-          <BlogContent {...blog} source={source} />
-        ) : (
-          <Error {...fetchBlogError} />
-        )}
+        <Suspense fallback={<BlogContent loading size={5} />}>
+          <ServerComponent
+            api={() => getBlogWithSource(blogHash)}
+            render={(blog) => <BlogContent {...blog} />}
+            errorBoundary={(err) => <Error {...err} />}
+          />
+        </Suspense>
         <RecommendSep />
         {/* 推荐列表 */}
         <Suspense fallback={<BlogListLoading count={3} />}>
