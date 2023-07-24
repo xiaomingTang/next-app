@@ -69,7 +69,14 @@ export default async function Home({ params: { blogHash } }: Props) {
       <DefaultBodyContainer>
         <Suspense fallback={<BlogContent loading size={5} />}>
           <ServerComponent
-            api={() => getBlogWithSource(blogHash)}
+            api={unstable_cache(
+              () => getBlogWithSource(blogHash),
+              ['getBlog', blogHash],
+              {
+                revalidate: 300,
+                tags: [`getBlog:${blogHash}`],
+              }
+            )}
             render={(blog) => <BlogContent {...blog} />}
             errorBoundary={(err) => <Error {...err} />}
           />
@@ -78,7 +85,14 @@ export default async function Home({ params: { blogHash } }: Props) {
         {/* 推荐列表 */}
         <Suspense fallback={<BlogListLoading count={3} />}>
           <ServerComponent
-            api={() => getRecommendBlogs(blogHash)}
+            api={unstable_cache(
+              () => getRecommendBlogs(blogHash),
+              ['getRecommendBlogs', blogHash],
+              {
+                revalidate: 300,
+                tags: [`getRecommendBlogs:${blogHash}`],
+              }
+            )}
             render={(data) => <BlogList blogs={data} />}
             errorBoundary={(err) => <Error {...err} />}
           />
