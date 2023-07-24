@@ -4,17 +4,17 @@ import { RecommendSep } from '../components/RecommendSep'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
-import {
-  getBlog,
-  getBlogWithSource,
-  getRecommendBlogs,
-} from '@/app/admin/blog/server'
+import { getBlog, getRecommendBlogs } from '@/app/admin/blog/server'
 import { Error } from '@/components/Error'
 import { seo } from '@/utils/seo'
 import { ServerComponent } from '@/components/ServerComponent'
+import { SA } from '@/errors/utils'
 
-import { Suspense } from 'react'
 import { unstable_cache } from 'next/cache'
+import { Suspense } from 'react'
+import remarkGfm from 'remark-gfm'
+import rehypeHighlight from 'rehype-highlight'
+import { serialize } from 'next-mdx-remote/serialize'
 
 import type { Metadata } from 'next'
 
@@ -33,6 +33,7 @@ export async function generateMetadata({
     ['getBlog', blogHash],
     {
       revalidate: 300,
+      tags: [`getBlog:${blogHash}`],
     }
   )()
 
@@ -45,6 +46,22 @@ export async function generateMetadata({
     ].join(','),
   })
 }
+
+const getBlogWithSource = SA.encode(async (blogHash: string) => {
+  const blog = await getBlog({
+    hash: blogHash,
+  }).then(SA.decode)
+  return {
+    ...blog,
+    source: await serialize(blog.content ?? '', {
+      mdxOptions: {
+        rehypePlugins: [rehypeHighlight],
+        remarkPlugins: [remarkGfm],
+        format: 'md',
+      },
+    }),
+  }
+})
 
 export default async function Home({ params: { blogHash } }: Props) {
   return (

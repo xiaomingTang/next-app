@@ -4,9 +4,6 @@ import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { authValidate, getSelf } from '@/user/server'
 
-import { serialize } from 'next-mdx-remote/serialize'
-import rehypeHighlight from 'rehype-highlight'
-import remarkGfm from 'remark-gfm'
 import { nanoid } from 'nanoid'
 import { BlogType, Role } from '@prisma/client'
 import { noop, omit } from 'lodash-es'
@@ -77,22 +74,6 @@ export const getBlog = SA.encode(async (props: Prisma.BlogWhereUniqueInput) =>
     })
     .then(filterBlogWithAuth)
 )
-
-export const getBlogWithSource = SA.encode(async (blogHash: string) => {
-  const blog = await getBlog({
-    hash: blogHash,
-  }).then(SA.decode)
-  return {
-    ...blog,
-    source: await serialize(blog.content ?? '', {
-      mdxOptions: {
-        rehypePlugins: [rehypeHighlight],
-        remarkPlugins: [remarkGfm],
-        format: 'md',
-      },
-    }),
-  }
-})
 
 export type BlogWithTags = NonNullable<
   Awaited<ReturnType<typeof getBlog>>['data']

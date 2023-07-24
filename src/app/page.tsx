@@ -13,6 +13,7 @@ import { shuffledArray7 } from '@/constants'
 
 import { BlogType } from '@prisma/client'
 import { Suspense } from 'react'
+import { unstable_cache } from 'next/cache'
 
 export const metadata = seo.defaults({
   title: '博客列表页',
@@ -34,7 +35,10 @@ export default async function Home() {
             }
           >
             <ServerComponent
-              api={() => getTags({})}
+              api={unstable_cache(() => getTags({}), ['getTags'], {
+                revalidate: 300,
+                tags: ['getTags'],
+              })}
               render={(tags) =>
                 tags.map((tag) => (
                   <TagItem
@@ -52,11 +56,17 @@ export default async function Home() {
           {/* blog list */}
           <Suspense fallback={<BlogListLoading count={8} />}>
             <ServerComponent
-              api={() =>
-                getBlogs({
-                  type: BlogType.PUBLISHED,
-                })
-              }
+              api={unstable_cache(
+                () =>
+                  getBlogs({
+                    type: BlogType.PUBLISHED,
+                  }),
+                ['getBlogs', BlogType.PUBLISHED],
+                {
+                  revalidate: 300,
+                  tags: ['getBlogs'],
+                }
+              )}
               render={(data) => <BlogList blogs={data} />}
               errorBoundary={(err) => <Error {...err} />}
             />

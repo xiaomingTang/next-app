@@ -5,20 +5,32 @@ import { SA } from '@/errors/utils'
 import { resolvePath } from '@/utils/url'
 
 import { BlogType } from '@prisma/client'
+import { unstable_cache } from 'next/cache'
 
 import type { MetadataRoute } from 'next'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const blogs = await getBlogs({
-    type: BlogType.PUBLISHED,
-  }).then(SA.decode)
+  const blogs = await unstable_cache(
+    () =>
+      getBlogs({
+        type: BlogType.PUBLISHED,
+      }),
+    ['getBlogs', BlogType.PUBLISHED],
+    {
+      revalidate: 300,
+      tags: ['getBlogs'],
+    }
+  )().then(SA.decode)
 
   const blogRoutes = blogs.map((blog) => ({
     url: resolvePath(`/blog/${blog.hash}`).href,
     lastModified: blog.updatedAt,
   }))
 
-  const tags = await getTags({}).then(SA.decode)
+  const tags = await unstable_cache(() => getTags({}), ['getTags'], {
+    revalidate: 300,
+    tags: ['getTags'],
+  })().then(SA.decode)
 
   const tagRoutes = tags.map((tag) => ({
     url: resolvePath(`/tag/${tag.hash}`).href,

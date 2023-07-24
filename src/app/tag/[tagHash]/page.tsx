@@ -14,6 +14,7 @@ import { ServerComponent } from '@/components/ServerComponent'
 
 import { BlogType } from '@prisma/client'
 import { Suspense } from 'react'
+import { unstable_cache } from 'next/cache'
 
 import type { Metadata } from 'next'
 
@@ -24,9 +25,17 @@ interface Props {
 export async function generateMetadata({
   params: { tagHash },
 }: Props): Promise<Metadata> {
-  const { data: tag } = await getTag({
-    hash: tagHash,
-  })
+  const { data: tag } = await unstable_cache(
+    () =>
+      getTag({
+        hash: tagHash,
+      }),
+    ['getTag', tagHash],
+    {
+      revalidate: 300,
+      tags: [`getTag:${tagHash}`],
+    }
+  )()
 
   const { name, description } = tag ?? {}
 
@@ -55,7 +64,10 @@ export default async function Home({ params: { tagHash } }: Props) {
             }
           >
             <ServerComponent
-              api={() => getTags({})}
+              api={unstable_cache(() => getTags({}), ['getTags'], {
+                revalidate: 300,
+                tags: ['getTags'],
+              })}
               render={(tags) =>
                 tags.map((tag) => (
                   <TagItem
@@ -73,11 +85,17 @@ export default async function Home({ params: { tagHash } }: Props) {
           {/* tag desc */}
           <Suspense fallback={<TagDesc loading size={5} />}>
             <ServerComponent
-              api={() =>
-                getTag({
-                  hash: tagHash,
-                })
-              }
+              api={unstable_cache(
+                () =>
+                  getTag({
+                    hash: tagHash,
+                  }),
+                ['getTag', tagHash],
+                {
+                  revalidate: 300,
+                  tags: [`getTag:${tagHash}`],
+                }
+              )}
               render={(data) => <TagDesc {...data} />}
               errorBoundary={(err) => <Error {...err} />}
             />
@@ -86,16 +104,22 @@ export default async function Home({ params: { tagHash } }: Props) {
           {/* blog list */}
           <Suspense fallback={<BlogListLoading count={8} />}>
             <ServerComponent
-              api={() =>
-                getBlogs({
-                  type: BlogType.PUBLISHED,
-                  tags: {
-                    some: {
-                      hash: tagHash,
+              api={unstable_cache(
+                () =>
+                  getBlogs({
+                    type: BlogType.PUBLISHED,
+                    tags: {
+                      some: {
+                        hash: tagHash,
+                      },
                     },
-                  },
-                })
-              }
+                  }),
+                ['getBlogs', BlogType.PUBLISHED, tagHash],
+                {
+                  revalidate: 300,
+                  tags: ['getBlogs'],
+                }
+              )}
               render={(data) => <BlogList blogs={data} />}
               errorBoundary={(err) => <Error {...err} />}
             />

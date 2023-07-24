@@ -6,14 +6,26 @@ import { seo } from '@/utils/seo'
 import { resolvePath } from '@/utils/url'
 
 import { BlogType } from '@prisma/client'
+import { unstable_cache } from 'next/cache'
 import RSS from 'rss'
 
 export async function GET() {
-  const allBlogs = await getBlogs({
-    type: BlogType.PUBLISHED,
-  }).then(SA.decode)
+  const allBlogs = await unstable_cache(
+    () =>
+      getBlogs({
+        type: BlogType.PUBLISHED,
+      }),
+    ['getBlogs', BlogType.PUBLISHED],
+    {
+      revalidate: 300,
+      tags: ['getBlogs'],
+    }
+  )().then(SA.decode)
 
-  const allTags = await getTags({}).then(SA.decode)
+  const allTags = await unstable_cache(() => getTags({}), ['getTags'], {
+    revalidate: 300,
+    tags: ['getTags'],
+  })().then(SA.decode)
 
   const feed = new RSS(
     {
