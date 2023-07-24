@@ -1,6 +1,7 @@
 'use client'
 
 import { useElementScroll } from '@/hooks/useElementScroll'
+import { dark, light } from '@/utils/theme'
 
 import {
   Box,
@@ -11,6 +12,7 @@ import {
 } from '@mui/material'
 import { useRef } from 'react'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
+import { common, grey } from '@mui/material/colors'
 
 export function ScrollToTop({
   children,
@@ -45,13 +47,19 @@ export function ScrollToTop({
             position: 'fixed',
             bottom: '48px',
             right: '16px',
+            [dark()]: {
+              backgroundColor: grey[800],
+            },
+            [light()]: {
+              backgroundColor: common.white,
+            },
           }}
         >
-          <KeyboardArrowUpIcon color='info' />
+          <KeyboardArrowUpIcon color='primary' />
           <CircularProgress
             variant='determinate'
             size={48}
-            color='info'
+            color='primary'
             sx={{
               position: 'absolute',
               top: 0,
