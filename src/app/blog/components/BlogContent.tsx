@@ -9,7 +9,14 @@ import { TagItem } from '@/app/tag/components/TagItem'
 import { SvgLoading } from '@/svg'
 
 import { MDXRemote } from 'next-mdx-remote'
-import { Alert, Box, Button, IconButton, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Button,
+  IconButton,
+  NoSsr,
+  Typography,
+} from '@mui/material'
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -94,18 +101,20 @@ export function BlogContent(blog: BlogContentProps) {
           <>{BlogTypeMap[blog.type].name} </>
         )}
         {blog.title}
-        {blog.creator.id === user.id && (
-          <IconButton
-            LinkComponent={Link}
-            href='/admin/blog'
-            target='_blank'
-            color='primary'
-            sx={{ verticalAlign: 'baseline' }}
-            aria-label='打开后台管理以编辑博客'
-          >
-            <BorderColorIcon />
-          </IconButton>
-        )}
+        <NoSsr>
+          {blog.creator.id === user.id && (
+            <IconButton
+              LinkComponent={Link}
+              href='/admin/blog'
+              target='_blank'
+              color='primary'
+              sx={{ verticalAlign: 'baseline' }}
+              aria-label='打开后台管理以编辑博客'
+            >
+              <BorderColorIcon />
+            </IconButton>
+          )}
+        </NoSsr>
       </Typography>
       {/* meta: time & tags */}
       <Box sx={{ mb: 1 }}>
