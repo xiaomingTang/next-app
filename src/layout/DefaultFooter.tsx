@@ -49,7 +49,7 @@ export function DefaultFooter() {
             aria-label='王小明的 github'
           >
             <SvgGithub />
-            小明123
+            小明
           </Anchor>
         </Stack>
       </Stack>
