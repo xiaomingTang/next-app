@@ -1,311 +1,378 @@
+'use client'
+
 import { BlogTypeMap, sortedBlogTypes } from './constants'
 import { editMarkdown } from './editMarkdown'
 import { MultiSelect } from './TagsSelect'
 
 import { saveBlog } from '../server'
 
-import { SA } from '@/errors/utils'
+import { SA, toPlainError } from '@/errors/utils'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import { useLoading } from '@/hooks/useLoading'
 import { getTags, saveTag } from '@/app/admin/tag/server'
+import { SlideUpTransition } from '@/components/SlideUpTransition'
 
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import CloseIcon from '@mui/icons-material/Close'
-import { forwardRef, useRef, useState } from 'react'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
-import Slide from '@mui/material/Slide'
 import useSWR from 'swr'
 import {
   Box,
+  DialogContent,
   FormControl,
+  FormHelperText,
   InputLabel,
   MenuItem,
   OutlinedInput,
   Select,
+  Stack,
   TextField,
   Tooltip,
   Typography,
 } from '@mui/material'
-import { noop } from 'lodash-es'
+import { pick } from 'lodash-es'
 import { BlogType } from '@prisma/client'
+import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
+import { Controller, useForm } from 'react-hook-form'
+import { revalidateTag } from 'next/cache'
 
 import type { BlogWithTags } from '../server'
-import type { TransitionProps } from '@mui/material/transitions'
 import type { PickAndPartial } from '@/utils/type'
-
-interface EditBlogPromise {
-  resolve: (blog: BlogWithTags) => void
-  reject: (reason: Error) => void
-}
-
-const defaultPromise: EditBlogPromise = {
-  resolve: noop,
-  reject: noop,
-}
 
 type PartialBlog = PickAndPartial<
   BlogWithTags,
-  'creator' | 'tags' | 'hash' | 'createdAt' | 'updatedAt'
+  'creator' | 'createdAt' | 'updatedAt'
 >
 
+interface EditBlogModalProps {
+  blog: PartialBlog
+  onSuccess?: (blog: BlogWithTags) => void
+  onCancel?: (error: Error) => void
+}
+
 export const defaultEmptyBlog: PartialBlog = {
+  hash: '',
   title: '',
   content: '',
   description: '',
   type: BlogType.UNPUBLISHED,
+  tags: [],
 }
 
-function RawTransition(
-  props: TransitionProps & {
-    children: React.ReactElement
-  },
-  ref: React.Ref<unknown>
-) {
-  return <Slide direction='up' ref={ref} {...props} />
+type FormProps = Pick<
+  BlogWithTags,
+  'hash' | 'title' | 'description' | 'content' | 'type'
+> & {
+  tags: string[]
 }
 
-const Transition = forwardRef(RawTransition)
+const BlogEditor = NiceModal.create(
+  ({ blog, onCancel, onSuccess }: EditBlogModalProps) => {
+    const modal = useModal()
+    const {
+      data: allTags = [],
+      mutate: mutateAllTags,
+      error: fetchAllTagsError,
+      isLoading: isLoadingAllTags,
+    } = useSWR('getTags', () => getTags({}).then(SA.decode))
+    const [addTagLoading, withAddTagLoading] = useLoading()
+    const defaultFormProps: FormProps = {
+      ...pick(blog, 'hash', 'title', 'description', 'content', 'type'),
+      tags: blog.tags.map((t) => t.hash),
+    }
+    const {
+      handleSubmit,
+      control,
+      setValue: setFormValue,
+    } = useForm<FormProps>({
+      defaultValues: defaultFormProps,
+    })
 
-export function useEditBlog() {
-  const [open, setOpen] = useState(false)
-  const [blog, setBlog] = useState<PartialBlog>(defaultEmptyBlog)
-  const {
-    data: allTags = [],
-    mutate: mutateAllTags,
-    error: fetchAllTagsError,
-  } = useSWR('getTags', () => getTags({}).then(SA.decode))
-  const promiseRef = useRef(defaultPromise)
-  const [addTagLoading, withAddTagLoading] = useLoading()
+    const onSubmit = handleSubmit(
+      cat(async (e) => {
+        const res = await saveBlog(e).then(SA.decode)
+        try {
+          revalidateTag(`getBlog:${e.hash}`)
+          revalidateTag('getBlogs')
+        } catch (error) {
+          // pass
+        }
+        modal.hide()
+        onSuccess?.(res)
+      })
+    )
 
-  const elem = (
-    <>
-      <Dialog
-        fullScreen
-        // 编辑(hash 非空)或有内容时, 禁用 esc close
-        disableEscapeKeyDown={!!(blog.hash || blog.content || blog.description)}
-        open={open}
-        onClose={() => {
-          promiseRef.current.reject(new Error('取消编辑'))
-        }}
-        TransitionComponent={Transition}
-      >
-        <AppBar sx={{ position: 'relative' }}>
-          <Toolbar variant='dense'>
-            <IconButton
-              edge='start'
-              aria-label='取消编辑'
-              onClick={() => {
-                promiseRef.current.reject(new Error('取消编辑'))
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
-            <Box sx={{ flex: 1 }}>
-              {blog.hash && blog.updatedAt ? (
-                <Tooltip title={formatTime(blog.updatedAt)}>
-                  <Typography component='span'>
-                    上次编辑于 {friendlyFormatTime(blog.updatedAt)}
-                  </Typography>
-                </Tooltip>
-              ) : (
-                <Typography component='span'>新建</Typography>
-              )}
-            </Box>
-            <CustomLoadingButton
-              size='small'
-              color='inherit'
-              onClick={cat(async () => {
-                const res = await saveBlog({
-                  ...blog,
-                  tags: (blog.tags ?? []).map((t) => t.hash),
-                }).then(SA.decode)
-                promiseRef.current.resolve(res)
-              })}
-            >
-              保存
-            </CustomLoadingButton>
-            <IconButton
-              size='small'
-              edge='end'
-              aria-label='预览/可视化编辑'
-              onClick={cat(async () => {
-                const content = await editMarkdown({
-                  name: blog?.title,
-                  content: {
-                    text: blog?.content,
-                  },
-                })
-                setBlog({
-                  ...blog,
-                  content,
-                })
-              })}
-            >
-              <VisibilityIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <Box
-          sx={{
-            p: 2,
-            width: '100%',
-            flex: 1,
-          }}
-        >
+    const header = (
+      <AppBar sx={{ position: 'relative' }}>
+        <Toolbar variant='dense'>
+          <IconButton
+            edge='start'
+            aria-label='取消编辑'
+            onClick={() => {
+              modal.hide()
+              onCancel?.(new Error('用户取消编辑'))
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+          <Box sx={{ flex: 1 }}>
+            {blog.hash && blog.updatedAt ? (
+              <Tooltip title={formatTime(blog.updatedAt)}>
+                <Typography component='span'>
+                  上次编辑于 {friendlyFormatTime(blog.updatedAt)}
+                </Typography>
+              </Tooltip>
+            ) : (
+              <Typography component='span'>新建</Typography>
+            )}
+          </Box>
+          <CustomLoadingButton size='small' color='inherit' onClick={onSubmit}>
+            保存
+          </CustomLoadingButton>
+          <IconButton
+            size='small'
+            edge='end'
+            aria-label='预览/可视化编辑'
+            onClick={cat(async () => {
+              const content = await editMarkdown({
+                name: blog?.title,
+                content: {
+                  text: blog?.content,
+                },
+              })
+              setFormValue('content', content)
+            })}
+          >
+            <VisibilityIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+    )
+
+    const titleElem = (
+      <Controller
+        name='title'
+        control={control}
+        render={({ field, fieldState: { error } }) => (
           <TextField
+            {...field}
             label='标题'
             size='small'
-            sx={{ display: 'flex' }}
-            value={blog?.title ?? ''}
-            onChange={(e) => {
-              setBlog((prev) => ({
-                ...prev,
-                title: e.target.value,
-              }))
-            }}
+            helperText={error?.message ?? ' '}
+            error={!!error}
           />
+        )}
+        rules={{
+          required: {
+            value: true,
+            message: '必填项',
+          },
+          minLength: {
+            value: 2,
+            message: '最少 2 个字',
+          },
+          maxLength: {
+            value: 100,
+            message: '最多 100 个字',
+          },
+        }}
+      />
+    )
+
+    const typeElem = (
+      <Controller
+        name='type'
+        control={control}
+        render={({ field, fieldState: { error } }) => (
           <FormControl
             size='small'
-            sx={{ minWidth: 200, maxWidth: 500, marginTop: 2, marginRight: 2 }}
+            error={!!error}
+            sx={{ minWidth: 200, maxWidth: 500 }}
           >
             <InputLabel>状态</InputLabel>
             <Select
-              value={blog?.type}
+              {...field}
               input={<OutlinedInput label='状态' />}
-              onChange={(e) => {
-                setBlog((prev) => ({
-                  ...prev,
-                  type: e.target.value as BlogType,
-                }))
-              }}
-              renderValue={(type) => (
-                <>{!type ? '-' : BlogTypeMap[type].name}</>
-              )}
+              renderValue={(type) => <>{BlogTypeMap[type].name}</>}
             >
               {sortedBlogTypes.map((type) => (
                 <MenuItem key={type} value={type}>
-                  {BlogTypeMap[type as BlogType].name}
+                  {BlogTypeMap[type].name}
                 </MenuItem>
               ))}
             </Select>
+            <FormHelperText>{error?.message ?? ' '}</FormHelperText>
           </FormControl>
+        )}
+      />
+    )
+
+    const tagsElem = (
+      <Controller
+        name='tags'
+        control={control}
+        render={({ field, fieldState: { error } }) => (
           <FormControl
             size='small'
-            sx={{ minWidth: 200, maxWidth: 500, marginTop: 2, marginRight: 2 }}
-            error={!!fetchAllTagsError}
+            sx={{ minWidth: 200, maxWidth: 500 }}
+            error={!!fetchAllTagsError || !!error}
           >
-            <MultiSelect
-              label={`标签${addTagLoading ? ' 添加中...' : ''}`}
-              defaultSelectedList={blog.tags?.map((t) => t.hash)}
-              selectList={allTags.map((t) => ({
-                label: t.name,
-                value: t.hash,
-              }))}
-              onChange={(selected) => {
-                setBlog((prev) => ({
-                  ...prev,
-                  tags: allTags.filter((tag) => selected.includes(tag.hash)),
-                }))
-              }}
-              onNoMatch={withAddTagLoading(async (s) => {
-                if (!s) {
-                  return
-                }
-                const newTag = await saveTag({
-                  hash: '',
-                  name: s,
-                  description: s,
-                }).then(SA.decode)
-                const newAllTags = (await mutateAllTags()) ?? allTags
-                setBlog((prev) => {
-                  const prevTagHashes = (prev.tags ?? []).map((t) => t.hash)
-                  const nextTagHashes = [...prevTagHashes, newTag.hash]
-                  return {
-                    ...prev,
-                    tags: newAllTags.filter((tag) =>
-                      nextTagHashes.includes(tag.hash)
-                    ),
+            {isLoadingAllTags ? (
+              <TextField label='标签列表加载中...' disabled size='small' />
+            ) : (
+              <MultiSelect
+                {...field}
+                label={`标签${addTagLoading ? ' 添加中...' : ''}`}
+                defaultSelectedList={field.value}
+                selectList={allTags.map((t) => ({
+                  label: t.name,
+                  value: t.hash,
+                }))}
+                onNoMatch={withAddTagLoading(async (s) => {
+                  if (!s) {
+                    return
                   }
-                })
-              })}
-            />
-          </FormControl>
+                  await saveTag({
+                    hash: '',
+                    name: s,
+                    description: s,
+                  }).then(SA.decode)
+                  await mutateAllTags()
+                })}
+              />
+            )}
 
+            <FormHelperText>
+              {[
+                error?.message,
+                fetchAllTagsError && toPlainError(fetchAllTagsError).message,
+              ]
+                .filter(Boolean)
+                .join(' + ')}
+              &nbsp;
+            </FormHelperText>
+          </FormControl>
+        )}
+      />
+    )
+
+    const descElem = (
+      <Controller
+        name='description'
+        control={control}
+        render={({ field, fieldState: { error } }) => (
           <TextField
+            {...field}
             label='简介'
             size='small'
-            value={blog?.description ?? ''}
-            onChange={(e) => {
-              setBlog((prev) => ({
-                ...prev,
-                description: e.target.value,
-              }))
-            }}
+            helperText={error?.message ?? ' '}
+            error={!!error}
             multiline
             minRows={4}
             maxRows={30}
-            sx={{
-              marginTop: 2,
-              display: 'flex',
-            }}
             inputProps={{
               style: {
                 overflow: 'auto',
               },
             }}
           />
+        )}
+        rules={{
+          required: {
+            value: true,
+            message: '必填项',
+          },
+          minLength: {
+            value: 2,
+            message: '最少 2 个字',
+          },
+          maxLength: {
+            value: 200,
+            message: '最多 200 个字',
+          },
+        }}
+      />
+    )
+
+    const contentElem = (
+      <Controller
+        name='content'
+        control={control}
+        render={({ field, fieldState: { error } }) => (
           <TextField
+            {...field}
             label='内容 (markdown 语法)'
-            size='small'
-            value={blog?.content ?? ''}
-            onChange={(e) => {
-              setBlog((prev) => ({
-                ...prev,
-                content: e.target.value,
-              }))
-            }}
             multiline
             minRows={8}
             maxRows={30}
-            sx={{
-              marginTop: 2,
-              display: 'flex',
-            }}
+            size='small'
+            helperText={error?.message ?? ' '}
+            error={!!error}
             inputProps={{
               style: {
                 overflow: 'auto',
               },
             }}
           />
-        </Box>
+        )}
+        rules={{
+          required: {
+            value: true,
+            message: '必填项',
+          },
+          minLength: {
+            value: 2,
+            message: '最少 2 个字',
+          },
+          maxLength: {
+            value: 20000,
+            message: '最多 20000 个字',
+          },
+        }}
+      />
+    )
+
+    return (
+      <Dialog
+        fullWidth
+        fullScreen
+        // 编辑(hash 非空)或有内容时, 禁用 esc close
+        disableEscapeKeyDown={!!(blog.hash || blog.content || blog.description)}
+        TransitionComponent={SlideUpTransition}
+        {...muiDialogV5(modal)}
+        onClose={() => {
+          modal.hide()
+          onCancel?.(new Error('用户取消编辑'))
+        }}
+      >
+        {header}
+        <DialogContent>
+          <Stack component={'form'} direction='column' spacing={1}>
+            {titleElem}
+            <Stack direction='row' spacing={1} useFlexGap flexWrap='wrap'>
+              {typeElem}
+              {tagsElem}
+            </Stack>
+            {descElem}
+            {contentElem}
+          </Stack>
+        </DialogContent>
       </Dialog>
-    </>
-  )
+    )
+  }
+)
 
-  const edit = async (input: PartialBlog): Promise<BlogWithTags> => {
-    setBlog(input)
-    setOpen(true)
-    return new Promise((resolve, reject) => {
-      promiseRef.current = {
-        resolve: (_blog) => {
-          resolve(_blog)
-          setOpen(false)
-        },
-        reject: (_reason) => {
-          reject(_reason)
-          setOpen(false)
-        },
-      }
+export async function editBlog(input: PartialBlog): Promise<BlogWithTags> {
+  return new Promise<BlogWithTags>((resolve, reject) => {
+    NiceModal.show(BlogEditor, {
+      blog: input,
+      onSuccess: resolve,
+      onCancel: reject,
     })
-  }
-
-  return {
-    elem,
-    edit,
-  }
+  })
 }

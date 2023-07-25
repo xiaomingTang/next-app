@@ -7,6 +7,8 @@ import { BlogTypeMap } from '@/app/admin/blog/components/constants'
 import { useUser } from '@/user'
 import { TagItem } from '@/app/tag/components/TagItem'
 import { SvgLoading } from '@/svg'
+import { editBlog } from '@/app/admin/blog/components/EditBlog'
+import { cat } from '@/errors/catchAndToast'
 
 import { MDXRemote } from 'next-mdx-remote'
 import {
@@ -19,7 +21,6 @@ import {
 } from '@mui/material'
 import { useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
 import { BlogType } from '@prisma/client'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 
@@ -104,12 +105,10 @@ export function BlogContent(blog: BlogContentProps) {
         <NoSsr>
           {blog.creator.id === user.id && (
             <IconButton
-              LinkComponent={Link}
-              href='/admin/blog'
-              target='_blank'
               color='primary'
               sx={{ verticalAlign: 'baseline' }}
-              aria-label='打开后台管理以编辑博客'
+              aria-label='编辑该博客'
+              onClick={cat(() => editBlog(blog))}
             >
               <BorderColorIcon />
             </IconButton>

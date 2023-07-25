@@ -1,4 +1,4 @@
-import { useEditBlog } from './EditBlog'
+import { editBlog } from './EditBlog'
 import { BlogTypeMap } from './constants'
 
 import { deleteBlogs } from '../server'
@@ -37,7 +37,6 @@ export function BlogEditorBlogList({
   blogs: Blogs
   onChange: () => void
 }) {
-  const { elem, edit } = useEditBlog()
   return (
     <>
       <TableContainer component={Paper}>
@@ -90,7 +89,7 @@ export function BlogEditorBlogList({
                     <CustomLoadingButton
                       variant='contained'
                       onClick={cat(async () => {
-                        await edit(blog)
+                        await editBlog(blog)
                         onChange()
                       })}
                     >
@@ -120,7 +119,6 @@ export function BlogEditorBlogList({
           </TableBody>
         </Table>
       </TableContainer>
-      {elem}
     </>
   )
 }
