@@ -3,12 +3,15 @@
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { authValidate, getSelf } from '@/user/server'
+import { validateRequest } from '@/request/validator'
 
 import { nanoid } from 'nanoid'
 import { BlogType, Role } from '@prisma/client'
 import { noop, omit } from 'lodash-es'
 import Boom from '@hapi/boom'
+import { Type } from '@sinclair/typebox'
 
+import type { Static } from '@sinclair/typebox'
 import type { Prisma, User } from '@prisma/client'
 
 const blogSelect = {
@@ -112,87 +115,93 @@ export const getBlogs = SA.encode(
   }
 )
 
-export const saveBlog = SA.encode(
-  async ({
-    hash,
-    content,
-    description,
-    title: inputTitle,
-    type,
-    tags,
-  }: {
-    /**
-     * hash 为空则是新建
-     */
-    hash?: string
-    title: string
-    content: string
-    description: string
-    type: BlogType
-    /**
-     * Array<tag hash>
-     */
-    tags: string[]
-  }) => {
-    // 移除标题的前后空格
-    const title = inputTitle.trim()
-    // 注册用户才能访问
-    const self = await getSelf()
-    if (!hash) {
-      // 所有人都能新建
-      return prisma.blog.create({
-        data: {
-          hash: nanoid(12),
-          content,
-          description,
-          title,
-          type,
-          tags: {
-            connect: tags.map((tagHash) => ({
-              hash: tagHash,
-            })),
-          },
-          creatorId: self.id,
+const saveBlogDto = Type.Object({
+  /**
+   * hash 为空则是新建
+   */
+  hash: Type.Optional(Type.String()),
+  title: Type.String({
+    minLength: 2,
+    maxLength: 100,
+  }),
+  type: Type.Enum(BlogType),
+  /**
+   * Array<tag hash>
+   */
+  tags: Type.Array(Type.String()),
+  description: Type.String({
+    minLength: 2,
+    maxLength: 200,
+  }),
+  content: Type.String({
+    minLength: 2,
+    maxLength: 20000,
+  }),
+})
+
+export const saveBlog = SA.encode(async (props: Static<typeof saveBlogDto>) => {
+  validateRequest(saveBlogDto, props)
+  // 注册用户才能访问
+  const self = await getSelf()
+  const { hash, type, tags } = props
+  // 移除标题的前后空格
+  const title = props.title.trim()
+  const description = props.description.trim()
+  const content = props.content.trim()
+  if (!hash) {
+    // 所有人都能新建
+    return prisma.blog.create({
+      data: {
+        hash: nanoid(12),
+        content,
+        description,
+        title,
+        type,
+        tags: {
+          connect: tags.map((tagHash) => ({
+            hash: tagHash,
+          })),
         },
-        select: blogSelect,
-      })
-    }
-    // 以下是保存
-    if (self.role !== Role.ADMIN) {
-      // 非 admin 则需要请求者是作者
-      await prisma.blog
-        .findUnique({
-          where: {
-            hash,
-          },
-          select: blogSelect,
-        })
-        .then(filterBlogWithAuth)
-    }
-    return prisma.blog
-      .update({
+        creatorId: self.id,
+      },
+      select: blogSelect,
+    })
+  }
+  // 以下是保存
+  if (self.role !== Role.ADMIN) {
+    // 非 admin 则需要请求者是作者
+    await prisma.blog
+      .findUnique({
         where: {
           hash,
-        },
-        data: {
-          content,
-          description,
-          title,
-          type,
-          tags: {
-            set: tags.map((tagHash) => ({
-              hash: tagHash,
-            })),
-          },
         },
         select: blogSelect,
       })
       .then(filterBlogWithAuth)
   }
-)
+  return prisma.blog
+    .update({
+      where: {
+        hash,
+      },
+      data: {
+        content,
+        description,
+        title,
+        type,
+        tags: {
+          set: tags.map((tagHash) => ({
+            hash: tagHash,
+          })),
+        },
+      },
+      select: blogSelect,
+    })
+    .then(filterBlogWithAuth)
+})
 
 export const deleteBlogs = SA.encode(async (blogHashes: string[]) => {
-  const self = await getSelf(true)
+  const self = await getSelf()
   if (self.role === Role.ADMIN) {
     // ADMIN 可以直接删除博文
     return prisma.blog.deleteMany({
