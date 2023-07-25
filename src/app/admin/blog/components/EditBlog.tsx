@@ -14,6 +14,7 @@ import { useLoading } from '@/hooks/useLoading'
 import { getTags, saveTag } from '@/app/admin/tag/server'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
 
+import { useRouter } from 'next/navigation'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import CloseIcon from '@mui/icons-material/Close'
 import Dialog from '@mui/material/Dialog'
@@ -73,6 +74,7 @@ type FormProps = Pick<
 
 const BlogEditor = NiceModal.create(
   ({ blog, onCancel, onSuccess }: EditBlogModalProps) => {
+    const router = useRouter()
     const modal = useModal()
     const {
       data: allTags = [],
@@ -102,6 +104,7 @@ const BlogEditor = NiceModal.create(
         } catch (error) {
           // pass
         }
+        router.refresh()
         modal.hide()
         onSuccess?.(res)
       })
