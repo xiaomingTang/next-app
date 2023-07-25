@@ -117,7 +117,7 @@ export const saveShortUrl = SA.encode(async (props: Static<typeof saveDto>) => {
 })
 
 export const deleteShortUrls = SA.encode(async (hashes: string[]) => {
-  const self = await getSelf(true)
+  const self = await getSelf()
   if (self.role === Role.ADMIN) {
     // ADMIN 可以直接删除短链
     return prisma.shortUrl.deleteMany({

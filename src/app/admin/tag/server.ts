@@ -126,7 +126,7 @@ export const saveTag = SA.encode(async (props: Static<typeof saveTagDto>) => {
 })
 
 export const deleteTags = SA.encode(async (hashes: string[]) => {
-  const self = await getSelf(true)
+  const self = await getSelf()
   let res: Prisma.BatchPayload
   if (self.role === Role.ADMIN) {
     // ADMIN 可以直接删除标签
