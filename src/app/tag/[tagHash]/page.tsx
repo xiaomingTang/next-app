@@ -11,6 +11,7 @@ import { getTag, getTags } from '@/app/admin/tag/server'
 import { BlogList, BlogListLoading } from '@/app/blog/components/BlogList'
 import { shuffledArray7 } from '@/constants'
 import { ServerComponent } from '@/components/ServerComponent'
+import { FESEO } from '@/components/FESEO'
 
 import { BlogType } from '@prisma/client'
 import { Suspense } from 'react'
@@ -96,7 +97,16 @@ export default async function Home({ params: { tagHash } }: Props) {
                   tags: [`getTag:${tagHash}`],
                 }
               )}
-              render={(data) => <TagDesc {...data} />}
+              render={(data) => (
+                <>
+                  <TagDesc {...data} />
+                  <FESEO
+                    title={`标签: ${data.name}`}
+                    description={`与${data.name}有关的文章: ${data.description}`}
+                    keywords={data.name}
+                  />
+                </>
+              )}
               errorBoundary={(err) => <Error {...err} />}
             />
           </Suspense>

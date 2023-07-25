@@ -9,6 +9,7 @@ import { Error } from '@/components/Error'
 import { seo } from '@/utils/seo'
 import { ServerComponent } from '@/components/ServerComponent'
 import { SA } from '@/errors/utils'
+import { FESEO } from '@/components/FESEO'
 
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
@@ -77,7 +78,19 @@ export default async function Home({ params: { blogHash } }: Props) {
                 tags: [`getBlog:${blogHash}`],
               }
             )}
-            render={(blog) => <BlogContent {...blog} />}
+            render={(blog) => (
+              <>
+                <BlogContent {...blog} />
+                <FESEO
+                  title={seo.title(blog.title)}
+                  description={seo.description(blog.description)}
+                  keywords={[
+                    ...blog.tags.map((tag) => tag.name),
+                    ...blog.tags.map((tag) => tag.description),
+                  ].join(',')}
+                />
+              </>
+            )}
             errorBoundary={(err) => <Error {...err} />}
           />
         </Suspense>
