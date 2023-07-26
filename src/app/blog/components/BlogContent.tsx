@@ -9,6 +9,7 @@ import { TagItem } from '@/app/tag/components/TagItem'
 import { SvgLoading } from '@/svg'
 import { editBlog } from '@/app/admin/blog/components/EditBlog'
 import { cat } from '@/errors/catchAndToast'
+import { isOptimizedUrl } from '@/utils/url'
 
 import { MDXRemote } from 'next-mdx-remote'
 import {
@@ -36,14 +37,18 @@ const components: MDXComponents = {
   a: (props) => <Anchor {...props} ref={null} />,
   // TODO: preview
   // TODO: 仅支持的域才使用 next/image
-  img: (props) => (
-    <Image
-      src={props.src ?? '/pwa/android-chrome-512x512.png'}
-      width={512}
-      height={512}
-      alt={props.alt ?? ''}
-    />
-  ),
+  img: (props) => {
+    const src = props.src || '/pwa/android-chrome-512x512.png'
+    return (
+      <Image
+        src={src}
+        width={512}
+        height={256}
+        alt={props.alt ?? '图片'}
+        unoptimized={!isOptimizedUrl(src)}
+      />
+    )
+  },
 }
 
 function Time({ blog }: { blog: BlogWithTags }) {
