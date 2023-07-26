@@ -1,8 +1,9 @@
-import Stackedit from 'stackedit-js'
+'use client'
 
 import type { BuiltInEvents, OpenFileProps } from 'stackedit-js'
 
 export async function editMarkdown(editProps: OpenFileProps): Promise<string> {
+  const { default: Stackedit } = await import('stackedit-js')
   return new Promise((resolve) => {
     const stackedit = new Stackedit()
     stackedit.openFile(editProps)
