@@ -7,7 +7,7 @@ import { validateRequest } from '@/request/validator'
 
 import { nanoid } from 'nanoid'
 import { Type } from '@sinclair/typebox'
-import { Role } from '@prisma/client'
+import { BlogType, Role } from '@prisma/client'
 import Boom from '@hapi/boom'
 
 import type { Prisma } from '@prisma/client'
@@ -23,7 +23,11 @@ const tagSelector = {
   creator: true,
   _count: {
     select: {
-      blogs: true,
+      blogs: {
+        where: {
+          type: BlogType.PUBLISHED,
+        },
+      },
     },
   },
 }
