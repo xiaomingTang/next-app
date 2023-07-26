@@ -36,7 +36,7 @@ export function useLoading() {
   const withLoading = useCallback(
     <Arg extends unknown[], Res>(
         fn: (...args: Arg) => Res | Promise<Res>,
-        delayMs = 500
+        delayMs = 300
       ) =>
       async (...args: Arg) => {
         let timer = -1
