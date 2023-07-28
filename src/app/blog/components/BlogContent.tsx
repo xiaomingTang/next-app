@@ -66,32 +66,6 @@ export function BlogContent(blog: BlogContentProps) {
 
   return (
     <ScrollToTop>
-      {/* 标题 */}
-      <Typography
-        component='h1'
-        sx={{
-          textAlign: 'center',
-          fontSize: '2rem',
-          fontWeight: 'bold',
-        }}
-      >
-        {blog.type === BlogType.UNPUBLISHED && (
-          <>{BlogTypeMap[blog.type].name} </>
-        )}
-        {blog.title}
-        <NoSsr>
-          {blog.creator.id === user.id && (
-            <IconButton
-              color='primary'
-              sx={{ verticalAlign: 'baseline' }}
-              aria-label='编辑该博客'
-              onClick={cat(() => editBlog(blog))}
-            >
-              <BorderColorIcon />
-            </IconButton>
-          )}
-        </NoSsr>
-      </Typography>
       {/* meta: time & tags */}
       <Box sx={{ mb: 1 }}>
         <Time blog={blog} />
@@ -112,6 +86,32 @@ export function BlogContent(blog: BlogContentProps) {
           overflow: 'auto',
         }}
       >
+        {/* 标题 */}
+        <Typography
+          component='h1'
+          sx={{
+            textAlign: 'center',
+            fontSize: '2rem',
+            fontWeight: 'bold',
+          }}
+        >
+          {blog.type === BlogType.UNPUBLISHED && (
+            <>{BlogTypeMap[blog.type].name} </>
+          )}
+          {blog.title}
+          <NoSsr>
+            {blog.creator.id === user.id && (
+              <IconButton
+                color='primary'
+                sx={{ verticalAlign: 'baseline', float: 'right' }}
+                aria-label='编辑该博客'
+                onClick={cat(() => editBlog(blog))}
+              >
+                <BorderColorIcon />
+              </IconButton>
+            )}
+          </NoSsr>
+        </Typography>
         <MDXRemote {...blog.source} components={markdownComponents} />
       </Typography>
     </ScrollToTop>
