@@ -2,8 +2,9 @@
 
 import './styles/markdown-overrides.scss'
 
+import { markdownComponents } from './markdownComponents'
+
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
-import Anchor from '@/components/Anchor'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { BlogTypeMap } from '@/app/admin/blog/components/constants'
 import { useUser } from '@/user'
@@ -11,45 +12,16 @@ import { TagItem } from '@/app/tag/components/TagItem'
 import { SvgLoading } from '@/svg'
 import { editBlog } from '@/app/admin/blog/components/EditBlog'
 import { cat } from '@/errors/catchAndToast'
-import { isOptimizedUrl } from '@/utils/url'
 
 import { MDXRemote } from 'next-mdx-remote'
-import {
-  Alert,
-  Box,
-  Button,
-  IconButton,
-  NoSsr,
-  Typography,
-} from '@mui/material'
+import { Alert, Box, IconButton, NoSsr, Typography } from '@mui/material'
 import { useState } from 'react'
-import Image from 'next/image'
 import { BlogType } from '@prisma/client'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 
 import type { LoadingAble } from '@/components/ServerComponent'
-import type { MDXComponents } from 'mdx/types'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import type { BlogWithTags } from '@/app/admin/blog/server'
-
-const components: MDXComponents = {
-  Button,
-  a: (props) => <Anchor {...props} ref={null} />,
-  // TODO: preview
-  // TODO: 仅支持的域才使用 next/image
-  img: (props) => {
-    const src = props.src || '/pwa/android-chrome-512x512.png'
-    return (
-      <Image
-        src={src}
-        width={512}
-        height={256}
-        alt={props.alt ?? '图片'}
-        unoptimized={!isOptimizedUrl(src)}
-      />
-    )
-  },
-}
 
 function Time({ blog }: { blog: BlogWithTags }) {
   const [step, setStep] = useState(0)
@@ -140,7 +112,7 @@ export function BlogContent(blog: BlogContentProps) {
           overflow: 'auto',
         }}
       >
-        <MDXRemote {...blog.source} components={components} />
+        <MDXRemote {...blog.source} components={markdownComponents} />
       </Typography>
     </ScrollToTop>
   )

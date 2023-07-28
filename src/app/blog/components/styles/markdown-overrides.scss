@@ -19,4 +19,23 @@
   button > p {
     margin-bottom: 0;
   }
+  .user-heading {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+
+    & > .user-anchor {
+      position: absolute;
+      float: left;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      padding-right: 4px;
+      margin-left: -28px;
+      opacity: 0;
+    }
+    &:hover > .user-anchor {
+      opacity: 1;
+    }
+  }
 }
