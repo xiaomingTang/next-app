@@ -1,5 +1,7 @@
 'use client'
 
+import './styles/markdown-overrides.scss'
+
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import Anchor from '@/components/Anchor'
 import { ScrollToTop } from '@/components/ScrollToTop'
@@ -29,8 +31,6 @@ import type { LoadingAble } from '@/components/ServerComponent'
 import type { MDXComponents } from 'mdx/types'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import type { BlogWithTags } from '@/app/admin/blog/server'
-
-import './styles/markdown-overrides.scss'
 
 const components: MDXComponents = {
   Button,
