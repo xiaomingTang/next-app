@@ -14,7 +14,7 @@ import { FESEO } from '@/components/FESEO'
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
 import remarkGfm from 'remark-gfm'
-import rehypeHighlight from 'rehype-highlight'
+import rehypePrism from 'rehype-prism-plus'
 import { serialize } from 'next-mdx-remote/serialize'
 
 import type { Metadata } from 'next'
@@ -56,8 +56,17 @@ const getBlogWithSource = SA.encode(async (blogHash: string) => {
     ...blog,
     source: await serialize(blog.content ?? '', {
       mdxOptions: {
-        rehypePlugins: [rehypeHighlight],
         remarkPlugins: [remarkGfm],
+        rehypePlugins: [
+          [
+            rehypePrism,
+            {
+              showLineNumbers: true,
+              ignoreMissing: true,
+              defaultLanguage: 'txt',
+            },
+          ],
+        ],
         format: 'md',
       },
     }),

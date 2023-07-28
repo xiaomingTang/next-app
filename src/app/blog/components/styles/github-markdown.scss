@@ -831,7 +831,8 @@
   overflow: auto;
   font-size: 85%;
   line-height: 1.45;
-  background-color: var(--color-canvas-subtle);
+  // 留给 prism 自己设置
+  // background-color: var(--color-canvas-subtle);
   border-radius: 6px;
 }
 
