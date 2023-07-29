@@ -1,5 +1,7 @@
 import { useActiveMenu } from './constants'
 
+import Anchor from '@/components/Anchor'
+
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import {
@@ -12,7 +14,6 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
@@ -32,7 +33,7 @@ export function NestedListItem(props: NestedMenu) {
         ? {}
         : {
             selected: pathname === props.path,
-            LinkComponent: Link,
+            LinkComponent: Anchor,
             href: props.path,
           })}
     >

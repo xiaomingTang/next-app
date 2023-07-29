@@ -1,5 +1,6 @@
+import Anchor from '@/components/Anchor'
+
 import { Button } from '@mui/material'
-import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 function Entry({
@@ -17,7 +18,7 @@ function Entry({
     <Button
       variant='text'
       color={isActive ? 'primary' : 'inherit'}
-      LinkComponent={Link}
+      LinkComponent={Anchor}
       href={pathname}
       sx={{
         fontWeight: 'bold',

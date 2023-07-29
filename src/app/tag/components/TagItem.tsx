@@ -1,7 +1,8 @@
 'use client'
 
+import Anchor from '@/components/Anchor'
+
 import { Button, Skeleton, Tooltip, Typography } from '@mui/material'
-import Link from 'next/link'
 
 import type { SxProps, Theme } from '@mui/material'
 import type { LoadingAble } from '@/components/ServerComponent'
@@ -40,7 +41,7 @@ export function TagItem(tag: TagItemProps) {
       disabled={tag.loading}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabel}
-      LinkComponent={Link}
+      LinkComponent={Anchor}
       href={`/tag/${tag.hash}`}
       sx={{ borderRadius: 99, fontSize: `${REM}rem`, ...tag.sx }}
       role={tag.loading ? 'none' : undefined}

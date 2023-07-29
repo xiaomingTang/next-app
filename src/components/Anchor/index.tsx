@@ -80,7 +80,13 @@ export default forwardRef(function Anchor(
   }
 
   return (
-    <Link href={href ?? '/'} passHref legacyBehavior {...linkProps}>
+    <Link
+      href={href ?? '/'}
+      passHref
+      legacyBehavior
+      prefetch={false}
+      {...linkProps}
+    >
       {anchor}
     </Link>
   )
