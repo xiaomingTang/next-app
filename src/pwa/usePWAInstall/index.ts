@@ -49,7 +49,7 @@ export default function usePWAInstall() {
   return {
     isInstalled: !beforeInstallPromptEvent,
     /**
-     * 抛错表示添加失败(浏览器不支持 或 应用已安装 或 用户点击取消);
+     * 抛错表示添加失败(浏览器不支持 或 应用已安装 或 操作已取消);
      * 不抛错表示尝试安装(不代表已经成功)
      */
     install,

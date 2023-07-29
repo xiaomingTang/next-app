@@ -50,7 +50,7 @@ export const useUser = withStatic(useRawUser, {
   /**
    * @WARNING !!!
    * 该方法会抛错:
-   * - new Error('用户取消登录')
+   * - new Error('操作已取消')
    */
   async login(): Promise<User> {
     if (promise) {
@@ -71,7 +71,7 @@ export const useUser = withStatic(useRawUser, {
         onCancel() {
           promise = null
           useRawUser.setState(defaultUser)
-          reject(new Error('用户取消登录'))
+          reject(new Error('操作已取消'))
         },
       })
     })

@@ -110,7 +110,7 @@ const BlogEditor = NiceModal.create(
             aria-label='取消编辑'
             onClick={() => {
               modal.hide()
-              onCancel?.(new Error('用户取消编辑'))
+              onCancel?.(new Error('操作已取消'))
             }}
           >
             <CloseIcon />
@@ -342,7 +342,7 @@ const BlogEditor = NiceModal.create(
         {...muiDialogV5(modal)}
         onClose={() => {
           modal.hide()
-          onCancel?.(new Error('用户取消编辑'))
+          onCancel?.(new Error('操作已取消'))
         }}
       >
         {header}
