@@ -6,7 +6,6 @@ import { GetInitColorSchemeScript } from './GetColorScheme'
 import Contexts from '@/common/contexts'
 import Polyfills from '@/common/polyfills'
 import Providers from '@/common/providers'
-import PWAStaleTip from '@/pwa/PWAStaleTip'
 import { seo } from '@/utils/seo'
 
 import clsx from 'clsx'
@@ -57,7 +56,6 @@ export default function RootLayout({
           <Polyfills />
           <Contexts />
           {children}
-          <PWAStaleTip />
         </Providers>
       </body>
     </html>

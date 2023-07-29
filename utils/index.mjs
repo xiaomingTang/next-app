@@ -93,9 +93,9 @@ export const webpackConfig = (config, { dev }) => {
   }
   // disable next-pwa 时, 不能修改 entry
   // 否则会报 "__PWA_START_URL__ is not defined"
-  if (!dev) {
-    const entry = generateAppDirEntry(config.entry)
-    config.entry = () => entry
-  }
+  // if (!dev) {
+  //   const entry = generateAppDirEntry(config.entry)
+  //   config.entry = () => entry
+  // }
   return config
 }
