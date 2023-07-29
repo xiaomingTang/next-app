@@ -2,11 +2,13 @@
 
 import Anchor from '@/components/Anchor'
 import { images } from '@ROOT/next-image.config'
+import { useScrollToTop } from '@/hooks/useScrollToTop'
 
 import { Button } from '@mui/material'
-import { createElement } from 'react'
+import { createElement, useEffect } from 'react'
 import Image from 'next/image'
 import LinkIcon from '@mui/icons-material/Link'
+import { noop } from 'lodash-es'
 
 import type { MDXComponents } from 'mdx/types'
 
@@ -35,6 +37,25 @@ function geneHeading(tag: `h${number}`) {
     }
     const stringified = encodeToId(propsWithDefault.children)
     const id = stringified ? `user-content-${stringified}` : ''
+    const elementHash = `#${id}`
+
+    const { element: scrollFlag, scrollToTop } = useScrollToTop('inline')
+
+    useEffect(() => {
+      if (elementHash === decodeURIComponent(window.location.hash)) {
+        const onReadyStateChange = () => {
+          if (document.readyState === 'complete') {
+            scrollToTop()
+          }
+        }
+        document.addEventListener('readystatechange', onReadyStateChange)
+        return () => {
+          document.removeEventListener('readystatechange', onReadyStateChange)
+        }
+      }
+      return noop
+    }, [elementHash, scrollToTop])
+
     if (!id) {
       return createElement(tag, propsWithDefault, propsWithDefault.children)
     }
@@ -42,9 +63,10 @@ function geneHeading(tag: `h${number}`) {
       tag,
       propsWithDefault,
       <>
+        {scrollFlag}
         <Anchor
           id={id}
-          href={`#${id}`}
+          href={elementHash}
           aria-label={`超链接, 指向页面内 hash: ${stringified}`}
           tabIndex={-1}
           className='user-anchor'
@@ -53,6 +75,7 @@ function geneHeading(tag: `h${number}`) {
             const url = new URL(window.location.href)
             url.hash = `#${id}`
             window.history.pushState(null, '', url)
+            scrollToTop()
           }}
         >
           <LinkIcon className='align-baseline' />
