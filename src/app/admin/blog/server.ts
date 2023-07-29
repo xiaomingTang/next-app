@@ -1,6 +1,6 @@
 'use server'
 
-import { SA } from '@/errors/utils'
+import { SA, withRevalidate } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { authValidate, getSelf } from '@/user/server'
 import { validateRequest } from '@/request/validator'
@@ -150,22 +150,28 @@ export const saveBlog = SA.encode(async (props: Static<typeof saveBlogDto>) => {
   const content = props.content.trim()
   if (!hash) {
     // 所有人都能新建
-    return prisma.blog.create({
-      data: {
-        hash: nanoid(12),
-        content,
-        description,
-        title,
-        type,
-        tags: {
-          connect: tags.map((tagHash) => ({
-            hash: tagHash,
-          })),
+    return prisma.blog
+      .create({
+        data: {
+          hash: nanoid(12),
+          content,
+          description,
+          title,
+          type,
+          tags: {
+            connect: tags.map((tagHash) => ({
+              hash: tagHash,
+            })),
+          },
+          creatorId: self.id,
         },
-        creatorId: self.id,
-      },
-      select: blogSelect,
-    })
+        select: blogSelect,
+      })
+      .then(
+        withRevalidate({
+          tags: ['getBlogs'],
+        })
+      )
   }
   // 以下是保存
   if (self.role !== Role.ADMIN) {
@@ -198,6 +204,11 @@ export const saveBlog = SA.encode(async (props: Static<typeof saveBlogDto>) => {
       select: blogSelect,
     })
     .then(filterBlogWithAuth)
+    .then(
+      withRevalidate({
+        tags: [`getBlog:${props.hash}`, 'getBlogs'],
+      })
+    )
 })
 
 export const deleteBlogs = SA.encode(async (blogHashes: string[]) => {

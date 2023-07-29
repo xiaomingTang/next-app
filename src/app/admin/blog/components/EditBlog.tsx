@@ -39,7 +39,6 @@ import {
 import { pick } from 'lodash-es'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
-import { revalidateTag } from 'next/cache'
 
 import type { BlogWithTags } from '../server'
 import type { PickAndPartial } from '@/utils/type'
@@ -97,12 +96,6 @@ const BlogEditor = NiceModal.create(
     const onSubmit = handleSubmit(
       cat(async (e) => {
         const res = await saveBlog(e).then(SA.decode)
-        try {
-          revalidateTag(`getBlog:${e.hash}`)
-          revalidateTag('getBlogs')
-        } catch (error) {
-          // pass
-        }
         router.refresh()
         modal.hide()
         onSuccess?.(res)

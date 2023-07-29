@@ -1,4 +1,5 @@
 import Boom from '@hapi/boom'
+import { revalidateTag, revalidatePath } from 'next/cache'
 
 export type Func<Args extends unknown[], Ret> = (...args: Args) => Ret
 
@@ -119,4 +120,26 @@ function serverActionDecoder<Ret>(ret: ServerResponse<Ret>): Ret {
 export const SA = {
   encode: serverActionEncoder,
   decode: serverActionDecoder,
+}
+
+export function withRevalidate<T>({
+  tags = [],
+  paths = [],
+}: {
+  tags?: string[]
+  paths?: string[]
+}) {
+  return async function pipeResponse(res: T) {
+    try {
+      tags.forEach((tag) => {
+        revalidateTag(tag)
+      })
+      paths.forEach((p) => {
+        revalidatePath(p)
+      })
+    } catch (error) {
+      // pass
+    }
+    return res
+  }
 }
