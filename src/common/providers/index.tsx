@@ -20,6 +20,7 @@ const muiTheme = createTheme({
       styleOverrides: {
         root: {
           fontFamily: 'inherit',
+          whiteSpace: 'nowrap',
         },
       },
     },
