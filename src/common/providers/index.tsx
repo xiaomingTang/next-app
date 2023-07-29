@@ -16,11 +16,19 @@ const muiTheme = createTheme({
     },
   },
   components: {
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+        },
+      },
+    },
     MuiButton: {
       styleOverrides: {
         root: {
           fontFamily: 'inherit',
           whiteSpace: 'nowrap',
+          textTransform: 'none',
         },
       },
     },
