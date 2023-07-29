@@ -1,8 +1,6 @@
 'use client'
 
-import { CustomLink } from '@/components/CustomLink'
-
-import { Button, Skeleton, Tooltip, Typography } from '@mui/material'
+import { Button, Link, Skeleton, Tooltip, Typography } from '@mui/material'
 
 import type { SxProps, Theme } from '@mui/material'
 import type { LoadingAble } from '@/components/ServerComponent'
@@ -41,7 +39,7 @@ export function TagItem(tag: TagItemProps) {
       disabled={tag.loading}
       aria-label={ariaLabel}
       aria-labelledby={ariaLabel}
-      LinkComponent={CustomLink}
+      LinkComponent={Link}
       href={`/tag/${tag.hash}`}
       sx={{ borderRadius: 99, fontSize: `${REM}rem`, ...tag.sx }}
       role={tag.loading ? 'none' : undefined}

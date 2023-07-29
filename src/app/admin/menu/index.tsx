@@ -1,13 +1,12 @@
 import { useActiveMenu } from './constants'
 
-import Anchor from '@/components/Anchor'
-
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import {
   Box,
   Collapse,
   IconButton,
+  Link,
   List,
   ListItem,
   ListItemButton,
@@ -33,7 +32,7 @@ export function NestedListItem(props: NestedMenu) {
         ? {}
         : {
             selected: pathname === props.path,
-            LinkComponent: Anchor,
+            LinkComponent: Link,
             href: props.path,
           })}
     >
