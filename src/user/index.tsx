@@ -71,6 +71,7 @@ export const useUser = withStatic(useRawUser, {
         },
         onCancel() {
           promise = null
+          useRawUser.setState(defaultUser)
           reject(new Error('用户取消登录'))
         },
       })
