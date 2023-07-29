@@ -6,13 +6,13 @@ import { authValidate, getSelf } from '@/user/server'
 import { validateRequest } from '@/request/validator'
 
 import { nanoid } from 'nanoid'
-import { BlogType, Role } from '@prisma/client'
 import { noop, omit } from 'lodash-es'
 import Boom from '@hapi/boom'
 import { Type } from '@sinclair/typebox'
+import { BlogType, Role } from '@prisma/client'
 
-import type { Static } from '@sinclair/typebox'
 import type { Prisma, User } from '@prisma/client'
+import type { Static } from '@sinclair/typebox'
 
 const blogSelect = {
   hash: true,
@@ -41,7 +41,7 @@ async function filterBlogWithAuth<
   if (!blog) {
     throw Boom.notFound('该博客不存在或已删除')
   }
-  if (blog.type === BlogType.PUBLISHED) {
+  if (blog.type === 'PUBLISHED') {
     return blog
   }
   const self = await getSelf()
@@ -62,7 +62,7 @@ async function filterBlogsWithAuth<
     if (!b) {
       return false
     }
-    if (b.type === BlogType.PUBLISHED) {
+    if (b.type === 'PUBLISHED') {
       return true
     }
     return !!self && (self.role === Role.ADMIN || b.creator.id === self.id)
@@ -234,7 +234,7 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
     return prisma.blog
       .findMany({
         where: {
-          type: BlogType.PUBLISHED,
+          type: 'PUBLISHED',
         },
         take: 3,
         orderBy: {
@@ -250,13 +250,13 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
     },
     select: omit(blogSelect, 'content'),
   })
-  if (!inputBlog || inputBlog.type !== BlogType.PUBLISHED) {
+  if (!inputBlog || inputBlog.type !== 'PUBLISHED') {
     // 博客不存在或者非公开, 直接返回最新的几篇
     // 非公开博客不能推荐(这样他人就能从推荐列表猜测博文内容了)
     return prisma.blog
       .findMany({
         where: {
-          type: BlogType.PUBLISHED,
+          type: 'PUBLISHED',
         },
         take: 3,
         orderBy: {
@@ -273,7 +273,7 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
   // 认为其为系列文章的前一篇
   const prevBlog = await prisma.blog.findFirst({
     where: {
-      type: BlogType.PUBLISHED,
+      type: 'PUBLISHED',
       title: {
         startsWith: getPrefix(title),
       },
@@ -298,7 +298,7 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
   // 认为其为系列文章的后一篇
   const nextBlog = await prisma.blog.findFirst({
     where: {
-      type: BlogType.PUBLISHED,
+      type: 'PUBLISHED',
       title: {
         startsWith: getPrefix(title),
       },
@@ -323,7 +323,7 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
   const similarBlogs = await prisma.blog.findMany({
     take: 4 - selectedBlogHashes.length,
     where: {
-      type: BlogType.PUBLISHED,
+      type: 'PUBLISHED',
       hash: {
         notIn: selectedBlogHashes,
       },

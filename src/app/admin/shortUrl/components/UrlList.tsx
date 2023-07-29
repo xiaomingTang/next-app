@@ -22,7 +22,6 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
-import { Role } from '@prisma/client'
 import { toast } from 'react-hot-toast'
 
 import type { ShortUrlWithCreator } from '../server'
@@ -41,7 +40,7 @@ export function UrlEditUrlList({
           <TableHead>
             <TableRow>
               <TableCell>短链</TableCell>
-              <AuthRequired roles={[Role.ADMIN]}>
+              <AuthRequired roles={['ADMIN']}>
                 <TableCell>作者</TableCell>
               </AuthRequired>
               <TableCell>目标链接</TableCell>
@@ -66,7 +65,7 @@ export function UrlEditUrlList({
                     {`${ENV_CONFIG.public.origin}/u/${url.hash}`}
                   </TableCell>
                 </CopyToClipboard>
-                <AuthRequired roles={[Role.ADMIN]}>
+                <AuthRequired roles={['ADMIN']}>
                   <TableCell>
                     [{RoleNameMap[url.creator.role]}]{url.creator.name}
                   </TableCell>

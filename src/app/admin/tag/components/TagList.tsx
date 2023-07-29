@@ -20,7 +20,6 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
-import { Role } from '@prisma/client'
 
 import type { TagWithCreator } from '../server'
 
@@ -63,7 +62,7 @@ export function TagEditTagList({
                 <TableCell>{formatTime(tag.updatedAt)}</TableCell>
                 <TableCell>{formatTime(tag.createdAt)}</TableCell>
                 <TableCell>
-                  <AuthRequired roles={[Role.ADMIN]} userIds={[tag.creatorId]}>
+                  <AuthRequired roles={['ADMIN']} userIds={[tag.creatorId]}>
                     <ButtonGroup size='small'>
                       <CustomLoadingButton
                         variant='contained'

@@ -5,7 +5,6 @@ import { SA } from '@/errors/utils'
 import { seo } from '@/utils/seo'
 import { resolvePath } from '@/utils/url'
 
-import { BlogType } from '@prisma/client'
 import { unstable_cache } from 'next/cache'
 import RSS from 'rss'
 
@@ -13,9 +12,9 @@ export async function GET() {
   const allBlogs = await unstable_cache(
     () =>
       getBlogs({
-        type: BlogType.PUBLISHED,
+        type: 'PUBLISHED',
       }),
-    ['getBlogs', BlogType.PUBLISHED],
+    ['getBlogs', 'PUBLISHED'],
     {
       revalidate: 300,
       tags: ['getBlogs'],

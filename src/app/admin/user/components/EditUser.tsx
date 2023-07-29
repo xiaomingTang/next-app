@@ -28,7 +28,6 @@ import {
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
-import { Role } from '@prisma/client'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { toast } from 'react-hot-toast'
 
@@ -47,7 +46,7 @@ const defaultEmptyUser: PartialUser = {
   name: '',
   email: '',
   password: '',
-  role: Role.USER,
+  role: 'USER',
 }
 
 const UserTip = NiceModal.create(({ user }: { user: User }) => {
@@ -250,11 +249,11 @@ const EditUserModal = NiceModal.create(
                     error={!!error}
                     input={<OutlinedInput label='role' />}
                   >
-                    <MenuItem key={Role.ADMIN} value={Role.ADMIN}>
-                      {RoleNameMap[Role.ADMIN]}
+                    <MenuItem key={'ADMIN'} value={'ADMIN'}>
+                      {RoleNameMap.ADMIN}
                     </MenuItem>
-                    <MenuItem key={Role.USER} value={Role.USER}>
-                      {RoleNameMap[Role.USER]}
+                    <MenuItem key={'USER'} value={'USER'}>
+                      {RoleNameMap.USER}
                     </MenuItem>
                   </Select>
                   <FormHelperText>{error?.message ?? ' '}</FormHelperText>

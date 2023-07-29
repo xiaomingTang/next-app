@@ -1,6 +1,7 @@
-import { BlogType } from '@prisma/client'
 import { Typography } from '@mui/material'
 import { green, orange } from '@mui/material/colors'
+
+import type { BlogType } from '@prisma/client'
 
 export const BlogTypeMap: Record<
   BlogType,
@@ -8,7 +9,7 @@ export const BlogTypeMap: Record<
     name: React.ReactNode
   }
 > = {
-  [BlogType.PUBLISHED]: {
+  PUBLISHED: {
     name: (
       <Typography
         component='span'
@@ -21,7 +22,7 @@ export const BlogTypeMap: Record<
       </Typography>
     ),
   },
-  [BlogType.UNPUBLISHED]: {
+  UNPUBLISHED: {
     name: (
       <Typography
         component='span'
@@ -36,7 +37,4 @@ export const BlogTypeMap: Record<
   },
 }
 
-export const sortedBlogTypes: BlogType[] = [
-  BlogType.PUBLISHED,
-  BlogType.UNPUBLISHED,
-]
+export const sortedBlogTypes: BlogType[] = ['PUBLISHED', 'UNPUBLISHED']

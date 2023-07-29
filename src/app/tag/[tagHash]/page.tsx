@@ -13,7 +13,6 @@ import { shuffledArray7 } from '@/constants'
 import { ServerComponent } from '@/components/ServerComponent'
 import { FESEO } from '@/components/FESEO'
 
-import { BlogType } from '@prisma/client'
 import { Suspense } from 'react'
 import { unstable_cache } from 'next/cache'
 
@@ -117,14 +116,14 @@ export default async function Home({ params: { tagHash } }: Props) {
               api={unstable_cache(
                 () =>
                   getBlogs({
-                    type: BlogType.PUBLISHED,
+                    type: 'PUBLISHED',
                     tags: {
                       some: {
                         hash: tagHash,
                       },
                     },
                   }),
-                ['getBlogs', BlogType.PUBLISHED, tagHash],
+                ['getBlogs', 'PUBLISHED', tagHash],
                 {
                   revalidate: 300,
                   tags: ['getBlogs'],

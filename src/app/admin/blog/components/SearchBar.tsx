@@ -27,7 +27,6 @@ import { toast } from 'react-hot-toast'
 import { useEffect, useMemo, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
-import { Role } from '@prisma/client'
 
 interface SearchProps {
   /**
@@ -70,7 +69,7 @@ export function useBlogEditorSearchBar() {
                 },
                 // admin 用户展示所有人的博客
                 // 普通用户仅展示自己的博客
-                creatorId: user.role === Role.ADMIN ? undefined : user.id,
+                creatorId: user.role === 'ADMIN' ? undefined : user.id,
                 tags:
                   e.tags.length === 0
                     ? {}

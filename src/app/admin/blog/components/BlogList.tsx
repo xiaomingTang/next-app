@@ -26,7 +26,6 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import { Role } from '@prisma/client'
 
 import type { Blogs } from './SearchBar'
 
@@ -44,7 +43,7 @@ export function BlogEditorBlogList({
           <TableHead>
             <TableRow>
               <TableCell>标题</TableCell>
-              <AuthRequired roles={[Role.ADMIN]}>
+              <AuthRequired roles={['ADMIN']}>
                 <TableCell>作者</TableCell>
               </AuthRequired>
               <TableCell>标签</TableCell>
@@ -68,7 +67,7 @@ export function BlogEditorBlogList({
                     </Tooltip>
                   </Anchor>
                 </TableCell>
-                <AuthRequired roles={[Role.ADMIN]}>
+                <AuthRequired roles={['ADMIN']}>
                   <TableCell>
                     [{RoleNameMap[blog.creator.role]}]{blog.creator.name}
                   </TableCell>

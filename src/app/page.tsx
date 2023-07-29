@@ -11,7 +11,6 @@ import { Error } from '@/components/Error'
 import { ServerComponent } from '@/components/ServerComponent'
 import { shuffledArray7 } from '@/constants'
 
-import { BlogType } from '@prisma/client'
 import { Suspense } from 'react'
 import { unstable_cache } from 'next/cache'
 
@@ -59,9 +58,9 @@ export default async function Home() {
               api={unstable_cache(
                 () =>
                   getBlogs({
-                    type: BlogType.PUBLISHED,
+                    type: 'PUBLISHED',
                   }),
-                ['getBlogs', BlogType.PUBLISHED],
+                ['getBlogs', 'PUBLISHED'],
                 {
                   revalidate: 300,
                   tags: ['getBlogs'],

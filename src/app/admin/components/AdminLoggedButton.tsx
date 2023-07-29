@@ -7,7 +7,6 @@ import PersonIcon from '@mui/icons-material/Person'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { IconButton, Menu, MenuItem, ListItemIcon } from '@mui/material'
-import { Role } from '@prisma/client'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
@@ -50,7 +49,7 @@ export function AdminLoggedButton() {
         }}
       >
         <MenuItem disabled divider>
-          {user.role === Role.ADMIN && `[${RoleNameMap[user.role]}]`}
+          {user.role === 'ADMIN' && `[${RoleNameMap[user.role]}]`}
           {user.name}
         </MenuItem>
         <MenuItem

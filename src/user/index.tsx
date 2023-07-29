@@ -7,7 +7,6 @@ import { withStatic } from '@/utils/withStatic'
 import { SA } from '@/errors/utils'
 
 import NiceModal from '@ebay/nice-modal-react'
-import { Role } from '@prisma/client'
 import { create } from 'zustand'
 
 import type { User } from '@prisma/client'
@@ -15,7 +14,7 @@ import type { User } from '@prisma/client'
 const defaultUser: Required<User> = {
   id: 0,
   name: '',
-  role: Role.USER,
+  role: 'USER',
   password: '',
   email: '',
 }

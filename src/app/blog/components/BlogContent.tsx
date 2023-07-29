@@ -16,7 +16,6 @@ import { cat } from '@/errors/catchAndToast'
 import { MDXRemote } from 'next-mdx-remote'
 import { Alert, Box, IconButton, NoSsr, Typography } from '@mui/material'
 import { useState } from 'react'
-import { BlogType } from '@prisma/client'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 
 import type { LoadingAble } from '@/components/ServerComponent'
@@ -95,9 +94,7 @@ export function BlogContent(blog: BlogContentProps) {
             fontWeight: 'bold',
           }}
         >
-          {blog.type === BlogType.UNPUBLISHED && (
-            <>{BlogTypeMap[blog.type].name} </>
-          )}
+          {blog.type === 'UNPUBLISHED' && <>{BlogTypeMap[blog.type].name} </>}
           {blog.title}
           <NoSsr>
             {blog.creator.id === user.id && (

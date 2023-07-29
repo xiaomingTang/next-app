@@ -3,11 +3,10 @@
 import { useUser } from '@/user'
 
 import { NoSsr } from '@mui/material'
-import { Role } from '@prisma/client'
 import { noop } from 'lodash-es'
 import { useEffect } from 'react'
 
-import type { User } from '@prisma/client'
+import type { Role, User } from '@prisma/client'
 
 type AuthRequiredProps = {
   disabled?: boolean
@@ -25,7 +24,7 @@ type AuthRequiredProps = {
   fallback?: React.ReactNode | React.ReactNode[]
 }
 
-const defaultRoles = [Role.USER]
+const defaultRoles: Role[] = ['USER']
 const defaultUserIds: User['id'][] = []
 const defaultFallback = <></>
 
@@ -54,7 +53,7 @@ export function AuthRequired({
     }
 
     if (
-      user.role === Role.ADMIN ||
+      user.role === 'ADMIN' ||
       roles.includes(user.role) ||
       userIds.includes(user.id)
     ) {

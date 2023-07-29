@@ -37,7 +37,6 @@ import {
   Typography,
 } from '@mui/material'
 import { pick } from 'lodash-es'
-import { BlogType } from '@prisma/client'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
 import { revalidateTag } from 'next/cache'
@@ -61,7 +60,7 @@ export const defaultEmptyBlog: PartialBlog = {
   title: '',
   content: '',
   description: '',
-  type: BlogType.UNPUBLISHED,
+  type: 'UNPUBLISHED',
   tags: [],
 }
 

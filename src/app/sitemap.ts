@@ -4,7 +4,6 @@ import { getTags } from './admin/tag/server'
 import { SA } from '@/errors/utils'
 import { resolvePath } from '@/utils/url'
 
-import { BlogType } from '@prisma/client'
 import { unstable_cache } from 'next/cache'
 
 import type { MetadataRoute } from 'next'
@@ -13,9 +12,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogs = await unstable_cache(
     () =>
       getBlogs({
-        type: BlogType.PUBLISHED,
+        type: 'PUBLISHED',
       }),
-    ['getBlogs', BlogType.PUBLISHED],
+    ['getBlogs', 'PUBLISHED'],
     {
       revalidate: 300,
       tags: ['getBlogs'],
