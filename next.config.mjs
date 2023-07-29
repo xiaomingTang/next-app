@@ -10,7 +10,8 @@ const withBundleAnalyzer = NextBundleAnalyzer({
 
 const withPWA = nextPwa({
   dest: 'public',
-  disable: process.env.NODE_ENV !== 'production',
+  // disable pwa
+  disable: true,
   // disable cache start url: [discussion of use case to not cache start url at all](https://github.com/shadowwalker/next-pwa/pull/296#issuecomment-1094167025)
   cacheStartUrl: false,
   publicExcludes: [
