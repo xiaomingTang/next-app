@@ -25,6 +25,7 @@ export function useScrollToTop(display: 'inline' | 'block') {
 
   return {
     element,
+    elementRef: scrollStarterRef,
     scrollToTop,
   }
 }
