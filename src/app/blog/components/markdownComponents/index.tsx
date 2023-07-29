@@ -74,7 +74,7 @@ function geneHeading(tag: `h${number}`) {
             e.preventDefault()
             const url = new URL(window.location.href)
             url.hash = `#${id}`
-            window.history.pushState(null, '', url)
+            window.history.replaceState(null, '', url)
             scrollToTop()
           }}
         >
