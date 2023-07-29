@@ -2,11 +2,11 @@
 
 import { friendlyFormatTime } from '@/utils/formatTime'
 import { dark, light } from '@/utils/theme'
+import { CustomLink } from '@/components/CustomLink'
 
 import {
   ButtonBase,
   Chip,
-  Link,
   Skeleton,
   Stack,
   Typography,
@@ -118,7 +118,7 @@ export function BlogItem({ sx, ...blog }: BlogItemProps) {
         },
         ...sx,
       }}
-      LinkComponent={Link}
+      LinkComponent={CustomLink}
       disabled={blog.loading}
       href={blog.loading ? '/' : `/blog/${blog.hash}`}
       aria-label={blogDescAriaLabel}
