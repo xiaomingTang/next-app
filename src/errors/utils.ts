@@ -1,5 +1,4 @@
 import Boom from '@hapi/boom'
-import httpStatus from 'http-status'
 
 export type Func<Args extends unknown[], Ret> = (...args: Args) => Ret
 
@@ -27,7 +26,7 @@ export function toError(err: unknown): Error {
     (err as PlainError)?.toString() ??
     '未知错误'
   const retError = new Error(message)
-  retError.code = (err as PlainError)?.code ?? httpStatus.INTERNAL_SERVER_ERROR
+  retError.code = (err as PlainError)?.code ?? 500
   return retError
 }
 
@@ -41,9 +40,8 @@ export function toPlainError(inputError: unknown): PlainError {
     }
   }
   return {
-    code: err.code ?? httpStatus.INTERNAL_SERVER_ERROR,
-    message:
-      err.message || httpStatus[`${httpStatus.INTERNAL_SERVER_ERROR}_MESSAGE`],
+    code: err.code ?? 500,
+    message: err.message || '服务器错误, 请稍后再试',
   }
 }
 

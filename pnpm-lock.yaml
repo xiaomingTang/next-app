@@ -53,9 +53,6 @@ dependencies:
   fs-extra:
     specifier: ^11.1.1
     version: 11.1.1
-  http-status:
-    specifier: ^1.6.2
-    version: 1.6.2
   jsonschema:
     specifier: ^1.4.1
     version: 1.4.1
@@ -6616,11 +6613,6 @@ packages:
     dependencies:
       lru-cache: 6.0.0
     dev: true
-
-  /http-status@1.6.2:
-    resolution: {integrity: sha512-oUExvfNckrpTpDazph7kNG8sQi5au3BeTo0idaZFXEhTaJKu7GNJCLHI0rYY2wljm548MSTM+Ljj/c6anqu2zQ==}
-    engines: {node: '>= 0.4.0'}
-    dev: false
 
   /human-signals@2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}

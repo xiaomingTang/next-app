@@ -73,7 +73,6 @@
     "cookie": "^0.5.0",
     "dotenv": "^16.0.3",
     "fs-extra": "^11.1.1",
-    "http-status": "^1.6.2",
     "jsonschema": "^1.4.1",
     "jsonwebtoken": "^9.0.0",
     "lodash-es": "^4.17.21",

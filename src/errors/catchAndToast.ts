@@ -5,7 +5,6 @@ import { toError } from './utils'
 import { useUser } from '@/user'
 
 import { toast } from 'react-hot-toast'
-import httpStatus from 'http-status'
 import { noop } from 'lodash-es'
 
 import type { Func } from './utils'
@@ -29,10 +28,7 @@ export function cat<Args extends unknown[], Ret>(
       return ret
     } catch (catchError) {
       const error = toError(catchError)
-      if (
-        error.code === httpStatus.UNAUTHORIZED &&
-        props?.doNotShowLoginModalWhen401 !== true
-      ) {
+      if (error.code === 401 && props?.doNotShowLoginModalWhen401 !== true) {
         // 不关心完成与否, 所以无需 await
         useUser.login().catch(noop)
       }
