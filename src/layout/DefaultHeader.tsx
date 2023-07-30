@@ -4,6 +4,7 @@ import { UserButton } from './CornerButtons/UserButton'
 import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
 import { BlogEntry } from './CornerButtons/Entries'
 import { RssButton } from './CornerButtons/RssButton'
+import { UploadTrigger } from './CornerButtons/UploadTrigger'
 
 import { dark, light } from '@/utils/theme'
 
@@ -58,6 +59,7 @@ export function DefaultRawHeader() {
             <BlogEntry />
           </Stack>
           <Stack direction='row'>
+            <UploadTrigger />
             <UserButton />
             <ThemeToggleButton />
             <RssButton />
