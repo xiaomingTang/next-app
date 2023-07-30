@@ -1,16 +1,15 @@
 'use client'
 
+import { FileInfoDisplay } from './FileInfoDisplay'
+
 import { deleteFile, uploadFiles } from '../server'
+import { geneFileKey } from '../utils/geneFileKey'
 
 import { SA, toPlainError } from '@/errors/utils'
 import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
 
-import WarningIcon from '@mui/icons-material/Warning'
-import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
-import UploadFileIcon from '@mui/icons-material/UploadFile'
-import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import CloseIcon from '@mui/icons-material/Close'
 import SettingsIcon from '@mui/icons-material/Settings'
 import CopyAllIcon from '@mui/icons-material/CopyAll'
@@ -21,12 +20,8 @@ import {
   FormControl,
   Stack,
   List,
-  ListItem,
   IconButton,
-  ButtonGroup,
   Button,
-  Tooltip,
-  Typography,
   Dialog,
   DialogContent,
   Menu,
@@ -36,9 +31,6 @@ import {
   DialogActions,
   useMediaQuery,
   useTheme,
-  Divider,
-  ListItemAvatar,
-  Avatar,
 } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { useCallback, useMemo, useState } from 'react'
@@ -47,140 +39,10 @@ import { toast } from 'react-hot-toast'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 
-interface FileInfo {
-  file: File
-  status: 'succeed' | 'failed' | 'pending' | 'before-upload'
-  /**
-   * 上传成功才有 key
-   */
-  key?: string
-  /**
-   * 上传成功才有 key
-   */
-  url?: string
-  /**
-   * 上传失败的原因
-   */
-  error?: string
-}
+import type { FileInfo } from './FileInfoDisplay'
 
 interface UploaderProps {
   onSuccess?: (fileInfos: FileInfo[]) => void
-}
-
-function geneKey({ file }: FileInfo) {
-  return `${file.name} - ${file.size} - ${file.type} - ${file.lastModified}`
-}
-
-const uploadStatusMap: Record<
-  FileInfo['status'],
-  {
-    title: string
-    icon: React.ReactNode
-  }
-> = {
-  'before-upload': {
-    title: '待上传',
-    icon: <UploadFileIcon color='info' />,
-  },
-  pending: {
-    title: '上传中',
-    icon: <HourglassBottomIcon color='disabled' />,
-  },
-  succeed: {
-    title: '上传成功',
-    icon: <CheckCircleIcon color='success' />,
-  },
-  failed: {
-    title: '上传失败',
-    icon: <WarningIcon color='error' />,
-  },
-}
-
-function FileInfoDisplay({
-  onDelete,
-  index,
-  ...info
-}: FileInfo & {
-  index: number
-  onDelete: () => Promise<void>
-}) {
-  const isImage = info.file.type.startsWith('image')
-  return (
-    <>
-      {index !== 0 && (
-        <Divider key={`divider-${index}`} variant='inset' component='li' />
-      )}
-      <ListItem
-        alignItems='flex-start'
-        sx={{ pr: '96px' }}
-        secondaryAction={
-          <>
-            {info.status !== 'pending' && (
-              <CustomLoadingButton
-                aria-label='删除该文件'
-                color='error'
-                size='small'
-                onClick={onDelete}
-              >
-                删除
-              </CustomLoadingButton>
-            )}
-            {info.status === 'failed' ? (
-              <Tooltip
-                title={`${uploadStatusMap[info.status].title}: ${
-                  info.error ?? ''
-                }`}
-              >
-                <IconButton
-                  edge='end'
-                  aria-label={uploadStatusMap[info.status].title}
-                >
-                  {uploadStatusMap[info.status].icon}
-                </IconButton>
-              </Tooltip>
-            ) : (
-              <IconButton
-                edge='end'
-                aria-label={uploadStatusMap[info.status].title}
-                disabled
-              >
-                {uploadStatusMap[info.status].icon}
-              </IconButton>
-            )}
-          </>
-        }
-      >
-        <ListItemAvatar>
-          <Avatar alt={info.file.name} src='' />
-        </ListItemAvatar>
-        <Stack sx={{ flex: '1 1 auto', overflow: 'hidden' }}>
-          <Typography
-            noWrap
-            color={info.status === 'failed' ? 'error' : undefined}
-          >
-            {info.file.name}
-          </Typography>
-          {info.url && (
-            <ButtonGroup size='small' variant='outlined'>
-              <CopyToClipboard
-                text={info.url}
-                onCopy={() => toast.success('复制成功')}
-              >
-                <Button>复制 url</Button>
-              </CopyToClipboard>
-              <CopyToClipboard
-                text={`${isImage ? '!' : ''}[${info.file.name}](${info.url})`}
-                onCopy={() => toast.success('复制成功')}
-              >
-                <Button>复制 markdown 格式</Button>
-              </CopyToClipboard>
-            </ButtonGroup>
-          )}
-        </Stack>
-      </ListItem>
-    </>
-  )
 }
 
 // TODO: 做成弹窗形式 & 简易上传弹窗 & 全屏/轻量/单个文件上传 等
@@ -204,7 +66,7 @@ const Uploader = NiceModal.create(({ onSuccess }: UploaderProps) => {
   const updateFileInfos = useCallback(
     (newFileInfos: FileInfo[], override = true) => {
       const newFileInfoTuple = newFileInfos.map(
-        (info) => [geneKey(info), info] as [string, FileInfo]
+        (info) => [geneFileKey(info.file), info] as [string, FileInfo]
       )
       if (override) {
         setFileInfoMap((prev) => ({
@@ -386,14 +248,14 @@ const Uploader = NiceModal.create(({ onSuccess }: UploaderProps) => {
     <List>
       {fileInfos.map((info, index) => (
         <FileInfoDisplay
-          key={geneKey(info)}
+          key={geneFileKey(info.file)}
           {...info}
           index={index}
           onDelete={async () => {
             if (info.key) {
               await deleteFile(info.key)
             }
-            setFileInfoMap((prev) => omit(prev, [geneKey(info)]))
+            setFileInfoMap((prev) => omit(prev, [geneFileKey(info.file)]))
           }}
         />
       ))}
