@@ -13,12 +13,11 @@ import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import { useLoading } from '@/hooks/useLoading'
 import { getTags, saveTag } from '@/app/admin/tag/server'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
-import { upload } from '@/app/upload/components/Uploader'
+import { UploadTrigger } from '@/layout/CornerButtons/UploadTrigger'
 
 import { useRouter } from 'next/navigation'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import CloseIcon from '@mui/icons-material/Close'
-import UploadIcon from '@mui/icons-material/Upload'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -128,15 +127,7 @@ const BlogEditor = NiceModal.create(
               <Typography component='span'>新建</Typography>
             )}
           </Box>
-          <IconButton
-            className='text-primary-main'
-            aria-label='上传'
-            onClick={cat(async () => {
-              await upload()
-            })}
-          >
-            <UploadIcon />
-          </IconButton>
+          <UploadTrigger />
           <CustomLoadingButton size='small' color='inherit' onClick={onSubmit}>
             保存
           </CustomLoadingButton>
