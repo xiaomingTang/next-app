@@ -1,6 +1,7 @@
 import { checkIsImage, useFileUrl } from '../utils/useFileUrl'
 
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
+import { obj } from '@/utils/tiny'
 
 import WarningIcon from '@mui/icons-material/Warning'
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
@@ -137,6 +138,21 @@ export function FileInfoDisplay({
             variant='square'
             alt={info.file.name}
             src={isImage ? url : ''}
+            sx={{
+              transition: 'transform .3s',
+              transformOrigin: 'left top',
+              cursor: 'pointer',
+              bgcolor: (theme) => theme.palette.grey[isImage ? 400 : 600],
+              ...obj(
+                isImage && {
+                  ':hover': {
+                    // 为了不被其他 Avatar 遮盖
+                    zIndex: 1,
+                    transform: 'scale(3.5)',
+                  },
+                }
+              ),
+            }}
           >
             {!isImage && <TextSnippetIcon />}
           </Avatar>

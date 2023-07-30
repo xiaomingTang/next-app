@@ -307,7 +307,7 @@ const Uploader = NiceModal.create(({ onSuccess }: UploaderProps) => {
       }}
     >
       {header}
-      <DialogContent>{filesDisplayElem}</DialogContent>
+      <DialogContent sx={{ height: '100vh' }}>{filesDisplayElem}</DialogContent>
       <DialogActions>{actionsElem}</DialogActions>
     </Dialog>
   )
