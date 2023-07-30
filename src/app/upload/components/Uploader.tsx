@@ -3,12 +3,13 @@
 import { FileInfoDisplay } from './FileInfoDisplay'
 
 import { deleteFile, uploadFiles } from '../server'
-import { geneFileKey } from '../utils/geneFileKey'
+import { fileToCopyableMarkdownStr, geneFileKey } from '../utils/geneFileKey'
 
 import { SA, toPlainError } from '@/errors/utils'
 import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
+import { AnchorProvider } from '@/components/AnchorProvider'
 
 import CloseIcon from '@mui/icons-material/Close'
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -31,6 +32,7 @@ import {
   DialogActions,
   useMediaQuery,
   useTheme,
+  MenuItem,
 } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import { useCallback, useMemo, useState } from 'react'
@@ -48,7 +50,6 @@ interface UploaderProps {
 // TODO: 做成弹窗形式 & 简易上传弹窗 & 全屏/轻量/单个文件上传 等
 const Uploader = NiceModal.create(({ onSuccess }: UploaderProps) => {
   const modal = useModal()
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'))
   const { handleSubmit, control } = useForm<{
     private: boolean
@@ -82,6 +83,15 @@ const Uploader = NiceModal.create(({ onSuccess }: UploaderProps) => {
     },
     []
   )
+  const copyableTexts = fileInfos
+    .filter((info) => info.status === 'succeed')
+    .map((info) => ({
+      raw: info.url,
+      markdown: fileToCopyableMarkdownStr({
+        url: info.url ?? '',
+        file: info.file,
+      }),
+    }))
 
   const onSubmit = useMemo(
     () =>
@@ -183,51 +193,86 @@ const Uploader = NiceModal.create(({ onSuccess }: UploaderProps) => {
     />
   )
 
-  const settingMenu = (
-    <Menu
-      id='logout-menu'
-      anchorEl={anchorEl}
-      open={!!anchorEl}
-      autoFocus
-      onClose={() => setAnchorEl(null)}
-      MenuListProps={{
-        'aria-labelledby': '关闭设置菜单',
-      }}
-    >
-      <Stack spacing={1} sx={{ p: 1 }}>
-        {dirnameElem}
-        {privateElem}
-        {randomFilenameElem}
-      </Stack>
-    </Menu>
+  const settingTriggerElem = (
+    <AnchorProvider>
+      {(settingAnchorEl, setSettingAnchorEl) => (
+        <>
+          <IconButton
+            edge='start'
+            aria-label='设置'
+            onClick={(e) => {
+              setSettingAnchorEl(e.currentTarget)
+            }}
+          >
+            <SettingsIcon />
+          </IconButton>
+          <Menu
+            id='logout-menu'
+            anchorEl={settingAnchorEl}
+            open={!!settingAnchorEl}
+            autoFocus
+            onClose={() => setSettingAnchorEl(null)}
+            MenuListProps={{
+              'aria-labelledby': '关闭设置菜单',
+            }}
+          >
+            <Stack spacing={1} sx={{ p: 1 }}>
+              {dirnameElem}
+              {privateElem}
+              {randomFilenameElem}
+            </Stack>
+          </Menu>
+        </>
+      )}
+    </AnchorProvider>
+  )
+
+  const copyTriggerElem = (
+    <AnchorProvider>
+      {(copyableAnchorEl, setCopyableAnchorEl) =>
+        copyableTexts.length > 0 && (
+          <>
+            <IconButton
+              aria-label='打开复制选项'
+              onClick={(e) => setCopyableAnchorEl(e.currentTarget)}
+            >
+              <CopyAllIcon />
+            </IconButton>
+            <Menu
+              open={!!copyableAnchorEl}
+              anchorEl={copyableAnchorEl}
+              onClose={() => setCopyableAnchorEl(null)}
+            >
+              <CopyToClipboard
+                text={copyableTexts.map((t) => t.raw).join('\n')}
+                onCopy={() => toast.success('复制成功')}
+              >
+                <MenuItem onClick={() => setCopyableAnchorEl(null)}>
+                  复制所有 url
+                </MenuItem>
+              </CopyToClipboard>
+              <CopyToClipboard
+                text={copyableTexts.map((t) => t.markdown).join('\n')}
+                onCopy={() => toast.success('复制成功')}
+              >
+                <MenuItem onClick={() => setCopyableAnchorEl(null)}>
+                  复制所有 markdown 格式
+                </MenuItem>
+              </CopyToClipboard>
+            </Menu>
+          </>
+        )
+      }
+    </AnchorProvider>
   )
 
   const header = (
     <>
-      {settingMenu}
       <AppBar sx={{ position: 'relative' }}>
         <Toolbar variant='dense'>
           <Box sx={{ flex: 1 }}>
-            <IconButton
-              edge='start'
-              aria-label='设置'
-              onClick={(e) => {
-                setAnchorEl(e.currentTarget)
-              }}
-            >
-              <SettingsIcon />
-            </IconButton>
-            <CopyToClipboard
-              text={fileInfos
-                .filter((info) => info.status === 'succeed')
-                .map((info) => info.url ?? '')
-                .join('\n')}
-              onCopy={() => toast.success('复制成功')}
-            >
-              <IconButton aria-label='复制所有'>
-                <CopyAllIcon />
-              </IconButton>
-            </CopyToClipboard>
+            {settingTriggerElem}
+            {copyTriggerElem}
           </Box>
           <IconButton
             edge='end'

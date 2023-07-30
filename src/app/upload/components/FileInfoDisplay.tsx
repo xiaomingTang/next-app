@@ -1,4 +1,5 @@
 import { checkIsImage, useFileUrl } from '../utils/useFileUrl'
+import { fileToCopyableMarkdownStr } from '../utils/geneFileKey'
 
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { obj } from '@/utils/tiny'
@@ -88,6 +89,14 @@ export function FileInfoDisplay({
 }) {
   const isImage = checkIsImage(info.file)
   const url = useFileUrl(info.file)
+  const copyableTexts = {
+    raw: info.url ?? '',
+    markdown: fileToCopyableMarkdownStr({
+      url: info.url ?? '',
+      file: info.file,
+    }),
+  }
+
   return (
     <>
       {index !== 0 && (
@@ -178,13 +187,13 @@ export function FileInfoDisplay({
           {info.url && (
             <ButtonGroup size='small' variant='outlined'>
               <CopyToClipboard
-                text={info.url}
+                text={copyableTexts.raw}
                 onCopy={() => toast.success('复制成功')}
               >
                 <Button>复制 url</Button>
               </CopyToClipboard>
               <CopyToClipboard
-                text={`${isImage ? '!' : ''}[${info.file.name}](${info.url})`}
+                text={copyableTexts.markdown}
                 onCopy={() => toast.success('复制成功')}
               >
                 <Button>复制 markdown 格式</Button>

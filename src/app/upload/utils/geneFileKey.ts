@@ -3,3 +3,14 @@ export function geneFileKey(file: Blob) {
     (file as File)?.lastModified ?? ''
   }`
 }
+
+export function fileToCopyableMarkdownStr({
+  url,
+  file,
+}: {
+  url: string
+  file: Blob
+}) {
+  const isImage = file.type.startsWith('image/')
+  return `${isImage ? '!' : ''}[${file.name}](${url})`
+}
