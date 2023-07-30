@@ -318,8 +318,8 @@ const Uploader = NiceModal.create(
       <List>
         {fileInfos.map((info, index) => (
           <FileInfoDisplay
-            key={geneFileKey(info.file)}
             {...info}
+            key={geneFileKey(info.file)}
             index={index}
             onDelete={async () => {
               if (info.key) {

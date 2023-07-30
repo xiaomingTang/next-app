@@ -41,8 +41,8 @@ export default async function Home() {
               render={(tags) =>
                 tags.map((tag) => (
                   <TagItem
-                    key={tag.hash}
                     {...tag}
+                    key={tag.hash}
                     active
                     sx={{ mr: 1, mb: 1 }}
                   />

@@ -15,7 +15,7 @@ export function BlogList({ blogs }: { blogs: BlogWithTags[] }) {
   return (
     <Stack direction='column' spacing={2}>
       {blogs.map((rec) => (
-        <BlogItem key={rec.hash} {...rec} />
+        <BlogItem {...rec} key={rec.hash} />
       ))}
     </Stack>
   )

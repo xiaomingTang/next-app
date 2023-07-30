@@ -71,7 +71,7 @@ export function BlogContent(blog: BlogContentProps) {
       </Box>
       <Box>
         {blog.tags.map((tag) => (
-          <TagItem key={tag.hash} {...tag} sx={{ mr: 1, mb: 1 }} />
+          <TagItem {...tag} key={tag.hash} sx={{ mr: 1, mb: 1 }} />
         ))}
       </Box>
       {/* content */}

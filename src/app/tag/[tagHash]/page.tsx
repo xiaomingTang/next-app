@@ -71,8 +71,8 @@ export default async function Home({ params: { tagHash } }: Props) {
               render={(tags) =>
                 tags.map((tag) => (
                   <TagItem
-                    key={tag.hash}
                     {...tag}
+                    key={tag.hash}
                     active={tag.hash === tagHash}
                     sx={{ mr: 1, mb: 1 }}
                   />
