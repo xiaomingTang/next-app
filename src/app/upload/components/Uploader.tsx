@@ -382,7 +382,7 @@ const Uploader = NiceModal.create(
   }
 )
 
-export async function upload(defaultFiles: File[]): Promise<FileInfo[]> {
+export async function upload(defaultFiles: File[] = []): Promise<FileInfo[]> {
   return new Promise<FileInfo[]>((resolve) => {
     NiceModal.show(Uploader, {
       defaultFiles,
