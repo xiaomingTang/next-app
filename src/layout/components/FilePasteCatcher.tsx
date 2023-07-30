@@ -1,11 +1,17 @@
 'use client'
 
 import { upload } from '@/app/upload/components/Uploader'
+import { useUser } from '@/user'
 
+import { noop } from 'lodash-es'
 import { useEffect } from 'react'
 
 export function FilePasteCatcher() {
+  const user = useUser()
   useEffect(() => {
+    if (!user.id) {
+      return noop
+    }
     const onPaste = (e: ClipboardEvent) => {
       // 需要把文件夹过滤掉 (文件夹没有 type)
       const files = Array.from(e.clipboardData?.files ?? []).filter(
@@ -19,7 +25,7 @@ export function FilePasteCatcher() {
     return () => {
       window.removeEventListener('paste', onPaste)
     }
-  }, [])
+  }, [user.id])
 
   return <></>
 }
