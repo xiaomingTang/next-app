@@ -89,9 +89,12 @@ export function BlogContent(blog: BlogContentProps) {
         <Typography
           component='h1'
           sx={{
+            position: 'relative',
             textAlign: 'center',
             fontSize: '2rem',
             fontWeight: 'bold',
+            // 空给编辑按钮
+            px: '2rem',
           }}
         >
           {blog.type === 'UNPUBLISHED' && <>{BlogTypeMap[blog.type].name} </>}
@@ -100,7 +103,13 @@ export function BlogContent(blog: BlogContentProps) {
             {blog.creator.id === user.id && (
               <IconButton
                 color='primary'
-                sx={{ verticalAlign: 'baseline', float: 'right' }}
+                size='small'
+                sx={{
+                  verticalAlign: 'baseline',
+                  position: 'absolute',
+                  right: 0,
+                  top: 0,
+                }}
                 aria-label='编辑该博客'
                 onClick={cat(() => editBlog(blog))}
               >
