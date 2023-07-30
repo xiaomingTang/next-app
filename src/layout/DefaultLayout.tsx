@@ -2,6 +2,7 @@
 
 import { DefaultFooter } from './DefaultFooter'
 import { DefaultHeader } from './DefaultHeader'
+import { FilePasteCatcher } from './components/FilePasteCatcher'
 
 import { Box } from '@mui/material'
 
@@ -12,6 +13,7 @@ export default function DefaultLayout({
 }) {
   return (
     <>
+      <FilePasteCatcher />
       <Box sx={{ width: '100%', minHeight: '100vh' }}>
         <DefaultHeader />
         {children}
