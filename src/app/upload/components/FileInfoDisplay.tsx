@@ -1,4 +1,4 @@
-import { checkIsImage, useFileUrl } from '../utils/fileToDataUrl'
+import { checkIsImage, useFileUrl } from '../utils/useFileUrl'
 
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 
