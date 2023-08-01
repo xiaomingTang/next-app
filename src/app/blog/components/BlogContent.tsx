@@ -3,6 +3,7 @@
 import './styles/markdown-overrides.scss'
 
 import { markdownComponents } from './markdownComponents'
+import { BLOG_MARKDOWN_ID } from './constants'
 
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import { ScrollToTop } from '@/components/ScrollToTop'
@@ -77,7 +78,8 @@ export function BlogContent(blog: BlogContentProps) {
       {/* content */}
       <Typography
         component='article'
-        className='markdown-body'
+        className='markdown-body shadow'
+        id={BLOG_MARKDOWN_ID}
         sx={{
           p: 2,
           mt: 1,

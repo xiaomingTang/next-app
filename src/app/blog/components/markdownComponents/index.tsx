@@ -2,23 +2,23 @@
 
 import Anchor from '@/components/Anchor'
 import { images } from '@ROOT/next-image.config'
-import { useScrollToTop } from '@/hooks/useScrollToTop'
+import { DefaultLayoutScrollFlag } from '@/layout/components/ScrollFlag'
 
 import { Button } from '@mui/material'
-import { createElement, useEffect } from 'react'
+import { createElement } from 'react'
 import Image from 'next/image'
 import LinkIcon from '@mui/icons-material/Link'
-import { noop } from 'lodash-es'
 
 import type { MDXComponents } from 'mdx/types'
 
-function encodeToId(s: unknown) {
+export function encodeToId(s: unknown) {
   if (typeof s === 'number' || typeof s === 'string') {
-    return `${s}`
+    const rawId = `${s}`
       .replace(/[^\u4e00-\u9fa5\-_a-zA-Z0-9]/g, '-')
       .split('-')
       .filter(Boolean)
       .join('-')
+    return rawId ? `user-content-${rawId}` : ''
   }
   return ''
 }
@@ -35,26 +35,8 @@ function geneHeading(tag: `h${number}`) {
       tabIndex: props.tabIndex ?? -1,
       className: 'user-heading',
     }
-    const stringified = encodeToId(propsWithDefault.children)
-    const id = stringified ? `user-content-${stringified}` : ''
+    const id = encodeToId(propsWithDefault.children?.toString())
     const elementHash = `#${id}`
-
-    const { element: scrollFlag, scrollToTop } = useScrollToTop('inline')
-
-    useEffect(() => {
-      if (elementHash === decodeURIComponent(window.location.hash)) {
-        const onReadyStateChange = () => {
-          if (document.readyState === 'complete') {
-            scrollToTop()
-          }
-        }
-        document.addEventListener('readystatechange', onReadyStateChange)
-        return () => {
-          document.removeEventListener('readystatechange', onReadyStateChange)
-        }
-      }
-      return noop
-    }, [elementHash, scrollToTop])
 
     if (!id) {
       return createElement(tag, propsWithDefault, propsWithDefault.children)
@@ -63,19 +45,19 @@ function geneHeading(tag: `h${number}`) {
       tag,
       propsWithDefault,
       <>
-        {scrollFlag}
+        <DefaultLayoutScrollFlag id={id} inline />
         <Anchor
-          id={id}
           href={elementHash}
-          aria-label={`超链接, 指向页面内 hash: ${stringified}`}
+          aria-label={`超链接, 指向页面内 heading`}
           tabIndex={-1}
           className='user-anchor'
           onClick={(e) => {
             e.preventDefault()
             const url = new URL(window.location.href)
-            url.hash = `#${id}`
+            const hash = `#${id}`
+            url.hash = hash
             window.history.replaceState(null, '', url)
-            scrollToTop()
+            document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' })
           }}
         >
           <LinkIcon className='align-baseline' />

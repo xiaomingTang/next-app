@@ -1,6 +1,7 @@
 import { BlogContent } from '../components/BlogContent'
 import { BlogList, BlogListLoading } from '../components/BlogList'
 import { RecommendSep } from '../components/RecommendSep'
+import { Toc } from '../components/Toc'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
@@ -10,6 +11,7 @@ import { seo } from '@/utils/seo'
 import { ServerComponent } from '@/components/ServerComponent'
 import { SA } from '@/errors/utils'
 import { FESEO } from '@/components/FESEO'
+import { DefaultAside } from '@/layout/DefaultAside'
 
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
@@ -89,6 +91,9 @@ export default async function Home({ params: { blogHash } }: Props) {
             )}
             render={(blog) => (
               <>
+                <DefaultAside placement='right'>
+                  <Toc />
+                </DefaultAside>
                 <BlogContent {...blog} />
                 <FESEO
                   title={seo.title(blog.title)}
