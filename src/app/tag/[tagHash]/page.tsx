@@ -32,7 +32,7 @@ export async function generateMetadata({
       }),
     ['getTag', tagHash],
     {
-      revalidate: 300,
+      revalidate: 10,
       tags: [`getTag:${tagHash}`],
     }
   )()
@@ -65,7 +65,7 @@ export default async function Home({ params: { tagHash } }: Props) {
           >
             <ServerComponent
               api={unstable_cache(() => getTags({}), ['getTags'], {
-                revalidate: 300,
+                revalidate: 10,
                 tags: ['getTags'],
               })}
               render={(tags) =>
@@ -92,7 +92,7 @@ export default async function Home({ params: { tagHash } }: Props) {
                   }),
                 ['getTag', tagHash],
                 {
-                  revalidate: 300,
+                  revalidate: 10,
                   tags: [`getTag:${tagHash}`],
                 }
               )}
@@ -125,7 +125,7 @@ export default async function Home({ params: { tagHash } }: Props) {
                   }),
                 ['getBlogs', 'PUBLISHED', tagHash],
                 {
-                  revalidate: 300,
+                  revalidate: 10,
                   tags: ['getBlogs'],
                 }
               )}

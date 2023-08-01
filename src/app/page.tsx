@@ -35,7 +35,7 @@ export default async function Home() {
           >
             <ServerComponent
               api={unstable_cache(() => getTags({}), ['getTags'], {
-                revalidate: 300,
+                revalidate: 10,
                 tags: ['getTags'],
               })}
               render={(tags) =>
@@ -62,7 +62,7 @@ export default async function Home() {
                   }),
                 ['getBlogs', 'PUBLISHED'],
                 {
-                  revalidate: 300,
+                  revalidate: 10,
                   tags: ['getBlogs'],
                 }
               )}

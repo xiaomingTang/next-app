@@ -35,7 +35,7 @@ export async function generateMetadata({
       }),
     ['getBlog', blogHash],
     {
-      revalidate: 300,
+      revalidate: 10,
       tags: [`getBlog:${blogHash}`],
     }
   )()
@@ -85,7 +85,7 @@ export default async function Home({ params: { blogHash } }: Props) {
               () => getBlogWithSource(blogHash),
               ['getBlog', blogHash],
               {
-                revalidate: 300,
+                revalidate: 10,
                 tags: [`getBlog:${blogHash}`],
               }
             )}
@@ -116,7 +116,7 @@ export default async function Home({ params: { blogHash } }: Props) {
               () => getRecommendBlogs(blogHash),
               ['getRecommendBlogs', blogHash],
               {
-                revalidate: 300,
+                revalidate: 10,
                 tags: [`getRecommendBlogs:${blogHash}`],
               }
             )}
