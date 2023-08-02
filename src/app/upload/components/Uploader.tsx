@@ -46,6 +46,7 @@ import type { FileInfo } from './FileInfoDisplay'
 interface UploaderProps {
   onSuccess?: (fileInfos: FileInfo[]) => void
   defaultFiles?: File[]
+  accept?: string
 }
 
 function initFileToInfo(f: File): FileInfo {
@@ -57,7 +58,7 @@ function initFileToInfo(f: File): FileInfo {
 
 // TODO: 做成弹窗形式 & 简易上传弹窗 & 全屏/轻量/单个文件上传 等
 const Uploader = NiceModal.create(
-  ({ onSuccess, defaultFiles = [] }: UploaderProps) => {
+  ({ onSuccess, defaultFiles = [], accept }: UploaderProps) => {
     const modal = useModal()
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'))
     const { handleSubmit, control } = useForm<{
@@ -348,6 +349,7 @@ const Uploader = NiceModal.create(
               cursor: 'pointer',
             }}
             multiple
+            accept={accept}
             onInput={(e) => {
               const target = e.target as HTMLInputElement
               const files = Array.from(target.files ?? [])
@@ -382,10 +384,16 @@ const Uploader = NiceModal.create(
   }
 )
 
-export async function upload(defaultFiles: File[] = []): Promise<FileInfo[]> {
+export async function upload(
+  defaultFiles: File[] = [],
+  options?: {
+    accept?: string
+  }
+): Promise<FileInfo[]> {
   return new Promise<FileInfo[]>((resolve) => {
     NiceModal.show(Uploader, {
       defaultFiles,
+      accept: options?.accept,
       onSuccess: resolve,
     })
   })
