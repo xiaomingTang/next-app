@@ -22,6 +22,11 @@ type AuthRequiredProps = {
    */
   userIds?: User['id'][]
   fallback?: React.ReactNode | React.ReactNode[]
+  /**
+   * 为 false 则会在未登录时自动弹出登录框
+   * @default false
+   */
+  silence?: boolean
 }
 
 const defaultRoles: Role[] = ['USER']
@@ -29,6 +34,7 @@ const defaultUserIds: User['id'][] = []
 const defaultFallback = <></>
 
 export function AuthRequired({
+  silence = false,
   disabled = false,
   roles = defaultRoles,
   userIds = defaultUserIds,
@@ -38,10 +44,10 @@ export function AuthRequired({
   const user = useUser()
 
   useEffect(() => {
-    if (!disabled && !user.id) {
+    if (!disabled && !user.id && !silence) {
       useUser.login().catch(noop)
     }
-  }, [disabled, user.id])
+  }, [disabled, user.id, silence])
 
   const getChildren = () => {
     if (disabled) {
