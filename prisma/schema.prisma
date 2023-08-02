@@ -33,13 +33,14 @@ model User {
   blogs            Blog[]
   tags             Tag[]
   uploads          Upload[]
+  mediaCards       MediaCard[]
 }
 
 model Novel {
   hash      String    @id
   driver    String
   remoteUrl String    @unique
-  title     String
+  title     String    @default("")
   author    String
   chapters  Chapter[]
 }
@@ -77,7 +78,7 @@ model ShortUrl {
 model Tag {
   hash        String   @id
   name        String   @unique
-  description String
+  description String   @default("")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   blogs       Blog[]
@@ -105,4 +106,23 @@ model Upload {
   updatedAt   DateTime @updatedAt
   creatorId   Int
   creator     User     @relation(fields: [creatorId], references: [id])
+}
+
+enum MediaCardType {
+  FRUIT
+}
+
+model MediaCard {
+  hash        String        @id
+  title       String        @default("") @db.VarChar(100)
+  description String        @default("") @db.VarChar(200)
+  image       String        @default("")
+  audio       String        @default("")
+  video       String        @default("")
+  type        MediaCardType
+  order       Int           @default(0)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  creatorId   Int
+  creator     User          @relation(fields: [creatorId], references: [id])
 }
