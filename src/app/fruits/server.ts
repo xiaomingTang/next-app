@@ -4,7 +4,6 @@ import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { validateRequest } from '@/request/validator'
 import { authValidate, getSelf } from '@/user/server'
-import { sleepMs } from '@/utils/time'
 
 import Boom from '@hapi/boom'
 import { Type } from '@sinclair/typebox'
@@ -150,9 +149,8 @@ export type MediaCardWithUser = NonNullable<
 >
 
 export const getMediaCards = SA.encode(
-  async (props: Prisma.MediaCardWhereInput) => {
-    await sleepMs(5000)
-    return prisma.mediaCard.findMany({
+  async (props: Prisma.MediaCardWhereInput) =>
+    prisma.mediaCard.findMany({
       where: props,
       select: mediaCardSelect,
       orderBy: [
@@ -164,7 +162,6 @@ export const getMediaCards = SA.encode(
         },
       ],
     })
-  }
 )
 
 const sortMediaCardsDto = Type.Array(
