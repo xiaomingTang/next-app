@@ -15,5 +15,6 @@ declare namespace NodeJS {
     C_AWS_BUCKET: string
     C_AWS_ACCESS_KEY_ID: string
     C_AWS_SECRET_ACCESS_KEY: string
+    GA_ID: string
   }
 }

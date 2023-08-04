@@ -7,6 +7,7 @@ import Contexts from '@/common/contexts'
 import Polyfills from '@/common/polyfills'
 import Providers from '@/common/providers'
 import { seo } from '@/utils/seo'
+import { GA } from '@/analytics/GA'
 
 import clsx from 'clsx'
 import { Inter } from 'next/font/google'
@@ -51,6 +52,7 @@ export default function RootLayout({
       <body className={clsx(inter.className, 'min-h-screen')}>
         {/* TODO: 这个 ENV_CONFIG 的实现可能有问题 */}
         <script src='/__ENV_CONFIG__.js' />
+        <GA />
         <GetInitColorSchemeScript />
         <Providers>
           <Polyfills />
