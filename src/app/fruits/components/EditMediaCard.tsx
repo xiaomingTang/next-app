@@ -31,6 +31,8 @@ import {
   InputLabel,
   FormHelperText,
   DialogActions,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { pick } from 'lodash-es'
 import { LoadingButton } from '@mui/lab'
@@ -62,6 +64,7 @@ const MediaCardModal = NiceModal.create(
   ({ mediaCard, onSuccess, onCancel }: MediaCardModalProps) => {
     const router = useRouter()
     const modal = useModal()
+    const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'))
     const [loading, withLoading] = useLoading()
     const {
       handleSubmit,
@@ -99,16 +102,6 @@ const MediaCardModal = NiceModal.create(
     const header = (
       <AppBar sx={{ position: 'relative' }}>
         <Toolbar variant='dense'>
-          <IconButton
-            edge='start'
-            aria-label='取消编辑'
-            onClick={() => {
-              modal.hide()
-              onCancel?.(new Error('操作已取消'))
-            }}
-          >
-            <CloseIcon />
-          </IconButton>
           <Box sx={{ flex: 1 }}>
             {mediaCard.hash && mediaCard.updatedAt ? (
               <Tooltip title={formatTime(mediaCard.updatedAt)}>
@@ -120,6 +113,16 @@ const MediaCardModal = NiceModal.create(
               <Typography component='span'>新建</Typography>
             )}
           </Box>
+          <IconButton
+            edge='end'
+            aria-label='取消编辑'
+            onClick={() => {
+              modal.hide()
+              onCancel?.(new Error('操作已取消'))
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
     )
@@ -317,7 +320,7 @@ const MediaCardModal = NiceModal.create(
     return (
       <Dialog
         fullWidth
-        maxWidth='sm'
+        fullScreen={fullScreen}
         // 编辑(hash 非空)或有内容时, 禁用 esc close
         disableEscapeKeyDown={
           !!(mediaCard.hash || mediaCard.title || mediaCard.description)
