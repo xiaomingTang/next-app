@@ -29,6 +29,8 @@ export function cat<Args extends unknown[], Ret>(
     } catch (catchError) {
       const error = toError(catchError)
       if (error.code === 401 && props?.doNotShowLoginModalWhen401 !== true) {
+        // 先清空用户态, 使得登录弹窗能正确弹出来
+        useUser.reset()
         // 不关心完成与否, 所以无需 await
         useUser.login().catch(noop)
       }

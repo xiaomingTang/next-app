@@ -44,6 +44,13 @@ export const useUser = withStatic(useRawUser, {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser))
     useRawUser.setState(newUser)
   },
+  reset() {
+    const newUser = {
+      ...defaultUser,
+    }
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser))
+    useRawUser.setState(newUser)
+  },
   init() {
     useRawUser.setState(useUser.getUser())
   },
