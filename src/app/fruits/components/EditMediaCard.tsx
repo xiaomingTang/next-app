@@ -30,6 +30,7 @@ import {
   FormControl,
   InputLabel,
   FormHelperText,
+  DialogActions,
 } from '@mui/material'
 import { pick } from 'lodash-es'
 import { LoadingButton } from '@mui/lab'
@@ -333,7 +334,7 @@ const MediaCardModal = NiceModal.create(
           <Stack
             component={'form'}
             direction='column'
-            spacing={1}
+            id='EDIT_MEDIA_CARD_FORM_ID'
             onSubmit={onSubmit}
           >
             {titleElem}
@@ -342,11 +343,19 @@ const MediaCardModal = NiceModal.create(
             {imageElem}
             {audioElem}
             {videoElem}
-            <LoadingButton loading={loading} variant='contained' type='submit'>
-              提交
-            </LoadingButton>
           </Stack>
         </DialogContent>
+        <DialogActions>
+          <LoadingButton
+            loading={loading}
+            variant='contained'
+            form='EDIT_MEDIA_CARD_FORM_ID'
+            type='submit'
+            sx={{ width: '100%' }}
+          >
+            提交
+          </LoadingButton>
+        </DialogActions>
       </Dialog>
     )
   }
