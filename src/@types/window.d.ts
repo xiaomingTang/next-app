@@ -1,15 +1,10 @@
 import type { User } from '@prisma/client'
-import type toast from 'react-hot-toast'
 
 declare global {
   type AppEnv = 'production' | 'preprod'
 
   type SimpleUser = Omit<User, 'password' | 'email'> &
     Pick<Partial<User>, 'password' | 'email'>
-
-  interface Window {
-    toast: typeof toast
-  }
 
   interface Document {
     mozFullScreenElement?: Element
