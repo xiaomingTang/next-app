@@ -11,7 +11,7 @@ import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
 import { AnchorProvider } from '@/components/AnchorProvider'
 
-import CloseIcon from '@mui/icons-material/Close'
+import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import SettingsIcon from '@mui/icons-material/Settings'
 import CopyAllIcon from '@mui/icons-material/CopyAll'
 import {
@@ -300,7 +300,7 @@ const Uploader = NiceModal.create(
             </Box>
             <IconButton
               edge='end'
-              aria-label='取消编辑'
+              aria-label='完成'
               onClick={() => {
                 modal.hide()
                 onSuccess?.(
@@ -308,7 +308,7 @@ const Uploader = NiceModal.create(
                 )
               }}
             >
-              <CloseIcon />
+              <CheckCircleIcon />
             </IconButton>
           </Toolbar>
         </AppBar>
@@ -346,6 +346,7 @@ const Uploader = NiceModal.create(
               top: 0,
               right: 0,
               bottom: 0,
+              overflow: 'hidden',
               cursor: 'pointer',
             }}
             multiple
