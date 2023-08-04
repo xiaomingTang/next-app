@@ -5,6 +5,8 @@ import { editMediaCard } from './EditMediaCard'
 import { cat } from '@/errors/catchAndToast'
 import { SvgLoading } from '@/svg'
 import { AuthRequired } from '@/components/AuthRequired'
+import { useMediaLoading } from '@/hooks/useMediaLoading'
+import { useListen } from '@/hooks/useListen'
 
 import { useAudio } from 'react-use'
 import {
@@ -18,6 +20,8 @@ import {
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
 import EditIcon from '@mui/icons-material/Edit'
+import UploadIcon from '@mui/icons-material/Upload'
+import { useMemo } from 'react'
 
 import type { MediaCardWithUser } from '../server'
 import type { LoadingAble } from '@/components/ServerComponent'
@@ -28,25 +32,32 @@ const emptyMedia =
   'https://next-app-storage-04a4aa9a124907-staging.s3.ap-northeast-2.amazonaws.com/public/2023-08-02/wEdkkC_r0Khz.mp3'
 
 export function MediaCardItem(props: MediaCardProps) {
-  const [audio, state, controls] = useAudio({
-    src: props.audio || emptyMedia,
-    autoPlay: false,
+  const mediaProps = useMemo(
+    () => ({
+      src: props.audio || emptyMedia,
+      autoPlay: false,
+    }),
+    [props.audio]
+  )
+  const [audio, state, controls, ref] = useAudio(mediaProps)
+  const { loading: mediaLoading, setMedia } = useMediaLoading()
+
+  // 变化才 setMedia
+  useListen(ref.current, () => {
+    setMedia(ref.current)
   })
+
   if (props.loading) {
     return (
-      <Card sx={{ display: 'flex' }}>
-        <CardMedia
-          component='div'
-          sx={{
-            width: 151,
-            height: 151,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
-          <SvgLoading className='animate-spin' />
-        </CardMedia>
+      <Card
+        sx={{
+          display: 'flex',
+          height: 151,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <SvgLoading className='w-[38px] h-[38px] animate-spin opacity-50' />
       </Card>
     )
   }
@@ -94,17 +105,31 @@ export function MediaCardItem(props: MediaCardProps) {
               aria-label='play/pause'
               onClick={() => {
                 if (state.paused) {
+                  // 暂停其他播放器
+                  document
+                    .querySelectorAll<HTMLAudioElement>('audio')
+                    .forEach((elem) => elem.pause())
+                  document
+                    .querySelectorAll<HTMLVideoElement>('video')
+                    .forEach((elem) => elem.pause())
+                  // 从头开始
+                  controls.seek(0)
                   controls.play()
                 } else {
                   controls.pause()
                 }
               }}
             >
-              {state.paused ? (
-                <PlayArrowIcon sx={{ height: 38, width: 38 }} />
-              ) : (
-                <PauseIcon sx={{ height: 38, width: 38 }} />
-              )}
+              {
+                // eslint-disable-next-line no-nested-ternary
+                state.paused ? (
+                  <PlayArrowIcon sx={{ height: 38, width: 38 }} />
+                ) : mediaLoading ? (
+                  <SvgLoading className='w-[38px] h-[38px] animate-spin opacity-50' />
+                ) : (
+                  <PauseIcon sx={{ height: 38, width: 38 }} />
+                )
+              }
             </IconButton>
           )}
         </Box>
@@ -127,29 +152,38 @@ export function MediaCardItem(props: MediaCardProps) {
 export function MediaCardUploadTrigger() {
   return (
     <Card
-      sx={{ display: 'flex' }}
+      sx={{
+        display: 'flex',
+        height: 151,
+        justifyContent: 'center',
+        alignItems: 'center',
+        cursor: 'pointer',
+      }}
       onClick={cat(async () => {
         await editMediaCard({
           type: 'FRUIT',
         })
       })}
     >
-      <CardMedia
-        component='div'
+      <Box
         sx={{
-          width: 151,
-          height: 151,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
+          fontSize: '1.2em',
+          fontWeight: 'bold',
         }}
-      />
-      <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-        <CardContent sx={{ flex: '1 0 auto' }}>
-          <Typography component='div' variant='h5'>
-            立即上传
-          </Typography>
-        </CardContent>
+      >
+        <UploadIcon sx={{ mr: 1 }} />
+        <Typography
+          component='span'
+          sx={{
+            fontSize: 'inherit',
+            fontWeight: 'inherit',
+          }}
+        >
+          立即上传
+        </Typography>
       </Box>
     </Card>
   )
