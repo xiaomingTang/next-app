@@ -6,6 +6,7 @@ import { useEvent } from 'react-use'
 
 import type { NiceModalHandler } from '@ebay/nice-modal-react'
 
+// TODO: BUG: 当同时有多个弹窗时, 直接返回会把所有弹窗都关闭掉
 export function useInjectHistory(
   modal: NiceModalHandler<Record<string, unknown>>,
   /**
