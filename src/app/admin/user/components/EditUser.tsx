@@ -6,6 +6,7 @@ import { useLoading } from '@/hooks/useLoading'
 import { SA } from '@/errors/utils'
 import { RoleNameMap } from '@/constants'
 import { ENV_CONFIG } from '@/config'
+import { useModalPushState } from '@/hooks/useModalPushState'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
@@ -49,6 +50,10 @@ const defaultEmptyUser: PartialUser = {
 
 const UserTip = NiceModal.create(({ user }: { user: User }) => {
   const modal = useModal()
+  useModalPushState(modal, async () => {
+    modal.reject(new Error('操作已取消'))
+    modal.hide()
+  })
   const texts = [
     `网站: ${ENV_CONFIG.public.origin}`,
     `用户名: ${user.name} (用户名仅作为标识, 请使用邮箱登录)`,
