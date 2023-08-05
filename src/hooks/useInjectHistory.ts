@@ -6,7 +6,9 @@ import { useEvent } from 'react-use'
 
 import type { NiceModalHandler } from '@ebay/nice-modal-react'
 
-// TODO: BUG: 当同时有多个弹窗时, 直接返回会把所有弹窗都关闭掉
+let modalLevels: number[] = []
+let ignoreLevel = -1
+
 export function useInjectHistory(
   modal: NiceModalHandler<Record<string, unknown>>,
   /**
@@ -15,18 +17,30 @@ export function useInjectHistory(
    */
   onPopState: (e: PopStateEvent) => Promise<void>
 ) {
-  const isTriggeredByPopStateRef = useRef(false)
+  const levelRef = useRef(-1)
   const finalOnPopState = useEventCallback((e: PopStateEvent) => {
-    isTriggeredByPopStateRef.current = true
+    if (levelRef.current !== Math.max(...modalLevels, 0)) {
+      return
+    }
+    if (levelRef.current === ignoreLevel) {
+      ignoreLevel = -1
+      return
+    }
+    modalLevels = modalLevels.filter((v) => v !== levelRef.current)
     onPopState(e).catch(() => {
-      window.history.pushState(null, '', '#dialog')
+      modalLevels.push(levelRef.current)
+      window.history.pushState(null, '', window.location.href)
     })
   })
   useEvent('popstate', finalOnPopState)
   useListen(modal.visible, () => {
     if (modal.visible) {
-      window.history.pushState(null, '', '#dialog')
-    } else if (!isTriggeredByPopStateRef.current) {
+      levelRef.current = Math.max(...modalLevels, 0) + 1
+      modalLevels.push(levelRef.current)
+      window.history.pushState(null, '', window.location.href)
+    } else if (modalLevels.includes(levelRef.current)) {
+      modalLevels = modalLevels.filter((v) => v !== levelRef.current)
+      ignoreLevel = levelRef.current - 1
       window.history.back()
     }
   })
