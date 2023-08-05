@@ -12,10 +12,10 @@ export function useInjectHistory(
    * 如果需要在用户物理返回时关闭弹窗, 就在该方法中手动调用 modal.hide();
    * 如果拒绝关闭弹窗, 就别 hide() 并 throw Error;
    */
-  onPopState: (e: unknown) => Promise<void>
+  onPopState: (e: PopStateEvent) => Promise<void>
 ) {
   const isTriggeredByPopStateRef = useRef(false)
-  const finalOnPopState = useEventCallback((e) => {
+  const finalOnPopState = useEventCallback((e: PopStateEvent) => {
     isTriggeredByPopStateRef.current = true
     onPopState(e).catch(() => {
       window.history.pushState(null, '', '#dialog')
