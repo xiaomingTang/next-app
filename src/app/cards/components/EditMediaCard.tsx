@@ -107,8 +107,13 @@ const MediaCardModal = NiceModal.create(
         <Toolbar variant='dense'>
           <Box sx={{ flex: 1 }}>
             {mediaCard.hash && mediaCard.updatedAt ? (
-              <Tooltip title={formatTime(mediaCard.updatedAt)}>
-                <Typography component='span'>
+              <Tooltip title={`上次编辑于 ${formatTime(mediaCard.updatedAt)}`}>
+                <Typography
+                  component='span'
+                  aria-label={`上次编辑于 ${friendlyFormatTime(
+                    mediaCard.updatedAt
+                  )}`}
+                >
                   上次编辑于 {friendlyFormatTime(mediaCard.updatedAt)}
                 </Typography>
               </Tooltip>

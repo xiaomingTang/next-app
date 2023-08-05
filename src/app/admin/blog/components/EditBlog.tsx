@@ -120,8 +120,11 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
         </IconButton>
         <Box sx={{ flex: 1 }}>
           {blog.hash && blog.updatedAt ? (
-            <Tooltip title={formatTime(blog.updatedAt)}>
-              <Typography component='span'>
+            <Tooltip title={`上次编辑于 ${formatTime(blog.updatedAt)}`}>
+              <Typography
+                component='span'
+                aria-label={`上次编辑于 ${friendlyFormatTime(blog.updatedAt)}`}
+              >
                 上次编辑于 {friendlyFormatTime(blog.updatedAt)}
               </Typography>
             </Tooltip>

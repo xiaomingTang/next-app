@@ -16,6 +16,7 @@ import {
   Typography,
   IconButton,
   CardMedia,
+  Button,
 } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
@@ -50,6 +51,7 @@ export function MediaCardItem(props: MediaCardProps) {
   if (props.loading) {
     return (
       <Card
+        aria-label='加载中'
         sx={{
           display: 'flex',
           height: 151,
@@ -102,7 +104,7 @@ export function MediaCardItem(props: MediaCardProps) {
           </Box>
           {props.audio && (
             <IconButton
-              aria-label='play/pause'
+              aria-label='播放/暂停'
               onClick={() => {
                 if (state.paused) {
                   // 暂停其他播放器
@@ -136,7 +138,7 @@ export function MediaCardItem(props: MediaCardProps) {
       </Box>
       <AuthRequired silence roles={['ADMIN']}>
         <IconButton
-          aria-label='edit'
+          aria-label='编辑'
           sx={{ position: 'absolute', right: 0, top: 0 }}
           onClick={cat(async () => {
             await editMediaCard(props)
@@ -152,18 +154,22 @@ export function MediaCardItem(props: MediaCardProps) {
 export function MediaCardUploadTrigger() {
   return (
     <Card
-      sx={{
-        display: 'flex',
-        height: 151,
-        justifyContent: 'center',
-        alignItems: 'center',
-        cursor: 'pointer',
-      }}
+      aria-label='立即上传'
+      aria-labelledby='立即上传'
+      component={Button}
       onClick={cat(async () => {
         await editMediaCard({
           type: 'FRUIT',
         })
       })}
+      sx={{
+        display: 'flex',
+        width: '100%',
+        height: 151,
+        justifyContent: 'center',
+        alignItems: 'center',
+        cursor: 'pointer',
+      }}
     >
       <Box
         sx={{
