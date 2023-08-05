@@ -36,7 +36,7 @@ export function BlogEntry() {
   return (
     <>
       <Entry pathname='/' name='首页' />
-      <Entry pathname='/fruits' name='水果' />
+      <Entry pathname='/cards/fruits' name='水果' />
     </>
   )
 }

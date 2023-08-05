@@ -1,5 +1,8 @@
-import { getMediaCards } from './server'
-import { MediaCardList, MediaCardListLoading } from './components/MediaCardList'
+import { getMediaCards } from '../server'
+import {
+  MediaCardList,
+  MediaCardListLoading,
+} from '../components/MediaCardList'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'

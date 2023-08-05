@@ -43,6 +43,15 @@ const nextConfig = {
   experimental: {
     serverActions: true,
   },
+  async redirects() {
+    return [
+      {
+        source: '/fruits',
+        destination: '/cards/fruits',
+        permanent: true,
+      },
+    ]
+  },
   async headers() {
     return [
       {
