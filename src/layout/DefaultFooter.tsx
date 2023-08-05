@@ -52,6 +52,9 @@ export function DefaultFooter() {
             小明
           </Anchor>
         </Stack>
+        <Anchor href='https://beian.miit.gov.cn/' aria-label='域名信息备案'>
+          赣ICP备2021003257号-1
+        </Anchor>
       </Stack>
       <Typography>
         Powered by
