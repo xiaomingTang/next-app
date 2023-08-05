@@ -22,6 +22,10 @@ export function useListen<T>(
   callbackRef.current = callback
 
   useEffect(() => {
+    // useEffect 在 dev 环境会执行 2 遍, 此处避免该行为造成的影响
+    if (value === prevRef.current) {
+      return
+    }
     callbackRef.current(value, prevRef.current)
     prevRef.current = value
   }, [value])
