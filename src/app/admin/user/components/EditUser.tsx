@@ -38,8 +38,6 @@ type PartialUser = PickAndPartial<User, 'id'>
 
 interface EditUserModalProps {
   user: PartialUser
-  onSuccess?: (user: User) => void
-  onCancel?: () => void
 }
 
 const defaultEmptyUser: PartialUser = {
@@ -70,6 +68,7 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
           <IconButton
             edge='end'
             onClick={() => {
+              modal.resolve()
               modal.hide()
             }}
             aria-label='close'
@@ -97,192 +96,182 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
   )
 })
 
-const EditUserModal = NiceModal.create(
-  ({ onSuccess, onCancel, user }: EditUserModalProps) => {
-    const modal = useModal()
-    const [loading, withLoading] = useLoading()
-    const { handleSubmit, control, setError } = useForm<PartialUser>({
-      defaultValues: user,
-    })
+const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
+  const modal = useModal()
+  const [loading, withLoading] = useLoading()
+  const { handleSubmit, control, setError } = useForm<PartialUser>({
+    defaultValues: user,
+  })
 
-    return (
-      <Dialog
-        {...muiDialogV5(modal)}
-        fullWidth
-        maxWidth='xs'
-        onClose={() => {
-          onCancel?.()
-          modal.hide()
-        }}
-      >
-        <AppBar position='relative' sx={{ paddingRight: '0' }}>
-          <Toolbar>
-            <Typography sx={{ flex: 1 }} variant='h6' component='div'>
-              {user.id ? '编辑用户' : '新建用户'}
-            </Typography>
-            <IconButton
-              edge='end'
-              onClick={() => {
-                onCancel?.()
-                modal.hide()
-              }}
-              aria-label='close'
-            >
-              <CloseIcon />
-            </IconButton>
-          </Toolbar>
-        </AppBar>
-        <DialogContent>
-          <form
-            className='flex flex-col gap-2 pt-2'
-            onSubmit={handleSubmit(
-              withLoading(async (e) => {
-                await saveUser(e)
-                  .then(SA.decode)
-                  .then((u) => {
-                    if (!user.id) {
-                      // 创建用户时, 提示用户名及密码
-                      NiceModal.show(UserTip, {
-                        user: {
-                          ...u,
-                          ...e,
-                        },
-                      })
-                    }
-                    onSuccess?.(u)
-                    modal.hide()
-                  })
-                  .catch((err) => {
-                    setError('email', {
-                      message: err.message,
-                    })
-                  })
-              })
-            )}
+  return (
+    <Dialog
+      {...muiDialogV5(modal)}
+      fullWidth
+      maxWidth='xs'
+      onClose={() => {
+        modal.reject(new Error('操作已取消'))
+        modal.hide()
+      }}
+    >
+      <AppBar position='relative' sx={{ paddingRight: '0' }}>
+        <Toolbar>
+          <Typography sx={{ flex: 1 }} variant='h6' component='div'>
+            {user.id ? '编辑用户' : '新建用户'}
+          </Typography>
+          <IconButton
+            edge='end'
+            onClick={() => {
+              modal.reject(new Error('操作已取消'))
+              modal.hide()
+            }}
+            aria-label='close'
           >
-            <Controller
-              name='name'
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <TextField
+            <CloseIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+      <DialogContent>
+        <form
+          className='flex flex-col gap-2 pt-2'
+          onSubmit={handleSubmit(
+            withLoading(async (e) => {
+              await saveUser(e)
+                .then(SA.decode)
+                .then((u) => {
+                  if (!user.id) {
+                    // 创建用户时, 提示用户名及密码
+                    NiceModal.show(UserTip, {
+                      user: {
+                        ...u,
+                        ...e,
+                      },
+                    })
+                  }
+                  modal.resolve(u)
+                  modal.hide()
+                })
+                .catch((err) => {
+                  setError('email', {
+                    message: err.message,
+                  })
+                })
+            })
+          )}
+        >
+          <Controller
+            name='name'
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                {...field}
+                size='small'
+                label='用户名'
+                helperText={error?.message ?? ' '}
+                error={!!error}
+              />
+            )}
+            rules={{
+              required: {
+                value: true,
+                message: '必填项',
+              },
+              minLength: {
+                value: 3,
+                message: '3 - 24 位',
+              },
+              maxLength: {
+                value: 24,
+                message: '3 - 24 位',
+              },
+            }}
+          />
+          <Controller
+            name='email'
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                {...field}
+                size='small'
+                label='邮箱'
+                helperText={error?.message ?? ' '}
+                error={!!error}
+              />
+            )}
+            rules={{
+              required: {
+                value: true,
+                message: '必填项',
+              },
+              pattern: {
+                value: /^\S+@\S+$/i,
+                message: '无效邮箱',
+              },
+            }}
+          />
+          <Controller
+            name='password'
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                {...field}
+                size='small'
+                label='密码'
+                helperText={error?.message ?? ' '}
+                error={!!error}
+              />
+            )}
+            rules={{
+              required: {
+                // 无 id 时, 为创建用户, 密码必填
+                value: !user.id,
+                message: '必填项',
+              },
+              minLength: {
+                value: 6,
+                message: '6 - 16 位',
+              },
+              maxLength: {
+                value: 16,
+                message: '6 - 16 位',
+              },
+            }}
+          />
+          <Controller
+            name='role'
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <FormControl size='small'>
+                <InputLabel>角色</InputLabel>
+                <Select
                   {...field}
-                  size='small'
-                  label='用户名'
-                  helperText={error?.message ?? ' '}
                   error={!!error}
-                />
-              )}
-              rules={{
-                required: {
-                  value: true,
-                  message: '必填项',
-                },
-                minLength: {
-                  value: 3,
-                  message: '3 - 24 位',
-                },
-                maxLength: {
-                  value: 24,
-                  message: '3 - 24 位',
-                },
-              }}
-            />
-            <Controller
-              name='email'
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <TextField
-                  {...field}
-                  size='small'
-                  label='邮箱'
-                  helperText={error?.message ?? ' '}
-                  error={!!error}
-                />
-              )}
-              rules={{
-                required: {
-                  value: true,
-                  message: '必填项',
-                },
-                pattern: {
-                  value: /^\S+@\S+$/i,
-                  message: '无效邮箱',
-                },
-              }}
-            />
-            <Controller
-              name='password'
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <TextField
-                  {...field}
-                  size='small'
-                  label='密码'
-                  helperText={error?.message ?? ' '}
-                  error={!!error}
-                />
-              )}
-              rules={{
-                required: {
-                  // 无 id 时, 为创建用户, 密码必填
-                  value: !user.id,
-                  message: '必填项',
-                },
-                minLength: {
-                  value: 6,
-                  message: '6 - 16 位',
-                },
-                maxLength: {
-                  value: 16,
-                  message: '6 - 16 位',
-                },
-              }}
-            />
-            <Controller
-              name='role'
-              control={control}
-              render={({ field, fieldState: { error } }) => (
-                <FormControl size='small'>
-                  <InputLabel>角色</InputLabel>
-                  <Select
-                    {...field}
-                    error={!!error}
-                    input={<OutlinedInput label='role' />}
-                  >
-                    <MenuItem key={'ADMIN'} value={'ADMIN'}>
-                      {RoleNameMap.ADMIN}
-                    </MenuItem>
-                    <MenuItem key={'USER'} value={'USER'}>
-                      {RoleNameMap.USER}
-                    </MenuItem>
-                  </Select>
-                  <FormHelperText>{error?.message ?? ' '}</FormHelperText>
-                </FormControl>
-              )}
-            />
-            <LoadingButton loading={loading} variant='contained' type='submit'>
-              提交
-            </LoadingButton>
-          </form>
-        </DialogContent>
-      </Dialog>
-    )
-  }
-)
+                  input={<OutlinedInput label='role' />}
+                >
+                  <MenuItem key={'ADMIN'} value={'ADMIN'}>
+                    {RoleNameMap.ADMIN}
+                  </MenuItem>
+                  <MenuItem key={'USER'} value={'USER'}>
+                    {RoleNameMap.USER}
+                  </MenuItem>
+                </Select>
+                <FormHelperText>{error?.message ?? ' '}</FormHelperText>
+              </FormControl>
+            )}
+          />
+          <LoadingButton loading={loading} variant='contained' type='submit'>
+            提交
+          </LoadingButton>
+        </form>
+      </DialogContent>
+    </Dialog>
+  )
+})
 
 /**
  * @param user 为空则为新建
  */
 export function editUser(user = defaultEmptyUser): Promise<User> {
-  return new Promise((resolve, reject) => {
-    NiceModal.show(EditUserModal, {
-      user,
-      onSuccess(u) {
-        resolve(u)
-      },
-      onCancel() {
-        reject(new Error('操作已取消'))
-      },
-    })
+  return NiceModal.show(EditUserModal, {
+    user,
   })
 }

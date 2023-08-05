@@ -9,6 +9,7 @@ import { SA } from '@/errors/utils'
 import NiceModal from '@ebay/nice-modal-react'
 import { create } from 'zustand'
 
+import type { NiceModalHocProps } from '@ebay/nice-modal-react'
 import type { User } from '@prisma/client'
 
 const defaultUser: Required<User> = {
@@ -69,18 +70,17 @@ export const useUser = withStatic(useRawUser, {
       return user
     }
     promise = new Promise((resolve, reject) => {
-      NiceModal.show(LoginModal, {
-        onSuccess(u) {
-          useUser.updateUser(u)
+      NiceModal.show<User, NiceModalHocProps>(LoginModal)
+        .then((u) => {
+          useUser.updateUser(u as User)
           promise = null
-          resolve(u)
-        },
-        onCancel() {
+          resolve(u as User)
+        })
+        .catch((err) => {
           promise = null
           useRawUser.setState(defaultUser)
-          reject(new Error('操作已取消'))
-        },
-      })
+          reject(err)
+        })
     })
     return promise
   },

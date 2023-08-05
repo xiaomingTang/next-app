@@ -44,7 +44,6 @@ import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import type { FileInfo } from './FileInfoDisplay'
 
 interface UploaderProps {
-  onSuccess?: (fileInfos: FileInfo[]) => void
   defaultFiles?: File[]
   accept?: string
 }
@@ -58,7 +57,7 @@ function initFileToInfo(f: File): FileInfo {
 
 // TODO: 做成弹窗形式 & 简易上传弹窗 & 全屏/轻量/单个文件上传 等
 const Uploader = NiceModal.create(
-  ({ onSuccess, defaultFiles = [], accept }: UploaderProps) => {
+  ({ defaultFiles = [], accept }: UploaderProps) => {
     const modal = useModal()
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'))
     const { handleSubmit, control } = useForm<{
@@ -302,10 +301,10 @@ const Uploader = NiceModal.create(
               edge='end'
               aria-label='完成'
               onClick={() => {
-                modal.hide()
-                onSuccess?.(
+                modal.resolve(
                   fileInfos.filter((info) => info.status === 'succeed')
                 )
+                modal.hide()
               }}
             >
               <CheckCircleIcon />
@@ -371,8 +370,8 @@ const Uploader = NiceModal.create(
         TransitionComponent={SlideUpTransition}
         {...muiDialogV5(modal)}
         onClose={() => {
+          modal.resolve(fileInfos.filter((info) => info.status === 'succeed'))
           modal.hide()
-          onSuccess?.(fileInfos.filter((info) => info.status === 'succeed'))
         }}
       >
         {header}
@@ -391,11 +390,8 @@ export async function upload(
     accept?: string
   }
 ): Promise<FileInfo[]> {
-  return new Promise<FileInfo[]>((resolve) => {
-    NiceModal.show(Uploader, {
-      defaultFiles,
-      accept: options?.accept,
-      onSuccess: resolve,
-    })
+  return NiceModal.show(Uploader, {
+    defaultFiles,
+    accept: options?.accept,
   })
 }

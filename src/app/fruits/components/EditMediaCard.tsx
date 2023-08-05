@@ -43,8 +43,6 @@ interface MediaCardModalProps {
   mediaCard: Partial<MediaCardWithUser> & {
     type: MediaCardWithUser['type']
   }
-  onSuccess?: (blog: MediaCardWithUser) => void
-  onCancel?: (error: Error) => void
 }
 
 type FormProps = Pick<MediaCardWithUser, 'title'> &
@@ -61,7 +59,7 @@ function numberFormat(val: number | string = '') {
 }
 
 const MediaCardModal = NiceModal.create(
-  ({ mediaCard, onSuccess, onCancel }: MediaCardModalProps) => {
+  ({ mediaCard }: MediaCardModalProps) => {
     const router = useRouter()
     const modal = useModal()
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'))
@@ -93,8 +91,8 @@ const MediaCardModal = NiceModal.create(
             order: numberFormat(e.order),
           }).then(SA.decode)
           router.refresh()
+          modal.resolve(res)
           modal.hide()
-          onSuccess?.(res)
         })
       )
     )
@@ -117,8 +115,8 @@ const MediaCardModal = NiceModal.create(
             edge='end'
             aria-label='取消编辑'
             onClick={() => {
+              modal.reject(new Error('操作已取消'))
               modal.hide()
-              onCancel?.(new Error('操作已取消'))
             }}
           >
             <CloseIcon />
@@ -328,8 +326,8 @@ const MediaCardModal = NiceModal.create(
         TransitionComponent={SlideUpTransition}
         {...muiDialogV5(modal)}
         onClose={() => {
+          modal.reject(new Error('操作已取消'))
           modal.hide()
-          onCancel?.(new Error('操作已取消'))
         }}
       >
         {header}
@@ -370,13 +368,7 @@ const MediaCardModal = NiceModal.create(
 export function editMediaCard(
   mediaCard: MediaCardModalProps['mediaCard']
 ): Promise<MediaCardWithUser> {
-  return new Promise((resolve, reject) => {
-    NiceModal.show(MediaCardModal, {
-      mediaCard,
-      onSuccess: resolve,
-      onCancel() {
-        reject(new Error('操作已取消'))
-      },
-    })
+  return NiceModal.show(MediaCardModal, {
+    mediaCard,
   })
 }
