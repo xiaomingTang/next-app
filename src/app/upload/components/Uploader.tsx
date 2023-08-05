@@ -10,7 +10,7 @@ import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
 import { AnchorProvider } from '@/components/AnchorProvider'
-import { useModalPushState } from '@/hooks/useModalPushState'
+import { useInjectHistory } from '@/hooks/useInjectHistory'
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -108,7 +108,7 @@ const Uploader = NiceModal.create(
         }),
       }))
 
-    useModalPushState(modal, async () => {
+    useInjectHistory(modal, async () => {
       modal.resolve(fileInfos.filter((info) => info.status === 'succeed'))
       modal.hide()
     })

@@ -14,7 +14,7 @@ import { useLoading } from '@/hooks/useLoading'
 import { getTags, saveTag } from '@/app/admin/tag/server'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
 import { UploadTrigger } from '@/layout/CornerButtons/UploadTrigger'
-import { useModalPushState } from '@/hooks/useModalPushState'
+import { useInjectHistory } from '@/hooks/useInjectHistory'
 
 import { useRouter } from 'next/navigation'
 import VisibilityIcon from '@mui/icons-material/Visibility'
@@ -73,7 +73,7 @@ type FormProps = Pick<
 const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
   const router = useRouter()
   const modal = useModal()
-  useModalPushState(modal, async () => {
+  useInjectHistory(modal, async () => {
     modal.reject(new Error('操作已取消'))
     modal.hide()
   })

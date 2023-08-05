@@ -8,7 +8,7 @@ import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import { upload } from '@/app/upload/components/Uploader'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
 import { useLoading } from '@/hooks/useLoading'
-import { useModalPushState } from '@/hooks/useModalPushState'
+import { useInjectHistory } from '@/hooks/useInjectHistory'
 
 import { useRouter } from 'next/navigation'
 import UploadIcon from '@mui/icons-material/Upload'
@@ -63,7 +63,7 @@ const MediaCardModal = NiceModal.create(
   ({ mediaCard }: MediaCardModalProps) => {
     const router = useRouter()
     const modal = useModal()
-    useModalPushState(modal, async () => {
+    useInjectHistory(modal, async () => {
       modal.reject(new Error('操作已取消'))
       modal.hide()
     })

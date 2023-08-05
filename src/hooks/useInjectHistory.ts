@@ -6,7 +6,7 @@ import { useEvent } from 'react-use'
 
 import type { NiceModalHandler } from '@ebay/nice-modal-react'
 
-export function useModalPushState(
+export function useInjectHistory(
   modal: NiceModalHandler<Record<string, unknown>>,
   /**
    * 如果需要在用户物理返回时关闭弹窗, 就在该方法中手动调用 modal.hide();
