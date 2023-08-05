@@ -110,6 +110,8 @@ model Upload {
 
 enum MediaCardType {
   FRUIT
+  FOOD
+  COLOR
 }
 
 model MediaCard {
