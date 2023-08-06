@@ -15,7 +15,7 @@ import { editBlog } from '@/app/admin/blog/components/EditBlog'
 import { cat } from '@/errors/catchAndToast'
 
 import { MDXRemote } from 'next-mdx-remote'
-import { Alert, Box, IconButton, NoSsr, Typography } from '@mui/material'
+import { Alert, Box, IconButton, NoSsr, Stack, Typography } from '@mui/material'
 import { useState } from 'react'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 
@@ -36,8 +36,6 @@ function Time({ blog }: { blog: BlogWithTags }) {
         display: 'inline-block',
         cursor: 'pointer',
         userSelect: 'none',
-        color: 'InactiveCaptionText',
-        fontSize: '0.825rem',
       }}
     >
       {step === 0 && `更新于 ${friendlyFormatTime(blog.updatedAt)}`}
@@ -55,6 +53,7 @@ type BlogContentProps = LoadingAble<
 
 export function BlogContent(blog: BlogContentProps) {
   const user = useUser()
+  const [wordCount, setWordCount] = useState(0)
 
   if (blog.loading) {
     return (
@@ -67,9 +66,26 @@ export function BlogContent(blog: BlogContentProps) {
   return (
     <ScrollToTop>
       {/* meta: time & tags */}
-      <Box sx={{ mb: 1 }}>
+      <Stack
+        spacing={1}
+        direction='row'
+        useFlexGap
+        flexWrap='wrap'
+        sx={{ mb: 1, color: 'InactiveCaptionText', fontSize: '0.825rem' }}
+      >
         <Time blog={blog} />
-      </Box>
+        {wordCount > 0 && (
+          <Typography
+            component='span'
+            sx={{
+              display: 'inline-block',
+            }}
+          >
+            约 {wordCount} 字, 预计耗时{' '}
+            {Math.max(1, Math.floor(wordCount / 400))} 分钟
+          </Typography>
+        )}
+      </Stack>
       <Box>
         {blog.tags.map((tag) => (
           <TagItem {...tag} key={tag.hash} sx={{ mr: 1, mb: 1 }} />
@@ -85,6 +101,12 @@ export function BlogContent(blog: BlogContentProps) {
           mt: 1,
           borderRadius: 1,
           overflow: 'auto',
+        }}
+        ref={(elem) => {
+          const text = elem?.innerText ?? ''
+          const simpleStr = text.replace(/[^a-zA-Z0-9]/g, '')
+          const cnStr = text.replace(/[^\u4e00-\u9fa5]/g, '')
+          setWordCount(Math.ceil(simpleStr.length / 3 + cnStr.length))
         }}
       >
         {/* 标题 */}
