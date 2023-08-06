@@ -1,5 +1,6 @@
-import { checkIsImage, useFileUrl } from '../utils/useFileUrl'
+import { useFileUrl } from '../utils/useFileUrl'
 import { fileToCopyableMarkdownStr } from '../utils/geneFileKey'
+import { checkIsImage } from '../utils/checkIsImage'
 
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { obj } from '@/utils/tiny'
@@ -88,7 +89,8 @@ export function FileInfoDisplay({
   onDelete: () => Promise<void>
 }) {
   const isImage = checkIsImage(info.file)
-  const url = useFileUrl(info.file)
+  // 10 M 以内才 preview
+  const url = useFileUrl(info.file, info.file.size < 1024 * 1024 * 10)
   const copyableTexts = {
     raw: info.url ?? '',
     markdown: fileToCopyableMarkdownStr({

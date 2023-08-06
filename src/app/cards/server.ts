@@ -1,5 +1,7 @@
 'use server'
 
+import { imageWithSize } from '../upload/utils/imageWithSize'
+
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { validateRequest } from '@/request/validator'
@@ -104,7 +106,7 @@ export const saveMediaCard = SA.encode(
           description,
           order,
           type,
-          image,
+          image: image ? (await imageWithSize({ url: image })).href : '',
           audio,
           video,
         },
@@ -134,7 +136,7 @@ export const saveMediaCard = SA.encode(
           description,
           type,
           order,
-          image,
+          image: image ? (await imageWithSize({ url: image })).href : '',
           audio,
           video,
         },

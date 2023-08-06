@@ -3,6 +3,8 @@
 import Anchor from '@/components/Anchor'
 import { images } from '@ROOT/next-image.config'
 import { DefaultLayoutScrollFlag } from '@/layout/components/ScrollFlag'
+import { ENV_CONFIG } from '@/config'
+import { getImageSizeFromUrl } from '@/app/upload/utils/urlImageSize'
 
 import { Button } from '@mui/material'
 import { createElement } from 'react'
@@ -85,11 +87,12 @@ export const markdownComponents: MDXComponents = {
   // TODO: preview
   img: (props) => {
     const src = props.src || '/pwa/android-chrome-512x512.png'
+    const size = getImageSizeFromUrl(new URL(src, ENV_CONFIG.public.origin))
     return (
       <Image
         src={src}
-        width={512}
-        height={256}
+        width={size?.width ?? 512}
+        height={size?.height ?? 256}
         alt={props.alt ?? '图片'}
         unoptimized={!isOptimizedUrl(src)}
       />

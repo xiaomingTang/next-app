@@ -1,5 +1,8 @@
 'use server'
 
+import { checkIsImage } from './utils/checkIsImage'
+import { imageWithSize } from './utils/imageWithSize'
+
 import { SA, pipePromiseAllSettled } from '@/errors/utils'
 import { getSelf } from '@/user/server'
 import { validateRequest } from '@/request/validator'
@@ -94,9 +97,10 @@ export const uploadFiles = SA.encode(async (formData: FormData) => {
       const pathname = strictPathname(
         `${rootPath}/${config.dirname}/${filename}`
       )
+      const buffer = Buffer.from(await f.arrayBuffer())
       const uploadParams: PutObjectCommandInput = {
         Bucket: process.env.C_AWS_BUCKET,
-        Body: Buffer.from(await f.arrayBuffer()),
+        Body: buffer,
         Key: pathname,
         ContentType: f.type,
         ACL: config.private
@@ -107,7 +111,14 @@ export const uploadFiles = SA.encode(async (formData: FormData) => {
       await s3Client.send(new PutObjectCommand(uploadParams))
       return {
         key: pathname,
-        url: targetUrl.href,
+        url: checkIsImage(f)
+          ? (
+              await imageWithSize({
+                url: new URL(pathname, S3_ROOT),
+                buffer,
+              })
+            ).href
+          : targetUrl.href,
       }
     })
   ).then(pipePromiseAllSettled)
