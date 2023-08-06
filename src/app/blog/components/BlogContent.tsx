@@ -82,7 +82,7 @@ export function BlogContent(blog: BlogContentProps) {
             }}
           >
             约 {wordCount} 字, 预计耗时{' '}
-            {Math.max(1, Math.floor(wordCount / 400))} 分钟
+            {Math.max(1, Math.ceil(wordCount / 400))} 分钟
           </Typography>
         )}
       </Stack>
