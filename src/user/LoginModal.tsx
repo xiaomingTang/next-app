@@ -97,6 +97,7 @@ export const LoginModal = NiceModal.create(() => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
+                autoFocus
                 size='small'
                 label='邮箱'
                 helperText={error?.message ?? ' '}

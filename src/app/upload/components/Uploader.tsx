@@ -267,6 +267,7 @@ const Uploader = NiceModal.create(
                 <CopyAllIcon />
               </IconButton>
               <Menu
+                autoFocus
                 open={!!copyableAnchorEl}
                 anchorEl={copyableAnchorEl}
                 onClose={() => setCopyableAnchorEl(null)}
@@ -353,6 +354,7 @@ const Uploader = NiceModal.create(
               overflow: 'hidden',
               cursor: 'pointer',
             }}
+            autoFocus
             multiple
             accept={accept}
             onInput={(e) => {

@@ -102,6 +102,7 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
+                autoFocus
                 size='small'
                 label='url'
                 helperText={error?.message ?? ' '}

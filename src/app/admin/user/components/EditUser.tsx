@@ -169,6 +169,7 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
+                autoFocus
                 size='small'
                 label='用户名'
                 helperText={error?.message ?? ' '}
