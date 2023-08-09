@@ -70,6 +70,10 @@ export const webpackConfig = (config, { dev }) => {
       },
     ],
   })
+  config.module.rules.push({
+    test: /\.sql$/,
+    use: 'raw-loader',
+  })
   config.resolve.alias['@ROOT'] = resolveRoot()
   config.resolve.alias['@'] = resolveRoot('src')
   if (!dev) {

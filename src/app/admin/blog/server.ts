@@ -4,6 +4,7 @@ import { SA, withRevalidate } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { authValidate, getSelf } from '@/user/server'
 import { validateRequest } from '@/request/validator'
+import blogFullTextSearchSql from '@/sql/blog-full-text-search.sql'
 
 import { nanoid } from 'nanoid'
 import { noop, omit } from 'lodash-es'
@@ -360,3 +361,20 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
     [nextBlog!, prevBlog!, ...similarBlogs].filter(Boolean)
   )
 })
+
+const searchBlogDto = Type.Object({
+  s: Type.String({
+    minLength: 2,
+    maxLength: 50,
+  }),
+})
+
+export const searchBlog = SA.encode(
+  async (props: Static<typeof searchBlogDto>) => {
+    validateRequest(searchBlogDto, props)
+    const { s } = props
+    return prisma
+      .$queryRawUnsafe<BlogWithTags[]>(blogFullTextSearchSql, s)
+      .then(filterBlogsWithAuth)
+  }
+)

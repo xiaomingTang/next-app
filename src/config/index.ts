@@ -19,3 +19,4 @@ export const ENV_CONFIG = {
 
 // 颜色见 https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
 console.log(`[appEnv: ${ENV_CONFIG.public.appEnv}]`)
+console.log(`[origin: ${ENV_CONFIG.public.origin}]`)

@@ -95,6 +95,7 @@ export function BlogItem({ sx, ...blog }: BlogItemProps) {
     <ButtonBase
       sx={{
         p: 2,
+        width: '100%',
         textAlign: 'start',
         borderRadius: 1,
         ':focus-visible': {
