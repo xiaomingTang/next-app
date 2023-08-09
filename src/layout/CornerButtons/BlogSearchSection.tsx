@@ -10,6 +10,7 @@ import { BlogList } from '@/app/blog/components/BlogList'
 import { dark, light } from '@/utils/theme'
 import { ENV_CONFIG } from '@/config'
 import { obj } from '@/utils/tiny'
+import { useInjectHistory } from '@/hooks/useInjectHistory'
 
 import {
   Box,
@@ -36,6 +37,11 @@ interface FormProps {
 
 export const BlogSearchSection = NiceModal.create(() => {
   const modal = useModal()
+
+  useInjectHistory(modal, async () => {
+    modal.hide()
+  })
+
   const [loading, withLoading] = useLoading()
   const { handleSubmit, control, setError } = useForm<FormProps>({
     defaultValues: {
