@@ -2,6 +2,7 @@ import { RoleNameMap } from '@/constants'
 import { useLoading } from '@/hooks/useLoading'
 import { SvgLoading } from '@/svg'
 import { useUser } from '@/user'
+import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 
 import PersonIcon from '@mui/icons-material/Person'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
@@ -54,10 +55,14 @@ export function AdminLoggedButton() {
         </MenuItem>
         <MenuItem
           divider
-          onClick={() => {
+          {...triggerMenuItemEvents((e, reason) => {
             handleClose()
-            router.push('/')
-          }}
+            if (reason === 'middleClick') {
+              window.open('/', '_blank')
+            } else {
+              router.push('/')
+            }
+          })}
         >
           <ListItemIcon>
             <VerifiedUserIcon fontSize='small' />
