@@ -52,7 +52,7 @@ model Chapter {
   driver           String
   remoteUrl        String           @unique
   title            String
-  content          String           @db.VarChar(20000)
+  content          String           @db.Text()
   novelHash        String
   novel            Novel            @relation(fields: [novelHash], references: [hash])
   chapterHistories ChapterHistory[]
@@ -92,8 +92,8 @@ model Blog {
   type        BlogType
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  title       String   @default("")
-  content     String   @default("") @db.Text()
+  title       String   @default("") @db.VarChar(1000)
+  content     String   @db.Text()
   description String   @default("") @db.VarChar(1000)
   tags        Tag[]
   creatorId   Int
@@ -115,6 +115,7 @@ enum MediaCardType {
   FRUIT
   FOOD
   COLOR
+  AREA
 }
 
 model MediaCard {

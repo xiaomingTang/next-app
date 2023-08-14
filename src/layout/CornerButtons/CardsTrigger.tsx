@@ -9,6 +9,7 @@ const menuList = [
   { pathname: '/cards/fruits', title: '水果' },
   { pathname: '/cards/foods', title: '肉和菜' },
   { pathname: '/cards/colors', title: '颜色' },
+  { pathname: '/cards/area', title: '国家和地区' },
 ]
 
 export function CardsTrigger() {
