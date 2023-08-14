@@ -5,6 +5,7 @@ import { useLoading } from '@/hooks/useLoading'
 import { SvgLoading } from '@/svg'
 import { cat } from '@/errors/catchAndToast'
 import { RoleNameMap } from '@/constants'
+import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 
 import { IconButton, ListItemIcon, Menu, MenuItem } from '@mui/material'
 import LogoutIcon from '@mui/icons-material/Logout'
@@ -43,7 +44,7 @@ function LoggedButton() {
         disabled={loading}
       >
         {loading ? (
-          <SvgLoading className='animate-spin' />
+          <SvgLoading className='animate-spin text-[24px]' />
         ) : (
           <PersonIcon color='primary' />
         )}
@@ -63,10 +64,14 @@ function LoggedButton() {
           {user.name}
         </MenuItem>
         <MenuItem
-          onClick={() => {
+          {...triggerMenuItemEvents((e, reason) => {
             handleClose()
+            if (reason === 'middleClick') {
+              window.open('/admin', '_blank')
+              return
+            }
             router.push('/admin')
-          }}
+          })}
         >
           <ListItemIcon>
             <VerifiedUserIcon fontSize='small' />
@@ -74,11 +79,13 @@ function LoggedButton() {
           管理后台
         </MenuItem>
         <MenuItem
-          onClick={withLoading(
-            cat(async () => {
-              handleClose()
-              await useUser.logout()
-            })
+          {...triggerMenuItemEvents(
+            withLoading(
+              cat(async () => {
+                handleClose()
+                await useUser.logout()
+              })
+            )
           )}
         >
           <ListItemIcon>
