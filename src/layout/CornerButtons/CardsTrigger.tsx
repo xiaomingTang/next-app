@@ -51,9 +51,9 @@ export function CardsTrigger() {
                 {...triggerMenuItemEvents((e, reason) => {
                   if (reason === 'middleClick') {
                     window.open(pathname, '_blank')
-                    return
+                  } else {
+                    router.push(pathname)
                   }
-                  router.push(pathname)
                 })}
               >
                 {title}

@@ -68,9 +68,9 @@ function LoggedButton() {
             handleClose()
             if (reason === 'middleClick') {
               window.open('/admin', '_blank')
-              return
+            } else {
+              router.push('/admin')
             }
-            router.push('/admin')
           })}
         >
           <ListItemIcon>
