@@ -61,9 +61,9 @@ export function DefaultRawHeader() {
             <BlogEntry />
           </Stack>
           <Stack direction='row'>
-            <BlogSearchButton />
             <UploadTrigger />
             <UserButton />
+            <BlogSearchButton />
             <ThemeToggleButton />
             <RssButton />
           </Stack>
