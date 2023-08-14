@@ -7,9 +7,16 @@ import { AuthRequired } from '@/components/AuthRequired'
 
 import { Grid } from '@mui/material'
 
+import type { MediaCardType } from '@prisma/client'
 import type { MediaCardWithUser } from '../server'
 
-export function MediaCardList({ cards }: { cards: MediaCardWithUser[] }) {
+export function MediaCardList({
+  cards,
+  type,
+}: {
+  cards: MediaCardWithUser[]
+  type: MediaCardType
+}) {
   return (
     <Grid
       container
@@ -23,14 +30,20 @@ export function MediaCardList({ cards }: { cards: MediaCardWithUser[] }) {
       ))}
       <AuthRequired silence roles={['ADMIN']}>
         <Grid item key='upload' xs={12} md={6}>
-          <MediaCardUploadTrigger />
+          <MediaCardUploadTrigger type={type} />
         </Grid>
       </AuthRequired>
     </Grid>
   )
 }
 
-export function MediaCardListLoading({ count }: { count: number }) {
+export function MediaCardListLoading({
+  count,
+  type,
+}: {
+  count: number
+  type: MediaCardType
+}) {
   return (
     <Grid
       container
@@ -44,7 +57,7 @@ export function MediaCardListLoading({ count }: { count: number }) {
       ))}
       <AuthRequired silence roles={['ADMIN']}>
         <Grid item key='upload' xs={12} md={6}>
-          <MediaCardUploadTrigger />
+          <MediaCardUploadTrigger type={type} />
         </Grid>
       </AuthRequired>
     </Grid>

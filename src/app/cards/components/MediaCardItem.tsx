@@ -24,6 +24,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import UploadIcon from '@mui/icons-material/Upload'
 import { useMemo } from 'react'
 
+import type { MediaCardType } from '@prisma/client'
 import type { MediaCardWithUser } from '../server'
 import type { LoadingAble } from '@/components/ServerComponent'
 
@@ -151,7 +152,7 @@ export function MediaCardItem(props: MediaCardProps) {
   )
 }
 
-export function MediaCardUploadTrigger() {
+export function MediaCardUploadTrigger({ type }: { type: MediaCardType }) {
   return (
     <Card
       aria-label='立即上传'
@@ -159,7 +160,7 @@ export function MediaCardUploadTrigger() {
       component={Button}
       onClick={cat(async () => {
         await editMediaCard({
-          type: 'FRUIT',
+          type,
         })
       })}
       sx={{

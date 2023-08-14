@@ -24,7 +24,7 @@ export default async function Home() {
       <DefaultBodyContainer>
         <ScrollToTop>
           {/* card list */}
-          <Suspense fallback={<MediaCardListLoading count={8} />}>
+          <Suspense fallback={<MediaCardListLoading type='FRUIT' count={8} />}>
             <ServerComponent
               api={unstable_cache(
                 () => getMediaCards({ type: 'FRUIT' }),
@@ -34,7 +34,7 @@ export default async function Home() {
                   tags: ['getMediaCards'],
                 }
               )}
-              render={(cards) => <MediaCardList cards={cards} />}
+              render={(cards) => <MediaCardList type='FRUIT' cards={cards} />}
               errorBoundary={(err) => <Error {...err} />}
             />
           </Suspense>
