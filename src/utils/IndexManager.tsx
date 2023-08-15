@@ -3,7 +3,7 @@ export class IndexManager {
 
   get latest() {
     // 是最大值 而非 最后一个元素, 因为 stack 不一定是 有序的
-    return Math.max(...this.stack) ?? 0
+    return Math.max(...this.stack, 0) ?? 0
   }
 
   push(n = this.latest) {
