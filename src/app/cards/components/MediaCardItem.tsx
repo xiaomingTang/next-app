@@ -33,6 +33,8 @@ export type MediaCardProps = LoadingAble<MediaCardWithUser>
 const emptyMedia =
   'https://next-app-storage-04a4aa9a124907-staging.s3.ap-northeast-2.amazonaws.com/public/2023-08-02/wEdkkC_r0Khz.mp3'
 
+const MEDIA_IMG_SIZE = 151
+
 export function MediaCardItem(props: MediaCardProps) {
   const mediaProps = useMemo(
     () => ({
@@ -55,7 +57,7 @@ export function MediaCardItem(props: MediaCardProps) {
         aria-label='加载中'
         sx={{
           display: 'flex',
-          height: 151,
+          height: MEDIA_IMG_SIZE,
           justifyContent: 'center',
           alignItems: 'center',
         }}
@@ -69,8 +71,9 @@ export function MediaCardItem(props: MediaCardProps) {
       <CardMedia
         component='img'
         sx={{
-          width: 151,
-          height: 151,
+          width: MEDIA_IMG_SIZE,
+          // 此处是 minHeight, 是为了当右边过高时, 左边图片能占满
+          minHeight: MEDIA_IMG_SIZE,
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
@@ -166,7 +169,7 @@ export function MediaCardUploadTrigger({ type }: { type: MediaCardType }) {
       sx={{
         display: 'flex',
         width: '100%',
-        height: 151,
+        height: MEDIA_IMG_SIZE,
         justifyContent: 'center',
         alignItems: 'center',
         cursor: 'pointer',
