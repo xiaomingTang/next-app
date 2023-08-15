@@ -73,22 +73,28 @@ export function DefaultRawHeader() {
   )
 }
 
-export function DefaultHeader() {
+export function DefaultHeaderShim() {
   const theme = useTheme()
+  return (
+    <Box
+      sx={{
+        height: '56px',
+        [theme.breakpoints.down('sm')]: {
+          height: '40px',
+        },
+        flex: 'none',
+        pointerEvents: 'none',
+        userSelect: 'none',
+      }}
+    />
+  )
+}
+
+export function DefaultHeader() {
   return (
     <>
       <DefaultRawHeader />
-      <Box
-        sx={{
-          height: '56px',
-          [theme.breakpoints.down('sm')]: {
-            height: '40px',
-          },
-          flex: 'none',
-          pointerEvents: 'none',
-          userSelect: 'none',
-        }}
-      />
+      <DefaultHeaderShim />
     </>
   )
 }
