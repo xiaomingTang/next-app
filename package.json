@@ -92,6 +92,7 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.44.3",
     "react-hot-toast": "^2.4.1",
+    "react-photo-view": "^1.2.3",
     "react-use": "^17.4.0",
     "rehype-prism-plus": "^1.6.1",
     "remark-gfm": "^3.0.1",

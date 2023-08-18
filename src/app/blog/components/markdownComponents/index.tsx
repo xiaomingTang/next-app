@@ -10,6 +10,7 @@ import { Button } from '@mui/material'
 import { createElement } from 'react'
 import Image from 'next/image'
 import LinkIcon from '@mui/icons-material/Link'
+import { PhotoView } from 'react-photo-view'
 
 import type { MDXComponents } from 'mdx/types'
 
@@ -73,22 +74,24 @@ function geneHeading(tag: `h${number}`) {
 const optimizedDomainUrls = images.domains.map((s) => `https://${s}`)
 
 function isOptimizedUrl(url = '') {
-  return (
-    // 支持 /xxx/xxx.xxx
-    /^\/\w/.test(url) ||
-    // 支持 http(s)://{OPTIMIZED_DOMAIN}/.xxx
-    optimizedDomainUrls.some((u) => url.startsWith(u))
-  )
+  // 不以 http:// 或 https:// 或 // 开头的, 说明是站内的, 需要优化
+  if (!/^(https?:)?\/\//i.test(url)) {
+    return true
+  }
+  return optimizedDomainUrls.some((u) => url.startsWith(u))
 }
 
-export const markdownComponents: MDXComponents = {
-  Button,
-  a: (props) => <Anchor {...props} ref={null} />,
-  // TODO: preview
-  img: (props) => {
-    const src = props.src || '/pwa/android-chrome-512x512.png'
-    const size = getImageSizeFromUrl(new URL(src, ENV_CONFIG.public.origin))
-    return (
+function CustomImage(
+  props: React.DetailedHTMLProps<
+    React.ImgHTMLAttributes<HTMLImageElement>,
+    HTMLImageElement
+  >
+) {
+  const src = props.src || '/pwa/android-chrome-512x512.png'
+  const size = getImageSizeFromUrl(new URL(src, ENV_CONFIG.public.origin))
+
+  return (
+    <PhotoView key={src} src={src}>
       <Image
         src={src}
         width={size?.width ?? 512}
@@ -96,8 +99,14 @@ export const markdownComponents: MDXComponents = {
         alt={props.alt ?? '图片'}
         unoptimized={!isOptimizedUrl(src)}
       />
-    )
-  },
+    </PhotoView>
+  )
+}
+
+export const markdownComponents: MDXComponents = {
+  Button,
+  a: (props) => <Anchor {...props} ref={null} />,
+  img: CustomImage,
   h1: geneHeading('h1'),
   h2: geneHeading('h2'),
   h3: geneHeading('h3'),

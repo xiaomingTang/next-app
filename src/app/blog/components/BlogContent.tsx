@@ -1,6 +1,7 @@
 'use client'
 
 import './styles/markdown-overrides.scss'
+import 'react-photo-view/dist/react-photo-view.css'
 
 import { markdownComponents } from './markdownComponents'
 import { BLOG_MARKDOWN_ID } from './constants'
@@ -13,10 +14,12 @@ import { TagItem } from '@/app/tag/components/TagItem'
 import { SvgLoading } from '@/svg'
 import { editBlog } from '@/app/admin/blog/components/EditBlog'
 import { cat } from '@/errors/catchAndToast'
+import { useInjectHistory } from '@/hooks/useInjectHistory'
 
+import { PhotoProvider } from 'react-photo-view'
 import { MDXRemote } from 'next-mdx-remote'
 import { Alert, Box, IconButton, NoSsr, Stack, Typography } from '@mui/material'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 
 import type { LoadingAble } from '@/components/ServerComponent'
@@ -54,6 +57,12 @@ type BlogContentProps = LoadingAble<
 export function BlogContent(blog: BlogContentProps) {
   const user = useUser()
   const [wordCount, setWordCount] = useState(0)
+  const [previewVisible, setPreviewVisible] = useState(false)
+  const closeRef = useRef<() => void>()
+
+  useInjectHistory(previewVisible, async () => {
+    closeRef.current?.()
+  })
 
   if (blog.loading) {
     return (
@@ -142,7 +151,22 @@ export function BlogContent(blog: BlogContentProps) {
             )}
           </NoSsr>
         </Typography>
-        <MDXRemote {...blog.source} components={markdownComponents} />
+        <PhotoProvider
+          onVisibleChange={(visible) => {
+            setPreviewVisible(visible)
+          }}
+          toolbarRender={({ onClose }) => {
+            closeRef.current = onClose
+            return (
+              <svg
+                className='PhotoView-Slider__toolbarIcon'
+                onClick={onClose}
+              />
+            )
+          }}
+        >
+          <MDXRemote {...blog.source} components={markdownComponents} />
+        </PhotoProvider>
       </Typography>
     </ScrollToTop>
   )
