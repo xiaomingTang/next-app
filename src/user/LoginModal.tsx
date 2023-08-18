@@ -25,7 +25,7 @@ import { useState } from 'react'
 
 export const LoginModal = NiceModal.create(() => {
   const modal = useModal()
-  useInjectHistory(modal, async () => {
+  useInjectHistory(modal.visible, async () => {
     modal.reject(new Error('操作已取消'))
     modal.hide()
   })

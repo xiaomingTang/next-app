@@ -108,7 +108,7 @@ const Uploader = NiceModal.create(
         }),
       }))
 
-    useInjectHistory(modal, async () => {
+    useInjectHistory(modal.visible, async () => {
       modal.resolve(fileInfos.filter((info) => info.status === 'succeed'))
       modal.hide()
     })

@@ -50,7 +50,7 @@ const defaultEmptyUser: PartialUser = {
 
 const UserTip = NiceModal.create(({ user }: { user: User }) => {
   const modal = useModal()
-  useInjectHistory(modal, async () => {
+  useInjectHistory(modal.visible, async () => {
     modal.reject(new Error('操作已取消'))
     modal.hide()
   })

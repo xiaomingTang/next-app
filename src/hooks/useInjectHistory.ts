@@ -6,15 +6,13 @@ import { useEventCallback } from '@mui/material'
 import { useRef } from 'react'
 import { useEvent } from 'react-use'
 
-import type { NiceModalHandler } from '@ebay/nice-modal-react'
-
 let ignoreIdx = -1
 // 这个 manager 既非 stack, 也非 queue,
 // 叫 stack 只是随便叫的
 const stack = new IndexManager()
 
 export function useInjectHistory(
-  modal: NiceModalHandler<Record<string, unknown>>,
+  open: boolean,
   /**
    * 如果需要在用户物理返回时关闭弹窗, 就在该方法中手动调用 modal.hide();
    * 如果拒绝关闭弹窗, 就别 hide() 并 throw Error;
@@ -45,8 +43,8 @@ export function useInjectHistory(
 
   useEvent('popstate', finalOnPopState)
 
-  useListen(modal.visible, () => {
-    if (modal.visible) {
+  useListen(!!open, () => {
+    if (open) {
       // modal index 初始化
       modalIdxRef.current = stack.latest + 1
       stack.push(modalIdxRef.current)

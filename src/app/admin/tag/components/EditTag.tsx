@@ -37,7 +37,7 @@ const defaultEmptyTag: PartialTag = {
 
 const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
   const modal = useModal()
-  useInjectHistory(modal, async () => {
+  useInjectHistory(modal.visible, async () => {
     modal.reject(new Error('操作已取消'))
     modal.hide()
   })

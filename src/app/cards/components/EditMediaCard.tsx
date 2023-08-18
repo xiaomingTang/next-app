@@ -63,7 +63,7 @@ const MediaCardModal = NiceModal.create(
   ({ mediaCard }: MediaCardModalProps) => {
     const router = useRouter()
     const modal = useModal()
-    useInjectHistory(modal, async () => {
+    useInjectHistory(modal.visible, async () => {
       modal.reject(new Error('操作已取消'))
       modal.hide()
     })
