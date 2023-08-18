@@ -157,12 +157,7 @@ export function BlogContent(blog: BlogContentProps) {
           }}
           toolbarRender={({ onClose }) => {
             closeRef.current = onClose
-            return (
-              <svg
-                className='PhotoView-Slider__toolbarIcon'
-                onClick={onClose}
-              />
-            )
+            return <></>
           }}
         >
           <MDXRemote {...blog.source} components={markdownComponents} />
