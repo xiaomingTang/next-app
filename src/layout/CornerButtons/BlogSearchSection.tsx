@@ -165,7 +165,7 @@ export const BlogSearchSection = NiceModal.create(() => {
         sx={{
           height: '400px',
           [dark()]: {
-            backgroundColor: '#1a2027',
+            backgroundColor: '#4d4d4d',
           },
           [light()]: {
             backgroundColor: '#eee',

@@ -53,7 +53,7 @@ export const seo = {
     keywords: seo.keywords(props?.keywords),
     generator: 'Next.js',
     themeColor: [
-      { media: '(prefers-color-scheme: dark)', color: '#1a2027' },
+      { media: '(prefers-color-scheme: dark)', color: '#4d4d4d' },
       { media: '(prefers-color-scheme: light)', color: '#eeeeee' },
     ],
     viewport: {

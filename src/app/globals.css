@@ -15,7 +15,7 @@ body {
 
 [data-mui-color-scheme='dark'] body {
   color: #eee;
-  background-color: #1a2027;
+  background-color: #4d4d4d;
 }
 
 *:focus-visible {
