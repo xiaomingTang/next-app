@@ -1,16 +1,12 @@
 'use client'
 
 import Anchor from '@/components/Anchor'
-import { images } from '@ROOT/next-image.config'
 import { DefaultLayoutScrollFlag } from '@/layout/components/ScrollFlag'
-import { ENV_CONFIG } from '@/config'
-import { getImageSizeFromUrl } from '@/app/upload/utils/urlImageSize'
+import { ImageWithState } from '@/components/ImageWithState'
 
 import { Button } from '@mui/material'
 import { createElement } from 'react'
-import Image from 'next/image'
 import LinkIcon from '@mui/icons-material/Link'
-import { PhotoView } from 'react-photo-view'
 
 import type { MDXComponents } from 'mdx/types'
 
@@ -71,42 +67,16 @@ function geneHeading(tag: `h${number}`) {
   }
 }
 
-const optimizedDomainUrls = images.domains.map((s) => `https://${s}`)
-
-function isOptimizedUrl(url = '') {
-  // 不以 http:// 或 https:// 或 // 开头的, 说明是站内的, 需要优化
-  if (!/^(https?:)?\/\//i.test(url)) {
-    return true
-  }
-  return optimizedDomainUrls.some((u) => url.startsWith(u))
-}
-
-function CustomImage(
-  props: React.DetailedHTMLProps<
-    React.ImgHTMLAttributes<HTMLImageElement>,
-    HTMLImageElement
-  >
-) {
-  const src = props.src || '/pwa/android-chrome-512x512.png'
-  const size = getImageSizeFromUrl(new URL(src, ENV_CONFIG.public.origin))
-
-  return (
-    <PhotoView key={src} src={src}>
-      <Image
-        src={src}
-        width={size?.width ?? 512}
-        height={size?.height ?? 256}
-        alt={props.alt ?? '图片'}
-        unoptimized={!isOptimizedUrl(src)}
-      />
-    </PhotoView>
-  )
-}
-
 export const markdownComponents: MDXComponents = {
   Button,
   a: (props) => <Anchor {...props} ref={null} />,
-  img: CustomImage,
+  img: ({
+    ref: _ref,
+    width: _width,
+    height: _height,
+    placeholder: _placeholder,
+    ...props
+  }) => <ImageWithState {...props} preview />,
   h1: geneHeading('h1'),
   h2: geneHeading('h2'),
   h3: geneHeading('h3'),

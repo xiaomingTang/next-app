@@ -7,6 +7,7 @@ import { SvgLoading } from '@/svg'
 import { AuthRequired } from '@/components/AuthRequired'
 import { useMediaLoading } from '@/hooks/useMediaLoading'
 import { useListen } from '@/hooks/useListen'
+import { ImageWithState } from '@/components/ImageWithState'
 
 import { useAudio } from 'react-use'
 import {
@@ -15,7 +16,6 @@ import {
   CardContent,
   Typography,
   IconButton,
-  CardMedia,
   Button,
 } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
@@ -68,18 +68,18 @@ export function MediaCardItem(props: MediaCardProps) {
   }
   return (
     <Card sx={{ display: 'flex', position: 'relative' }}>
-      <CardMedia
-        component='img'
-        sx={{
+      {/* {props.image} */}
+      <ImageWithState
+        src={props.image}
+        width={MEDIA_IMG_SIZE}
+        height={MEDIA_IMG_SIZE}
+        alt={props.title}
+        style={{
           width: MEDIA_IMG_SIZE,
           // 此处是 minHeight, 是为了当右边过高时, 左边图片能占满
           minHeight: MEDIA_IMG_SIZE,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          objectFit: 'cover',
         }}
-        image={props.image}
-        alt={props.title}
       />
       <Box sx={{ display: 'flex', flexDirection: 'column' }}>
         <CardContent sx={{ flex: '1 0 auto' }}>
