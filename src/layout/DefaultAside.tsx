@@ -26,15 +26,15 @@ export function DefaultAside({
         position: 'fixed',
         width: `${ASIDE_WIDTH}px`,
         top: '56px',
-        left: '50%',
-        transform:
+        left:
           placement === 'left'
-            ? `translatex(-${
+            ? `calc(50% - ${
                 theme.v.screens.desktop / 2 + ASIDE_WIDTH + ASIDE_MARGIN
               }px)`
-            : `translatex(${theme.v.screens.desktop / 2 + ASIDE_MARGIN}px)`,
+            : `calc(50% + ${theme.v.screens.desktop / 2 + ASIDE_MARGIN}px)`,
         [theme.breakpoints.down(
-          theme.v.screens.desktop + ASIDE_WIDTH * 2 + ASIDE_MARGIN * 2
+          // 17 是竖直滚动条的宽度
+          theme.v.screens.desktop + ASIDE_WIDTH * 2 + ASIDE_MARGIN * 2 + 17
         )]: {
           display: 'none',
         },
