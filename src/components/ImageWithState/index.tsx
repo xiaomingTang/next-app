@@ -42,6 +42,7 @@ function RawImageWithState(
   const size = getImageSizeFromUrl(new URL(src, ENV_CONFIG.public.origin))
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const previewEnabled = preview && !!props.src && !loading && !error
 
   const elem = (
     <Image
@@ -50,6 +51,7 @@ function RawImageWithState(
       src={src}
       className={clsx(
         props.className,
+        previewEnabled && styles.previewEnabled,
         error && styles.error,
         // 有 placeholder blur 时用 blur, 否则采用默认 loading
         props.placeholder !== 'blur' && loading && styles.loading
@@ -70,7 +72,7 @@ function RawImageWithState(
     />
   )
 
-  if (!preview || !props.src || loading || error) {
+  if (!previewEnabled) {
     return elem
   }
 
