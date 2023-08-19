@@ -5,12 +5,19 @@ import { getMediaCards } from './cards/server'
 import { SA } from '@/errors/utils'
 import { resolvePath } from '@/utils/url'
 
+import { headers } from 'next/headers'
 import { unstable_cache } from 'next/cache'
 
 import type { MetadataRoute } from 'next'
 import type { MediaCardType } from '@prisma/client'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // 跳过 build 阶段
+  if (process.env.npm_lifecycle_event === 'build') {
+    // 啥也不干, 只是为了避免 sitemap 变成纯静态文件
+    headers()
+    return []
+  }
   const blogs = await unstable_cache(
     () =>
       getBlogs({
@@ -18,25 +25,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }),
     ['getBlogs', 'PUBLISHED'],
     {
-      revalidate: 86400,
+      revalidate: 3600,
       tags: ['getBlogs'],
     }
   )().then(SA.decode)
 
-  const blogRoutes = blogs.map((blog) => ({
+  const blogRoutes: MetadataRoute.Sitemap = blogs.map((blog) => ({
     url: resolvePath(`/blog/${blog.hash}`).href,
     lastModified: blog.updatedAt,
+    changeFrequency: 'monthly',
     priority: 0.8,
   }))
 
   const tags = await unstable_cache(() => getTags({}), ['getTags'], {
-    revalidate: 86400,
+    revalidate: 3600,
     tags: ['getTags'],
   })().then(SA.decode)
 
-  const tagRoutes = tags.map((tag) => ({
+  const tagRoutes: MetadataRoute.Sitemap = tags.map((tag) => ({
     url: resolvePath(`/tag/${tag.hash}`).href,
     lastModified: tag.updatedAt,
+    changeFrequency: 'monthly',
     priority: 0.6,
   }))
 
@@ -44,7 +53,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     () => getMediaCards({}),
     ['getMediaCards'],
     {
-      revalidate: 86400,
+      revalidate: 3600,
       tags: ['getMediaCards'],
     }
   )().then(SA.decode)
@@ -63,6 +72,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           ...tags.map((b) => b.updatedAt.getTime())
         )
       ),
+      changeFrequency: 'weekly',
       priority: 1,
     },
     ...blogRoutes,
@@ -70,22 +80,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: resolvePath('/cards/area').href,
       lastModified: new Date(getCardsLastModifiedTime('AREA')),
-      priority: 0.4,
+      changeFrequency: 'monthly',
+      priority: 0.2,
     },
     {
       url: resolvePath('/cards/colors').href,
       lastModified: new Date(getCardsLastModifiedTime('COLOR')),
-      priority: 0.4,
+      changeFrequency: 'monthly',
+      priority: 0.2,
     },
     {
       url: resolvePath('/cards/foods').href,
       lastModified: new Date(getCardsLastModifiedTime('FOOD')),
-      priority: 0.4,
+      changeFrequency: 'monthly',
+      priority: 0.2,
     },
     {
       url: resolvePath('/cards/fruits').href,
       lastModified: new Date(getCardsLastModifiedTime('FRUIT')),
-      priority: 0.4,
+      changeFrequency: 'monthly',
+      priority: 0.2,
     },
   ]
 }
