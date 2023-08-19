@@ -73,7 +73,7 @@ function BlogTime(blog: BlogItemProps) {
     <Typography
       component='time'
       dateTime={blog.loading ? '' : friendlyFormatTime(blog.updatedAt)}
-      sx={{ color: 'InactiveCaptionText' }}
+      sx={{ color: 'text.secondary' }}
     >
       {blog.loading ? (
         <Skeleton width={16 * 5} height={20} />

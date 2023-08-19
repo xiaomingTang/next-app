@@ -1,5 +1,4 @@
 import { Typography } from '@mui/material'
-import { green, orange } from '@mui/material/colors'
 
 import type { BlogType } from '@prisma/client'
 
@@ -14,7 +13,7 @@ export const BlogTypeMap: Record<
       <Typography
         component='span'
         sx={{
-          color: green[800],
+          color: 'success.main',
           fontWeight: 'bold',
         }}
       >
@@ -27,7 +26,7 @@ export const BlogTypeMap: Record<
       <Typography
         component='span'
         sx={{
-          color: orange[800],
+          color: 'warning.main',
           fontWeight: 'bold',
         }}
       >

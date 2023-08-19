@@ -9,7 +9,6 @@ import { BlogSearchButton } from './CornerButtons/BlogSearchButton'
 
 import { dark, light } from '@/utils/theme'
 
-import { grey } from '@mui/material/colors'
 import {
   AppBar,
   Box,
@@ -36,13 +35,12 @@ export function DefaultRawHeader() {
             height: '40px',
           },
           backdropFilter: 'blur(8px)',
+          color: 'text.primary',
           [dark()]: {
-            backgroundColor: alpha(grey[900], 0.6),
-            color: grey[200],
+            backgroundColor: alpha(theme.palette.grey[900], 0.6),
           },
           [light()]: {
-            backgroundColor: alpha(grey[300], 0.6),
-            color: grey[800],
+            backgroundColor: alpha(theme.palette.grey[300], 0.6),
           },
         }}
       >

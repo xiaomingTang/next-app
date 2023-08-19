@@ -80,7 +80,11 @@ export function BlogContent(blog: BlogContentProps) {
         direction='row'
         useFlexGap
         flexWrap='wrap'
-        sx={{ mb: 1, color: 'InactiveCaptionText', fontSize: '0.825rem' }}
+        sx={{
+          mb: 1,
+          color: 'text.secondary',
+          fontSize: '0.825rem',
+        }}
       >
         <Time blog={blog} />
         {wordCount > 0 && (
