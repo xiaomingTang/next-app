@@ -7,7 +7,7 @@ import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { getBlogs } from '@/app/admin/blog/server'
 import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
-import { Error } from '@/components/Error'
+import { AlertError } from '@/components/Error'
 import { ServerComponent } from '@/components/ServerComponent'
 import { shuffledArray7 } from '@/constants'
 
@@ -48,7 +48,7 @@ export default async function Home() {
                   />
                 ))
               }
-              errorBoundary={(err) => <Error {...err} />}
+              errorBoundary={(err) => <AlertError {...err} />}
             />
           </Suspense>
           <div style={{ paddingBottom: '8px', pointerEvents: 'none' }} />
@@ -67,7 +67,7 @@ export default async function Home() {
                 }
               )}
               render={(data) => <BlogList blogs={data} />}
-              errorBoundary={(err) => <Error {...err} />}
+              errorBoundary={(err) => <AlertError {...err} />}
             />
           </Suspense>
         </ScrollToTop>

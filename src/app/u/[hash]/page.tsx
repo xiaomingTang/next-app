@@ -1,6 +1,6 @@
 import { getShortUrl } from './server'
 
-import { Error } from '@/components/Error'
+import { AlertError } from '@/components/Error'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import DefaultLayout from '@/layout/DefaultLayout'
 import { seo } from '@/utils/seo'
@@ -23,7 +23,7 @@ export default async function Index({ params: { hash } }: Props) {
     return (
       <DefaultLayout>
         <DefaultBodyContainer>
-          <Error {...error} />
+          <AlertError {...error} />
         </DefaultBodyContainer>
       </DefaultLayout>
     )

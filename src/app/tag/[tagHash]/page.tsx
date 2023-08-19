@@ -6,7 +6,7 @@ import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { getBlogs } from '@/app/admin/blog/server'
 import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
-import { Error } from '@/components/Error'
+import { AlertError } from '@/components/Error'
 import { getTag, getTags } from '@/app/admin/tag/server'
 import { BlogList, BlogListLoading } from '@/app/blog/components/BlogList'
 import { shuffledArray7 } from '@/constants'
@@ -78,7 +78,7 @@ export default async function Home({ params: { tagHash } }: Props) {
                   />
                 ))
               }
-              errorBoundary={(err) => <Error {...err} />}
+              errorBoundary={(err) => <AlertError {...err} />}
             />
           </Suspense>
 
@@ -106,7 +106,7 @@ export default async function Home({ params: { tagHash } }: Props) {
                   />
                 </>
               )}
-              errorBoundary={(err) => <Error {...err} />}
+              errorBoundary={(err) => <AlertError {...err} />}
             />
           </Suspense>
 
@@ -130,7 +130,7 @@ export default async function Home({ params: { tagHash } }: Props) {
                 }
               )}
               render={(data) => <BlogList blogs={data} />}
-              errorBoundary={(err) => <Error {...err} />}
+              errorBoundary={(err) => <AlertError {...err} />}
             />
           </Suspense>
         </ScrollToTop>

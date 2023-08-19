@@ -8,7 +8,7 @@ import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
-import { Error } from '@/components/Error'
+import { AlertError } from '@/components/Error'
 import { ServerComponent } from '@/components/ServerComponent'
 
 import { Suspense } from 'react'
@@ -35,7 +35,7 @@ export default async function Home() {
                 }
               )}
               render={(cards) => <MediaCardList type='COLOR' cards={cards} />}
-              errorBoundary={(err) => <Error {...err} />}
+              errorBoundary={(err) => <AlertError {...err} />}
             />
           </Suspense>
         </ScrollToTop>

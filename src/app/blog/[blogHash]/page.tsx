@@ -6,7 +6,7 @@ import { Toc } from '../components/Toc'
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { getBlog, getRecommendBlogs } from '@/app/admin/blog/server'
-import { Error } from '@/components/Error'
+import { AlertError } from '@/components/Error'
 import { seo } from '@/utils/seo'
 import { ServerComponent } from '@/components/ServerComponent'
 import { SA } from '@/errors/utils'
@@ -105,7 +105,7 @@ export default async function Home({ params: { blogHash } }: Props) {
                 />
               </>
             )}
-            errorBoundary={(err) => <Error {...err} />}
+            errorBoundary={(err) => <AlertError {...err} />}
           />
         </Suspense>
         <RecommendSep />
@@ -121,7 +121,7 @@ export default async function Home({ params: { blogHash } }: Props) {
               }
             )}
             render={(data) => <BlogList blogs={data} />}
-            errorBoundary={(err) => <Error {...err} />}
+            errorBoundary={(err) => <AlertError {...err} />}
           />
         </Suspense>
       </DefaultBodyContainer>
