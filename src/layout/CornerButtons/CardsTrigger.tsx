@@ -50,6 +50,7 @@ export function CardsTrigger() {
                 key={pathname}
                 selected={pathname === curPathname}
                 {...triggerMenuItemEvents((e, reason) => {
+                  setAnchorEl(null)
                   if (reason === 'middleClick') {
                     window.open(pathname, '_blank')
                   } else {
