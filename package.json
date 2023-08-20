@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "prepare": "husky install && is-ci || bash -c 'chmod ug+x .husky/*'",
+    "prepare": "bash -c 'chmod ug+x ./deploy.sh' && husky install && is-ci || bash -c 'chmod ug+x .husky/*'",
     "beforeRun": "node bin/runtime-scripts/pre-run.js",
     "predev": "pnpm run beforeRun",
     "dev": "next dev",
