@@ -43,3 +43,22 @@ jobs:
       - run: pnpm install --frozen-lockfile --prefer-offline
       - run: pnpm build
       - run: pnpm export
+      # upload by ftp
+      - name: deploy exports
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.ftp_server }}
+          username: ${{ secrets.ftp_username }}
+          password: ${{ secrets.ftp_password }}
+          port: ${{ secrets.ftp_port }}
+          local-dir: ./out/
+          server-dir: ${{ secrets.ftp_server_dir }}
+      # restart server
+      - name: restart server
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.ssh_host }}
+          username: ${{ secrets.ssh_username }}
+          password: ${{ secrets.ssh_password }}
+          port: ${{ secrets.ssh_port }}
+          script: cd ${{ secrets.ftp_server_dir }} && echo. > from-ssh.txt
