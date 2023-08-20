@@ -36,6 +36,7 @@ bye
 EOF
 
 # lsof -t -i:$port | xargs kill -15 # to be verified: not work
+# 之所以使用 `chown -R www .` 而非直接以 www 登录, 是 宝塔 www 用户不能用来登录...
 
 # pass them on the command line of the remote shell, and retrieve them via $1, $2: https://stackoverflow.com/a/37104048
 # upzip -o means replace files if exists and not ask
@@ -47,6 +48,7 @@ sshpass -p $P1_SSH_PASSWORD ssh -p $P1_SSH_PORT -t $P1_SSH_USER@$P1_SSH_HOST "ba
   cd /www/wwwroot/$remote_name
 
   unzip -o $file_name
+  chown -R www .
   lsof -i:$port | grep LISTEN | awk '{print $2}' | xargs kill -15
   bash /www/server/nodejs/vhost/scripts/$remote_name.sh
   exit
