@@ -48,7 +48,6 @@ sshpass -p $P1_SSH_PASSWORD ssh -p $P1_SSH_PORT -t $P1_SSH_USER@$P1_SSH_HOST "ba
   cd /www/wwwroot/$remote_name
 
   unzip -o $file_name
-  chown -R www .
   lsof -i:$port | grep LISTEN | awk '{print $2}' | xargs kill -15
   bash /www/server/nodejs/vhost/scripts/$remote_name.sh
   exit
