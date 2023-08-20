@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "prepare": "husky install && bash -c 'chmod ug+x .husky/*'",
+    "prepare": "mkdirp .husky && husky install && bash -c 'chmod ug+x .husky/*'",
     "beforeRun": "node bin/runtime-scripts/pre-run.js",
     "predev": "pnpm run beforeRun",
     "dev": "next dev",
@@ -74,7 +74,6 @@
     "cookie": "^0.5.0",
     "dotenv": "^16.0.3",
     "fs-extra": "^11.1.1",
-    "husky": "^8.0.3",
     "image-size": "^1.0.2",
     "jsonschema": "^1.4.1",
     "jsonwebtoken": "^9.0.0",
@@ -138,8 +137,10 @@
     "eslint-plugin-jsx-a11y": "^6.7.1",
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
     "loader-utils": "^3.2.1",
+    "mkdirp": "^3.0.1",
     "prettier": "^2.8.8",
     "raw-loader": "^4.0.2"
   }
