@@ -18,7 +18,7 @@
     "export": "ts-node --project tsconfig-for-bin.json -r tsconfig-paths/register bin/prepare-output.ts",
     "commit": "git-cz",
     "lint": "next lint && tsc --noEmit",
-    "test": "next lint && tsc --noEmit",
+    "test": "prisma generate && cross-env NEXT_PUBLIC_APP_ENV=production pnpm run beforeRun && next lint && tsc --noEmit",
     "lint:commit": "commitlint -e",
     "lint-staged": "lint-staged --quiet",
     "format": "prettier --write .",

@@ -17,6 +17,8 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    container:
+      image: 'centos:7'
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v3

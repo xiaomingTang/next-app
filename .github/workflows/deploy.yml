@@ -1,4 +1,4 @@
-name: Production deploy
+name: deploy
 on:
   push:
     branches:
@@ -24,10 +24,12 @@ env:
 jobs:
   test:
     uses: './.github/workflows/test.yml'
-  release:
+  deploy:
     timeout-minutes: 15
     needs: test
     runs-on: ubuntu-latest
+    container:
+      image: 'centos:7'
     steps:
       # install deps
       - uses: actions/checkout@v3
@@ -39,4 +41,4 @@ jobs:
           node-version: 16
           cache: 'pnpm'
       - run: pnpm install --frozen-lockfile --prefer-offline
-      - run: pnpm build
+      - run: pnpm build & pnpm export
