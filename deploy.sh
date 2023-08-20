@@ -5,6 +5,9 @@
 # sshpass required: sudo yum install sshpass
 # $P1_xxx series env variables is required
 
+# you MUST run ssh... locally first time, to activate the ssh terminal,
+# or you will get an error: pseudo-terminal will not be allocated because stdin is not a terminal.
+
 # ----------------------------------------------
 
 pnpm i
@@ -32,6 +35,8 @@ mput $zip_file_name
 bye
 EOF
 
+# lsof -t -i:$port | xargs kill -15 # to be verified: not work
+
 # pass them on the command line of the remote shell, and retrieve them via $1, $2: https://stackoverflow.com/a/37104048
 # upzip -o means replace files if exists and not ask
 sshpass -p $P1_SSH_PASSWORD ssh -p $P1_SSH_PORT -t $P1_SSH_USER@$P1_SSH_HOST "bash -s $P1_REMOTE_PORT $zip_file_name $P1_REMOTE_NAME" <<'EOL'
@@ -39,14 +44,14 @@ sshpass -p $P1_SSH_PASSWORD ssh -p $P1_SSH_PORT -t $P1_SSH_USER@$P1_SSH_HOST "ba
   file_name=$2
   remote_name=$3
 
-  echo port: $port; file_name: $filename; remote_name: $remote_name;
+  cd /www/wwwroot/$remote_name
 
-  upzip -o $file_name
-  lsof -t -i:$port | xargs kill -15
-  bash /www/server/nodejs/vhost/scripts/$remote_name.sh &
+  unzip -o $file_name
+  lsof -i:$port | grep LISTEN | awk '{print $2}' | xargs kill -15
+  bash /www/server/nodejs/vhost/scripts/$remote_name.sh
   exit
 EOL
 
 git add .
 git stash
-git drop
+git stash drop
