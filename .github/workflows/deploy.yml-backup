@@ -1,3 +1,5 @@
+# 艹, github 连不上国内服务器
+
 name: deploy
 on:
   push:
@@ -62,4 +64,4 @@ jobs:
           username: ${{ secrets.ssh_username }}
           password: ${{ secrets.ssh_password }}
           port: ${{ secrets.ssh_port }}
-          script: cd ${{ secrets.ftp_server_dir }} && echo. > from-ssh.txt
+          script: kill -15 `lsof -t -i:${{ secrets.baota_project_port }}` && bash /www/server/nodejs/vhost/scripts/${{ secrets.baota_project_name }}.sh
