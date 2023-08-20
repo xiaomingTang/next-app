@@ -1,0 +1,42 @@
+name: Production deploy
+on:
+  push:
+    branches:
+      - 'feat/ci'
+
+env:
+  # https://stackoverflow.com/a/75486166
+  CI: true
+  PORT: ${{ secrets.PORT }}
+  NEXT_PUBLIC_APP_ENV: ${{ secrets.NEXT_PUBLIC_APP_ENV }}
+  NEXT_PUBLIC_ORIGIN: ${{ secrets.NEXT_PUBLIC_ORIGIN }}
+
+  ANALYZE: ${{ secrets.ANALYZE }}
+  WRITE_DOT_ENV: ${{ secrets.WRITE_DOT_ENV }}
+
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+  ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
+  PASSWORD_SALT: ${{ secrets.PASSWORD_SALT }}
+
+  MYSQLDB_URI: ${{ secrets.MYSQLDB_URI }}
+
+jobs:
+  test:
+    uses: './.github/workflows/test.yml'
+  release:
+    timeout-minutes: 15
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      # install deps
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 7.29.0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile --prefer-offline
+      - run: pnpm build
