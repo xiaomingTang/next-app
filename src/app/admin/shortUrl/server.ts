@@ -4,6 +4,7 @@ import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { getSelf } from '@/user/server'
 import { validateRequest } from '@/request/validator'
+import { comparePassword, generatePassword } from '@/utils/password'
 
 import Boom from '@hapi/boom'
 import { Role } from '@prisma/client'
@@ -13,18 +14,53 @@ import { Type } from '@sinclair/typebox'
 import type { Static } from '@sinclair/typebox'
 import type { Prisma } from '@prisma/client'
 
+function mosaic<T extends Record<string, unknown>>(
+  obj: T,
+  replacement: Partial<T>
+): T {
+  return {
+    ...obj,
+    ...replacement,
+  }
+}
+
+function mosaicPassword<T extends { password?: string | null }>(u: T): T {
+  return mosaic(u, {
+    password: '',
+  } as Partial<T>)
+}
+
 export const getShortUrl = SA.encode(
-  async (props: Prisma.ShortUrlWhereUniqueInput) =>
-    prisma.shortUrl
-      .findUnique({
-        where: props,
-      })
-      .then((res) => {
-        if (!res) {
-          throw Boom.notFound('该短链不存在')
-        }
-        return res
-      })
+  async (props: Prisma.ShortUrlWhereUniqueInput, password?: string) => {
+    const res = await prisma.shortUrl.findUnique({
+      where: props,
+    })
+
+    if (!res) {
+      throw Boom.notFound('该短链不存在或已不可用')
+    }
+    if (res.password) {
+      if (!password) {
+        throw Boom.preconditionRequired('访问需要密码')
+      }
+      if (!comparePassword(password ?? '', res.password)) {
+        throw Boom.preconditionRequired('密码不正确')
+      }
+    }
+
+    await prisma.shortUrl.update({
+      where: {
+        hash: res.hash,
+      },
+      data: {
+        limit: {
+          decrement: 1,
+        },
+      },
+    })
+
+    return mosaicPassword(res)
+  }
 )
 
 const urlSelect = {
@@ -34,21 +70,31 @@ const urlSelect = {
   creator: true,
   hash: true,
   url: true,
+  timeout: true,
+  limit: true,
+  password: true,
 }
 
 export const getShortUrls = SA.encode(
   async (props: Prisma.ShortUrlWhereInput) => {
     const self = await getSelf()
 
-    const urls = await prisma.shortUrl.findMany({
-      where: {
-        ...props,
-      },
-      select: urlSelect,
-      orderBy: {
-        updatedAt: 'desc',
-      },
-    })
+    const urls = await prisma.shortUrl
+      .findMany({
+        where: {
+          ...props,
+        },
+        select: urlSelect,
+        orderBy: {
+          updatedAt: 'desc',
+        },
+      })
+      .then((res) =>
+        res.map((item) => ({
+          ...mosaicPassword(item),
+          encrypt: !!item.password,
+        }))
+      )
 
     if (self.role === Role.ADMIN) {
       return urls
@@ -65,6 +111,10 @@ export type ShortUrlWithCreator = NonNullable<
 
 const saveDto = Type.Object({
   hash: Type.Optional(Type.String()),
+  password: Type.String(),
+  limit: Type.Number(),
+  // jsonschema 包不支持 Date 类型的校验
+  timeout: Type.Number(),
   url: Type.String({
     format: 'uri',
   }),
@@ -72,7 +122,9 @@ const saveDto = Type.Object({
 
 export const saveShortUrl = SA.encode(async (props: Static<typeof saveDto>) => {
   validateRequest(saveDto, props)
-  const { hash, url } = props
+  const { hash, limit, url } = props
+  const password = generatePassword(props.password)
+  const timeout = new Date(props.timeout)
   const encodedUrl = encodeURI(url)
   const self = await getSelf()
   if (!hash) {
@@ -82,6 +134,9 @@ export const saveShortUrl = SA.encode(async (props: Static<typeof saveDto>) => {
         hash: nanoid(12),
         url: encodedUrl,
         creatorId: self.id,
+        password,
+        limit,
+        timeout,
       },
       select: urlSelect,
     })
@@ -111,6 +166,9 @@ export const saveShortUrl = SA.encode(async (props: Static<typeof saveDto>) => {
     },
     data: {
       url: encodedUrl,
+      password,
+      limit,
+      timeout,
     },
     select: urlSelect,
   })

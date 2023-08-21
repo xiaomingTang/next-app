@@ -1,5 +1,6 @@
-import { getShortUrl } from './server'
+import { UrlRequirePassword } from './UrlRequirePassword'
 
+import { getShortUrl } from '@/app/admin/shortUrl/server'
 import { AlertError } from '@/components/Error'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import DefaultLayout from '@/layout/DefaultLayout'
@@ -11,6 +12,8 @@ interface Props {
   params: { hash: string }
 }
 
+export const revalidate = 0
+
 export const metadata = seo.defaults({
   title: '短链服务',
 })
@@ -18,15 +21,27 @@ export const metadata = seo.defaults({
 export default async function Index({ params: { hash } }: Props) {
   const { data, error } = await getShortUrl({
     hash,
+    limit: {
+      gt: 0,
+    },
+    timeout: {
+      gt: new Date(),
+    },
   })
+
   if (error) {
     return (
       <DefaultLayout>
         <DefaultBodyContainer>
-          <AlertError {...error} />
+          {error.code === 428 ? (
+            <UrlRequirePassword hash={hash} />
+          ) : (
+            <AlertError {...error} />
+          )}
         </DefaultBodyContainer>
       </DefaultLayout>
     )
   }
+
   return redirect(data.url)
 }

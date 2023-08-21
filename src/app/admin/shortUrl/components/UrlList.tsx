@@ -21,6 +21,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from '@mui/material'
 import { toast } from 'react-hot-toast'
 
@@ -44,8 +45,8 @@ export function UrlEditUrlList({
                 <TableCell>作者</TableCell>
               </AuthRequired>
               <TableCell>目标链接</TableCell>
-              <TableCell>更新时间</TableCell>
-              <TableCell>创建时间</TableCell>
+              <TableCell>可访问次数</TableCell>
+              <TableCell>过期时间</TableCell>
               <TableCell>操作</TableCell>
             </TableRow>
           </TableHead>
@@ -62,6 +63,17 @@ export function UrlEditUrlList({
                   }}
                 >
                   <TableCell component='th' scope='row' sx={{ cursor: 'copy' }}>
+                    {url.encrypt && (
+                      <Typography
+                        component='span'
+                        sx={{
+                          color: 'success.main',
+                          fontWeight: 'bold',
+                        }}
+                      >
+                        [已加密]
+                      </Typography>
+                    )}{' '}
                     {`${ENV_CONFIG.public.origin}/u/${url.hash}`}
                   </TableCell>
                 </CopyToClipboard>
@@ -80,8 +92,8 @@ export function UrlEditUrlList({
                     {url.url}
                   </TableCell>
                 </CopyToClipboard>
-                <TableCell>{formatTime(url.updatedAt)}</TableCell>
-                <TableCell>{formatTime(url.createdAt)}</TableCell>
+                <TableCell>{url.limit}</TableCell>
+                <TableCell>{formatTime(url.timeout)}</TableCell>
                 <TableCell>
                   <ButtonGroup size='small'>
                     <CustomLoadingButton

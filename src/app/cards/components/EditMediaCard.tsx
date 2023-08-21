@@ -9,6 +9,7 @@ import { upload } from '@/app/upload/components/Uploader'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
 import { useLoading } from '@/hooks/useLoading'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { numberFormat } from '@/utils/numberFormat'
 
 import { useRouter } from 'next/navigation'
 import UploadIcon from '@mui/icons-material/Upload'
@@ -53,11 +54,6 @@ type FormProps = Pick<MediaCardWithUser, 'title'> &
       'description' | 'image' | 'audio' | 'video' | 'order'
     >
   >
-
-function numberFormat(val: number | string = '') {
-  const num = +val
-  return Number.isNaN(num) ? 0 : num
-}
 
 const MediaCardModal = NiceModal.create(
   ({ mediaCard }: MediaCardModalProps) => {
