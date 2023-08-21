@@ -72,13 +72,13 @@ function BlogTime(blog: BlogItemProps) {
   return (
     <Typography
       component='time'
-      dateTime={blog.loading ? '' : friendlyFormatTime(blog.updatedAt)}
+      dateTime={blog.loading ? '' : friendlyFormatTime(blog.createdAt)}
       sx={{ color: 'text.secondary' }}
     >
       {blog.loading ? (
         <Skeleton width={16 * 5} height={20} />
       ) : (
-        friendlyFormatTime(blog.updatedAt)
+        friendlyFormatTime(blog.createdAt)
       )}
     </Typography>
   )
