@@ -73,7 +73,7 @@ type FormProps = Pick<
 const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
   const router = useRouter()
   const modal = useModal()
-  useInjectHistory(modal.visible, async () => {
+  useInjectHistory(modal.visible, () => {
     modal.reject(new Error('操作已取消'))
     modal.hide()
   })

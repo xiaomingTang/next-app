@@ -60,7 +60,7 @@ export function BlogContent(blog: BlogContentProps) {
   const [previewVisible, setPreviewVisible] = useState(false)
   const closeRef = useRef<() => void>()
 
-  useInjectHistory(previewVisible, async () => {
+  useInjectHistory(previewVisible, () => {
     closeRef.current?.()
   })
 

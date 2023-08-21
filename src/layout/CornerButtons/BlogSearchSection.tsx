@@ -38,7 +38,7 @@ interface FormProps {
 export const BlogSearchSection = NiceModal.create(() => {
   const modal = useModal()
 
-  useInjectHistory(modal.visible, async () => {
+  useInjectHistory(modal.visible, () => {
     modal.hide()
   })
 

@@ -39,7 +39,7 @@ const defaultEmptyShortUrl: PartialShortUrl = {
 
 const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
   const modal = useModal()
-  useInjectHistory(modal.visible, async () => {
+  useInjectHistory(modal.visible, () => {
     modal.reject(new Error('操作已取消'))
     modal.hide()
   })
