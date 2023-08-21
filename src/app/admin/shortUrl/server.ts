@@ -86,7 +86,7 @@ export const getShortUrls = SA.encode(
         },
         select: urlSelect,
         orderBy: {
-          updatedAt: 'desc',
+          createdAt: 'desc',
         },
       })
       .then((res) =>
