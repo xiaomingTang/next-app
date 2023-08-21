@@ -108,9 +108,9 @@ export const BlogSearchSection = NiceModal.create(() => {
                     }}
                     sx={{ ml: 1, flex: 1 }}
                     autoFocus
-                    placeholder='搜索文章'
+                    placeholder='搜索博客'
                     inputProps={{
-                      'aria-label': '搜索文章',
+                      'aria-label': '搜索博客',
                     }}
                   />
                   <IconButton
