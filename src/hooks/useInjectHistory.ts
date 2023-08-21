@@ -24,12 +24,12 @@ export function useInjectHistory(
    * 如果需要在用户物理返回时关闭弹窗, 就在该方法中手动调用 modal.hide();
    * 如果拒绝关闭弹窗, 就别 hide() 并 throw Error;
    */
-  onPopState: (e: PopStateEvent) => Promise<void>
+  onPopState: (e: PopStateEvent) => void | Promise<void>
 ) {
   // 弹窗维护各自的 index
   const IndexRef = useRef(-1)
 
-  const finalOnPopState = useEventCallback((e: PopStateEvent) => {
+  const finalOnPopState = useEventCallback(async (e: PopStateEvent) => {
     // 轮到我了吗? 没轮到就返回
     if (IndexRef.current !== stack.latest) {
       return
@@ -40,12 +40,15 @@ export function useInjectHistory(
       ignoreIdx = -1
       return
     }
+    // 必须要立即 drop 掉
     stack.drop(IndexRef.current)
-    onPopState(e).catch(() => {
+    try {
+      await onPopState(e)
+    } catch (error) {
       // 抛错时, 恢复 stack
       stack.push(IndexRef.current)
       window.history.pushState(null, '', window.location.href)
-    })
+    }
   })
 
   useEvent('popstate', finalOnPopState)
