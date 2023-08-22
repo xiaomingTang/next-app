@@ -15,9 +15,10 @@ import { getTags, saveTag } from '@/app/admin/tag/server'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
 import { UploadTrigger } from '@/layout/CornerButtons/UploadTrigger'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { SvgLoading } from '@/svg'
 
 import { useRouter } from 'next/navigation'
-import VisibilityIcon from '@mui/icons-material/Visibility'
+import PreviewIcon from '@mui/icons-material/Preview'
 import CloseIcon from '@mui/icons-material/Close'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
@@ -84,11 +85,12 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
     isLoading: isLoadingAllTags,
   } = useSWR('getTags', () => getTags({}).then(SA.decode))
   const [addTagLoading, withAddTagLoading] = useLoading()
+  const [previewLoading, withPreviewLoading] = useLoading()
   const defaultFormProps: FormProps = {
     ...pick(blog, 'hash', 'title', 'description', 'content', 'type'),
     tags: blog.tags.map((t) => t.hash),
   }
-  const { handleSubmit, control } = useForm<FormProps>({
+  const { handleSubmit, control, getValues } = useForm<FormProps>({
     defaultValues: defaultFormProps,
   })
 
@@ -136,13 +138,21 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
           size='small'
           edge='end'
           aria-label='预览'
-          onClick={() => {
-            const url = new URL(window.location.href)
-            url.pathname = `/blog/${blog.hash}/draft`
-            showIframe({ url, title: '博客预览' }).catch(noop)
-          }}
+          onClick={cat(
+            withPreviewLoading(async () => {
+              // @TODO: 数据库需要新增一个博客预览表 (缓存表)
+              await saveBlog(getValues()).then(SA.decode)
+              const url = new URL(window.location.href)
+              url.pathname = `/blog/${blog.hash}/draft`
+              showIframe({ url, title: '博客预览' }).catch(noop)
+            })
+          )}
         >
-          <VisibilityIcon />
+          {previewLoading ? (
+            <SvgLoading className='animate-spin' />
+          ) : (
+            <PreviewIcon />
+          )}
         </IconButton>
       </Toolbar>
     </AppBar>
