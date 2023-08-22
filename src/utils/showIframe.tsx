@@ -22,7 +22,7 @@ interface IframeModalProps {
 
 const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
   const modal = useModal()
-  const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'))
+  const fullScreen = useMediaQuery(useTheme().breakpoints.down('md'))
 
   useInjectHistory(modal.visible, () => {
     modal.reject(new Error('操作已取消'))
@@ -51,6 +51,7 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
     <Dialog
       fullWidth
       fullScreen={fullScreen}
+      maxWidth='md'
       TransitionComponent={SlideUpTransition}
       {...muiDialogV5(modal)}
       onClose={() => {
