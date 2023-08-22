@@ -32,7 +32,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const blogRoutes: MetadataRoute.Sitemap = blogs.map((blog) => ({
     url: resolvePath(`/blog/${blog.hash}`).href,
-    lastModified: blog.updatedAt,
+    // 拿到的是 string...
+    lastModified: new Date(blog.updatedAt),
     changeFrequency: 'monthly',
     priority: 0.8,
   }))
@@ -44,7 +45,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const tagRoutes: MetadataRoute.Sitemap = tags.map((tag) => ({
     url: resolvePath(`/tag/${tag.hash}`).href,
-    lastModified: tag.updatedAt,
+    // 拿到的是 string...
+    lastModified: new Date(tag.updatedAt),
     changeFrequency: 'monthly',
     priority: 0.6,
   }))
