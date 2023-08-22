@@ -1,4 +1,4 @@
-import { BlogContent } from '../components/BlogContent'
+import { BlogPage } from '../components/BlogPage'
 import { BlogList, BlogListLoading } from '../components/BlogList'
 import { RecommendSep } from '../components/RecommendSep'
 import { Toc } from '../components/Toc'
@@ -79,7 +79,7 @@ export default async function Home({ params: { blogHash } }: Props) {
   return (
     <DefaultLayout>
       <DefaultBodyContainer>
-        <Suspense fallback={<BlogContent loading size={5} />}>
+        <Suspense fallback={<BlogPage loading size={5} />}>
           <ServerComponent
             api={unstable_cache(
               () => getBlogWithSource(blogHash),
@@ -94,7 +94,7 @@ export default async function Home({ params: { blogHash } }: Props) {
                 <DefaultAside placement='right'>
                   <Toc />
                 </DefaultAside>
-                <BlogContent {...blog} />
+                <BlogPage {...blog} />
                 <FESEO
                   title={seo.title(blog.title)}
                   description={seo.description(blog.description)}

@@ -6,57 +6,38 @@ import 'react-photo-view/dist/react-photo-view.css'
 import { markdownComponents } from './markdownComponents'
 import { BLOG_MARKDOWN_ID } from './constants'
 
-import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
-import { ScrollToTop } from '@/components/ScrollToTop'
-import { BlogTypeMap } from '@/app/admin/blog/components/constants'
-import { useUser } from '@/user'
-import { TagItem } from '@/app/tag/components/TagItem'
-import { SvgLoading } from '@/svg'
 import { editBlog } from '@/app/admin/blog/components/EditBlog'
+import { BlogTypeMap } from '@/app/admin/blog/components/constants'
 import { cat } from '@/errors/catchAndToast'
+import { useUser } from '@/user'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 
-import { PhotoProvider } from 'react-photo-view'
 import { MDXRemote } from 'next-mdx-remote'
-import { Alert, Box, IconButton, NoSsr, Stack, Typography } from '@mui/material'
-import { useRef, useState } from 'react'
+import { Typography, NoSsr, IconButton, Skeleton } from '@mui/material'
+import { PhotoProvider } from 'react-photo-view'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
+import { forwardRef, useRef, useState } from 'react'
 
-import type { LoadingAble } from '@/components/ServerComponent'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
+import type { LoadingAble } from '@/components/ServerComponent'
 import type { BlogWithTags } from '@/app/admin/blog/server'
 
-function Time({ blog }: { blog: BlogWithTags }) {
-  const [step, setStep] = useState(0)
-
-  return (
-    <Typography
-      component='time'
-      onClick={() => {
-        setStep((prev) => (prev + 1) % 3)
-      }}
-      sx={{
-        display: 'inline-block',
-        cursor: 'pointer',
-        userSelect: 'none',
-      }}
-    >
-      {step === 0 && `更新于 ${friendlyFormatTime(blog.updatedAt)}`}
-      {step === 1 && `更新于 ${formatTime(blog.updatedAt)}`}
-      {step === 2 && `发布于 ${formatTime(blog.createdAt)}`}
-    </Typography>
-  )
-}
-
-type BlogContentProps = LoadingAble<
+type DraftProps = LoadingAble<
   BlogWithTags & {
     source: MDXRemoteSerializeResult
   }
->
+> & {
+  /**
+   * @default 'production'
+   */
+  mode?: 'preview' | 'production'
+}
 
-export function BlogContent(blog: BlogContentProps) {
+function RawBlogContent(
+  { mode = 'production', ...blog }: DraftProps,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
   const user = useUser()
-  const [wordCount, setWordCount] = useState(0)
   const [previewVisible, setPreviewVisible] = useState(false)
   const closeRef = useRef<() => void>()
 
@@ -64,109 +45,133 @@ export function BlogContent(blog: BlogContentProps) {
     closeRef.current?.()
   })
 
-  if (blog.loading) {
-    return (
-      <Alert icon={<SvgLoading className='animate-spin' />} color='warning'>
-        加载中...
-      </Alert>
-    )
-  }
+  const titleElem = blog.loading ? (
+    <Skeleton
+      width={32 * blog.size}
+      height={40}
+      sx={{ display: 'inline-block' }}
+    />
+  ) : (
+    <>
+      {mode === 'preview' && (
+        <Typography
+          component='span'
+          sx={{
+            color: 'warning.main',
+            fontWeight: 'bold',
+          }}
+        >
+          [预览]{' '}
+        </Typography>
+      )}
+      {blog.type === 'UNPUBLISHED' && <>{BlogTypeMap[blog.type].name} </>}
+      {blog.title}
+      <NoSsr>
+        {mode === 'production' && blog.creator.id === user.id && (
+          <IconButton
+            color='primary'
+            size='small'
+            sx={{
+              verticalAlign: 'baseline',
+              position: 'absolute',
+              right: 0,
+              top: 0,
+            }}
+            aria-label='编辑该博客'
+            onClick={cat(() => editBlog(blog))}
+          >
+            <BorderColorIcon />
+          </IconButton>
+        )}
+      </NoSsr>
+    </>
+  )
+
+  const contentElem = blog.loading ? (
+    <>
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='38%' height={24} />
+      <br />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='76%' height={24} />
+      <br />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='65%' height={24} />
+      <br />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='12%' height={24} />
+      <br />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='46%' height={24} />
+      <br />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='100%' height={24} />
+      <Skeleton width='88%' height={24} />
+    </>
+  ) : (
+    <PhotoProvider
+      onVisibleChange={(visible) => {
+        setPreviewVisible(visible)
+      }}
+      toolbarRender={({ onClose }) => {
+        closeRef.current = onClose
+        return <></>
+      }}
+    >
+      <MDXRemote {...blog.source} components={markdownComponents} />
+    </PhotoProvider>
+  )
 
   return (
-    <ScrollToTop>
-      {/* meta: time & tags */}
-      <Stack
-        spacing={1}
-        direction='row'
-        useFlexGap
-        flexWrap='wrap'
-        sx={{
-          mb: 1,
-          color: 'text.secondary',
-          fontSize: '0.825rem',
-        }}
-      >
-        <Time blog={blog} />
-        {wordCount > 0 && (
-          <Typography
-            component='span'
-            sx={{
-              display: 'inline-block',
-            }}
-          >
-            约 {wordCount} 字, 预计耗时{' '}
-            {Math.max(1, Math.ceil(wordCount / 400))} 分钟
-          </Typography>
-        )}
-      </Stack>
-      <Box>
-        {blog.tags.map((tag) => (
-          <TagItem {...tag} key={tag.hash} sx={{ mr: 1, mb: 1 }} />
-        ))}
-      </Box>
-      {/* content */}
+    <Typography
+      component='article'
+      className='markdown-body shadow'
+      id={BLOG_MARKDOWN_ID}
+      sx={{
+        p: 2,
+        borderRadius: 1,
+        overflow: 'auto',
+      }}
+      ref={ref}
+    >
+      {/* 标题 */}
       <Typography
-        component='article'
-        className='markdown-body shadow'
-        id={BLOG_MARKDOWN_ID}
+        component='h1'
         sx={{
-          p: 2,
-          mt: 1,
-          borderRadius: 1,
-          overflow: 'auto',
-        }}
-        ref={(elem) => {
-          const text = elem?.innerText ?? ''
-          const simpleStr = text.replace(/[^a-zA-Z0-9]/g, '')
-          const cnStr = text.replace(/[^\u4e00-\u9fa5]/g, '')
-          setWordCount(Math.ceil(simpleStr.length / 3 + cnStr.length))
+          position: 'relative',
+          textAlign: 'center',
+          fontSize: '2rem',
+          fontWeight: 'bold',
+          // 空给编辑按钮
+          px: '2rem',
         }}
       >
-        {/* 标题 */}
-        <Typography
-          component='h1'
-          sx={{
-            position: 'relative',
-            textAlign: 'center',
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            // 空给编辑按钮
-            px: '2rem',
-          }}
-        >
-          {blog.type === 'UNPUBLISHED' && <>{BlogTypeMap[blog.type].name} </>}
-          {blog.title}
-          <NoSsr>
-            {blog.creator.id === user.id && (
-              <IconButton
-                color='primary'
-                size='small'
-                sx={{
-                  verticalAlign: 'baseline',
-                  position: 'absolute',
-                  right: 0,
-                  top: 0,
-                }}
-                aria-label='编辑该博客'
-                onClick={cat(() => editBlog(blog))}
-              >
-                <BorderColorIcon />
-              </IconButton>
-            )}
-          </NoSsr>
-        </Typography>
-        <PhotoProvider
-          onVisibleChange={(visible) => {
-            setPreviewVisible(visible)
-          }}
-          toolbarRender={({ onClose }) => {
-            closeRef.current = onClose
-            return <></>
-          }}
-        >
-          <MDXRemote {...blog.source} components={markdownComponents} />
-        </PhotoProvider>
+        {titleElem}
       </Typography>
-    </ScrollToTop>
+      {contentElem}
+    </Typography>
   )
 }
+
+export const BlogContent = forwardRef(RawBlogContent)
