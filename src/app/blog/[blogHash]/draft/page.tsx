@@ -1,4 +1,3 @@
-import { markdownComponents } from '../../components/markdownComponents'
 import { BlogContent } from '../../components/BlogContent'
 
 import { getBlog } from '@/app/admin/blog/server'
@@ -12,7 +11,6 @@ import { Suspense } from 'react'
 import remarkGfm from 'remark-gfm'
 import rehypePrism from 'rehype-prism-plus'
 import { serialize } from 'next-mdx-remote/serialize'
-import { MDXRemote } from 'next-mdx-remote'
 
 import type { Metadata } from 'next'
 
