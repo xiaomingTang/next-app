@@ -1,11 +1,11 @@
 'use client'
 
 import { BlogTypeMap, sortedBlogTypes } from './constants'
-import { editMarkdown } from './editMarkdown'
 import { MultiSelect } from './TagsSelect'
 
 import { saveBlog } from '../server'
 
+import { showIframe } from '@/utils/showIframe'
 import { SA, toPlainError } from '@/errors/utils'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
@@ -38,7 +38,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import { pick } from 'lodash-es'
+import { noop, pick } from 'lodash-es'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
 
@@ -88,11 +88,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
     ...pick(blog, 'hash', 'title', 'description', 'content', 'type'),
     tags: blog.tags.map((t) => t.hash),
   }
-  const {
-    handleSubmit,
-    control,
-    setValue: setFormValue,
-  } = useForm<FormProps>({
+  const { handleSubmit, control } = useForm<FormProps>({
     defaultValues: defaultFormProps,
   })
 
@@ -139,16 +135,12 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
         <IconButton
           size='small'
           edge='end'
-          aria-label='预览/可视化编辑'
-          onClick={cat(async () => {
-            const content = await editMarkdown({
-              name: blog?.title,
-              content: {
-                text: blog?.content,
-              },
-            })
-            setFormValue('content', content)
-          })}
+          aria-label='预览'
+          onClick={() => {
+            const url = new URL(window.location.href)
+            url.pathname = `/blog/${blog.hash}/draft`
+            showIframe({ url, title: '博客预览' }).catch(noop)
+          }}
         >
           <VisibilityIcon />
         </IconButton>
