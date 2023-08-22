@@ -72,14 +72,7 @@ export default async function Home({ params: { blogHash } }: Props) {
   return (
     <Suspense fallback={<BlogContent loading size={8} mode='preview' />}>
       <ServerComponent
-        api={unstable_cache(
-          () => getBlogWithSource(blogHash),
-          ['getBlog', blogHash],
-          {
-            revalidate: 10,
-            tags: [`getBlog:${blogHash}`],
-          }
-        )}
+        api={() => getBlogWithSource(blogHash)}
         render={(blog) => <BlogContent {...blog} mode='preview' />}
         errorBoundary={(err) => <AlertError {...err} />}
       />
