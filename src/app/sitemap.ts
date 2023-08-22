@@ -14,8 +14,8 @@ import type { MediaCardType } from '@prisma/client'
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 跳过 build 阶段
   if (process.env.npm_lifecycle_event === 'build') {
-    // 啥也不干, 只是为了避免 sitemap 变成纯静态文件
-    headers()
+    // 不能删, 啥也不干, 但是能避免 sitemap 变成纯静态文件
+    console.log(headers().get('User-Agent'))
     return []
   }
   const blogs = await unstable_cache(
