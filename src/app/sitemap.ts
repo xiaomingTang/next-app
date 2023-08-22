@@ -33,7 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogRoutes: MetadataRoute.Sitemap = blogs.map((blog) => ({
     url: resolvePath(`/blog/${blog.hash}`).href,
     // 拿到的是 string...
-    lastModified: new Date(blog.updatedAt),
+    lastModified: blog.updatedAt,
     changeFrequency: 'monthly',
     priority: 0.8,
   }))
@@ -46,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const tagRoutes: MetadataRoute.Sitemap = tags.map((tag) => ({
     url: resolvePath(`/tag/${tag.hash}`).href,
     // 拿到的是 string...
-    lastModified: new Date(tag.updatedAt),
+    lastModified: tag.updatedAt,
     changeFrequency: 'monthly',
     priority: 0.6,
   }))
@@ -62,7 +62,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const getCardsLastModifiedTime = (type: MediaCardType) =>
     Math.max(
-      ...cards.filter((c) => c.type === type).map((c) => c.updatedAt.getTime())
+      ...cards
+        .filter((c) => c.type === type)
+        .map((c) => new Date(c.updatedAt).getTime())
     )
 
   return [
@@ -70,8 +72,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: resolvePath('/').href,
       lastModified: new Date(
         Math.max(
-          ...blogs.map((b) => b.updatedAt.getTime()),
-          ...tags.map((b) => b.updatedAt.getTime())
+          ...blogs.map((b) => new Date(b.updatedAt).getTime()),
+          ...tags.map((b) => new Date(b.updatedAt).getTime())
         )
       ),
       changeFrequency: 'weekly',
