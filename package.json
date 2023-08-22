@@ -15,6 +15,7 @@
     "prestart": "pnpm run beforeRun",
     "start": "cd out && node server.js",
     "server": "node server.js",
+    "deploy": "bash -c 'chmod ug+x ./deploy.sh' && ./deploy",
     "export": "ts-node --project tsconfig-for-bin.json -r tsconfig-paths/register bin/prepare-output.ts",
     "commit": "git-cz",
     "lint": "next lint && tsc --noEmit",
