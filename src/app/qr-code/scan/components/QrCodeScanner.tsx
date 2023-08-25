@@ -3,24 +3,25 @@
 import { toPlainError } from '@/errors/utils'
 import { getUserVideo } from '@/utils/media/video'
 import { resizeTo } from '@/utils/resizeTo'
+import { useMediaPlaying } from '@/hooks/useMediaPlaying'
+import { useListen } from '@/hooks/useListen'
 
 import useSWR from 'swr'
 import { useEffect, useRef, useState } from 'react'
 import jsQR from 'jsqr'
 import { toast } from 'react-hot-toast'
 import { Box } from '@mui/material'
-import { noop } from 'lodash-es'
+import { noop, throttle } from 'lodash-es'
 import { useWindowSize } from 'react-use'
 
 import type { QRCode } from 'jsqr'
-
-// TODO: 抖动
 
 export function QrCodeScanner({
   fit = 'cover',
 }: {
   fit?: 'cover' | 'contain'
 }) {
+  let rafIndex = -1
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const { data: mediaStream } = useSWR('getUserVideo', () =>
@@ -30,98 +31,114 @@ export function QrCodeScanner({
   )
   const windowSize = useWindowSize()
   const [QRContent, setQRContent] = useState<QRCode | null>(null)
+  const { playing, setMedia } = useMediaPlaying()
   const [savedCanvasSize, setSavedCanvasSize] = useState({
     width: 1,
     height: 1,
   })
 
   useEffect(() => {
-    let rafIndex = -1
     const video = videoRef.current
     if (!video || !mediaStream) {
       return noop
     }
+    setMedia(video)
     video.srcObject = mediaStream
 
-    video.play().then(() => {
-      const canvas = canvasRef.current
-      const ctx = canvas?.getContext('2d')
-      if (!canvas || !ctx || video.readyState !== video.HAVE_ENOUGH_DATA) {
-        return
-      }
-      const videoSize = {
-        width: video.videoWidth,
-        height: video.videoHeight,
-      }
-      const canvasClientSize = {
-        width: Math.floor(canvas.clientWidth),
-        height: Math.floor(canvas.clientHeight),
-      }
-      const canvasSize = resizeTo({
-        src: canvasClientSize,
-        target: videoSize,
-        fit: fit === 'contain' ? 'cover' : 'contain',
-      })
-      canvasSize.width = Math.floor(canvasSize.width)
-      canvasSize.height = Math.floor(canvasSize.height)
-      setSavedCanvasSize(canvasSize)
-      canvas.width = canvasSize.width
-      canvas.height = canvasSize.height
-      const updateCanvas =
-        fit === 'cover'
-          ? () => {
-              ctx.drawImage(
-                video,
-                (videoSize.width - canvasSize.width) / 2,
-                (videoSize.height - canvasSize.height) / 2,
-                canvasSize.width,
-                canvasSize.height,
-                0,
-                0,
-                canvasSize.width,
-                canvasSize.height
-              )
-            }
-          : () => {
-              ctx.drawImage(
-                video,
-                0,
-                0,
-                videoSize.width,
-                videoSize.height,
-                (canvasSize.width - videoSize.width) / 2,
-                (canvasSize.height - videoSize.height) / 2,
-                videoSize.width,
-                videoSize.height
-              )
-            }
-      const tick = () => {
-        updateCanvas()
-        const imageData = ctx.getImageData(
-          0,
-          0,
-          canvasSize.width,
-          canvasSize.height
-        )
-        const content = jsQR(
-          imageData.data,
-          canvasSize.width,
-          canvasSize.height,
-          {
-            inversionAttempts: 'attemptBoth',
-          }
-        )
-        setQRContent(content)
-        rafIndex = window.requestAnimationFrame(tick)
-      }
-      rafIndex = window.requestAnimationFrame(tick)
-    })
+    video.play()
 
     return () => {
       video.pause()
-      window.cancelAnimationFrame(rafIndex)
     }
-  }, [fit, mediaStream, windowSize.width, windowSize.height])
+  }, [mediaStream, setMedia])
+
+  useListen(`${[playing, windowSize.width, windowSize.height]}`, () => {
+    window.cancelAnimationFrame(rafIndex)
+    const video = videoRef.current
+    const canvas = canvasRef.current
+    const ctx = canvas?.getContext('2d')
+    if (
+      !video ||
+      !canvas ||
+      !ctx ||
+      video.readyState !== video.HAVE_ENOUGH_DATA
+    ) {
+      return
+    }
+    const videoSize = {
+      width: video.videoWidth,
+      height: video.videoHeight,
+    }
+    const canvasClientSize = {
+      width: Math.floor(canvas.clientWidth),
+      height: Math.floor(canvas.clientHeight),
+    }
+    const canvasSize = resizeTo({
+      src: canvasClientSize,
+      target: videoSize,
+      fit: fit === 'contain' ? 'cover' : 'contain',
+    })
+    canvasSize.width = Math.floor(canvasSize.width)
+    canvasSize.height = Math.floor(canvasSize.height)
+    canvas.width = canvasSize.width
+    canvas.height = canvasSize.height
+
+    setSavedCanvasSize(canvasSize)
+
+    const updateCanvas =
+      fit === 'cover'
+        ? () => {
+            ctx.drawImage(
+              video,
+              (videoSize.width - canvasSize.width) / 2,
+              (videoSize.height - canvasSize.height) / 2,
+              canvasSize.width,
+              canvasSize.height,
+              0,
+              0,
+              canvasSize.width,
+              canvasSize.height
+            )
+          }
+        : () => {
+            ctx.drawImage(
+              video,
+              0,
+              0,
+              videoSize.width,
+              videoSize.height,
+              (canvasSize.width - videoSize.width) / 2,
+              (canvasSize.height - videoSize.height) / 2,
+              videoSize.width,
+              videoSize.height
+            )
+          }
+
+    const readQRCode = throttle(() => {
+      const imageData = ctx.getImageData(
+        0,
+        0,
+        canvasSize.width,
+        canvasSize.height
+      )
+      const content = jsQR(
+        imageData.data,
+        canvasSize.width,
+        canvasSize.height,
+        {
+          inversionAttempts: 'attemptBoth',
+        }
+      )
+      setQRContent(content)
+    }, 500)
+
+    const tick = () => {
+      updateCanvas()
+      readQRCode()
+      rafIndex = window.requestAnimationFrame(tick)
+    }
+    rafIndex = window.requestAnimationFrame(tick)
+  })
 
   return (
     <Box
