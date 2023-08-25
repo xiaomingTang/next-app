@@ -8,6 +8,7 @@ import Polyfills from '@/common/polyfills'
 import Providers from '@/common/providers'
 import { seo } from '@/utils/seo'
 import { GA } from '@/analytics/GA'
+import { VConsole } from '@/components/VConsole'
 
 import type { Metadata } from 'next'
 
@@ -45,6 +46,7 @@ export default function RootLayout({
   return (
     <html lang='zh-cn' suppressHydrationWarning>
       <body className='min-h-screen'>
+        <VConsole />
         {/* TODO: 这个 ENV_CONFIG 的实现可能有问题 */}
         <script src='/__ENV_CONFIG__.js' />
         <GA />
