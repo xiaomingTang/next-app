@@ -45,7 +45,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang='zh-cn' suppressHydrationWarning>
-      <body className='min-h-screen'>
+      <body>
         <VConsole />
         {/* TODO: 这个 ENV_CONFIG 的实现可能有问题 */}
         <script src='/__ENV_CONFIG__.js' />
