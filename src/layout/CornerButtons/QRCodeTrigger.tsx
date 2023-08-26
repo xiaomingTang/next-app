@@ -5,6 +5,7 @@ import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 
 import QrCodeIcon from '@mui/icons-material/QrCode'
 import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner'
+import QrCode2Icon from '@mui/icons-material/QrCode2'
 import {
   IconButton,
   ListItemIcon,
@@ -67,7 +68,10 @@ export function QRCodeTrigger() {
               <ListItemIcon>
                 <QrCodeScannerIcon />
               </ListItemIcon>
-              <ListItemText>扫码</ListItemText>
+              <ListItemText>
+                扫码
+                {!scannerEnabled && ' (相机不可用)'}
+              </ListItemText>
             </MenuItem>
             <MenuItem
               selected={curPathname === paths.generator}
@@ -81,7 +85,7 @@ export function QRCodeTrigger() {
               })}
             >
               <ListItemIcon>
-                <QrCodeIcon />
+                <QrCode2Icon />
               </ListItemIcon>
               <ListItemText>生成二维码</ListItemText>
             </MenuItem>

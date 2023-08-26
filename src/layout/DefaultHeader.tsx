@@ -6,7 +6,7 @@ import { BlogEntry } from './CornerButtons/Entries'
 import { RssButton } from './CornerButtons/RssButton'
 import { UploadTrigger } from './CornerButtons/UploadTrigger'
 import { BlogSearchButton } from './CornerButtons/BlogSearchButton'
-import { QRCodeTrigger } from './CornerButtons/ScannerButton'
+import { QRCodeTrigger } from './CornerButtons/QRCodeTrigger'
 
 import { dark, light } from '@/utils/theme'
 
