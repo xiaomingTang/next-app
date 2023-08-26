@@ -116,7 +116,7 @@ export function QrcodeDisplayItem({
                 key='访问'
                 {...triggerMenuItemEvents(() => {
                   setSettingAnchorEl(null)
-                  window.open('/', '_blank')
+                  window.open(qrcode.data, '_blank')
                 })}
               >
                 <ListItemIcon>
