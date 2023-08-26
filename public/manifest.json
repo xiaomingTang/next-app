@@ -12,10 +12,32 @@
   "orientation": "natural",
   "shortcuts": [
     {
-      "name": "搜小说",
-      "short_name": "搜小说",
-      "description": "立即搜索小说",
-      "url": "/s/d1"
+      "name": "扫一扫",
+      "short_name": "扫一扫",
+      "description": "扫描二维码",
+      "url": "/qr-code/scan",
+      "icons": [
+        {
+          "url": "/static/shortcuts/qr-code-scan-96x96.png",
+          "src": "/static/shortcuts/qr-code-scan-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "生成二维码",
+      "short_name": "生成二维码",
+      "description": "生成二维码",
+      "url": "/qr-code/generate",
+      "icons": [
+        {
+          "url": "/static/shortcuts/qr-code-generate-96x96.png",
+          "src": "/static/shortcuts/qr-code-generate-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ],
   "icons": [
