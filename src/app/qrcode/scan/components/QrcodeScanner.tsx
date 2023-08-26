@@ -1,6 +1,6 @@
 'use client'
 
-import { QRCodeDisplayItem } from './QRCodeDisplayItem'
+import { QrcodeDisplayItem } from './QrcodeDisplayItem'
 
 import { toPlainError } from '@/errors/utils'
 import { getUserVideo } from '@/utils/media/video'
@@ -18,7 +18,7 @@ import { useWindowSize } from 'react-use'
 
 import type { QRCode } from 'jsqr'
 
-export function QrCodeScanner({
+export function QrcodeScanner({
   fit = 'cover',
 }: {
   fit?: 'cover' | 'contain'
@@ -180,7 +180,7 @@ export function QrCodeScanner({
         }}
       />
       {QRContent && (
-        <QRCodeDisplayItem qrcode={QRContent} canvasSize={savedCanvasSize} />
+        <QrcodeDisplayItem qrcode={QRContent} canvasSize={savedCanvasSize} />
       )}
     </Box>
   )

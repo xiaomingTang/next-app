@@ -17,8 +17,8 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 const paths = {
-  scanner: '/qr-code/scan',
-  generator: '/qr-code/generate',
+  scanner: '/qrcode/scan',
+  generator: '/qrcode/generate',
 }
 
 export function QRCodeTrigger() {

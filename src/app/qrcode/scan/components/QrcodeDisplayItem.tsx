@@ -18,7 +18,7 @@ import { toast } from 'react-hot-toast'
 
 import type { QRCode } from 'jsqr'
 
-interface QRCodeDisplayItemProps {
+interface QrcodeDisplayItemProps {
   qrcode: QRCode
   canvasSize: {
     width: number
@@ -34,10 +34,10 @@ function isValidUrl(s: string) {
   }
 }
 
-export function QRCodeDisplayItem({
+export function QrcodeDisplayItem({
   qrcode,
   canvasSize,
-}: QRCodeDisplayItemProps) {
+}: QrcodeDisplayItemProps) {
   const isUrl = useMemo(() => isValidUrl(qrcode.data), [qrcode.data])
 
   return (

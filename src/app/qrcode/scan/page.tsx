@@ -1,6 +1,6 @@
 import '@/layout/FullscreenLayout.css'
 
-import { QrCodeScanner } from './components/QrCodeScanner'
+import { QrcodeScanner } from './components/QrcodeScanner'
 
 import FullscreenLayout from '@/layout/FullscreenLayout'
 import { seo } from '@/utils/seo'
@@ -12,7 +12,7 @@ export const metadata = seo.defaults({
 export default async function Home() {
   return (
     <FullscreenLayout>
-      <QrCodeScanner fit='cover' />
+      <QrcodeScanner fit='cover' />
     </FullscreenLayout>
   )
 }
