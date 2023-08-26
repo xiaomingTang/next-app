@@ -16,6 +16,8 @@ import { useWindowSize } from 'react-use'
 
 import type { QRCode } from 'jsqr'
 
+// TODO: 优化扫出内容后的 UI 及 UX
+
 export function QrCodeScanner({
   fit = 'cover',
 }: {
