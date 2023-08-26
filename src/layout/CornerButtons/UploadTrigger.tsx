@@ -14,7 +14,6 @@ export function UploadTrigger() {
   }
   return (
     <IconButton
-      className='text-primary-main'
       aria-label='上传'
       onClick={cat(async () => {
         await upload()

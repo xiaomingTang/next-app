@@ -15,6 +15,7 @@ export function DefaultBodyContainer({
       sx={{
         width: '100%',
         maxWidth: theme.v.screens.desktop,
+        minHeight: '100vh',
         mx: 'auto',
         p: 2,
       }}
