@@ -6,7 +6,7 @@ import FullscreenLayout from '@/layout/FullscreenLayout'
 import { seo } from '@/utils/seo'
 
 export const metadata = seo.defaults({
-  title: '二维码扫描',
+  title: '扫描二维码',
 })
 
 export default async function Home() {
