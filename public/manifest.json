@@ -18,8 +18,8 @@
       "url": "/qr-code/scan",
       "icons": [
         {
-          "url": "/static/shortcuts/qr-code-scan-96x96.png",
-          "src": "/static/shortcuts/qr-code-scan-96x96.png",
+          "url": "/pwa/shortcuts/qr-code-scan-96x96.png",
+          "src": "/pwa/shortcuts/qr-code-scan-96x96.png",
           "sizes": "96x96",
           "type": "image/png"
         }
@@ -32,8 +32,8 @@
       "url": "/qr-code/generate",
       "icons": [
         {
-          "url": "/static/shortcuts/qr-code-generate-96x96.png",
-          "src": "/static/shortcuts/qr-code-generate-96x96.png",
+          "url": "/pwa/shortcuts/qr-code-generate-96x96.png",
+          "src": "/pwa/shortcuts/qr-code-generate-96x96.png",
           "sizes": "96x96",
           "type": "image/png"
         }

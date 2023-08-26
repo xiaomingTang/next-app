@@ -53,9 +53,16 @@ const nextConfig = {
     ]
   },
   async headers() {
+    /**
+     * scripts & static 里面的内容不应该变化 (实在要变就改名),
+     * 所以使用 must-revalidate (过期后才重新验证);
+     *
+     * pwa & __ENV_CONFIG__ & manifest & favicon 可能会变,
+     * 所以使用 no-cache (每次使用都需要验证);
+     */
     return [
       {
-        source: '/(pwa|scripts|static)/:path*',
+        source: '/(scripts|static)/:path*',
         headers: [
           {
             key: 'Cache-Control',
@@ -64,11 +71,20 @@ const nextConfig = {
         ],
       },
       {
+        source: '/pwa/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, no-cache',
+          },
+        ],
+      },
+      {
         source: '/(__ENV_CONFIG__\\.js|manifest\\.json|favicon.ico)',
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, must-revalidate',
+            value: 'public, max-age=31536000, no-cache',
           },
         ],
       },
