@@ -52,6 +52,20 @@ export function DefaultFooter() {
             小明
           </Anchor>
         </Stack>
+        <Stack spacing={1} direction='row' justifyContent='center'>
+          <Anchor
+            href='https://github.com/xiaomingTang/next-app'
+            className='flex justify-center items-center'
+          >
+            本站源码
+          </Anchor>
+          <Anchor
+            href='https://github.com/xiaomingTang/next-app/commits/main'
+            className='flex justify-center items-center'
+          >
+            站点更新记录
+          </Anchor>
+        </Stack>
         <Anchor href='https://beian.miit.gov.cn/' aria-label='域名信息备案'>
           赣ICP备2021003257号-1
         </Anchor>
