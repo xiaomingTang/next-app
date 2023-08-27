@@ -9,7 +9,7 @@
   "start_url": "/",
   "scope": ".",
   "display": "standalone",
-  "orientation": "natural",
+  "orientation": "any",
   "shortcuts": [
     {
       "name": "扫一扫",
