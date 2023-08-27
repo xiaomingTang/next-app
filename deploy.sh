@@ -46,6 +46,7 @@ sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "bash -s $P1_REMOTE
 
   unzip -q -o $file_name
   lsof -t -i:$port | xargs kill -15
+  kill -15 $(ps aux | grep '[n]ext-render-worker-' | awk '{print $2}')
   nohup bash /www/server/nodejs/vhost/scripts/$remote_name.sh &>/dev/null
   ls -at .prod-*.zip | sed -n '4,$p' | xargs -I {} rm -rf {}
   exit
