@@ -89,7 +89,7 @@ export function useUserEditorSearchBar() {
             p: 2,
             borderRadius: 1,
             marginBottom: 2,
-            background: (theme) => theme.palette.background.paper,
+            background: 'background.paper',
           }}
         >
           <Controller

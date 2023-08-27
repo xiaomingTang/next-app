@@ -153,7 +153,7 @@ export function FileInfoDisplay({
               transition: 'transform .3s',
               transformOrigin: 'left top',
               cursor: 'pointer',
-              bgcolor: (theme) => theme.palette.grey[isImage ? 400 : 600],
+              bgcolor: isImage ? 'grey.400' : 'grey.600',
               ...obj(
                 isImage && {
                   ':hover': {
