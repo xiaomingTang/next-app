@@ -110,7 +110,7 @@ export function Toc() {
           mt: 1,
           p: 1,
           borderRadius: 1,
-          background: (theme) => theme.palette.background.paper,
+          backgroundColor: 'background.paper',
         }}
       >
         <Typography sx={{ fontWeight: 'bold' }}>目录</Typography>

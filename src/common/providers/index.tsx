@@ -15,6 +15,24 @@ const muiTheme = createTheme({
       desktop: 1024,
     },
   },
+  colorSchemes: {
+    light: {
+      palette: {
+        background: {
+          default: '#ffffff',
+          paper: '#ffffff',
+        },
+      },
+    },
+    dark: {
+      palette: {
+        background: {
+          default: '#0d1117',
+          paper: '#0d1117',
+        },
+      },
+    },
+  },
   components: {
     MuiButtonBase: {
       styleOverrides: {
