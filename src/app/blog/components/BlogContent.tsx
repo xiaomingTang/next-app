@@ -11,12 +11,14 @@ import { BlogTypeMap } from '@/app/admin/blog/components/constants'
 import { cat } from '@/errors/catchAndToast'
 import { useUser } from '@/user'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import Anchor from '@/components/Anchor'
 
 import { MDXRemote } from 'next-mdx-remote'
-import { Typography, NoSsr, IconButton, Skeleton } from '@mui/material'
+import { Typography, NoSsr, IconButton, Skeleton, alpha } from '@mui/material'
 import { PhotoProvider } from 'react-photo-view'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 import { forwardRef, useRef, useState } from 'react'
+import { common } from '@mui/material/colors'
 
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import type { LoadingAble } from '@/components/ServerComponent'
@@ -144,33 +146,55 @@ function RawBlogContent(
   )
 
   return (
-    <Typography
-      component='article'
-      className='markdown-body shadow'
-      id={BLOG_MARKDOWN_ID}
-      sx={{
-        p: 2,
-        borderRadius: 1,
-        overflow: 'auto',
-      }}
-      ref={ref}
-    >
-      {/* 标题 */}
+    <>
       <Typography
-        component='h1'
+        component='article'
+        className='markdown-body shadow'
+        id={BLOG_MARKDOWN_ID}
         sx={{
-          position: 'relative',
-          textAlign: 'center',
-          fontSize: '2rem',
-          fontWeight: 'bold',
-          // 空给编辑按钮
-          px: '2rem',
+          p: 2,
+          borderRadius: 1,
+          overflow: 'auto',
+        }}
+        ref={ref}
+      >
+        {/* 标题 */}
+        <Typography
+          component='h1'
+          sx={{
+            position: 'relative',
+            textAlign: 'center',
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            // 空给编辑按钮
+            px: '2rem',
+          }}
+        >
+          {titleElem}
+        </Typography>
+        {contentElem}
+      </Typography>
+      {/* 版权声明 */}
+      <Typography
+        sx={{
+          mt: 2,
+          p: 2,
+          borderRadius: 1,
+          boxShadow: 2,
+          backgroundColor: '#095261',
+          color: alpha(common.white, 0.7),
         }}
       >
-        {titleElem}
+        版权声明: 自由转载-非商用-非衍生-保持署名{' '}
+        <Anchor
+          href='https://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh'
+          bold={false}
+          style={{ color: 'inherit' }}
+        >
+          (创意共享 3.0 许可证)
+        </Anchor>
       </Typography>
-      {contentElem}
-    </Typography>
+    </>
   )
 }
 
