@@ -165,12 +165,15 @@ const Uploader = NiceModal.create(
                 })
               )
             } catch (err) {
+              const errorMsg = toPlainError(err).message
               updateFileInfos(
                 files.map((f) => ({
                   file: f,
                   status: 'failed',
+                  error: errorMsg,
                 }))
               )
+              throw err
             }
           })
         ),
