@@ -24,47 +24,16 @@ enum BlogType {
 }
 
 model User {
-  id               Int              @id @default(autoincrement())
-  name             String
-  email            String           @unique
-  password         String
-  role             Role             @default(USER)
-  shortUrls        ShortUrl[]
-  chapterHistories ChapterHistory[]
-  blogs            Blog[]
-  tags             Tag[]
-  uploads          Upload[]
-  mediaCards       MediaCard[]
-}
-
-model Novel {
-  hash      String    @id
-  driver    String
-  remoteUrl String    @unique
-  title     String    @default("")
-  author    String
-  chapters  Chapter[]
-}
-
-model Chapter {
-  id               Int              @id @default(autoincrement())
-  index            Int
-  driver           String
-  remoteUrl        String           @unique
-  title            String
-  content          String           @db.Text()
-  novelHash        String
-  novel            Novel            @relation(fields: [novelHash], references: [hash])
-  chapterHistories ChapterHistory[]
-}
-
-model ChapterHistory {
-  id        Int      @id @default(autoincrement())
-  chapterId Int
-  chapter   Chapter  @relation(fields: [chapterId], references: [id])
-  createdAt DateTime @default(now())
-  creatorId Int
-  creator   User     @relation(fields: [creatorId], references: [id])
+  id         Int         @id @default(autoincrement())
+  name       String
+  email      String      @unique
+  password   String
+  role       Role        @default(USER)
+  shortUrls  ShortUrl[]
+  blogs      Blog[]
+  tags       Tag[]
+  uploads    Upload[]
+  mediaCards MediaCard[]
 }
 
 model ShortUrl {
