@@ -2,8 +2,10 @@
 
 import { FileInfoDisplay } from './FileInfoDisplay'
 
-import { deleteFile, uploadFiles } from '../server'
+import { deleteFile, requestUploadFiles } from '../server'
 import { fileToCopyableMarkdownStr, geneFileKey } from '../utils/geneFileKey'
+import { setImageSizeForUrl } from '../utils/urlImageSize'
+import { checkIsImage } from '../utils/checkIsImage'
 
 import { SA, toPlainError } from '@/errors/utils'
 import { cat } from '@/errors/catchAndToast'
@@ -11,6 +13,8 @@ import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { getImageSize } from '@/utils/getImageSize'
+import { useUser } from '@/user'
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -59,15 +63,14 @@ function initFileToInfo(f: File): FileInfo {
 // TODO: 做成弹窗形式 & 简易上传弹窗 & 全屏/轻量/单个文件上传 等
 const Uploader = NiceModal.create(
   ({ defaultFiles = [], accept }: UploaderProps) => {
+    const user = useUser()
     const modal = useModal()
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'))
     const { handleSubmit, control } = useForm<{
-      private: boolean
       randomFilenameByServer: boolean
       dirname: string
     }>({
       defaultValues: {
-        private: false,
         randomFilenameByServer: true,
         dirname: '',
       },
@@ -120,8 +123,6 @@ const Uploader = NiceModal.create(
       () =>
         handleSubmit(
           cat(async (e) => {
-            const formData = new FormData()
-            formData.append('config', JSON.stringify(e))
             const files = fileInfos
               .filter(
                 (info) =>
@@ -129,52 +130,72 @@ const Uploader = NiceModal.create(
               )
               .map((info) => info.file)
             if (files.length === 0) {
-              toast.success('所有文件都已上传成功')
+              throw new Error('没有待上传的文件')
             }
-            files.forEach((f) => {
-              formData.append('files', f)
-            })
             updateFileInfos(
               files.map((f) => ({
                 file: f,
                 status: 'pending',
               }))
             )
-            try {
-              const res = await uploadFiles(formData).then(SA.decode)
-              updateFileInfos(
-                files.map((f, i) => {
-                  const resItem = res[i]
-                  return {
+            const res = await requestUploadFiles({
+              ...e,
+              files: files.map((f) => ({
+                name: f.name,
+                type: f.type,
+                size: f.size,
+              })),
+            })
+              .then(SA.decode)
+              .catch((err) => {
+                const errorMsg = toPlainError(err).message
+                updateFileInfos(
+                  files.map((f) => ({
                     file: f,
-                    status:
-                      resItem.status === 'fulfilled' ? 'succeed' : 'failed',
-                    key:
-                      resItem.status === 'fulfilled'
-                        ? resItem.value.key
-                        : undefined,
-                    url:
-                      resItem.status === 'fulfilled'
-                        ? resItem.value.url
-                        : undefined,
-                    error:
-                      resItem.status === 'rejected'
-                        ? toPlainError(resItem.reason).message
-                        : undefined,
+                    status: 'failed',
+                    error: errorMsg,
+                  }))
+                )
+                throw err
+              })
+            await Promise.allSettled(
+              res.map(async (item, idx) => {
+                const f = files[idx]
+                try {
+                  if (item.status === 'rejected') {
+                    throw new Error(item.reason)
                   }
-                })
-              )
-            } catch (err) {
-              const errorMsg = toPlainError(err).message
-              updateFileInfos(
-                files.map((f) => ({
-                  file: f,
-                  status: 'failed',
-                  error: errorMsg,
-                }))
-              )
-              throw err
-            }
+                  const url = new URL(item.value.url)
+                  await fetch(url, {
+                    method: 'PUT',
+                    body: f,
+                  }).then((r) => {
+                    if (!r.ok) {
+                      throw new Error(`上传失败: ${r.statusText}`)
+                    }
+                  })
+                  url.search = ''
+                  if (checkIsImage(f)) {
+                    setImageSizeForUrl(url, await getImageSize(f))
+                  }
+                  updateFileInfos([
+                    {
+                      file: f,
+                      status: 'succeed',
+                      url: url.href,
+                    },
+                  ])
+                } catch (error) {
+                  updateFileInfos([
+                    {
+                      file: f,
+                      status: 'failed',
+                      error: toPlainError(error).message,
+                    },
+                  ])
+                }
+              })
+            )
           })
         ),
       [fileInfos, handleSubmit, updateFileInfos]
@@ -185,24 +206,12 @@ const Uploader = NiceModal.create(
         name='dirname'
         control={control}
         render={({ field }) => (
-          <TextField {...field} size='small' label='存储目录(可缺省)' />
-        )}
-      />
-    )
-
-    const privateElem = (
-      <Controller
-        name='private'
-        control={control}
-        render={({ field }) => (
-          <FormControl size='small'>
-            <FormControlLabel
-              control={
-                <Checkbox size='small' checked={field.value} {...field} />
-              }
-              label='私密文件'
-            />
-          </FormControl>
+          <TextField
+            {...field}
+            size='small'
+            disabled={user.role !== 'ADMIN'}
+            label='存储目录(可缺省)'
+          />
         )}
       />
     )
@@ -215,7 +224,12 @@ const Uploader = NiceModal.create(
           <FormControl size='small'>
             <FormControlLabel
               control={
-                <Checkbox size='small' checked={field.value} {...field} />
+                <Checkbox
+                  size='small'
+                  checked={field.value}
+                  disabled={user.role !== 'ADMIN'}
+                  {...field}
+                />
               }
               label='随机文件名（服务器随机生成）'
             />
@@ -249,7 +263,6 @@ const Uploader = NiceModal.create(
             >
               <Stack spacing={1} sx={{ p: 1 }}>
                 {dirnameElem}
-                {privateElem}
                 {randomFilenameElem}
               </Stack>
             </Menu>
@@ -331,8 +344,8 @@ const Uploader = NiceModal.create(
             key={geneFileKey(info.file)}
             index={index}
             onDelete={async () => {
-              if (info.key) {
-                await deleteFile(info.key)
+              if (info.url) {
+                await deleteFile(info.url)
               }
               setFileInfoMap((prev) => omit(prev, [geneFileKey(info.file)]))
             }}

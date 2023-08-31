@@ -75,12 +75,13 @@ model Blog {
 }
 
 model Upload {
-  hash        String   @id
-  description String   @default("") @db.VarChar(100)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  creatorId   Int
-  creator     User     @relation(fields: [creatorId], references: [id])
+  id        Int      @id @default(autoincrement())
+  key       String
+  url       String   @db.VarChar(1000)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  creatorId Int
+  creator   User     @relation(fields: [creatorId], references: [id])
 }
 
 enum MediaCardType {

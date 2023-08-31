@@ -29,11 +29,7 @@ export interface FileInfo {
   file: File
   status: 'succeed' | 'failed' | 'pending' | 'before-upload'
   /**
-   * 上传成功才有 key
-   */
-  key?: string
-  /**
-   * 上传成功才有 key
+   * 上传成功才有 url
    */
   url?: string
   /**
