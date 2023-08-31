@@ -24,6 +24,7 @@ export function toError(err: unknown): Error {
   }
   const message =
     (err as PlainError)?.message ??
+    (err as PromiseRejectedResult)?.reason ??
     (err as PlainError)?.toString() ??
     '未知错误'
   const retError = new Error(message)
