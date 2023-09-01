@@ -9,6 +9,9 @@
 
 # ----------------------------------------------
 
+# https://stackoverflow.com/a/2871034
+set -euxo pipefail
+
 pnpm i
 
 pnpm run build
