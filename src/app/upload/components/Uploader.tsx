@@ -240,26 +240,24 @@ const Uploader = NiceModal.create(
 
     const settingTriggerElem = (
       <AnchorProvider>
-        {(settingAnchorEl, setSettingAnchorEl) => (
+        {(anchorEl, setAnchorEl) => (
           <>
             <IconButton
               edge='start'
               aria-label='设置'
-              aria-controls={
-                settingAnchorEl ? 'upload-settings-menu' : undefined
-              }
+              aria-controls={anchorEl ? 'upload-settings-menu' : undefined}
               onClick={(e) => {
-                setSettingAnchorEl(e.currentTarget)
+                setAnchorEl(e.currentTarget)
               }}
             >
               <SettingsIcon />
             </IconButton>
             <Menu
               id='upload-settings-menu'
-              anchorEl={settingAnchorEl}
-              open={!!settingAnchorEl}
+              anchorEl={anchorEl}
+              open={!!anchorEl}
               autoFocus
-              onClose={() => setSettingAnchorEl(null)}
+              onClose={() => setAnchorEl(null)}
               MenuListProps={{
                 'aria-labelledby': '关闭设置菜单',
               }}

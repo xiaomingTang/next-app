@@ -42,12 +42,12 @@ export function QrcodeDisplayItem({
 
   return (
     <AnchorProvider>
-      {(settingAnchorEl, setSettingAnchorEl) => (
+      {(anchorEl, setAnchorEl) => (
         <>
           <Button
             variant='contained'
             onClick={(e) => {
-              setSettingAnchorEl(e.currentTarget)
+              setAnchorEl(e.currentTarget)
             }}
             sx={{
               position: 'absolute',
@@ -81,10 +81,10 @@ export function QrcodeDisplayItem({
           </Button>
           <Menu
             id='qrcode-options'
-            anchorEl={settingAnchorEl}
-            open={!!settingAnchorEl}
+            anchorEl={anchorEl}
+            open={!!anchorEl}
             autoFocus
-            onClose={() => setSettingAnchorEl(null)}
+            onClose={() => setAnchorEl(null)}
             MenuListProps={{
               'aria-labelledby': '关闭二维码操作菜单',
             }}
@@ -101,7 +101,7 @@ export function QrcodeDisplayItem({
               text={qrcode.data}
               onCopy={() => {
                 toast.success('复制成功')
-                setSettingAnchorEl(null)
+                setAnchorEl(null)
               }}
             >
               <MenuItem key='复制'>
@@ -115,7 +115,7 @@ export function QrcodeDisplayItem({
               <MenuItem
                 key='访问'
                 {...triggerMenuItemEvents(() => {
-                  setSettingAnchorEl(null)
+                  setAnchorEl(null)
                   window.open(qrcode.data, '_blank')
                 })}
               >
