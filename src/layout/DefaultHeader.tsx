@@ -31,7 +31,6 @@ export function DefaultRawHeader() {
       <AppBar
         sx={{
           boxShadow: 'none',
-          overflow: 'auto',
           zIndex: theme.zIndex.appBar,
           height: '56px',
           [theme.breakpoints.down('sm')]: {
