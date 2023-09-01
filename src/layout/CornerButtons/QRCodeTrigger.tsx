@@ -38,6 +38,8 @@ export function QrcodeTrigger() {
       {(anchorEl, setAnchorEl) => (
         <>
           <IconButton
+            aria-label='二维码菜单'
+            aria-controls={anchorEl ? 'header-qrcode-menu' : undefined}
             onClick={(e) => {
               setAnchorEl(e.currentTarget)
             }}
@@ -45,6 +47,7 @@ export function QrcodeTrigger() {
             <QrCodeIcon />
           </IconButton>
           <Menu
+            id='header-qrcode-menu'
             anchorEl={anchorEl}
             open={!!anchorEl}
             autoFocus
