@@ -21,7 +21,7 @@ const paths = {
   generator: '/qrcode/generate',
 }
 
-export function QRCodeTrigger() {
+export function QrcodeTrigger() {
   const router = useRouter()
   const curPathname = usePathname()
   const [scannerEnabled, setScannerEnabled] = useState(false)

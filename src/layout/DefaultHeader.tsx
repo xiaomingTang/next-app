@@ -6,7 +6,7 @@ import { Entry } from './CornerButtons/Entries'
 import { RssButton } from './CornerButtons/RssButton'
 import { UploadTrigger } from './CornerButtons/UploadTrigger'
 import { BlogSearchButton } from './CornerButtons/BlogSearchButton'
-import { QRCodeTrigger } from './CornerButtons/QRCodeTrigger'
+import { QrcodeTrigger } from './CornerButtons/QrcodeTrigger'
 import { CardsTrigger } from './CornerButtons/CardsTrigger'
 import { MenuTrigger } from './CornerButtons/MenuTrigger'
 
@@ -87,7 +87,7 @@ export function DefaultRawHeader() {
           <Stack direction='row'>
             <UploadTrigger />
             <UserButton />
-            <QRCodeTrigger />
+            <QrcodeTrigger />
             <BlogSearchButton />
             <ThemeToggleButton />
             <RssButton />
