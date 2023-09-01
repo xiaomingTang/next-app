@@ -2,11 +2,13 @@
 
 import { UserButton } from './CornerButtons/UserButton'
 import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
-import { BlogEntry } from './CornerButtons/Entries'
+import { Entry } from './CornerButtons/Entries'
 import { RssButton } from './CornerButtons/RssButton'
 import { UploadTrigger } from './CornerButtons/UploadTrigger'
 import { BlogSearchButton } from './CornerButtons/BlogSearchButton'
 import { QRCodeTrigger } from './CornerButtons/QRCodeTrigger'
+import { CardsTrigger } from './CornerButtons/CardsTrigger'
+import { MenuTrigger } from './CornerButtons/MenuTrigger'
 
 import { dark, light } from '@/utils/theme'
 
@@ -56,8 +58,32 @@ export function DefaultRawHeader() {
             m: 'auto',
           }}
         >
-          <Stack direction='row' sx={{ height: '100%', flex: '1 1 0%' }}>
-            <BlogEntry />
+          {/* 移动端 */}
+          <Stack
+            direction='row'
+            sx={{
+              flex: '1 1 0%',
+              [theme.breakpoints.up('sm')]: {
+                display: 'none',
+              },
+            }}
+          >
+            <MenuTrigger />
+            <Entry pathname='/' name='首页' />
+          </Stack>
+          {/* 大于移动端 */}
+          <Stack
+            direction='row'
+            sx={{
+              flex: '1 1 0%',
+              [theme.breakpoints.down('sm')]: {
+                display: 'none',
+              },
+            }}
+          >
+            <Entry pathname='/' name='首页' />
+            <Entry pathname='/blog/3EpPJTM2LwB_' name='关于' />
+            <CardsTrigger />
           </Stack>
           <Stack direction='row'>
             <UploadTrigger />

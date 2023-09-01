@@ -1,9 +1,7 @@
-import { CardsTrigger } from './CardsTrigger'
-
 import { Button, Link } from '@mui/material'
 import { usePathname } from 'next/navigation'
 
-function Entry({
+export function Entry({
   pathname,
   name,
 }: {
@@ -31,15 +29,5 @@ function Entry({
     >
       {name}
     </Button>
-  )
-}
-
-export function BlogEntry() {
-  return (
-    <>
-      <Entry pathname='/' name='首页' />
-      <Entry pathname='/blog/3EpPJTM2LwB_' name='关于' />
-      <CardsTrigger />
-    </>
   )
 }

@@ -1,53 +1,49 @@
+import { cardList } from './CardsTrigger'
+
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 
-import ListIcon from '@mui/icons-material/ArrowDropDown'
-import { Button, Menu, MenuItem } from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
+import { IconButton, Menu, MenuItem } from '@mui/material'
 import { usePathname, useRouter } from 'next/navigation'
 
-export const cardList = [
-  { pathname: '/cards/fruits', title: '水果' },
-  { pathname: '/cards/foods', title: '肉和菜' },
-  { pathname: '/cards/colors', title: '颜色' },
-  { pathname: '/cards/area', title: '国家和地区' },
+const menuList = [
+  {
+    pathname: '/blog/3EpPJTM2LwB_',
+    title: '关于',
+  },
+  ...cardList,
 ]
 
-export function CardsTrigger() {
+export function MenuTrigger() {
   const router = useRouter()
   const curPathname = usePathname()
+
   return (
     <AnchorProvider>
       {(anchorEl, setAnchorEl) => (
         <>
-          <Button
-            variant='text'
-            color='inherit'
-            sx={{
-              fontWeight: 'bold',
-              fontSize: '1em',
-              minWidth: 0,
-              height: '100%',
-              px: 1,
-              whiteSpace: 'nowrap',
-            }}
+          <IconButton
+            aria-label='更多菜单'
             onClick={(e) => {
               setAnchorEl(e.currentTarget)
             }}
           >
-            卡片 <ListIcon />
-          </Button>
+            <MenuIcon />
+          </IconButton>
           <Menu
             anchorEl={anchorEl}
             open={!!anchorEl}
             autoFocus
             onClose={() => setAnchorEl(null)}
             MenuListProps={{
-              'aria-labelledby': '关闭卡片列表',
+              'aria-labelledby': '关闭更多菜单',
             }}
           >
-            {cardList.map(({ pathname, title }) => (
+            {menuList.map(({ pathname, title }) => (
               <MenuItem
                 key={pathname}
+                dense
                 selected={pathname === curPathname}
                 {...triggerMenuItemEvents((e, reason) => {
                   setAnchorEl(null)
