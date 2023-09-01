@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-sync-scripts */
-import './globals.css'
+import './global.css'
 
 import { GetInitColorSchemeScript } from './GetColorScheme'
 
