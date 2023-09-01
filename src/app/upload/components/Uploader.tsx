@@ -245,6 +245,9 @@ const Uploader = NiceModal.create(
             <IconButton
               edge='start'
               aria-label='设置'
+              aria-controls={
+                settingAnchorEl ? 'upload-settings-menu' : undefined
+              }
               onClick={(e) => {
                 setSettingAnchorEl(e.currentTarget)
               }}
@@ -252,7 +255,7 @@ const Uploader = NiceModal.create(
               <SettingsIcon />
             </IconButton>
             <Menu
-              id='logout-menu'
+              id='upload-settings-menu'
               anchorEl={settingAnchorEl}
               open={!!settingAnchorEl}
               autoFocus

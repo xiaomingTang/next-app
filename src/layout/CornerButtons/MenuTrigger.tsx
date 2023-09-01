@@ -25,6 +25,7 @@ export function MenuTrigger() {
         <>
           <IconButton
             aria-label='更多菜单'
+            aria-controls={anchorEl ? 'header-more-menu' : undefined}
             onClick={(e) => {
               setAnchorEl(e.currentTarget)
             }}
@@ -32,6 +33,7 @@ export function MenuTrigger() {
             <MenuIcon />
           </IconButton>
           <Menu
+            id='header-more-menu'
             anchorEl={anchorEl}
             open={!!anchorEl}
             autoFocus
