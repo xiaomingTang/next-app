@@ -1,5 +1,3 @@
-'use client'
-
 import { DefaultRawHeader } from './DefaultHeader'
 import { FilePasteCatcher } from './components/FilePasteCatcher'
 

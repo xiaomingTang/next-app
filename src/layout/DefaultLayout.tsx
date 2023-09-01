@@ -1,5 +1,3 @@
-'use client'
-
 import { DefaultFooter } from './DefaultFooter'
 import { DefaultHeader } from './DefaultHeader'
 import { FilePasteCatcher } from './components/FilePasteCatcher'
