@@ -6,7 +6,7 @@ import { Entry } from './CornerButtons/Entries'
 import { RssButton } from './CornerButtons/RssButton'
 import { UploadTrigger } from './CornerButtons/UploadTrigger'
 import { BlogSearchButton } from './CornerButtons/BlogSearchButton'
-import { QrcodeTrigger } from './CornerButtons/Qr-codeTrigger'
+import { QrcodeTrigger } from './CornerButtons/QrcodeTrigger'
 import { CardsTrigger } from './CornerButtons/CardsTrigger'
 import { MenuTrigger } from './CornerButtons/MenuTrigger'
 
