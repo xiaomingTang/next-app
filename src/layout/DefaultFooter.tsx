@@ -16,7 +16,7 @@ export function DefaultFooter() {
       spacing={1}
       direction={{
         xs: 'column',
-        sm: 'row',
+        md: 'row',
       }}
       sx={{
         alignItems: 'center',
@@ -35,7 +35,7 @@ export function DefaultFooter() {
         spacing={1}
         direction={{
           xs: 'column',
-          sm: 'row',
+          md: 'row',
         }}
         sx={{
           flexGrow: 1,
@@ -50,6 +50,14 @@ export function DefaultFooter() {
           >
             <SvgGithub />
             小明
+          </Anchor>
+        </Stack>
+        <Stack spacing={1} direction='row' justifyContent='center'>
+          <Anchor href='/links' className='flex justify-center items-center'>
+            友链
+          </Anchor>
+          <Anchor href='/comment' className='flex justify-center items-center'>
+            向站长留言 (施工中...)
           </Anchor>
         </Stack>
         <Stack spacing={1} direction='row' justifyContent='center'>
