@@ -48,6 +48,7 @@ const EditUrlModal = NiceModal.create(
     const { handleSubmit, control } = useForm<
       Partial<SimpleFriendsLink> & {
         url: string
+        name: string
         email?: string
       }
     >({
