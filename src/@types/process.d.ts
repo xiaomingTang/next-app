@@ -16,5 +16,7 @@ declare namespace NodeJS {
     C_AWS_ACCESS_KEY_ID: string
     C_AWS_SECRET_ACCESS_KEY: string
     GA_ID: string
+    DINGTALK_WEB_HOOK: string
+    DINGTALK_SECRET: string
   }
 }
