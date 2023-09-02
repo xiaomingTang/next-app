@@ -24,34 +24,44 @@ const linkSelect = {
   hash: true,
   status: true,
   name: true,
+  email: true,
   url: true,
   image: true,
   description: true,
 }
 
-async function filterFriendsLinkWithAuth<T extends Pick<FriendsLink, 'status'>>(
-  link?: T | null
-) {
+async function filterFriendsLinkWithAuth<
+  T extends Pick<FriendsLink, 'status' | 'email'>,
+>(link?: T | null) {
   if (!link) {
     throw Boom.notFound('该友链不存在或已删除')
   }
   const self = await getSelf()
-  if (self.role === Role.ADMIN || link.status === 'ACCEPTED') {
+  if (self.role === Role.ADMIN) {
     return link
+  }
+  if (link.status === 'ACCEPTED') {
+    return {
+      ...link,
+      email: '',
+    }
   }
   throw Boom.forbidden('你无权访问该友链')
 }
 
 async function filterFriendsLinksWithAuth<
-  T extends Pick<FriendsLink, 'status'>,
+  T extends Pick<FriendsLink, 'status' | 'email'>,
 >(links: (T | null | undefined)[]) {
   const self = await getSelf().catch(noop)
-  return links.filter((link) => {
-    if (!link) {
-      return false
-    }
-    return self?.role === Role.ADMIN || link.status === 'ACCEPTED'
-  }) as T[]
+  if (self?.role === Role.ADMIN) {
+    return links
+  }
+  return links
+    .filter((link) => link?.status === 'ACCEPTED')
+    .map((link) => ({
+      ...link,
+      email: '',
+    })) as T[]
 }
 
 export const getFriendsLink = SA.encode(
