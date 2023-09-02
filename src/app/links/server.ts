@@ -54,7 +54,7 @@ async function filterFriendsLinksWithAuth<
 >(links: (T | null | undefined)[]) {
   const self = await getSelf().catch(noop)
   if (self?.role === Role.ADMIN) {
-    return links
+    return links.filter(Boolean) as T[]
   }
   return links
     .filter((link) => link?.status === 'ACCEPTED')
