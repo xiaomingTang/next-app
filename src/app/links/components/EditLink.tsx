@@ -1,6 +1,7 @@
 'use client'
 
 import { FriendsLinkStatusMap, sortedFriendsLinkStatus } from './constants'
+import { FriendsLinkResultTip } from './FriendsLinkResultTip'
 
 import { saveFriendsLink } from '../server'
 
@@ -29,6 +30,7 @@ import {
 import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
 import toast from 'react-hot-toast'
+import { noop } from 'lodash-es'
 
 import type { SimpleFriendsLink } from '../server'
 
@@ -92,7 +94,12 @@ const EditUrlModal = NiceModal.create(
               withLoading(async (rest) => {
                 await saveFriendsLink(rest)
                   .then(SA.decode)
-                  .then((u) => {
+                  .then(async (u) => {
+                    if (u.status !== 'PENDING' && u.email) {
+                      await NiceModal.show(FriendsLinkResultTip, {
+                        link: u,
+                      }).catch(noop)
+                    }
                     modal.resolve(u)
                     modal.hide()
                   })
