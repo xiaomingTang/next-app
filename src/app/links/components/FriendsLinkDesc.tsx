@@ -2,18 +2,13 @@
 
 import { editFriendsLink } from './EditLink'
 
-import Anchor from '@/components/Anchor'
 import { ENV_CONFIG } from '@/config'
 import { cat } from '@/errors/catchAndToast'
 import { AnchorProvider } from '@/components/AnchorProvider'
+import { resolvePath } from '@/utils/url'
 
-import { Box, Button, Collapse, Link, Typography, styled } from '@mui/material'
+import { Box, Button, Collapse, Typography, styled } from '@mui/material'
 import toast from 'react-hot-toast'
-
-const logo = new URL(
-  '/pwa/android-chrome-512x512.png',
-  ENV_CONFIG.public.origin
-)
 
 const ThemedLabel = styled('span')({
   display: 'inline-block',
@@ -79,7 +74,7 @@ export function FriendsLinkDesc() {
                     </Typography>
                     <Typography component='li'>
                       <ThemedLabel>站点 logo: </ThemedLabel>
-                      {logo.href}
+                      {resolvePath('/pwa/android-chrome-512x512.png').href}
                     </Typography>
                   </Typography>
                 </Collapse>
