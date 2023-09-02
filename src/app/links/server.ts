@@ -158,6 +158,7 @@ export const saveFriendsLink = SA.encode(
       throw Boom.forbidden('无权限')
     }
     if (!hash) {
+      const newHash = nanoid(12)
       if (status === 'PENDING') {
         sendToDingTalk({
           msgtype: 'markdown',
@@ -175,7 +176,9 @@ export const saveFriendsLink = SA.encode(
 
 站点 logo: ${!image ? '无' : `![${image}](${image})`}   
 
-[查看详情](${geneDingtalkUrl(resolvePath(`/links/${hash}`).href, true).href})   
+[查看详情](${
+              geneDingtalkUrl(resolvePath(`/links/${newHash}`).href, true).href
+            })   
             `,
           },
         })
@@ -183,7 +186,7 @@ export const saveFriendsLink = SA.encode(
       // 所有人都能新建
       return prisma.friendsLink.create({
         data: {
-          hash: nanoid(12),
+          hash: newHash,
           status,
           name,
           email,
