@@ -156,7 +156,7 @@ export const saveFriendsLink = SA.encode(
 
 站点 logo: ${!image ? '无' : `![${image}](${image})`}   
 
-[查看详情](${geneDingtalkUrl(resolvePath('/links/all').href, true).href})   
+[查看详情](${geneDingtalkUrl(resolvePath(`/links/${hash}`).href, true).href})   
             `,
           },
         })

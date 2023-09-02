@@ -7,6 +7,7 @@ import {
   FriendsLinkListLoading,
 } from '../components/FriendsLinkList'
 import { getFriendsLinks } from '../server'
+import { sortedFriendsLinkStatus } from '../components/constants'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
@@ -18,11 +19,31 @@ import { Suspense } from 'react'
 import { unstable_cache } from 'next/cache'
 import { Divider } from '@mui/material'
 
+import type { FriendsLinkStatus } from '@prisma/client'
+
 export const metadata = seo.defaults({
   title: '友链',
 })
 
-export default async function Home() {
+interface Props {
+  params: {
+    /**
+     * hash 既可能是 FriendsLinkStatus, 也可能是 FriendsLink.hash
+     */
+    hash: string
+  }
+}
+
+function toFriendsLinkStatus(s: string): FriendsLinkStatus | null {
+  if (sortedFriendsLinkStatus.includes(s.toUpperCase() as FriendsLinkStatus)) {
+    return s.toUpperCase() as FriendsLinkStatus
+  }
+  return null
+}
+
+export default async function Home({ params: { hash } }: Props) {
+  // 注意, 这个变量不是 status, 需要使用时自行判断
+  const status = toFriendsLinkStatus(hash)
   return (
     <DefaultLayout>
       <DefaultBodyContainer>
@@ -32,8 +53,15 @@ export default async function Home() {
           <Suspense fallback={<FriendsLinkListLoading count={8} />}>
             <ServerComponent
               api={unstable_cache(
-                () => getFriendsLinks({}),
-                ['getFriendsLinks', 'all'],
+                () =>
+                  status
+                    ? getFriendsLinks({
+                        status,
+                      })
+                    : getFriendsLinks({
+                        hash,
+                      }),
+                ['getFriendsLinks', hash],
                 {
                   revalidate: 10,
                   tags: ['getFriendsLinks'],
