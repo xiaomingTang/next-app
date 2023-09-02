@@ -92,16 +92,20 @@ const saveFriendsLinkDto = Type.Object({
    */
   hash: Type.Optional(Type.String()),
   status: Type.Optional(Type.Enum(FriendsLinkStatus)),
-  name: Type.Optional(
-    Type.String({
-      maxLength: 100,
-    })
-  ),
+  name: Type.String({
+    minLength: 2,
+    maxLength: 100,
+  }),
   email: Type.Optional(
-    Type.String({
-      format: 'email',
-      maxLength: 200,
-    })
+    Type.Union([
+      Type.String({
+        maxLength: 0,
+      }),
+      Type.String({
+        maxLength: 200,
+        format: 'email',
+      }),
+    ])
   ),
   url: Type.String({
     minLength: 1,
@@ -114,10 +118,15 @@ const saveFriendsLinkDto = Type.Object({
     })
   ),
   image: Type.Optional(
-    Type.String({
-      maxLength: 400,
-      pattern: `https?:\\/\\/`,
-    })
+    Type.Union([
+      Type.String({
+        maxLength: 0,
+      }),
+      Type.String({
+        maxLength: 400,
+        pattern: `https?:\\/\\/`,
+      }),
+    ])
   ),
 })
 

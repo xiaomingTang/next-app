@@ -1,15 +1,12 @@
 'use client'
 
-import { dark, light } from '@/utils/theme'
+import { FriendsLinkStatusMap } from './constants'
+import { editFriendsLink } from './EditLink'
 
-import {
-  ButtonBase,
-  Link,
-  Skeleton,
-  Stack,
-  Typography,
-  alpha,
-} from '@mui/material'
+import { dark, light } from '@/utils/theme'
+import { cat } from '@/errors/catchAndToast'
+
+import { ButtonBase, Skeleton, Stack, Typography, alpha } from '@mui/material'
 import { common, blue } from '@mui/material/colors'
 
 import type { SimpleFriendsLink } from '../server'
@@ -34,6 +31,9 @@ function FriendsLinkName(friendsLink: FriendsLinkItemProps) {
   }
   return (
     <Typography component='h2' sx={{ fontWeight: 'bold' }}>
+      {friendsLink.status !== 'ACCEPTED' && (
+        <>{FriendsLinkStatusMap[friendsLink.status].name} </>
+      )}
       {friendsLink.name}
     </Typography>
   )
@@ -60,7 +60,7 @@ function FriendsLinkDesc(friendsLink: FriendsLinkItemProps) {
           <Skeleton width={`${friendsLink.size * 10}%`} height={20} />
         </>
       ) : (
-        friendsLink.description
+        friendsLink.description || '无描述'
       )}
     </Typography>
   )
@@ -99,11 +99,20 @@ export function FriendsLinkItem({ sx, ...friendsLink }: FriendsLinkItemProps) {
         },
         ...sx,
       }}
-      LinkComponent={Link}
       disabled={friendsLink.loading}
-      href={friendsLink.loading ? '/' : `/blog/${friendsLink.hash}`}
+      rel='noopener'
       aria-label={friendsLinkDescAriaLabel}
       role={friendsLink.loading ? 'none' : undefined}
+      onClick={cat(async () => {
+        if (friendsLink.loading) {
+          return
+        }
+        if (friendsLink.status === 'ACCEPTED') {
+          window.open(friendsLink.url, '_blank', 'noopener')
+        } else {
+          await editFriendsLink(friendsLink)
+        }
+      })}
     >
       <Stack direction='column' spacing={1} sx={{ width: '100%' }} aria-hidden>
         <FriendsLinkName {...friendsLink} />
