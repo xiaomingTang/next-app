@@ -42,6 +42,7 @@ export function CommentArea() {
               {...field}
               autoFocus
               label='留言内容'
+              placeholder='仅站长可见'
               multiline
               size='small'
               sx={{ width: '100%' }}
