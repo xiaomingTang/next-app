@@ -57,7 +57,7 @@ export function DefaultFooter() {
             友链
           </Anchor>
           <Anchor href='/comment' className='flex justify-center items-center'>
-            向站长留言 (施工中...)
+            向站长留言
           </Anchor>
         </Stack>
         <Stack spacing={1} direction='row' justifyContent='center'>
