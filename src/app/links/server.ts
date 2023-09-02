@@ -1,6 +1,6 @@
 'use server'
 
-import { SA } from '@/errors/utils'
+import { SA, withRevalidate } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { validateRequest } from '@/request/validator'
 import { getSelf } from '@/user/server'
@@ -184,9 +184,31 @@ export const saveFriendsLink = SA.encode(
         })
       }
       // 所有人都能新建
-      return prisma.friendsLink.create({
+      return prisma.friendsLink
+        .create({
+          data: {
+            hash: newHash,
+            status,
+            name,
+            email,
+            url,
+            description,
+            image,
+          },
+          select: linkSelect,
+        })
+        .then(
+          withRevalidate({
+            tags: ['getFriendsLinks'],
+          })
+        )
+    }
+    return prisma.friendsLink
+      .update({
+        where: {
+          hash,
+        },
         data: {
-          hash: newHash,
           status,
           name,
           email,
@@ -196,20 +218,10 @@ export const saveFriendsLink = SA.encode(
         },
         select: linkSelect,
       })
-    }
-    return prisma.friendsLink.update({
-      where: {
-        hash,
-      },
-      data: {
-        status,
-        name,
-        email,
-        url,
-        description,
-        image,
-      },
-      select: linkSelect,
-    })
+      .then(
+        withRevalidate({
+          tags: ['getFriendsLinks'],
+        })
+      )
   }
 )
