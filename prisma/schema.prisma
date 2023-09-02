@@ -105,3 +105,32 @@ model MediaCard {
   creatorId   Int
   creator     User          @relation(fields: [creatorId], references: [id])
 }
+
+enum FriendsLinkStatus {
+  ACCEPTED
+  REJECTED
+  PENDING
+}
+
+model FriendsLink {
+  hash        String            @id
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  status      FriendsLinkStatus
+  // 站点名称
+  name        String            @default("") @db.VarChar(100)
+  email       String            @default("") @db.VarChar(200)
+  // 必填
+  url         String            @default("") @db.VarChar(200)
+  description String            @default("") @db.VarChar(200)
+  image       String            @default("") @db.VarChar(400)
+}
+
+model Comment {
+  hash      String   @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  email     String   @default("")
+  name      String   @default("匿名用户")
+  content   String   @db.Text()
+}
