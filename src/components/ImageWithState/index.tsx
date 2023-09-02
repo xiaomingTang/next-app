@@ -38,7 +38,7 @@ function RawImageWithState(
   { preview = false, ...props }: Props,
   ref: React.Ref<HTMLImageElement>
 ) {
-  const src = props.src || '/pwa/android-chrome-512x512.png'
+  const src = props.src || '/static/images/empty.png'
   const size = getImageSizeFromUrl(new URL(src, ENV_CONFIG.public.origin))
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
