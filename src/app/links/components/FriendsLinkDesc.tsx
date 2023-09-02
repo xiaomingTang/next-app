@@ -88,7 +88,7 @@ export function FriendsLinkDesc() {
         onClick={cat(async () => {
           await editFriendsLink()
           toast.success(
-            '请等待管理员审核; 如果不通过, 将于 3 天内邮件通知你 (如果你留了邮箱的话)',
+            '请等待站长审核, 审核结果将于 3 天内邮件通知你 (如果你留了邮箱的话)',
             {
               duration: 5000,
             }

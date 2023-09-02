@@ -162,7 +162,7 @@ const EditUrlModal = NiceModal.create(
                   {...field}
                   size='small'
                   label='邮箱 (可选)'
-                  placeholder='如果不通过, 会在三天内通知该邮箱'
+                  placeholder='审核结果会在三天内通知该邮箱'
                   helperText={error?.message ?? ' '}
                   error={!!error}
                 />
