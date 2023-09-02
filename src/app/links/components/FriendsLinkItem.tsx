@@ -6,9 +6,11 @@ import { editFriendsLink } from './EditLink'
 import { dark, light } from '@/utils/theme'
 import { cat } from '@/errors/catchAndToast'
 import { ImageWithState } from '@/components/ImageWithState'
+import { useUser } from '@/user'
 
 import { ButtonBase, Skeleton, Stack, Typography, alpha } from '@mui/material'
 import { common, blue } from '@mui/material/colors'
+import { useRouter } from 'next/navigation'
 
 import type { SimpleFriendsLink } from '../server'
 import type { LoadingAble } from '@/components/ServerComponent'
@@ -68,6 +70,8 @@ function FriendsLinkDesc(friendsLink: FriendsLinkItemProps) {
 }
 
 export function FriendsLinkItem({ sx, ...friendsLink }: FriendsLinkItemProps) {
+  const router = useRouter()
+  const isAdmin = useUser().role === 'ADMIN'
   const friendsLinkDescAriaLabel = friendsLink.loading
     ? '加载中'
     : `友链站点：${friendsLink.name}；简介是：${friendsLink.description}`
@@ -76,6 +80,7 @@ export function FriendsLinkItem({ sx, ...friendsLink }: FriendsLinkItemProps) {
     <ButtonBase
       sx={{
         display: 'flex',
+        alignItems: 'flex-start',
         p: 2,
         width: '100%',
         textAlign: 'start',
@@ -109,10 +114,11 @@ export function FriendsLinkItem({ sx, ...friendsLink }: FriendsLinkItemProps) {
         if (friendsLink.loading) {
           return
         }
-        if (friendsLink.status === 'ACCEPTED') {
-          window.open(friendsLink.url, '_blank', 'noopener')
-        } else {
+        if (isAdmin) {
           await editFriendsLink(friendsLink)
+          router.refresh()
+        } else {
+          window.open(friendsLink.url, '_blank', 'noopener')
         }
       })}
     >
