@@ -5,6 +5,7 @@ import { editFriendsLink } from './EditLink'
 
 import { dark, light } from '@/utils/theme'
 import { cat } from '@/errors/catchAndToast'
+import { ImageWithState } from '@/components/ImageWithState'
 
 import { ButtonBase, Skeleton, Stack, Typography, alpha } from '@mui/material'
 import { common, blue } from '@mui/material/colors'
@@ -74,6 +75,7 @@ export function FriendsLinkItem({ sx, ...friendsLink }: FriendsLinkItemProps) {
   return (
     <ButtonBase
       sx={{
+        display: 'flex',
         p: 2,
         width: '100%',
         textAlign: 'start',
@@ -114,6 +116,19 @@ export function FriendsLinkItem({ sx, ...friendsLink }: FriendsLinkItemProps) {
         }
       })}
     >
+      <ImageWithState
+        src={friendsLink.image || '/pwa/android-chrome-512x512.png'}
+        width={60}
+        height={60}
+        alt={friendsLink.name}
+        style={{
+          width: 60,
+          // 此处是 minHeight, 是为了当右边过高时, 左边图片能占满
+          minHeight: 60,
+          objectFit: 'cover',
+          marginRight: '12px',
+        }}
+      />
       <Stack direction='column' spacing={1} sx={{ width: '100%' }} aria-hidden>
         <FriendsLinkName {...friendsLink} />
         <FriendsLinkDesc {...friendsLink} />
