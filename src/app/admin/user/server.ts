@@ -69,17 +69,17 @@ const saveDto = Type.Object({
   email: Type.String({
     format: 'email',
   }),
-  password: Type.Union([
-    Type.String({
-      minLength: 6,
-      maxLength: 16,
-    }),
-    Type.Optional(
+  password: Type.Optional(
+    Type.Union([
+      Type.String({
+        minLength: 6,
+        maxLength: 16,
+      }),
       Type.String({
         maxLength: 0,
-      })
-    ),
-  ]),
+      }),
+    ])
+  ),
   name: Type.String({
     minLength: 3,
     maxLength: 24,

@@ -55,31 +55,31 @@ export type TagWithCreator = NonNullable<
 >[number]
 
 const saveTagDto = Type.Object({
-  hash: Type.Union([
-    Type.String({
-      minLength: 6,
-      maxLength: 16,
-    }),
-    Type.Optional(
+  hash: Type.Optional(
+    Type.Union([
+      Type.String({
+        minLength: 6,
+        maxLength: 16,
+      }),
       Type.String({
         maxLength: 0,
-      })
-    ),
-  ]),
+      }),
+    ])
+  ),
   name: Type.String({
     minLength: 2,
   }),
-  description: Type.Union([
-    Type.String({
-      minLength: 2,
-      maxLength: 66,
-    }),
-    Type.Optional(
+  description: Type.Optional(
+    Type.Union([
+      Type.String({
+        minLength: 2,
+        maxLength: 66,
+      }),
       Type.String({
         maxLength: 0,
-      })
-    ),
-  ]),
+      }),
+    ])
+  ),
 })
 
 export const saveTag = SA.encode(async (props: Static<typeof saveTagDto>) => {
