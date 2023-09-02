@@ -208,7 +208,6 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                autoFocus
                 size='small'
                 label='访问密码 (可缺省)'
                 helperText={error?.message ?? ' '}

@@ -132,7 +132,6 @@ const EditUrlModal = NiceModal.create(
               render={({ field, fieldState: { error } }) => (
                 <TextField
                   {...field}
-                  autoFocus
                   size='small'
                   label='站点 url (必须 https)'
                   placeholder='https://xxx.xxx'
@@ -161,7 +160,6 @@ const EditUrlModal = NiceModal.create(
               render={({ field, fieldState: { error } }) => (
                 <TextField
                   {...field}
-                  autoFocus
                   size='small'
                   label='邮箱 (可选)'
                   placeholder='如果不通过, 会在三天内通知该邮箱'
@@ -186,7 +184,6 @@ const EditUrlModal = NiceModal.create(
               render={({ field, fieldState: { error } }) => (
                 <TextField
                   {...field}
-                  autoFocus
                   size='small'
                   label='站点一句话描述 (可选)'
                   helperText={error?.message ?? ' '}
@@ -206,7 +203,6 @@ const EditUrlModal = NiceModal.create(
               render={({ field, fieldState: { error } }) => (
                 <TextField
                   {...field}
-                  autoFocus
                   size='small'
                   label='站点 logo (可选)'
                   placeholder='图片地址如: https://xxx.xxx'
