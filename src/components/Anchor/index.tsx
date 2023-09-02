@@ -49,8 +49,9 @@ export default forwardRef(function Anchor(
   }: AnchorProps,
   ref: ForwardedRef<HTMLAnchorElement>
 ) {
-  const url = resolvePath(href || '')
-  const isExternal = !url.hostname.endsWith(APP_URL.hostname)
+  const isExternal = !resolvePath(href || '').hostname.endsWith(
+    APP_URL.hostname
+  )
   const finalTarget = target ?? (isExternal ? '_blank' : '_self')
   const finalRel = rel ?? isExternal ? 'noopener noreferrer' : undefined
 
@@ -75,7 +76,7 @@ export default forwardRef(function Anchor(
     </a>
   )
 
-  if (isExternal) {
+  if (!href || isExternal) {
     return anchor
   }
 
