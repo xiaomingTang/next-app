@@ -4,7 +4,7 @@ import { AnchorProvider } from '@/components/AnchorProvider'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 
 import QrCodeIcon from '@mui/icons-material/QrCode'
-import QrCodeScannerIcon from '@mui/icons-material/QrCodeScanner'
+import FilterCenterFocusIcon from '@mui/icons-material/FilterCenterFocus'
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 import {
   IconButton,
@@ -69,7 +69,7 @@ export function QrcodeTrigger() {
               })}
             >
               <ListItemIcon>
-                <QrCodeScannerIcon />
+                <FilterCenterFocusIcon />
               </ListItemIcon>
               <ListItemText>
                 扫码
