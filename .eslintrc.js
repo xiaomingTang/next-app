@@ -67,5 +67,13 @@ module.exports = {
         destructuredArrayIgnorePattern: '^_',
       },
     ],
+    '@typescript-eslint/naming-convention': [
+      'warn',
+      {
+        selector: 'default',
+        format: ['camelCase', 'PascalCase'],
+        leadingUnderscore: 'allowSingleOrDouble',
+      },
+    ],
   },
 }
