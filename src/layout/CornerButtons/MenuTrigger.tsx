@@ -12,6 +12,10 @@ const menuList = [
     pathname: '/about',
     title: '关于',
   },
+  {
+    pathname: '/wallpaper',
+    title: '壁纸',
+  },
   ...cardList,
 ]
 
