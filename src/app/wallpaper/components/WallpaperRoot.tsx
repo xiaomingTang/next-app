@@ -24,8 +24,10 @@ import FullscreenExitIcon from '@mui/icons-material/FullscreenExit'
 import DownloadIcon from '@mui/icons-material/Download'
 import PaletteIcon from '@mui/icons-material/Palette'
 import ScreenshotMonitorIcon from '@mui/icons-material/ScreenshotMonitor'
+import LoopIcon from '@mui/icons-material/Loop'
 import { useEvent } from 'react-use'
-import { clamp, debounce } from 'lodash-es'
+import { clamp, debounce, shuffle } from 'lodash-es'
+import randomColor from 'randomcolor'
 
 export function WallpaperRoot() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -266,6 +268,59 @@ export function WallpaperRoot() {
             }}
           >
             <DownloadIcon sx={{ fontSize: '2em' }} />
+          </IconButton>
+          <IconButton
+            aria-label='随机颜色'
+            title='随机颜色'
+            onClick={() => {
+              const colorList = shuffle([
+                'red',
+                'orange',
+                'yellow',
+                'green',
+                'blue',
+                'purple',
+                'pink',
+                'monochrome',
+              ])
+              setLt(
+                randomColor({
+                  hue: colorList[0],
+                  format: 'hex',
+                }).slice(1)
+              )
+              setRt(
+                randomColor({
+                  hue: colorList[1],
+                  format: 'hex',
+                }).slice(1)
+              )
+              setLb(
+                randomColor({
+                  hue: colorList[2],
+                  format: 'hex',
+                }).slice(1)
+              )
+              setRb(
+                randomColor({
+                  hue: colorList[3],
+                  format: 'hex',
+                }).slice(1)
+              )
+            }}
+            sx={{
+              transition: 'opacity 1s',
+              ...obj(
+                isFullScreen && {
+                  opacity: 0.1,
+                  '&:hover': {
+                    opacity: 1,
+                  },
+                }
+              ),
+            }}
+          >
+            <LoopIcon sx={{ fontSize: '2em' }} />
           </IconButton>
           <IconButton
             aria-label='切换全屏'
