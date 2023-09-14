@@ -114,12 +114,12 @@ export function WallpaperRoot() {
 
   useEffect(() => {
     const url = new URL(window.location.href)
-    url.searchParams.set('lt', lt)
-    url.searchParams.set('rt', rt)
-    url.searchParams.set('lb', lb)
-    url.searchParams.set('rb', rb)
+    url.searchParams.set('lt', colorToCss(clt, 'hex').slice(1))
+    url.searchParams.set('rt', colorToCss(crt, 'hex').slice(1))
+    url.searchParams.set('lb', colorToCss(clb, 'hex').slice(1))
+    url.searchParams.set('rb', colorToCss(crb, 'hex').slice(1))
     window.history.replaceState(null, '', url)
-  }, [lb, lt, rb, rt])
+  }, [clb, clt, crb, crt])
 
   useEvent('resize', updateCanvas)
 
