@@ -150,8 +150,11 @@ export async function toggleFullScreen(
 }
 
 export function useFullScreen() {
-  const [isFullScreenFlag, setIsFullScreenFlag] = useState(isFullScreen)
+  const [isFullScreenFlag, setIsFullScreenFlag] = useState(false)
+  const [enabled, setEnabled] = useState(false)
+
   useEffect(() => {
+    setEnabled(fullScreenEnabled)
     const onFullScreenChanged = () => {
       setIsFullScreenFlag(isFullScreen())
     }
@@ -160,8 +163,9 @@ export function useFullScreen() {
       document.removeEventListener('fullscreenchange', onFullScreenChanged)
     }
   }, [])
+
   return {
-    fullScreenEnabled,
+    fullScreenEnabled: enabled,
     isFullScreen: isFullScreenFlag,
     toggleFullScreen,
   }

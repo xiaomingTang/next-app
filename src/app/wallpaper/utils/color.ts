@@ -1,5 +1,7 @@
+import { clamp } from 'lodash-es'
+
 /**
- * [255, 255, 255, 1]
+ * [255, 255, 255, 255]
  */
 export type Color = [number, number, number, number]
 
@@ -23,7 +25,7 @@ export function toColor(inputStr: string, defaultColor?: Color): Color {
           parseInt(`${r}${r}`, 16),
           parseInt(`${g}${g}`, 16),
           parseInt(`${b}${b}`, 16),
-          1,
+          255,
         ]
       }
       case 6: {
@@ -32,7 +34,7 @@ export function toColor(inputStr: string, defaultColor?: Color): Color {
           parseInt(`${r1}${r2}`, 16),
           parseInt(`${g1}${g2}`, 16),
           parseInt(`${b1}${b2}`, 16),
-          1,
+          255,
         ]
       }
       case 4: {
@@ -41,7 +43,7 @@ export function toColor(inputStr: string, defaultColor?: Color): Color {
           parseInt(`${r}${r}`, 16),
           parseInt(`${g}${g}`, 16),
           parseInt(`${b}${b}`, 16),
-          parseInt(`${a}${a}`, 16) / 255,
+          parseInt(`${a}${a}`, 16),
         ]
       }
       case 8: {
@@ -50,7 +52,7 @@ export function toColor(inputStr: string, defaultColor?: Color): Color {
           parseInt(`${r1}${r2}`, 16),
           parseInt(`${g1}${g2}`, 16),
           parseInt(`${b1}${b2}`, 16),
-          parseInt(`${a1}${a2}`, 16) / 255,
+          parseInt(`${a1}${a2}`, 16),
         ]
       }
       default: {
@@ -69,11 +71,21 @@ export function toColor(inputStr: string, defaultColor?: Color): Color {
     throw new Error(`invalid color: ${str}`)
   }
   const [_prefix, r, g, b, _commaAlpha, a = '1'] = result
-  return [parseInt(r, 10), parseInt(g, 10), parseInt(b, 10), parseInt(a, 10)]
+  return [
+    parseInt(r, 10),
+    parseInt(g, 10),
+    parseInt(b, 10),
+    Math.floor(parseFloat(a) * 255),
+  ]
 }
 
 export function getComplementaryColor([r, g, b]: Color): Color {
-  return [255 - r, 255 - g, 255 - b, 1]
+  return [
+    clamp(r > 128 ? 0 : 255, 0, 255),
+    clamp(g > 128 ? 0 : 255, 0, 255),
+    clamp(b > 128 ? 0 : 255, 0, 255),
+    255,
+  ]
 }
 
 export function colorToCss(
@@ -84,7 +96,7 @@ export function colorToCss(
     case 'rgb':
       return `rgb(${r},${g},${b})`
     case 'rgba':
-      return `rgba(${r},${g},${b},${a})`
+      return `rgba(${r},${g},${b},${a / 255})`
     case 'hex':
       return `#${[r, g, b]
         .map((c) => c.toString(16).padStart(2, '0'))
