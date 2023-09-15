@@ -2,6 +2,8 @@
 
 'use client'
 
+import { ColorPicker } from './elems'
+
 import { colorToCss, getComplementaryColor, toColor } from '../utils/color'
 import { drawWallpaper } from '../utils/canvas'
 
@@ -9,25 +11,19 @@ import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { useFullScreen } from '@/utils/device'
 import { obj } from '@/utils/tiny'
 
-import {
-  Box,
-  ButtonBase,
-  IconButton,
-  Link,
-  Stack,
-  TextField,
-} from '@mui/material'
+import { Box, IconButton, Link, Stack, TextField } from '@mui/material'
 import { startTransition, useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import FullscreenIcon from '@mui/icons-material/Fullscreen'
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit'
 import DownloadIcon from '@mui/icons-material/Download'
-import PaletteIcon from '@mui/icons-material/Palette'
 import ScreenshotMonitorIcon from '@mui/icons-material/ScreenshotMonitor'
 import LoopIcon from '@mui/icons-material/Loop'
 import { useEvent } from 'react-use'
 import { clamp, debounce, shuffle } from 'lodash-es'
 import randomColor from 'randomcolor'
+
+import type { SxProps, Theme } from '@mui/material'
 
 export function WallpaperRoot() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -125,6 +121,87 @@ export function WallpaperRoot() {
 
   useEvent('resize', updateCanvas)
 
+  const weakWhenFullScreenProps: SxProps<Theme> = {
+    transition: 'opacity 1s',
+    ...obj(
+      isFullScreen && {
+        opacity: 0.1,
+        '&:hover': {
+          opacity: 1,
+        },
+      }
+    ),
+  }
+
+  const hideWhenFullScreenProps: SxProps<Theme> = {
+    transition: 'opacity 1s',
+    ...obj(
+      isFullScreen && {
+        opacity: 0,
+        pointerEvents: 'none',
+      }
+    ),
+  }
+
+  const inputProps: SxProps<Theme> = {
+    width: '6em',
+    '& label': {
+      color: centerTextColor,
+    },
+    '& .MuiOutlinedInput-root': {
+      color: centerTextColor,
+      '& fieldset': {
+        borderColor: centerTextColor,
+      },
+    },
+    ...hideWhenFullScreenProps,
+  }
+
+  const colorPickerProps: SxProps<Theme> = {
+    position: 'absolute',
+    p: 1,
+    borderRadius: '999px',
+    transition: 'opacity 1s',
+    ...weakWhenFullScreenProps,
+  }
+
+  const setRandomColors = () => {
+    const colorList = shuffle([
+      'red',
+      'orange',
+      'yellow',
+      'green',
+      'blue',
+      'purple',
+      'pink',
+      'monochrome',
+    ])
+    setLt(
+      randomColor({
+        hue: colorList[0],
+        format: 'hex',
+      }).slice(1)
+    )
+    setRt(
+      randomColor({
+        hue: colorList[1],
+        format: 'hex',
+      }).slice(1)
+    )
+    setLb(
+      randomColor({
+        hue: colorList[2],
+        format: 'hex',
+      }).slice(1)
+    )
+    setRb(
+      randomColor({
+        hue: colorList[3],
+        format: 'hex',
+      }).slice(1)
+    )
+  }
+
   return (
     <Box
       sx={{
@@ -152,372 +229,148 @@ export function WallpaperRoot() {
           }}
         />
         {/* 操作区域 */}
-        <Stack
-          direction='row'
-          flexWrap='wrap'
-          useFlexGap
-          spacing={1}
+        <Box
           sx={{
             position: 'absolute',
-            width: '90%',
-            maxWidth: '600px',
             top: '50%',
             left: '50%',
             transform: 'translate(-50%,-50%)',
-            alignItems: 'center',
-            justifyContent: {
-              xs: 'flex-start',
-              sm: 'center',
-            },
             color: centerTextColor,
           }}
         >
-          <TextField
-            type='number'
-            label='宽度 W'
-            size='small'
-            value={inputWidth}
-            sx={{
-              width: '6em',
-              '& label': {
-                color: centerTextColor,
-              },
-              '& .MuiOutlinedInput-root': {
-                color: centerTextColor,
-                '& fieldset': {
-                  borderColor: centerTextColor,
-                },
-              },
-              transition: 'opacity 1s',
-              ...obj(
-                isFullScreen && {
-                  opacity: 0,
-                  pointerEvents: 'none',
+          <Stack direction='row' spacing={1} alignItems='center'>
+            <TextField
+              type='number'
+              label='宽度 W'
+              size='small'
+              value={inputWidth}
+              sx={inputProps}
+              onChange={(e) => {
+                setInputWidth(
+                  clamp(parseInt(e.target.value || '1', 10), 1, 8000)
+                )
+              }}
+            />
+            <TextField
+              type='number'
+              label='高度 H'
+              size='small'
+              value={inputHeight}
+              sx={inputProps}
+              onChange={(e) => {
+                setInputHeight(
+                  clamp(parseInt(e.target.value || '1', 10), 1, 8000)
+                )
+              }}
+            />
+            <IconButton
+              aria-label='设置为设备尺寸'
+              title='设置为设备尺寸'
+              sx={hideWhenFullScreenProps}
+              onClick={() => {
+                setInputWidth(window.screen.width)
+                setInputHeight(window.screen.height)
+              }}
+            >
+              <ScreenshotMonitorIcon sx={{ fontSize: '2em' }} />
+            </IconButton>
+          </Stack>
+          <Stack direction='row' spacing={1} alignItems='center'>
+            <IconButton
+              aria-label='下载'
+              title='下载'
+              disabled={!canvasUrl}
+              LinkComponent={Link}
+              href={canvasUrl || '/'}
+              download='wallpaper.png'
+              target='_blank'
+              sx={hideWhenFullScreenProps}
+            >
+              <DownloadIcon sx={{ fontSize: '2em' }} />
+            </IconButton>
+            <IconButton
+              aria-label='随机颜色'
+              title='随机颜色'
+              onClick={setRandomColors}
+              sx={weakWhenFullScreenProps}
+            >
+              <LoopIcon sx={{ fontSize: '2em' }} />
+            </IconButton>
+            <IconButton
+              aria-label='切换全屏'
+              title='切换全屏'
+              disabled={!fullScreenEnabled}
+              onClick={() => {
+                const container = containerRef.current
+                if (!container) {
+                  return
                 }
-              ),
-            }}
-            onChange={(e) => {
-              setInputWidth(clamp(parseInt(e.target.value || '1', 10), 1, 8000))
-            }}
-          />
-          <IconButton
-            aria-label='设置为设备尺寸'
-            title='设置为设备尺寸'
-            sx={{
-              transition: 'opacity 1s',
-              ...obj(
-                isFullScreen && {
-                  opacity: 0,
-                  pointerEvents: 'none',
-                }
-              ),
-            }}
-            onClick={() => {
-              setInputWidth(window.screen.width)
-              setInputHeight(window.screen.height)
-            }}
-          >
-            <ScreenshotMonitorIcon sx={{ fontSize: '2em' }} />
-          </IconButton>
-          <TextField
-            type='number'
-            label='高度 H'
-            size='small'
-            value={inputHeight}
-            sx={{
-              width: '6em',
-              '& label': {
-                color: centerTextColor,
-              },
-              '& .MuiOutlinedInput-root': {
-                color: centerTextColor,
-                '& fieldset': {
-                  borderColor: centerTextColor,
-                },
-              },
-              transition: 'opacity 1s',
-              ...obj(
-                isFullScreen && {
-                  opacity: 0,
-                  pointerEvents: 'none',
-                }
-              ),
-            }}
-            onChange={(e) => {
-              setInputHeight(
-                clamp(parseInt(e.target.value || '1', 10), 1, 8000)
-              )
-            }}
-          />
-          <IconButton
-            aria-label='下载'
-            title='下载'
-            disabled={!canvasUrl}
-            LinkComponent={Link}
-            href={canvasUrl || '/'}
-            download='wallpaper.png'
-            target='_blank'
-            sx={{
-              transition: 'opacity 1s',
-              ...obj(
-                isFullScreen && {
-                  opacity: 0,
-                  pointerEvents: 'none',
-                }
-              ),
-            }}
-          >
-            <DownloadIcon sx={{ fontSize: '2em' }} />
-          </IconButton>
-          <IconButton
-            aria-label='随机颜色'
-            title='随机颜色'
-            onClick={() => {
-              const colorList = shuffle([
-                'red',
-                'orange',
-                'yellow',
-                'green',
-                'blue',
-                'purple',
-                'pink',
-                'monochrome',
-              ])
-              setLt(
-                randomColor({
-                  hue: colorList[0],
-                  format: 'hex',
-                }).slice(1)
-              )
-              setRt(
-                randomColor({
-                  hue: colorList[1],
-                  format: 'hex',
-                }).slice(1)
-              )
-              setLb(
-                randomColor({
-                  hue: colorList[2],
-                  format: 'hex',
-                }).slice(1)
-              )
-              setRb(
-                randomColor({
-                  hue: colorList[3],
-                  format: 'hex',
-                }).slice(1)
-              )
-            }}
-            sx={{
-              transition: 'opacity 1s',
-              ...obj(
-                isFullScreen && {
-                  opacity: 0.1,
-                  '&:hover': {
-                    opacity: 1,
-                  },
-                }
-              ),
-            }}
-          >
-            <LoopIcon sx={{ fontSize: '2em' }} />
-          </IconButton>
-          <IconButton
-            aria-label='切换全屏'
-            title='切换全屏'
-            disabled={!fullScreenEnabled}
-            onClick={() => {
-              const container = containerRef.current
-              if (!container) {
-                return
-              }
-              toggleFullScreen(container)
-            }}
-            sx={{
-              transition: 'opacity 1s',
-              ...obj(
-                isFullScreen && {
-                  opacity: 0.1,
-                  '&:hover': {
-                    opacity: 1,
-                  },
-                }
-              ),
-            }}
-          >
-            {isFullScreen ? (
-              <FullscreenExitIcon sx={{ fontSize: '2em' }} />
-            ) : (
-              <FullscreenIcon sx={{ fontSize: '2em' }} />
-            )}
-          </IconButton>
-        </Stack>
+                toggleFullScreen(container)
+              }}
+              sx={weakWhenFullScreenProps}
+            >
+              {isFullScreen ? (
+                <FullscreenExitIcon sx={{ fontSize: '2em' }} />
+              ) : (
+                <FullscreenIcon sx={{ fontSize: '2em' }} />
+              )}
+            </IconButton>
+          </Stack>
+        </Box>
         {/* 选择颜色 */}
         <>
-          <ButtonBase
-            aria-label='修改左上角色值'
+          <ColorPicker
             title='修改左上角色值'
-            component='label'
-            focusRipple
-            onKeyUp={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                ;(e.target as HTMLLabelElement)
-                  .getElementsByTagName('input')[0]
-                  ?.click()
-              }
-            }}
             sx={{
-              position: 'absolute',
+              ...colorPickerProps,
               left: '0.5em',
               top: '0.5em',
               color: colorToCss(getComplementaryColor(clt), 'hex'),
-              p: 1,
-              borderRadius: '999px',
-              transition: 'opacity 1s',
-              ...obj(
-                isFullScreen && {
-                  opacity: 0.1,
-                  '&:hover': {
-                    opacity: 1,
-                  },
-                }
-              ),
             }}
-          >
-            <PaletteIcon />
-            <input
-              type='color'
-              tabIndex={-1}
-              defaultValue={colorToCss(clt, 'hex')}
-              style={{ width: 0, height: 0, overflow: 'hidden' }}
-              onChange={debounce((e) => {
-                setLt(e.target.value.slice(1))
-              }, 500)}
-            />
-          </ButtonBase>
-          <ButtonBase
-            aria-label='修改右上角色值'
+            defaultValue={clt}
+            onChange={debounce((newColor) => {
+              setLt(colorToCss(newColor, 'hex').slice(1))
+            }, 500)}
+          />
+          <ColorPicker
             title='修改右上角色值'
-            component='label'
-            focusRipple
-            onKeyUp={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                ;(e.target as HTMLLabelElement)
-                  .getElementsByTagName('input')[0]
-                  ?.click()
-              }
-            }}
             sx={{
-              position: 'absolute',
+              ...colorPickerProps,
               right: '0.5em',
               top: '0.5em',
               color: colorToCss(getComplementaryColor(crt), 'hex'),
-              p: 1,
-              borderRadius: '999px',
-              transition: 'opacity 1s',
-              ...obj(
-                isFullScreen && {
-                  opacity: 0.1,
-                  '&:hover': {
-                    opacity: 1,
-                  },
-                }
-              ),
             }}
-          >
-            <PaletteIcon />
-            <input
-              type='color'
-              tabIndex={-1}
-              defaultValue={colorToCss(crt, 'hex')}
-              style={{ width: 0, height: 0, overflow: 'hidden' }}
-              onChange={debounce((e) => {
-                setRt(e.target.value.slice(1))
-              }, 500)}
-            />
-          </ButtonBase>
-          <ButtonBase
-            aria-label='修改左下角色值'
+            defaultValue={crt}
+            onChange={debounce((newColor) => {
+              setRt(colorToCss(newColor, 'hex').slice(1))
+            }, 500)}
+          />
+          <ColorPicker
             title='修改左下角色值'
-            component='label'
-            focusRipple
-            onKeyUp={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                ;(e.target as HTMLLabelElement)
-                  .getElementsByTagName('input')[0]
-                  ?.click()
-              }
-            }}
             sx={{
-              position: 'absolute',
+              ...colorPickerProps,
               left: '0.5em',
               bottom: '0.5em',
               color: colorToCss(getComplementaryColor(clb), 'hex'),
-              p: 1,
-              borderRadius: '999px',
-              transition: 'opacity 1s',
-              ...obj(
-                isFullScreen && {
-                  opacity: 0.1,
-                  '&:hover': {
-                    opacity: 1,
-                  },
-                }
-              ),
             }}
-          >
-            <PaletteIcon />
-            <input
-              type='color'
-              tabIndex={-1}
-              defaultValue={colorToCss(clb, 'hex')}
-              style={{ width: 0, height: 0, overflow: 'hidden' }}
-              onChange={debounce((e) => {
-                setLb(e.target.value.slice(1))
-              }, 500)}
-            />
-          </ButtonBase>
-          <ButtonBase
-            aria-label='修改右下角色值'
+            defaultValue={clb}
+            onChange={debounce((newColor) => {
+              setLb(colorToCss(newColor, 'hex').slice(1))
+            }, 500)}
+          />
+          <ColorPicker
             title='修改右下角色值'
-            component='label'
-            focusRipple
-            onKeyUp={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                ;(e.target as HTMLLabelElement)
-                  .getElementsByTagName('input')[0]
-                  ?.click()
-              }
-            }}
             sx={{
-              position: 'absolute',
+              ...colorPickerProps,
               right: '0.5em',
               bottom: '0.5em',
               color: colorToCss(getComplementaryColor(crb), 'hex'),
-              p: 1,
-              borderRadius: '999px',
-              transition: 'opacity 1s',
-              ...obj(
-                isFullScreen && {
-                  opacity: 0.1,
-                  '&:hover': {
-                    opacity: 1,
-                  },
-                }
-              ),
             }}
-          >
-            <PaletteIcon />
-            <input
-              type='color'
-              tabIndex={-1}
-              defaultValue={colorToCss(crb, 'hex')}
-              style={{ width: 0, height: 0, overflow: 'hidden' }}
-              onChange={debounce((e) => {
-                setRb(e.target.value.slice(1))
-              }, 500)}
-            />
-          </ButtonBase>
+            defaultValue={crb}
+            onChange={debounce((newColor) => {
+              setRb(colorToCss(newColor, 'hex').slice(1))
+            }, 500)}
+          />
         </>
       </Box>
     </Box>
