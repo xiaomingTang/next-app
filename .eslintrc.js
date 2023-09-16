@@ -68,10 +68,10 @@ module.exports = {
       },
     ],
     '@typescript-eslint/naming-convention': [
-      'warn',
+      'error',
       {
-        selector: 'default',
-        format: ['camelCase', 'PascalCase'],
+        selector: 'variable',
+        format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
         leadingUnderscore: 'allowSingleOrDouble',
       },
     ],
