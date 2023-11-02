@@ -70,6 +70,7 @@ const urlSelect = {
   creator: true,
   hash: true,
   url: true,
+  description: true,
   timeout: true,
   limit: true,
   password: true,
@@ -111,6 +112,7 @@ export type ShortUrlWithCreator = NonNullable<
 
 const saveDto = Type.Object({
   hash: Type.Optional(Type.String()),
+  description: Type.String(),
   password: Type.String(),
   limit: Type.Number(),
   // jsonschema 包不支持 Date 类型的校验
@@ -122,7 +124,7 @@ const saveDto = Type.Object({
 
 export const saveShortUrl = SA.encode(async (props: Static<typeof saveDto>) => {
   validateRequest(saveDto, props)
-  const { hash, limit, url } = props
+  const { hash, limit, url, description } = props
   const password = generatePassword(props.password)
   const timeout = new Date(props.timeout)
   const encodedUrl = encodeURI(url)
@@ -133,6 +135,7 @@ export const saveShortUrl = SA.encode(async (props: Static<typeof saveDto>) => {
       data: {
         hash: nanoid(12),
         url: encodedUrl,
+        description,
         creatorId: self.id,
         password,
         limit,
@@ -166,6 +169,7 @@ export const saveShortUrl = SA.encode(async (props: Static<typeof saveDto>) => {
     },
     data: {
       url: encodedUrl,
+      description,
       password,
       limit,
       timeout,

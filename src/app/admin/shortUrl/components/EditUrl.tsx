@@ -74,6 +74,7 @@ const timeoutSelections = [
 const defaultEmptyShortUrl: PartialShortUrl = {
   hash: '',
   url: '',
+  description: '',
   limit: 1234567890,
   password: '',
 }
@@ -86,7 +87,7 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
   })
   const [loading, withLoading] = useLoading()
   const { handleSubmit, control, setError } = useForm<
-    Pick<ShortUrl, 'hash' | 'url' | 'limit' | 'password'> & {
+    Pick<ShortUrl, 'hash' | 'url' | 'description' | 'limit' | 'password'> & {
       timeout: number
     }
   >({
@@ -169,6 +170,26 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
               pattern: {
                 value: /^(http|ws)s?:\/\/.+\..+$/,
                 message: '无效 url',
+              },
+            }}
+          />
+          <Controller
+            name='description'
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                {...field}
+                autoFocus
+                size='small'
+                label='描述'
+                helperText={error?.message ?? ' '}
+                error={!!error}
+              />
+            )}
+            rules={{
+              required: {
+                value: true,
+                message: '必填项',
               },
             }}
           />

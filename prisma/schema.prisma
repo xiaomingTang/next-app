@@ -37,15 +37,16 @@ model User {
 }
 
 model ShortUrl {
-  hash      String   @id
-  url       String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  timeout   DateTime
-  limit     Int      @default(1234567890)
-  password  String   @default("")
-  creatorId Int
-  creator   User     @relation(fields: [creatorId], references: [id])
+  hash        String   @id
+  description String   @default("")
+  url         String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  timeout     DateTime
+  limit       Int      @default(1234567890)
+  password    String   @default("")
+  creatorId   Int
+  creator     User     @relation(fields: [creatorId], references: [id])
 }
 
 model Tag {

@@ -41,6 +41,7 @@ export function UrlEditUrlList({
           <TableHead>
             <TableRow>
               <TableCell>短链</TableCell>
+              <TableCell>描述</TableCell>
               <AuthRequired roles={['ADMIN']}>
                 <TableCell>作者</TableCell>
               </AuthRequired>
@@ -62,7 +63,11 @@ export function UrlEditUrlList({
                     toast.success('复制成功')
                   }}
                 >
-                  <TableCell component='th' scope='row' sx={{ cursor: 'copy' }}>
+                  <TableCell
+                    component='th'
+                    scope='row'
+                    sx={{ cursor: 'copy', wordBreak: 'break-all' }}
+                  >
                     {url.encrypt && (
                       <Typography
                         component='span'
@@ -77,6 +82,7 @@ export function UrlEditUrlList({
                     {`${ENV_CONFIG.public.origin}/u/${url.hash}`}
                   </TableCell>
                 </CopyToClipboard>
+                <TableCell>{url.description}</TableCell>
                 <AuthRequired roles={['ADMIN']}>
                   <TableCell>
                     [{RoleNameMap[url.creator.role]}]{url.creator.name}
@@ -88,7 +94,14 @@ export function UrlEditUrlList({
                     toast.success('复制成功')
                   }}
                 >
-                  <TableCell component='th' scope='row' sx={{ cursor: 'copy' }}>
+                  <TableCell
+                    component='th'
+                    scope='row'
+                    sx={{
+                      cursor: 'copy',
+                      wordBreak: 'break-all',
+                    }}
+                  >
                     {url.url}
                   </TableCell>
                 </CopyToClipboard>

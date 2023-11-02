@@ -24,6 +24,10 @@ interface SearchProps {
    * 模糊搜索
    */
   url: string
+  /**
+   * 模糊搜索
+   */
+  description: string
   hash: string
 }
 
@@ -50,6 +54,13 @@ export function useUrlEditorSearchBar() {
               ...(e.hash
                 ? {
                     hash: e.hash,
+                  }
+                : {}),
+              ...(e.description
+                ? {
+                    description: {
+                      contains: e.description,
+                    },
                   }
                 : {}),
               ...(e.url
@@ -100,6 +111,26 @@ export function useUrlEditorSearchBar() {
                 {...field}
                 size='small'
                 label='链接【支持模糊搜索】'
+                helperText={error?.message ?? ' '}
+                error={!!error}
+                sx={{ minWidth: 200, maxWidth: 500 }}
+              />
+            )}
+            rules={{
+              maxLength: {
+                value: 100,
+                message: '最多 100 个字',
+              },
+            }}
+          />
+          <Controller
+            name='description'
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <TextField
+                {...field}
+                size='small'
+                label='描述'
                 helperText={error?.message ?? ' '}
                 error={!!error}
                 sx={{ minWidth: 200, maxWidth: 500 }}
