@@ -129,6 +129,7 @@ export function FriendsLinkItem({ sx, ...friendsLink }: FriendsLinkItemProps) {
         alt={friendsLink.name}
         style={{
           width: 60,
+          flexShrink: '0',
           // 此处是 minHeight, 是为了当右边过高时, 左边图片能占满
           minHeight: 60,
           objectFit: 'cover',
