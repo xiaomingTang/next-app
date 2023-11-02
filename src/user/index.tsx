@@ -70,11 +70,11 @@ export const useUser = withStatic(useRawUser, {
       return user
     }
     promise = new Promise((resolve, reject) => {
-      NiceModal.show<User, NiceModalHocProps>(LoginModal)
+      NiceModal.show<User, NiceModalHocProps, {}>(LoginModal)
         .then((u) => {
-          useUser.updateUser(u as User)
+          useUser.updateUser(u)
           promise = null
-          resolve(u as User)
+          resolve(u)
         })
         .catch((err) => {
           promise = null

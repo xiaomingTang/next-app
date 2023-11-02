@@ -75,9 +75,7 @@ const Uploader = NiceModal.create(
         dirname: '',
       },
     })
-    const [fileInfoMap, setFileInfoMap] = useState(
-      {} as Record<string, FileInfo>
-    )
+    const [fileInfoMap, setFileInfoMap] = useState<Record<string, FileInfo>>({})
     const fileInfos = useMemo(() => Object.values(fileInfoMap), [fileInfoMap])
     const updateFileInfos = useCallback(
       (newFileInfos: FileInfo[], override = true) => {
@@ -85,7 +83,7 @@ const Uploader = NiceModal.create(
           return
         }
         const newFileInfoTuple = newFileInfos.map(
-          (info) => [geneFileKey(info.file), info] as [string, FileInfo]
+          (info) => [geneFileKey(info.file), info] as const
         )
         if (override) {
           setFileInfoMap((prev) => ({
