@@ -3,6 +3,7 @@
 import Anchor from '@/components/Anchor'
 import { DefaultLayoutScrollFlag } from '@/layout/components/ScrollFlag'
 import { ImageWithState } from '@/components/ImageWithState'
+import { ENV_CONFIG } from '@/config'
 
 import { Button } from '@mui/material'
 import { createElement } from 'react'
@@ -67,20 +68,59 @@ function geneHeading(tag: `h${number}`) {
   }
 }
 
+function Video({ src = '', poster = '' }: { src?: string; poster?: string }) {
+  if (!src) {
+    return <></>
+  }
+  return (
+    <video
+      src={src}
+      poster={poster}
+      width={720}
+      height={450}
+      controls
+      autoPlay={false}
+    />
+  )
+}
+
+function Iframe({ src = '' }: { src?: string }) {
+  if (!src) {
+    return <></>
+  }
+  const whiteListOrigins = ['youtube.com', 'youtu.be', 'bilibili.com']
+  const srcUrl = new URL(src, ENV_CONFIG.public.origin)
+
+  if (
+    whiteListOrigins.some(
+      (origin) =>
+        srcUrl.origin === origin || srcUrl.origin.endsWith(`.${origin}`)
+    )
+  ) {
+    return (
+      <iframe
+        src={src}
+        width={720}
+        height={450}
+        allowFullScreen
+        allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+      />
+    )
+  }
+
+  return <></>
+}
+
 export const markdownComponents: MDXComponents = {
   Button,
   a: (props) => <Anchor {...props} ref={null} />,
-  img: ({
-    ref: _ref,
-    width: _width,
-    height: _height,
-    placeholder: _placeholder,
-    ...props
-  }) => <ImageWithState {...props} preview />,
+  img: ({ src, alt }) => <ImageWithState src={src} alt={alt} preview />,
   h1: geneHeading('h1'),
   h2: geneHeading('h2'),
   h3: geneHeading('h3'),
   h4: geneHeading('h4'),
   h5: geneHeading('h5'),
   h6: geneHeading('h6'),
+  Video,
+  Iframe,
 }

@@ -3,8 +3,11 @@
 @import './prism-vsc-dark-plus.scss';
 
 .markdown-body {
-  img {
-    margin: auto;
+  img,
+  video,
+  iframe {
+    border: 0;
+    margin: 0 auto 16px;
   }
   ol {
     list-style-type: decimal;

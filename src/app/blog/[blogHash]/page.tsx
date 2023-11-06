@@ -69,7 +69,7 @@ const getBlogWithSource = SA.encode(async (blogHash: string) => {
             },
           ],
         ],
-        format: 'md',
+        format: 'mdx',
       },
     }),
   }
