@@ -1,5 +1,5 @@
 // 该文件用于自动从 componentRoot 目录中自动生成导出文件, 免于手动 import export
-import { pascalCase } from 'pascal-case'
+import Case from 'case'
 
 import path from 'path'
 import fs from 'fs'
@@ -28,7 +28,7 @@ function geneSvgInterface() {
     // 文件名简单粗暴转成 PascalCase, 然后移除掉底划线
     // (因为部分场景会生成底划线, 如'ab-cd-5', 会被转成 'AbCd_5')
     // (而 eslint 不建议变量名中使用底划线)
-    const displayName = pascalCase(name).replace(/_/g, '')
+    const displayName = Case.pascal(name).replace(/_/g, '')
     if (ext === '.svg') {
       if (nameMap[displayName]) {
         throw new Error(

@@ -2,7 +2,7 @@
 
 import { useHydrated } from '@/hooks/useHydrated'
 
-import { useColorScheme } from '@mui/material/styles'
+import { useColorScheme } from '@mui/material'
 
 /**
  * 根据 PrefersColorSchema 返回对应的值

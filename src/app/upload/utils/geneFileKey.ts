@@ -1,5 +1,9 @@
+function getBlobName(blob: Blob) {
+  return (blob as File).name ?? 'unknown'
+}
+
 export function geneFileKey(file: Blob) {
-  return `${file.name} - ${file.size} - ${file.type} - ${
+  return `${getBlobName(file)} - ${file.size} - ${file.type} - ${
     (file as File)?.lastModified ?? ''
   }`
 }
@@ -12,5 +16,5 @@ export function fileToCopyableMarkdownStr({
   file: Blob
 }) {
   const isImage = file.type.startsWith('image/')
-  return `${isImage ? '!' : ''}[${file.name}](${url})`
+  return `${isImage ? '!' : ''}[${getBlobName(file)}](${url})`
 }
