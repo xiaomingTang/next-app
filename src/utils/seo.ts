@@ -52,14 +52,6 @@ export const seo = {
     description: seo.description(props?.description),
     keywords: seo.keywords(props?.keywords),
     generator: 'Next.js',
-    themeColor: [
-      { media: '(prefers-color-scheme: dark)', color: '#4d4d4d' },
-      { media: '(prefers-color-scheme: light)', color: '#eeeeee' },
-    ],
-    viewport: {
-      width: 'device-width',
-      initialScale: 1,
-    },
     icons: manifest.icons,
     manifest: `/manifest.json`,
     formatDetection: {

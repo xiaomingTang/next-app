@@ -2,7 +2,8 @@ import styles from './index.module.scss'
 
 import { getImageSizeFromUrl } from '@/app/upload/utils/urlImageSize'
 import { ENV_CONFIG } from '@/config'
-import { images } from '@ROOT/next-image.config'
+import imageConfig from '@ROOT/next-image.config'
+import { urlMatchPattern } from '@/utils/url'
 
 import Image from 'next/image'
 import { forwardRef, useState } from 'react'
@@ -10,8 +11,6 @@ import clsx from 'clsx'
 import { PhotoView } from 'react-photo-view'
 
 import type { ImageProps } from 'next/image'
-
-const optimizedDomainUrls = images.domains.map((s) => `https://${s}`)
 
 function isOptimizedUrl(url = '') {
   if (url.startsWith('data:')) {
@@ -21,7 +20,12 @@ function isOptimizedUrl(url = '') {
   if (!/^(https?:)?\/\//i.test(url)) {
     return true
   }
-  return optimizedDomainUrls.some((u) => url.startsWith(u))
+  if (!imageConfig.remotePatterns || imageConfig.remotePatterns.length === 0) {
+    return false
+  }
+  return imageConfig.remotePatterns.some((pattern) =>
+    urlMatchPattern(new URL(url, ENV_CONFIG.public.origin), pattern)
+  )
 }
 
 type Props = Omit<ImageProps, 'src' | 'alt'> & {
@@ -65,9 +69,9 @@ function RawImageWithState(
         setError(true)
         props?.onError?.(e)
       }}
-      onLoadingComplete={(e) => {
+      onLoad={(e) => {
         setLoading(false)
-        props?.onLoadingComplete?.(e)
+        props?.onLoad?.(e)
       }}
     />
   )

@@ -38,11 +38,8 @@ const nextConfig = {
   swcMinify: true,
   output: 'standalone',
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
-  images: imageConfig.images,
+  images: imageConfig,
   webpack: webpackConfig,
-  experimental: {
-    serverActions: true,
-  },
   async redirects() {
     return [
       {

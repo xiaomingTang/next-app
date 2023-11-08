@@ -10,7 +10,7 @@ import { seo } from '@/utils/seo'
 import { GA } from '@/analytics/GA'
 import { VConsole } from '@/components/VConsole'
 
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 
 export const metadata: Metadata = {
   ...seo.defaults({}),
@@ -20,6 +20,15 @@ export const metadata: Metadata = {
       'application/rss+xml': [{ url: 'rss.xml', title: 'RSS' }],
     },
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: dark)', color: '#4d4d4d' },
+    { media: '(prefers-color-scheme: light)', color: '#eeeeee' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
 }
 
 function serverErrorHandler() {
