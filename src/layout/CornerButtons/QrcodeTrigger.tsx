@@ -27,7 +27,7 @@ export function QrcodeTrigger() {
   const [scannerEnabled, setScannerEnabled] = useState(false)
 
   useEffect(() => {
-    navigator.mediaDevices.enumerateDevices().then((res) => {
+    navigator.mediaDevices?.enumerateDevices().then((res) => {
       const videoInputs = res.filter((item) => item.kind === 'videoinput')
       setScannerEnabled(videoInputs.length > 0)
     })
