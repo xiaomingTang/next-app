@@ -19,7 +19,7 @@
     "server": "node server.js",
     "predeploy": "bash -c 'chmod ug+x ./deploy.sh'",
     "deploy": "./deploy.sh",
-    "export": "esno bin/prepare-output.ts",
+    "export": "tsx bin/prepare-output.ts",
     "commit": "git-cz",
     "lint": "next lint && tsc --noEmit",
     "pretest": "pnpm run beforeRun",
@@ -27,7 +27,7 @@
     "lint:commit": "commitlint -e",
     "lint-staged": "lint-staged --quiet",
     "format": "prettier --write .",
-    "svg": "esno bin/generate-svg-interface.ts",
+    "svg": "tsx bin/generate-svg-interface.ts",
     "db:push": "dotenv -e .env -c -- prisma db push",
     "db:seed": "dotenv -e .env -c -- prisma db seed"
   },
@@ -60,7 +60,7 @@
     }
   },
   "prisma": {
-    "seed": "esno bin/seed.ts"
+    "seed": "tsx bin/seed.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.445.0",
@@ -146,12 +146,12 @@
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
-    "esno": "^0.17.0",
     "husky": "^8.0.3",
     "lint-staged": "^15.0.2",
     "loader-utils": "^3.2.1",
     "prettier": "^3.0.3",
     "prisma": "^5.5.2",
-    "raw-loader": "^4.0.2"
+    "raw-loader": "^4.0.2",
+    "tsx": "^4.0.0"
   }
 }

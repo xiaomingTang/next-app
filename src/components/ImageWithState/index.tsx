@@ -3,8 +3,8 @@ import styles from './index.module.scss'
 import { getImageSizeFromUrl } from '@/app/upload/utils/urlImageSize'
 import { ENV_CONFIG } from '@/config'
 import imageConfig from '@ROOT/next-image.config'
-import { urlMatchPattern } from '@/utils/url'
 
+import { matchRemotePattern } from 'next/dist/shared/lib/match-remote-pattern'
 import Image from 'next/image'
 import { forwardRef, useState } from 'react'
 import clsx from 'clsx'
@@ -24,7 +24,7 @@ function isOptimizedUrl(url = '') {
     return false
   }
   return imageConfig.remotePatterns.some((pattern) =>
-    urlMatchPattern(new URL(url, ENV_CONFIG.public.origin), pattern)
+    matchRemotePattern(pattern, new URL(url, ENV_CONFIG.public.origin))
   )
 }
 

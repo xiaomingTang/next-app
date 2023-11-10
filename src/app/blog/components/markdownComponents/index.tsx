@@ -8,7 +8,9 @@ import { ENV_CONFIG } from '@/config'
 import { Button } from '@mui/material'
 import { createElement } from 'react'
 import LinkIcon from '@mui/icons-material/Link'
+import { matchRemotePattern } from 'next/dist/shared/lib/match-remote-pattern'
 
+import type { RemotePattern } from 'next/dist/shared/lib/image-config'
 import type { MDXComponents } from 'mdx/types'
 
 export function encodeToId(s: unknown) {
@@ -88,14 +90,18 @@ function Iframe({ src = '' }: { src?: string }) {
   if (!src) {
     return <></>
   }
-  const whiteListOrigins = ['youtube.com', 'youtu.be', 'bilibili.com']
+  const whiteListPatterns: RemotePattern[] = [
+    { hostname: 'youtu.be' },
+    { hostname: 'youtube.com' },
+    { hostname: 'bilibili.com' },
+    { hostname: '**.youtu.be' },
+    { hostname: '**.youtube.com' },
+    { hostname: '**.bilibili.com' },
+  ]
   const srcUrl = new URL(src, ENV_CONFIG.public.origin)
 
   if (
-    whiteListOrigins.some(
-      (origin) =>
-        srcUrl.origin === origin || srcUrl.origin.endsWith(`.${origin}`)
-    )
+    whiteListPatterns.some((pattern) => matchRemotePattern(pattern, srcUrl))
   ) {
     return (
       <iframe
