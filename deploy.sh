@@ -47,7 +47,7 @@ sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "bash -s $P1_REMOTE
 
   log_file_name=".prod-$(date +%Y-%m-%d-%H-%M-%S).log"
 
-  cd remote_dir
+  cd $remote_dir
 
   unzip -q -o $file_name
   lsof -t -i:$port | xargs kill -15
