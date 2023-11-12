@@ -2,6 +2,7 @@
 
 # ssh required: sudo yum install ssh
 # sshpass required: sudo yum install sshpass
+# pm2 required: pnpm i -g pm2
 # $P1_xxx series env variables is required
 
 # you MUST run ssh... locally first time, to activate the ssh terminal,
@@ -40,19 +41,19 @@ echo upload $zip_file_name finished
 
 # pass them on the command line of the remote shell, and retrieve them via $1, $2: https://stackoverflow.com/a/37104048
 # upzip -o means replace files if exists and not ask
-sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "bash -s $P1_REMOTE_PORT $zip_file_name $P1_REMOTE_DIR_WITHOUT_TAIL_SLASH" <<'EOL'
+sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "bash -s $P1_REMOTE_PORT $zip_file_name $P1_REMOTE_DIR_WITHOUT_TAIL_SLASH $P1_APP_NAME" <<'EOL'
   port=$1
   file_name=$2
   remote_dir=$3
+  app_name=$4
 
-  log_file_name=".bak.log-$(date +%Y-%m-%d-%H-%M-%S).log"
+  pm2 stop $app_name
 
   cd $remote_dir
-
   unzip -q -o $file_name
-  lsof -t -i:$port | xargs kill -15
-  kill -15 $(ps aux | grep '[n]ext-render-worker-' | awk '{print $2}')
-  nohup node server.js &>$log_file_name
+
+  log_file_name=".bak.log-$(date +%Y-%m-%d-%H-%M-%S).log"
+  pm2 start node --name $app_name --log $log_file_name -- server.js
   # 限制 log 备份文件数量
   ls -at .bak.log-*.log | sed -n '100,$p' | xargs -I {} rm -rf {}
   # 限制 code 备份文件数量
