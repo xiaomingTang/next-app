@@ -47,12 +47,13 @@ echo upload $zip_file_name finished
 
 # pass them on the command line of the remote shell, and retrieve them via $1, $2: https://stackoverflow.com/a/37104048
 # upzip -o means replace files if exists and not ask
-sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "bash -s $P1_REMOTE_PORT $zip_file_name $P1_REMOTE_DIR_WITHOUT_TAIL_SLASH $P1_APP_NAME" <<'EOL'
+sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "zsh -s $P1_REMOTE_PORT $zip_file_name $P1_REMOTE_DIR_WITHOUT_TAIL_SLASH $P1_APP_NAME" <<'EOL'
   port=$1
   file_name=$2
   remote_dir=$3
   app_name=$4
 
+  source ~/.zshrc
   pm2 delete $app_name
 
   cd $remote_dir
