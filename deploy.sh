@@ -53,7 +53,7 @@ sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "bash -s $P1_REMOTE
   remote_dir=$3
   app_name=$4
 
-  pm2 stop $app_name
+  pm2 delete $app_name
 
   cd $remote_dir
   unzip -q -o $file_name
