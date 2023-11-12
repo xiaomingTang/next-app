@@ -13,17 +13,21 @@
 # https://stackoverflow.com/a/2871034
 set -euxo pipefail
 
-pnpm i
+if [ ! -n "$IGNORE_BUILD" ]; then
+  pnpm i
 
-pnpm run build
+  pnpm run build
 
-rm -rf ./out/
+  rm -rf ./out/
 
-pnpm run export
+  pnpm run export
 
-chmod -R 755 ./out
+  chmod -R 755 ./out
+fi
 
 cd out
+
+rm .bak.code-*.zip
 
 zip_file_name=".bak.code-$(date +%Y-%m-%d-%H-%M-%S).zip"
 
