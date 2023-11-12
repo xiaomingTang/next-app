@@ -29,7 +29,7 @@ fi
 
 cd out
 
-rm .bak.code-*.zip
+rm -f .bak.code-*.zip
 
 zip_file_name=".bak.code-$(date +%Y-%m-%d-%H-%M-%S).zip"
 
