@@ -32,7 +32,7 @@ zip -r -q $zip_file_name .
 echo zip $zip_file_name finished
 
 echo upload $zip_file_name ing...
-sshpass -p $P1_SSH_PASSWORD scp -r $zip_file_name $P1_SSH_USER@$P1_SSH_HOST:/www/wwwroot/$P1_REMOTE_NAME
+sshpass -p $P1_SSH_PASSWORD scp -r $zip_file_name $P1_SSH_USER@$P1_SSH_HOST:$P1_REMOTE_DIR_WITHOUT_TAIL_SLASH
 echo upload $zip_file_name finished
 
 # lsof -t -i:$port | xargs kill -15
@@ -40,17 +40,19 @@ echo upload $zip_file_name finished
 
 # pass them on the command line of the remote shell, and retrieve them via $1, $2: https://stackoverflow.com/a/37104048
 # upzip -o means replace files if exists and not ask
-sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "bash -s $P1_REMOTE_PORT $zip_file_name $P1_REMOTE_NAME" <<'EOL'
+sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "bash -s $P1_REMOTE_PORT $zip_file_name $P1_REMOTE_DIR_WITHOUT_TAIL_SLASH" <<'EOL'
   port=$1
   file_name=$2
-  remote_name=$3
+  remote_dir=$3
 
-  cd /www/wwwroot/$remote_name
+  log_file_name=".prod-$(date +%Y-%m-%d-%H-%M-%S).log"
+
+  cd remote_dir
 
   unzip -q -o $file_name
   lsof -t -i:$port | xargs kill -15
   kill -15 $(ps aux | grep '[n]ext-render-worker-' | awk '{print $2}')
-  nohup bash /www/server/nodejs/vhost/scripts/$remote_name.sh &>/dev/null
+  nohup node server.js &>/dev/null
   ls -at .prod-*.zip | sed -n '4,$p' | xargs -I {} rm -rf {}
 EOL
 
