@@ -24,7 +24,7 @@ chmod -R 755 ./out
 
 cd out
 
-zip_file_name=".prod-$(date +%Y-%m-%d-%H-%M-%S).zip"
+zip_file_name=".bak.code-$(date +%Y-%m-%d-%H-%M-%S).zip"
 
 echo zip $zip_file_name ing...
 # -q: silent
@@ -45,7 +45,7 @@ sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "bash -s $P1_REMOTE
   file_name=$2
   remote_dir=$3
 
-  log_file_name=".prod-$(date +%Y-%m-%d-%H-%M-%S).log"
+  log_file_name=".bak.log-$(date +%Y-%m-%d-%H-%M-%S).log"
 
   cd $remote_dir
 
@@ -53,7 +53,10 @@ sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "bash -s $P1_REMOTE
   lsof -t -i:$port | xargs kill -15
   kill -15 $(ps aux | grep '[n]ext-render-worker-' | awk '{print $2}')
   nohup node server.js &>$log_file_name
-  ls -at .prod-*.zip | sed -n '4,$p' | xargs -I {} rm -rf {}
+  # 限制 log 备份文件数量
+  ls -at .bak.log-*.log | sed -n '100,$p' | xargs -I {} rm -rf {}
+  # 限制 code 备份文件数量
+  ls -at .bak.code-*.zip | sed -n '10,$p' | xargs -I {} rm -rf {}
 EOL
 
 cd ..
