@@ -13,7 +13,9 @@
 # https://stackoverflow.com/a/2871034
 set -euxo pipefail
 
-if [ ! -n "$IGNORE_BUILD" ]; then
+if [[ -v IGNORE_BUILD ]] && [ -d "out" ]; then
+  echo "skip build"
+else
   pnpm i
 
   pnpm run build
