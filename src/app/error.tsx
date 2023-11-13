@@ -2,8 +2,11 @@
 
 // Error components must be Client Components
 
+import { GA } from '@/analytics/GA'
 import { AlertError } from '@/components/Error'
 import { toPlainError } from '@/errors/utils'
+import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
+import DefaultLayout from '@/layout/DefaultLayout'
 
 import { useEffect } from 'react'
 
@@ -20,5 +23,12 @@ export default function ErrorPage({
     console.error(rawError)
   }, [rawError])
 
-  return <AlertError {...error} />
+  return (
+    <DefaultLayout>
+      <DefaultBodyContainer>
+        <GA />
+        <AlertError {...error} />
+      </DefaultBodyContainer>
+    </DefaultLayout>
+  )
 }
