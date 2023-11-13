@@ -1,5 +1,7 @@
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
+import { geneRunOnly } from '@/utils/runOnce'
+import { useVisibilityState } from '@/hooks/useVisibilityState'
 
 import {
   Button,
@@ -39,12 +41,20 @@ export function QrcodeDisplayItem({
   canvasSize,
 }: QrcodeDisplayItemProps) {
   const isUrl = useMemo(() => isValidUrl(qrcode.data), [qrcode.data])
+  const visibilityState = useVisibilityState()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const runOnce = useMemo(() => geneRunOnly(1), [qrcode.data, visibilityState])
 
   return (
     <AnchorProvider>
       {(anchorEl, setAnchorEl) => (
         <>
           <Button
+            ref={(e) => {
+              if (e) {
+                runOnce(() => setAnchorEl(e))
+              }
+            }}
             variant='contained'
             onClick={(e) => {
               setAnchorEl(e.currentTarget)
