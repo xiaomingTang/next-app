@@ -1,6 +1,6 @@
 'use client'
 
-import { SlideUpTransition } from '@/components/SlideUpTransition'
+import { DefaultDialogTransition } from '@/components/SlideUpTransition'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
@@ -52,7 +52,7 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
       fullWidth
       fullScreen={fullScreen}
       maxWidth='md'
-      TransitionComponent={SlideUpTransition}
+      TransitionComponent={DefaultDialogTransition}
       {...muiDialogV5(modal)}
       onClose={() => {
         modal.reject(new Error('操作已取消'))

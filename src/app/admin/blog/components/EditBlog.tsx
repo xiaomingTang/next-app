@@ -12,7 +12,7 @@ import { cat } from '@/errors/catchAndToast'
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import { useLoading } from '@/hooks/useLoading'
 import { getTags, saveTag } from '@/app/admin/tag/server'
-import { SlideUpTransition } from '@/components/SlideUpTransition'
+import { DefaultDialogTransition } from '@/components/SlideUpTransition'
 import { UploadTrigger } from '@/layout/CornerButtons/UploadTrigger'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SvgLoading } from '@/svg'
@@ -347,7 +347,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
       fullScreen
       // 编辑(hash 非空)或有内容时, 禁用 esc close
       disableEscapeKeyDown={!!(blog.hash || blog.content || blog.description)}
-      TransitionComponent={SlideUpTransition}
+      TransitionComponent={DefaultDialogTransition}
       {...muiDialogV5(modal)}
       onClose={() => {
         modal.reject(new Error('操作已取消'))

@@ -6,7 +6,7 @@ import { cat } from '@/errors/catchAndToast'
 import { SA } from '@/errors/utils'
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import { upload } from '@/app/upload/components/Uploader'
-import { SlideUpTransition } from '@/components/SlideUpTransition'
+import { DefaultDialogTransition } from '@/components/SlideUpTransition'
 import { useLoading } from '@/hooks/useLoading'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { numberFormat } from '@/utils/numberFormat'
@@ -329,7 +329,7 @@ const MediaCardModal = NiceModal.create(
         disableEscapeKeyDown={
           !!(mediaCard.hash || mediaCard.title || mediaCard.description)
         }
-        TransitionComponent={SlideUpTransition}
+        TransitionComponent={DefaultDialogTransition}
         {...muiDialogV5(modal)}
         onClose={() => {
           modal.reject(new Error('操作已取消'))

@@ -1,6 +1,6 @@
 'use client'
 
-import { SlideUpTransition } from '@/components/SlideUpTransition'
+import { DefaultDialogTransition } from '@/components/SlideUpTransition'
 import { cat } from '@/errors/catchAndToast'
 import { searchBlog } from '@/app/admin/blog/server'
 import { SA } from '@/errors/utils'
@@ -78,7 +78,7 @@ export const BlogSearchSection = NiceModal.create(() => {
   return (
     <Dialog
       {...muiDialogV5(modal)}
-      TransitionComponent={SlideUpTransition}
+      TransitionComponent={DefaultDialogTransition}
       fullWidth
       maxWidth='sm'
       onClose={() => {
