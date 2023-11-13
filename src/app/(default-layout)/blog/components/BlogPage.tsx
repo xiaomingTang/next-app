@@ -4,7 +4,7 @@ import { BlogContent } from './BlogContent'
 
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import { ScrollToTop } from '@/components/ScrollToTop'
-import { TagItem } from '@/app/tag/components/TagItem'
+import { TagItem } from '@D/tag/components/TagItem'
 import { shuffledArray7 } from '@/constants'
 
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
@@ -12,7 +12,7 @@ import { useState } from 'react'
 
 import type { LoadingAble } from '@/components/ServerComponent'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
-import type { BlogWithTags } from '@/app/admin/blog/server'
+import type { BlogWithTags } from '@ADMIN/blog/server'
 
 function Time({ blog }: { blog: BlogWithTags }) {
   const [step, setStep] = useState(0)

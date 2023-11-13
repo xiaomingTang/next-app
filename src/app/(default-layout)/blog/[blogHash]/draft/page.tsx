@@ -1,11 +1,11 @@
 import { BlogContent } from '../../components/BlogContent'
 
-import { getBlog } from '@/app/admin/blog/server'
 import { AlertError } from '@/components/Error'
 import { seo } from '@/utils/seo'
 import { ServerComponent } from '@/components/ServerComponent'
 import { SA } from '@/errors/utils'
 
+import { getBlog } from '@ADMIN/blog/server'
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
 import remarkGfm from 'remark-gfm'

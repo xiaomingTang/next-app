@@ -2,7 +2,7 @@ import { defaultEmptyBlog, editBlog } from './EditBlog'
 
 import { getBlogs } from '../server'
 
-import { getTags } from '@/app/admin/tag/server'
+import { getTags } from '@ADMIN/tag/server'
 import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
 import { cat } from '@/errors/catchAndToast'

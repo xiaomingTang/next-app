@@ -6,13 +6,13 @@ import 'react-photo-view/dist/react-photo-view.css'
 import { markdownComponents } from './markdownComponents'
 import { BLOG_MARKDOWN_ID } from './constants'
 
-import { editBlog } from '@/app/admin/blog/components/EditBlog'
-import { BlogTypeMap } from '@/app/admin/blog/components/constants'
 import { cat } from '@/errors/catchAndToast'
 import { useUser } from '@/user'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import Anchor from '@/components/Anchor'
 
+import { BlogTypeMap } from '@ADMIN/blog/components/constants'
+import { editBlog } from '@ADMIN/blog/components/EditBlog'
 import { MDXRemote } from 'next-mdx-remote'
 import { Typography, NoSsr, IconButton, Skeleton, alpha } from '@mui/material'
 import { PhotoProvider } from 'react-photo-view'
@@ -22,7 +22,7 @@ import { common } from '@mui/material/colors'
 
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import type { LoadingAble } from '@/components/ServerComponent'
-import type { BlogWithTags } from '@/app/admin/blog/server'
+import type { BlogWithTags } from '@ADMIN/blog/server'
 
 type DraftProps = LoadingAble<
   BlogWithTags & {

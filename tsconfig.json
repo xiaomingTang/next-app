@@ -21,6 +21,10 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@APP/*": ["./src/app/*"],
+      "@ADMIN/*": ["./src/app/admin/*"],
+      "@D/*": ["./src/app/(default-layout)/*"],
+      "@F/*": ["./src/app/(fullscreen-layout)/*"],
       "@ROOT/*": ["./*"]
     }
   },

@@ -4,9 +4,9 @@ import { FileInfoDisplay } from './FileInfoDisplay'
 
 import { deleteFile, requestUploadFiles } from '../server'
 import { fileToCopyableMarkdownStr, geneFileKey } from '../utils/geneFileKey'
-import { setImageSizeForUrl } from '../utils/urlImageSize'
 import { checkIsImage } from '../utils/checkIsImage'
 
+import { setImageSizeForUrl } from '@/utils/urlImageSize'
 import { SA, toPlainError } from '@/errors/utils'
 import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'

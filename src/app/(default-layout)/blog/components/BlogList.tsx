@@ -6,7 +6,7 @@ import { shuffledArray7 } from '@/constants'
 
 import { Stack, Typography } from '@mui/material'
 
-import type { BlogWithTags } from '@/app/admin/blog/server'
+import type { BlogWithTags } from '@ADMIN/blog/server'
 
 export function BlogList({ blogs }: { blogs: BlogWithTags[] }) {
   if (blogs.length === 0) {

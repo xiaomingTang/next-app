@@ -15,7 +15,7 @@ import {
 import { common, blue } from '@mui/material/colors'
 
 import type { LoadingAble } from '@/components/ServerComponent'
-import type { BlogWithTags } from '@/app/admin/blog/server'
+import type { BlogWithTags } from '@ADMIN/blog/server'
 import type { SxProps, Theme } from '@mui/material'
 
 function boxShadow(size: 'small' | 'medium', color: string) {

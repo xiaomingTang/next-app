@@ -1,16 +1,16 @@
 import { BlogList, BlogListLoading } from './blog/components/BlogList'
-import { getTags } from './admin/tag/server'
 import { TagItem } from './tag/components/TagItem'
 
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
-import { getBlogs } from '@/app/admin/blog/server'
 import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { AlertError } from '@/components/Error'
 import { ServerComponent } from '@/components/ServerComponent'
 import { shuffledArray7 } from '@/constants'
 
+import { getTags } from '@ADMIN/tag/server'
+import { getBlogs } from '@ADMIN/blog/server'
 import { Suspense } from 'react'
 import { unstable_cache } from 'next/cache'
 

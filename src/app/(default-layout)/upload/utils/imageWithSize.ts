@@ -1,5 +1,4 @@
-import { getImageSizeFromUrl, setImageSizeForUrl } from './urlImageSize'
-
+import { getImageSizeFromUrl, setImageSizeForUrl } from '@/utils/urlImageSize'
 import { ENV_CONFIG } from '@/config'
 
 import sizeOf from 'image-size'

@@ -1,8 +1,7 @@
 /* eslint-disable @next/next/no-sync-scripts */
 import './global.css'
 
-import { GetInitColorSchemeScript } from './GetColorScheme'
-
+import { GetInitColorSchemeScript } from '@/components/GetColorScheme'
 import Contexts from '@/common/contexts'
 import Polyfills from '@/common/polyfills'
 import Providers from '@/common/providers'

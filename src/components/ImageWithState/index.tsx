@@ -1,6 +1,6 @@
 import styles from './index.module.scss'
 
-import { getImageSizeFromUrl } from '@/app/upload/utils/urlImageSize'
+import { getImageSizeFromUrl } from '@/utils/urlImageSize'
 import { ENV_CONFIG } from '@/config'
 import imageConfig from '@ROOT/next-image.config'
 

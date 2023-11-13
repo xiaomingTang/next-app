@@ -2,11 +2,11 @@
 
 import { DefaultDialogTransition } from '@/components/SlideUpTransition'
 import { cat } from '@/errors/catchAndToast'
-import { searchBlog } from '@/app/admin/blog/server'
+import { searchBlog } from '@ADMIN/blog/server'
 import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
 import { SvgGoogle, SvgLoading } from '@/svg'
-import { BlogList } from '@/app/blog/components/BlogList'
+import { BlogList } from '@D/blog/components/BlogList'
 import { dark, light } from '@/utils/theme'
 import { ENV_CONFIG } from '@/config'
 import { obj } from '@/utils/tiny'
@@ -29,7 +29,7 @@ import SearchIcon from '@mui/icons-material/Search'
 import { Controller, useForm } from 'react-hook-form'
 import { useMemo, useState } from 'react'
 
-import type { BlogWithTags } from '@/app/admin/blog/server'
+import type { BlogWithTags } from '@ADMIN/blog/server'
 
 interface FormProps {
   s: string

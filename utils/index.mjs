@@ -74,8 +74,12 @@ export const webpackConfig = (config, { dev }) => {
     test: /\.sql$/,
     use: 'raw-loader',
   })
-  config.resolve.alias['@ROOT'] = resolveRoot()
   config.resolve.alias['@'] = resolveRoot('src')
+  config.resolve.alias['@APP'] = resolveRoot('src/app')
+  config.resolve.alias['@ADMIN'] = resolveRoot('src/app/admin')
+  config.resolve.alias['@D'] = resolveRoot('src/app/(default-layout)')
+  config.resolve.alias['@F'] = resolveRoot('src/app/(fullscreen-layout)')
+  config.resolve.alias['@ROOT'] = resolveRoot()
   if (!dev) {
     // https://stackoverflow.com/a/69166434
     config.module.rules

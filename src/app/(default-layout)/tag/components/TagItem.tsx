@@ -4,7 +4,7 @@ import { Button, Link, Skeleton, Tooltip, Typography } from '@mui/material'
 
 import type { SxProps, Theme } from '@mui/material'
 import type { LoadingAble } from '@/components/ServerComponent'
-import type { TagWithCreator } from '@/app/admin/tag/server'
+import type { TagWithCreator } from '@ADMIN/tag/server'
 
 type TagItemProps = LoadingAble<
   Pick<TagWithCreator, 'name' | 'hash' | 'description'>

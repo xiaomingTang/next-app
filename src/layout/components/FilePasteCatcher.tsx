@@ -1,6 +1,6 @@
 'use client'
 
-import { upload } from '@/app/upload/components/Uploader'
+import { upload } from '@D/upload/components/Uploader'
 import { useUser } from '@/user'
 
 import { noop } from 'lodash-es'
