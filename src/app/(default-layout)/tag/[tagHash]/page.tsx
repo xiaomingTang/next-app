@@ -8,9 +8,9 @@ import { BlogList, BlogListLoading } from '@D/blog/components/BlogList'
 import { shuffledArray7 } from '@/constants'
 import { ServerComponent } from '@/components/ServerComponent'
 import { FESEO } from '@/components/FESEO'
-
 import { getTag, getTags } from '@ADMIN/tag/server'
 import { getBlogs } from '@ADMIN/blog/server'
+
 import { Suspense } from 'react'
 import { unstable_cache } from 'next/cache'
 

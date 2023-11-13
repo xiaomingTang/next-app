@@ -2,8 +2,8 @@ import { UrlRequirePassword } from './UrlRequirePassword'
 
 import { AlertError } from '@/components/Error'
 import { seo } from '@/utils/seo'
-
 import { getShortUrl } from '@ADMIN/shortUrl/server'
+
 import { redirect } from 'next/navigation'
 
 interface Props {
