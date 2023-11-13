@@ -8,8 +8,6 @@ import {
 } from './components/FriendsLinkList'
 import { getFriendsLinks } from './server'
 
-import DefaultLayout from '@/layout/DefaultLayout'
-import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { seo } from '@/utils/seo'
 import { ServerComponent } from '@/components/ServerComponent'
 import { AlertError } from '@/components/Error'
@@ -24,30 +22,28 @@ export const metadata = seo.defaults({
 
 export default async function Home() {
   return (
-    <DefaultLayout>
-      <DefaultBodyContainer>
-        <FriendsLinkDesc />
-        <Divider sx={{ my: 2 }} />
-        <FriendsLinkSection>
-          <Suspense fallback={<FriendsLinkListLoading count={8} />}>
-            <ServerComponent
-              api={unstable_cache(
-                () =>
-                  getFriendsLinks({
-                    status: 'ACCEPTED',
-                  }),
-                ['getFriendsLinks'],
-                {
-                  revalidate: 10,
-                  tags: ['getFriendsLinks'],
-                }
-              )}
-              render={(cards) => <FriendsLinkList friendsLinks={cards} />}
-              errorBoundary={(err) => <AlertError {...err} />}
-            />
-          </Suspense>
-        </FriendsLinkSection>
-      </DefaultBodyContainer>
-    </DefaultLayout>
+    <>
+      <FriendsLinkDesc />
+      <Divider sx={{ my: 2 }} />
+      <FriendsLinkSection>
+        <Suspense fallback={<FriendsLinkListLoading count={8} />}>
+          <ServerComponent
+            api={unstable_cache(
+              () =>
+                getFriendsLinks({
+                  status: 'ACCEPTED',
+                }),
+              ['getFriendsLinks'],
+              {
+                revalidate: 10,
+                tags: ['getFriendsLinks'],
+              }
+            )}
+            render={(cards) => <FriendsLinkList friendsLinks={cards} />}
+            errorBoundary={(err) => <AlertError {...err} />}
+          />
+        </Suspense>
+      </FriendsLinkSection>
+    </>
   )
 }

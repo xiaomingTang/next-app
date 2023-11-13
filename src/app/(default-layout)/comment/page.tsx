@@ -1,7 +1,5 @@
 import { CommentArea } from './components/CommentArea'
 
-import DefaultLayout from '@/layout/DefaultLayout'
-import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { seo } from '@/utils/seo'
 
 export const metadata = seo.defaults({
@@ -9,11 +7,5 @@ export const metadata = seo.defaults({
 })
 
 export default async function Home() {
-  return (
-    <DefaultLayout>
-      <DefaultBodyContainer>
-        <CommentArea />
-      </DefaultBodyContainer>
-    </DefaultLayout>
-  )
+  return <CommentArea />
 }

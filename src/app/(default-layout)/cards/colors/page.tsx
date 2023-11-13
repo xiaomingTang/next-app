@@ -4,8 +4,6 @@ import {
   MediaCardListLoading,
 } from '../components/MediaCardList'
 
-import DefaultLayout from '@/layout/DefaultLayout'
-import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { AlertError } from '@/components/Error'
@@ -20,26 +18,22 @@ export const metadata = seo.defaults({
 
 export default async function Home() {
   return (
-    <DefaultLayout>
-      <DefaultBodyContainer>
-        <ScrollToTop>
-          {/* card list */}
-          <Suspense fallback={<MediaCardListLoading type='COLOR' count={8} />}>
-            <ServerComponent
-              api={unstable_cache(
-                () => getMediaCards({ type: 'COLOR' }),
-                ['getMediaCards', 'COLOR'],
-                {
-                  revalidate: 10,
-                  tags: ['getMediaCards'],
-                }
-              )}
-              render={(cards) => <MediaCardList type='COLOR' cards={cards} />}
-              errorBoundary={(err) => <AlertError {...err} />}
-            />
-          </Suspense>
-        </ScrollToTop>
-      </DefaultBodyContainer>
-    </DefaultLayout>
+    <ScrollToTop>
+      {/* card list */}
+      <Suspense fallback={<MediaCardListLoading type='COLOR' count={8} />}>
+        <ServerComponent
+          api={unstable_cache(
+            () => getMediaCards({ type: 'COLOR' }),
+            ['getMediaCards', 'COLOR'],
+            {
+              revalidate: 10,
+              tags: ['getMediaCards'],
+            }
+          )}
+          render={(cards) => <MediaCardList type='COLOR' cards={cards} />}
+          errorBoundary={(err) => <AlertError {...err} />}
+        />
+      </Suspense>
+    </ScrollToTop>
   )
 }

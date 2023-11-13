@@ -6,7 +6,6 @@ import Contexts from '@/common/contexts'
 import Polyfills from '@/common/polyfills'
 import Providers from '@/common/providers'
 import { seo } from '@/utils/seo'
-import { GA } from '@/analytics/GA'
 import { VConsole } from '@/components/VConsole'
 
 import type { Metadata, Viewport } from 'next'
@@ -57,7 +56,6 @@ export default function RootLayout({
         <VConsole />
         {/* TODO: 这个 ENV_CONFIG 的实现可能有问题 */}
         <script src='/__ENV_CONFIG__.js' />
-        <GA />
         <GetInitColorSchemeScript />
         <Providers>
           <Polyfills />

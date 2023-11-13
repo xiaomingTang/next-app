@@ -1,8 +1,5 @@
-import '@/layout/FullscreenLayout.css'
-
 import { WallpaperRoot } from './components/WallpaperRoot'
 
-import FullscreenLayout from '@/layout/FullscreenLayout'
 import { seo } from '@/utils/seo'
 
 export const metadata = seo.defaults({
@@ -10,9 +7,5 @@ export const metadata = seo.defaults({
 })
 
 export default async function Home() {
-  return (
-    <FullscreenLayout>
-      <WallpaperRoot />
-    </FullscreenLayout>
-  )
+  return <WallpaperRoot />
 }

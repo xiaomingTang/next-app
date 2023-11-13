@@ -1,8 +1,6 @@
 import { UrlRequirePassword } from './UrlRequirePassword'
 
 import { AlertError } from '@/components/Error'
-import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
-import DefaultLayout from '@/layout/DefaultLayout'
 import { seo } from '@/utils/seo'
 
 import { getShortUrl } from '@ADMIN/shortUrl/server'
@@ -30,16 +28,10 @@ export default async function Index({ params: { hash } }: Props) {
   })
 
   if (error) {
-    return (
-      <DefaultLayout>
-        <DefaultBodyContainer>
-          {error.code === 428 ? (
-            <UrlRequirePassword hash={hash} />
-          ) : (
-            <AlertError {...error} />
-          )}
-        </DefaultBodyContainer>
-      </DefaultLayout>
+    return error.code === 428 ? (
+      <UrlRequirePassword hash={hash} />
+    ) : (
+      <AlertError {...error} />
     )
   }
 

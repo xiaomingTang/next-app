@@ -3,8 +3,6 @@ import { BlogList, BlogListLoading } from '../components/BlogList'
 import { RecommendSep } from '../components/RecommendSep'
 import { Toc } from '../components/Toc'
 
-import DefaultLayout from '@/layout/DefaultLayout'
-import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { AlertError } from '@/components/Error'
 import { seo } from '@/utils/seo'
 import { ServerComponent } from '@/components/ServerComponent'
@@ -77,54 +75,52 @@ const getBlogWithSource = SA.encode(async (blogHash: string) => {
 
 export default async function Home({ params: { blogHash } }: Props) {
   return (
-    <DefaultLayout>
-      <DefaultBodyContainer>
-        <Suspense fallback={<BlogPage loading size={5} />}>
-          <ServerComponent
-            api={unstable_cache(
-              () => getBlogWithSource(blogHash),
-              ['getBlog', blogHash],
-              {
-                revalidate: 10,
-                tags: [`getBlog:${blogHash}`],
-              }
-            )}
-            render={(blog) => (
-              <>
-                <DefaultAside placement='right'>
-                  <Toc />
-                </DefaultAside>
-                <BlogPage {...blog} />
-                <FESEO
-                  title={seo.title(blog.title)}
-                  description={seo.description(blog.description)}
-                  keywords={[
-                    ...blog.tags.map((tag) => tag.name),
-                    ...blog.tags.map((tag) => tag.description),
-                  ].join(',')}
-                />
-              </>
-            )}
-            errorBoundary={(err) => <AlertError {...err} />}
-          />
-        </Suspense>
-        <RecommendSep />
-        {/* 推荐列表 */}
-        <Suspense fallback={<BlogListLoading count={3} />}>
-          <ServerComponent
-            api={unstable_cache(
-              () => getRecommendBlogs(blogHash),
-              ['getRecommendBlogs', blogHash],
-              {
-                revalidate: 10,
-                tags: [`getRecommendBlogs:${blogHash}`],
-              }
-            )}
-            render={(data) => <BlogList blogs={data} />}
-            errorBoundary={(err) => <AlertError {...err} />}
-          />
-        </Suspense>
-      </DefaultBodyContainer>
-    </DefaultLayout>
+    <>
+      <Suspense fallback={<BlogPage loading size={5} />}>
+        <ServerComponent
+          api={unstable_cache(
+            () => getBlogWithSource(blogHash),
+            ['getBlog', blogHash],
+            {
+              revalidate: 10,
+              tags: [`getBlog:${blogHash}`],
+            }
+          )}
+          render={(blog) => (
+            <>
+              <DefaultAside placement='right'>
+                <Toc />
+              </DefaultAside>
+              <BlogPage {...blog} />
+              <FESEO
+                title={seo.title(blog.title)}
+                description={seo.description(blog.description)}
+                keywords={[
+                  ...blog.tags.map((tag) => tag.name),
+                  ...blog.tags.map((tag) => tag.description),
+                ].join(',')}
+              />
+            </>
+          )}
+          errorBoundary={(err) => <AlertError {...err} />}
+        />
+      </Suspense>
+      <RecommendSep />
+      {/* 推荐列表 */}
+      <Suspense fallback={<BlogListLoading count={3} />}>
+        <ServerComponent
+          api={unstable_cache(
+            () => getRecommendBlogs(blogHash),
+            ['getRecommendBlogs', blogHash],
+            {
+              revalidate: 10,
+              tags: [`getRecommendBlogs:${blogHash}`],
+            }
+          )}
+          render={(data) => <BlogList blogs={data} />}
+          errorBoundary={(err) => <AlertError {...err} />}
+        />
+      </Suspense>
+    </>
   )
 }

@@ -1,8 +1,6 @@
 import { TagDesc } from '../components/TagDesc'
 import { TagItem } from '../components/TagItem'
 
-import DefaultLayout from '@/layout/DefaultLayout'
-import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { AlertError } from '@/components/Error'
@@ -50,91 +48,87 @@ export async function generateMetadata({
 
 export default async function Home({ params: { tagHash } }: Props) {
   return (
-    <DefaultLayout>
-      <DefaultBodyContainer>
-        <ScrollToTop>
-          {/* tag list */}
-          <Suspense
-            fallback={
-              <>
-                {shuffledArray7.slice(0, 15).map((n, i) => (
-                  <TagItem key={i} loading size={n} sx={{ mr: 1, mb: 1 }} />
-                ))}
-              </>
+    <ScrollToTop>
+      {/* tag list */}
+      <Suspense
+        fallback={
+          <>
+            {shuffledArray7.slice(0, 15).map((n, i) => (
+              <TagItem key={i} loading size={n} sx={{ mr: 1, mb: 1 }} />
+            ))}
+          </>
+        }
+      >
+        <ServerComponent
+          api={unstable_cache(() => getTags({}), ['getTags'], {
+            revalidate: 10,
+            tags: ['getTags'],
+          })}
+          render={(tags) =>
+            tags.map((tag) => (
+              <TagItem
+                {...tag}
+                key={tag.hash}
+                active={tag.hash === tagHash}
+                sx={{ mr: 1, mb: 1 }}
+              />
+            ))
+          }
+          errorBoundary={(err) => <AlertError {...err} />}
+        />
+      </Suspense>
+
+      {/* tag desc */}
+      <Suspense fallback={<TagDesc loading size={5} />}>
+        <ServerComponent
+          api={unstable_cache(
+            () =>
+              getTag({
+                hash: tagHash,
+              }),
+            ['getTag', tagHash],
+            {
+              revalidate: 10,
+              tags: [`getTag:${tagHash}`],
             }
-          >
-            <ServerComponent
-              api={unstable_cache(() => getTags({}), ['getTags'], {
-                revalidate: 10,
-                tags: ['getTags'],
-              })}
-              render={(tags) =>
-                tags.map((tag) => (
-                  <TagItem
-                    {...tag}
-                    key={tag.hash}
-                    active={tag.hash === tagHash}
-                    sx={{ mr: 1, mb: 1 }}
-                  />
-                ))
-              }
-              errorBoundary={(err) => <AlertError {...err} />}
-            />
-          </Suspense>
+          )}
+          render={(data) => (
+            <>
+              <TagDesc {...data} />
+              <FESEO
+                title={`标签: ${data.name}`}
+                description={`与${data.name}有关的文章: ${data.description}`}
+                keywords={data.name}
+              />
+            </>
+          )}
+          errorBoundary={(err) => <AlertError {...err} />}
+        />
+      </Suspense>
 
-          {/* tag desc */}
-          <Suspense fallback={<TagDesc loading size={5} />}>
-            <ServerComponent
-              api={unstable_cache(
-                () =>
-                  getTag({
+      {/* blog list */}
+      <Suspense fallback={<BlogListLoading count={8} />}>
+        <ServerComponent
+          api={unstable_cache(
+            () =>
+              getBlogs({
+                type: 'PUBLISHED',
+                tags: {
+                  some: {
                     hash: tagHash,
-                  }),
-                ['getTag', tagHash],
-                {
-                  revalidate: 10,
-                  tags: [`getTag:${tagHash}`],
-                }
-              )}
-              render={(data) => (
-                <>
-                  <TagDesc {...data} />
-                  <FESEO
-                    title={`标签: ${data.name}`}
-                    description={`与${data.name}有关的文章: ${data.description}`}
-                    keywords={data.name}
-                  />
-                </>
-              )}
-              errorBoundary={(err) => <AlertError {...err} />}
-            />
-          </Suspense>
-
-          {/* blog list */}
-          <Suspense fallback={<BlogListLoading count={8} />}>
-            <ServerComponent
-              api={unstable_cache(
-                () =>
-                  getBlogs({
-                    type: 'PUBLISHED',
-                    tags: {
-                      some: {
-                        hash: tagHash,
-                      },
-                    },
-                  }),
-                ['getBlogs', 'PUBLISHED', tagHash],
-                {
-                  revalidate: 10,
-                  tags: ['getBlogs'],
-                }
-              )}
-              render={(data) => <BlogList blogs={data} />}
-              errorBoundary={(err) => <AlertError {...err} />}
-            />
-          </Suspense>
-        </ScrollToTop>
-      </DefaultBodyContainer>
-    </DefaultLayout>
+                  },
+                },
+              }),
+            ['getBlogs', 'PUBLISHED', tagHash],
+            {
+              revalidate: 10,
+              tags: ['getBlogs'],
+            }
+          )}
+          render={(data) => <BlogList blogs={data} />}
+          errorBoundary={(err) => <AlertError {...err} />}
+        />
+      </Suspense>
+    </ScrollToTop>
   )
 }
