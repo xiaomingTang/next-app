@@ -82,6 +82,10 @@ function Video({ src = '', poster = '' }: { src?: string; poster?: string }) {
       height={450}
       controls
       autoPlay={false}
+      style={{
+        width: '100%',
+        maxWidth: 720,
+      }}
     />
   )
 }
@@ -110,6 +114,10 @@ function Iframe({ src = '' }: { src?: string }) {
         height={450}
         allowFullScreen
         allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+        style={{
+          width: '100%',
+          maxWidth: 720,
+        }}
       />
     )
   }
