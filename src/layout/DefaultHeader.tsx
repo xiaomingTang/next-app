@@ -10,7 +10,7 @@ import { QrcodeTrigger } from './CornerButtons/QrcodeTrigger'
 import { CardsTrigger } from './CornerButtons/CardsTrigger'
 import { MenuTrigger } from './CornerButtons/MenuTrigger'
 
-import { dark, light } from '@/utils/theme'
+import { dark } from '@/utils/theme'
 
 import {
   AppBar,
@@ -38,11 +38,9 @@ export function DefaultRawHeader() {
           },
           backdropFilter: 'blur(8px)',
           color: 'text.primary',
+          backgroundColor: alpha(theme.palette.grey[300], 0.6),
           [dark()]: {
             backgroundColor: alpha(theme.palette.grey[900], 0.6),
-          },
-          [light()]: {
-            backgroundColor: alpha(theme.palette.grey[300], 0.6),
           },
         }}
       >

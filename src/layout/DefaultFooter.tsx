@@ -2,7 +2,7 @@
 
 import Anchor from '@/components/Anchor'
 import { SvgGithub } from '@/svg'
-import { dark, light } from '@/utils/theme'
+import { dark } from '@/utils/theme'
 
 import { Stack, Typography } from '@mui/material'
 import { common, grey } from '@mui/material/colors'
@@ -23,11 +23,9 @@ export function DefaultFooter() {
         px: 2,
         py: 3,
         fontSize: '0.875rem',
+        backgroundColor: common.white,
         [dark()]: {
           backgroundColor: grey[800],
-        },
-        [light()]: {
-          backgroundColor: common.white,
         },
       }}
     >

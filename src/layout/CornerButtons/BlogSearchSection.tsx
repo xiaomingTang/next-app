@@ -7,7 +7,7 @@ import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
 import { SvgGoogle, SvgLoading } from '@/svg'
 import { BlogList } from '@D/blog/components/BlogList'
-import { dark, light } from '@/utils/theme'
+import { dark } from '@/utils/theme'
 import { ENV_CONFIG } from '@/config'
 import { obj } from '@/utils/tiny'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
@@ -164,11 +164,9 @@ export const BlogSearchSection = NiceModal.create(() => {
       <DialogContent
         sx={{
           height: '400px',
+          backgroundColor: '#eee',
           [dark()]: {
             backgroundColor: '#4d4d4d',
-          },
-          [light()]: {
-            backgroundColor: '#eee',
           },
         }}
       >

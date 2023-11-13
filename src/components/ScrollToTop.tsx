@@ -1,7 +1,7 @@
 'use client'
 
 import { useElementScroll } from '@/hooks/useElementScroll'
-import { dark, light } from '@/utils/theme'
+import { dark } from '@/utils/theme'
 
 import {
   Box,
@@ -47,11 +47,9 @@ export function ScrollToTop({
             position: 'fixed',
             bottom: '48px',
             right: '16px',
+            backgroundColor: common.white,
             [dark()]: {
               backgroundColor: grey[800],
-            },
-            [light()]: {
-              backgroundColor: common.white,
             },
           }}
         >

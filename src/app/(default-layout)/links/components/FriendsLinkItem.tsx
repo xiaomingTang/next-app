@@ -3,7 +3,7 @@
 import { FriendsLinkStatusMap } from './constants'
 import { editFriendsLink } from './EditLink'
 
-import { dark, light } from '@/utils/theme'
+import { dark } from '@/utils/theme'
 import { cat } from '@/errors/catchAndToast'
 import { ImageWithState } from '@/components/ImageWithState'
 import { useUser } from '@/user'
@@ -46,11 +46,9 @@ function FriendsLinkDesc(friendsLink: FriendsLinkItemProps) {
   return (
     <Typography
       sx={{
+        backgroundColor: alpha(common.black, 0.025),
         [dark()]: {
           backgroundColor: alpha(common.white, 0.025),
-        },
-        [light()]: {
-          backgroundColor: alpha(common.black, 0.025),
         },
         p: 1,
         borderRadius: 1,
@@ -88,20 +86,18 @@ export function FriendsLinkItem({ sx, ...friendsLink }: FriendsLinkItemProps) {
         ':focus-visible': {
           outline: `1px solid ${blue[700]}`,
         },
+        backgroundColor: common.white,
+        boxShadow: boxShadow('small', common.white),
+        ':hover': {
+          backgroundColor: alpha(blue[100], 0.66),
+          boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
+        },
         [dark()]: {
           backgroundColor: alpha(common.black, 0.55),
           boxShadow: boxShadow('small', alpha(common.black, 0.55)),
           ':hover': {
             backgroundColor: alpha(common.black, 0.35),
             boxShadow: boxShadow('medium', alpha(common.black, 0.35)),
-          },
-        },
-        [light()]: {
-          backgroundColor: common.white,
-          boxShadow: boxShadow('small', common.white),
-          ':hover': {
-            backgroundColor: alpha(blue[100], 0.66),
-            boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
           },
         },
         ...sx,

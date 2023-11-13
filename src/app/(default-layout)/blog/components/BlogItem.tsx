@@ -1,7 +1,7 @@
 'use client'
 
 import { friendlyFormatTime } from '@/utils/formatTime'
-import { dark, light } from '@/utils/theme'
+import { dark } from '@/utils/theme'
 import { Link } from '@/components/CustomLink'
 
 import {
@@ -45,11 +45,9 @@ function BlogDesc(blog: BlogItemProps) {
   return (
     <Typography
       sx={{
+        backgroundColor: alpha(common.black, 0.025),
         [dark()]: {
           backgroundColor: alpha(common.white, 0.025),
-        },
-        [light()]: {
-          backgroundColor: alpha(common.black, 0.025),
         },
         p: 1,
         borderRadius: 1,
@@ -101,20 +99,18 @@ export function BlogItem({ sx, ...blog }: BlogItemProps) {
         ':focus-visible': {
           outline: `1px solid ${blue[700]}`,
         },
+        backgroundColor: common.white,
+        boxShadow: boxShadow('small', common.white),
+        ':hover': {
+          backgroundColor: alpha(blue[100], 0.66),
+          boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
+        },
         [dark()]: {
           backgroundColor: alpha(common.black, 0.55),
           boxShadow: boxShadow('small', alpha(common.black, 0.55)),
           ':hover': {
             backgroundColor: alpha(common.black, 0.35),
             boxShadow: boxShadow('medium', alpha(common.black, 0.35)),
-          },
-        },
-        [light()]: {
-          backgroundColor: common.white,
-          boxShadow: boxShadow('small', common.white),
-          ':hover': {
-            backgroundColor: alpha(blue[100], 0.66),
-            boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
           },
         },
         ...sx,
