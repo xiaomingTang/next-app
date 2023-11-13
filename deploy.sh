@@ -14,17 +14,17 @@
 set -euxo pipefail
 
 if [[ -v IGNORE_BUILD ]] && [ -d "out" ]; then
-  echo "skip build"
+    echo "skip build"
 else
-  pnpm i
-
-  pnpm run build
-
-  rm -rf ./out/
-
-  pnpm run export
-
-  chmod -R 755 ./out
+    pnpm i
+    
+    pnpm run build
+    
+    rm -rf ./out/
+    
+    pnpm run export
+    
+    chmod -R 755 ./out
 fi
 
 cd out
@@ -58,13 +58,14 @@ sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "zsh -s $P1_REMOTE_
 
   cd $remote_dir
   unzip -q -o $file_name
+  mv $file_name .bak/$file_name
 
-  log_file_name=".bak.log-$(date +%Y-%m-%d-%H-%M-%S).log"
+  log_file_name=".bak/.bak.log-$(date +%Y-%m-%d-%H-%M-%S).log"
   pm2 start node --name $app_name --log $log_file_name -- server.js
   # 限制 log 备份文件数量
-  ls -at .bak.log-*.log | sed -n '100,$p' | xargs -I {} rm -rf {}
+  ls -at .bak/.bak.log-*.log | sed -n '100,$p' | xargs -I {} rm -rf {}
   # 限制 code 备份文件数量
-  ls -at .bak.code-*.zip | sed -n '10,$p' | xargs -I {} rm -rf {}
+  ls -at .bak/.bak.code-*.zip | sed -n '10,$p' | xargs -I {} rm -rf {}
 EOL
 
 cd ..
