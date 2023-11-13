@@ -2,11 +2,11 @@
 
 import { friendlyFormatTime } from '@/utils/formatTime'
 import { dark, light } from '@/utils/theme'
+import { Link } from '@/components/CustomLink'
 
 import {
   ButtonBase,
   Chip,
-  Link,
   Skeleton,
   Stack,
   Typography,

@@ -1,12 +1,13 @@
 import { useActiveMenu } from './constants'
 
+import { Link } from '@/components/CustomLink'
+
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import {
   Box,
   Collapse,
   IconButton,
-  Link,
   List,
   ListItem,
   ListItemButton,

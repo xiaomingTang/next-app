@@ -1,8 +1,9 @@
+import { Link } from '../CustomLink'
+
 import { resolvePath } from '@/utils/url'
 
 import { forwardRef } from 'react'
 import { clsx } from 'clsx'
-import Link from 'next/link'
 
 import type { LinkProps } from 'next/link'
 import type { AnchorHTMLAttributes, ForwardedRef } from 'react'

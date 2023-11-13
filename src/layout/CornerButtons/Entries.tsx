@@ -1,4 +1,6 @@
-import { Button, Link } from '@mui/material'
+import { Link } from '@/components/CustomLink'
+
+import { Button } from '@mui/material'
 import { usePathname } from 'next/navigation'
 
 export function Entry({

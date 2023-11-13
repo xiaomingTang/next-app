@@ -1,6 +1,8 @@
 'use client'
 
-import { Button, Link, Skeleton, Tooltip, Typography } from '@mui/material'
+import { Link } from '@/components/CustomLink'
+
+import { Button, Skeleton, Tooltip, Typography } from '@mui/material'
 
 import type { SxProps, Theme } from '@mui/material'
 import type { LoadingAble } from '@/components/ServerComponent'
