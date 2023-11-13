@@ -87,6 +87,12 @@ const nextConfig = {
       },
     ]
   },
+  experimental: {
+    serverActions: {
+      // .host 带有端口
+      allowedOrigins: [new URL(process.env.NEXT_PUBLIC_ORIGIN).host],
+    },
+  },
 }
 
 export default withBundleAnalyzer(withPWA(nextConfig))
