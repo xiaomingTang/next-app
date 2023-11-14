@@ -3,6 +3,8 @@
 import { friendlyFormatTime } from '@/utils/formatTime'
 import { dark } from '@/utils/theme'
 import { Link } from '@/components/CustomLink'
+import { obj } from '@/utils/tiny'
+import { useListen } from '@/hooks/useListen'
 
 import {
   ButtonBase,
@@ -13,6 +15,7 @@ import {
   alpha,
 } from '@mui/material'
 import { common, blue } from '@mui/material/colors'
+import { useRef } from 'react'
 
 import type { LoadingAble } from '@/components/ServerComponent'
 import type { BlogWithTags } from '@ADMIN/blog/server'
@@ -26,8 +29,9 @@ function boxShadow(size: 'small' | 'medium', color: string) {
   return `0 0 ${sizeMap[size]} ${color}`
 }
 
-type BlogItemProps = LoadingAble<Omit<BlogWithTags, 'content'>> & {
+export type BlogItemProps = LoadingAble<Omit<BlogWithTags, 'content'>> & {
   sx?: SxProps<Theme>
+  selected?: boolean
 }
 
 function BlogTitle(blog: BlogItemProps) {
@@ -82,15 +86,30 @@ function BlogTime(blog: BlogItemProps) {
   )
 }
 
-export function BlogItem({ sx, ...blog }: BlogItemProps) {
+export function BlogItem({ sx, selected, ...blog }: BlogItemProps) {
+  const ref = useRef<HTMLAnchorElement>(null)
   const blogDescAriaLabel = blog.loading
     ? '加载中'
     : `${friendlyFormatTime(blog.updatedAt)}更新的博客《${
         blog.title
       }》；简介是：${blog.description}`
 
+  useListen(selected, () => {
+    if (selected) {
+      ref.current?.scrollIntoView({
+        behavior: 'smooth',
+      })
+    }
+  })
+
   return (
     <ButtonBase
+      ref={ref}
+      LinkComponent={Link}
+      disabled={blog.loading}
+      href={blog.loading ? '/' : `/blog/${blog.hash}`}
+      aria-label={blogDescAriaLabel}
+      role={blog.loading ? 'none' : undefined}
       sx={{
         p: 2,
         width: '100%',
@@ -99,6 +118,11 @@ export function BlogItem({ sx, ...blog }: BlogItemProps) {
         ':focus-visible': {
           outline: `1px solid ${blue[700]}`,
         },
+        ...obj(
+          selected && {
+            outline: `1px solid ${blue[700]}`,
+          }
+        ),
         backgroundColor: common.white,
         boxShadow: boxShadow('small', common.white),
         ':hover': {
@@ -115,11 +139,6 @@ export function BlogItem({ sx, ...blog }: BlogItemProps) {
         },
         ...sx,
       }}
-      LinkComponent={Link}
-      disabled={blog.loading}
-      href={blog.loading ? '/' : `/blog/${blog.hash}`}
-      aria-label={blogDescAriaLabel}
-      role={blog.loading ? 'none' : undefined}
     >
       <Stack direction='column' spacing={1} sx={{ width: '100%' }} aria-hidden>
         <BlogTitle {...blog} />

@@ -8,14 +8,19 @@ import { Stack, Typography } from '@mui/material'
 
 import type { BlogWithTags } from '@ADMIN/blog/server'
 
-export function BlogList({ blogs }: { blogs: BlogWithTags[] }) {
+interface BlogListProps {
+  blogs: BlogWithTags[]
+  selectedIndex?: number
+}
+
+export function BlogList({ blogs, selectedIndex }: BlogListProps) {
   if (blogs.length === 0) {
     return <Typography>哪有博客啊，我怎么不知道</Typography>
   }
   return (
     <Stack direction='column' spacing={2}>
-      {blogs.map((rec) => (
-        <BlogItem {...rec} key={rec.hash} />
+      {blogs.map((rec, i) => (
+        <BlogItem selected={selectedIndex === i} {...rec} key={rec.hash} />
       ))}
     </Stack>
   )

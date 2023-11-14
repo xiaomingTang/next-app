@@ -12,6 +12,7 @@ import { ENV_CONFIG } from '@/config'
 import { obj } from '@/utils/tiny'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { useListen } from '@/hooks/useListen'
+import { useRawPlatform } from '@/utils/device'
 
 import {
   Box,
@@ -28,8 +29,10 @@ import {
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import SearchIcon from '@mui/icons-material/Search'
 import { Controller, useForm } from 'react-hook-form'
-import { useMemo, useState } from 'react'
-import { usePathname } from 'next/navigation'
+import { useEffect, useMemo, useState } from 'react'
+import { useKeyPressEvent, usePrevious } from 'react-use'
+import { usePathname, useRouter } from 'next/navigation'
+import { debounce } from 'lodash-es'
 
 import type { BlogWithTags } from '@ADMIN/blog/server'
 
@@ -38,27 +41,17 @@ interface FormProps {
 }
 
 export const BlogSearchSection = NiceModal.create(() => {
+  const platform = useRawPlatform()
+  const router = useRouter()
   const modal = useModal()
-  const pathname = usePathname()
-
-  useListen(pathname, (_, prev) => {
-    if (prev) {
-      modal.hide()
-    }
-  })
-
-  useInjectHistory(modal.visible, () => {
-    modal.hide()
-  })
-
   const [loading, withLoading] = useLoading()
-  const { handleSubmit, control, setError } = useForm<FormProps>({
-    defaultValues: {
-      s: '',
-    },
-  })
+  const [selectedIndex, setSelectedIndex] = useState(0)
   const [blogs, setBlogs] = useState<BlogWithTags[]>([])
   const [searchText, setSearchText] = useState('')
+
+  const pathname = usePathname()
+  const prevPathname = usePrevious(pathname)
+
   const googleSearchUrl = useMemo(() => {
     if (!searchText.trim()) {
       return undefined
@@ -69,19 +62,91 @@ export const BlogSearchSection = NiceModal.create(() => {
     return url.href
   }, [searchText])
 
-  const onSubmit = handleSubmit(
-    withLoading(
-      cat(async (e) => {
-        const res = await searchBlog(e).then(SA.decode)
-        if (res.length === 0) {
-          setError('s', {
-            message: '你查找的内容不存在',
-          })
-          return
-        }
-        setBlogs(res)
-      })
-    )
+  // pathname 变化之后关闭弹窗
+  useListen(pathname, (_, prev) => {
+    if (prev) {
+      modal.hide()
+    }
+  })
+
+  // pathname 变化之后保持住 useInjectHistory 的状态, 避免触发出栈, 以及 history.back
+  useInjectHistory(modal.visible || pathname !== prevPathname, () => {
+    modal.hide()
+  })
+
+  const { handleSubmit, control, setError } = useForm<FormProps>({
+    defaultValues: {
+      s: '',
+    },
+  })
+
+  useEffect(() => {
+    setSelectedIndex(platform === 'desktop' ? 0 : -1)
+  }, [platform, searchText])
+
+  useKeyPressEvent('ArrowUp', (e) => {
+    if (blogs.length === 0) {
+      return
+    }
+    // 有任何辅助键, 都不 preventDefault
+    if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) {
+      return
+    }
+    // e.preventDefault 配合 autoComplete off, 避免按方向键时触发输入框的下拉推荐
+    e.preventDefault()
+    setSelectedIndex((selectedIndex - 1 + blogs.length) % blogs.length)
+  })
+
+  useKeyPressEvent('ArrowDown', (e) => {
+    if (blogs.length === 0) {
+      return
+    }
+    // 有任何辅助键, 都不 preventDefault
+    if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) {
+      return
+    }
+    // e.preventDefault 配合 autoComplete off, 避免按方向键时触发输入框的下拉推荐
+    e.preventDefault()
+    setSelectedIndex((selectedIndex + 1) % blogs.length)
+  })
+
+  useKeyPressEvent('Enter', (e) => {
+    const curBlog = blogs[selectedIndex]
+    if (curBlog) {
+      e.preventDefault()
+      router.push(`/blog/${curBlog.hash}`)
+    }
+  })
+
+  const onSubmit = useMemo(
+    () =>
+      handleSubmit(
+        withLoading(
+          cat(
+            debounce(
+              async (e) => {
+                const res = await searchBlog(e)
+                  .then(SA.decode)
+                  .then((list) =>
+                    list.filter((item) => `/blog/${item.hash}` !== pathname)
+                  )
+                if (res.length === 0) {
+                  setError('s', {
+                    message: '你查找的内容不存在',
+                  })
+                  return
+                }
+                setBlogs(res)
+              },
+              500,
+              {
+                leading: false,
+              }
+            )
+          )
+        )
+      ),
+    [handleSubmit, pathname, setError, withLoading]
   )
 
   return (
@@ -114,9 +179,11 @@ export const BlogSearchSection = NiceModal.create(() => {
                     onChange={(e) => {
                       setSearchText(e.target.value ?? '')
                       field.onChange(e)
+                      onSubmit()
                     }}
                     sx={{ ml: 1, flex: 1 }}
                     autoFocus
+                    autoComplete='off'
                     placeholder='搜索博客'
                     inputProps={{
                       'aria-label': '搜索博客',
@@ -180,7 +247,7 @@ export const BlogSearchSection = NiceModal.create(() => {
         }}
       >
         <Box sx={{ pointerEvents: 'none', pt: 2 }} />
-        <BlogList blogs={blogs} />
+        <BlogList blogs={blogs} selectedIndex={selectedIndex} />
       </DialogContent>
     </Dialog>
   )
