@@ -9,7 +9,7 @@ import { usePathname, useRouter } from 'next/navigation'
 
 const menuList = [
   {
-    pathname: '/about',
+    pathname: '/blog/3EpPJTM2LwB_',
     title: '关于',
   },
   {

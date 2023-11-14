@@ -80,7 +80,7 @@ export function DefaultRawHeader() {
           >
             <Entry pathname='/' name='首页' />
             <Entry pathname='/wallpaper' name='壁纸' />
-            <Entry pathname='/about' name='关于' />
+            <Entry pathname='/blog/3EpPJTM2LwB_' name='关于' />
             <CardsTrigger />
           </Stack>
           <Stack direction='row'>
