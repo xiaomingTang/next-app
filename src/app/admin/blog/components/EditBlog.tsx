@@ -42,6 +42,7 @@ import {
 import { noop, pick } from 'lodash-es'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
+import { useKeyPressEvent } from 'react-use'
 
 import type { BlogWithTags } from '../server'
 import type { PickAndPartial } from '@/utils/type'
@@ -103,6 +104,14 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
     })
   )
 
+  useKeyPressEvent(
+    (e) => e.ctrlKey && e.key.toLowerCase() === 's',
+    (e) => {
+      e.preventDefault()
+      onSubmit()
+    }
+  )
+
   const header = (
     <AppBar sx={{ position: 'relative' }}>
       <Toolbar variant='dense'>
@@ -131,7 +140,12 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
           )}
         </Box>
         <UploadTrigger />
-        <CustomLoadingButton size='small' color='inherit' onClick={onSubmit}>
+        <CustomLoadingButton
+          size='small'
+          color='inherit'
+          title='保存 [快捷键 ctrl + s]'
+          onClick={onSubmit}
+        >
           保存
         </CustomLoadingButton>
         <IconButton
