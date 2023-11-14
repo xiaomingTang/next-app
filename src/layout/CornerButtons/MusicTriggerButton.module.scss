@@ -1,0 +1,56 @@
+.rotate {
+  animation: 3s linear infinite rotate;
+
+  &.blink {
+    animation:
+      3s linear infinite rotate,
+      1.3s linear infinite blink;
+  }
+}
+
+.shake {
+  animation: 6s cubic-bezier(0.1, -0.6, 0.2, 0) 3s infinite shake;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shake {
+  0% {
+    transform: rotate(0);
+  }
+  1% {
+    transform: rotate(15deg);
+  }
+  3% {
+    transform: rotate(-15deg);
+  }
+  5% {
+    transform: rotate(15deg);
+  }
+  7% {
+    transform: rotate(-15deg);
+  }
+  8% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(0);
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.1;
+  }
+}

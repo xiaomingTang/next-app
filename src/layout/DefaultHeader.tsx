@@ -3,7 +3,7 @@
 import { UserButton } from './CornerButtons/UserButton'
 import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
 import { Entry } from './CornerButtons/Entries'
-import { RssButton } from './CornerButtons/RssButton'
+import { MusicTriggerButton } from './CornerButtons/MusicTriggerButton'
 import { UploadTrigger } from './CornerButtons/UploadTrigger'
 import { BlogSearchButton } from './CornerButtons/BlogSearchButton'
 import { QrcodeTrigger } from './CornerButtons/QrcodeTrigger'
@@ -89,7 +89,7 @@ export function DefaultRawHeader() {
             <QrcodeTrigger />
             <BlogSearchButton />
             <ThemeToggleButton />
-            <RssButton />
+            <MusicTriggerButton />
           </Stack>
         </Stack>
       </AppBar>
