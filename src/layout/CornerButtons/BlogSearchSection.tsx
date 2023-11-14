@@ -11,6 +11,7 @@ import { dark } from '@/utils/theme'
 import { ENV_CONFIG } from '@/config'
 import { obj } from '@/utils/tiny'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { useListen } from '@/hooks/useListen'
 
 import {
   Box,
@@ -28,6 +29,7 @@ import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import SearchIcon from '@mui/icons-material/Search'
 import { Controller, useForm } from 'react-hook-form'
 import { useMemo, useState } from 'react'
+import { usePathname } from 'next/navigation'
 
 import type { BlogWithTags } from '@ADMIN/blog/server'
 
@@ -37,6 +39,13 @@ interface FormProps {
 
 export const BlogSearchSection = NiceModal.create(() => {
   const modal = useModal()
+  const pathname = usePathname()
+
+  useListen(pathname, (_, prev) => {
+    if (prev) {
+      modal.hide()
+    }
+  })
 
   useInjectHistory(modal.visible, () => {
     modal.hide()
