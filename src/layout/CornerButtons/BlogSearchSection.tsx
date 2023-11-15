@@ -30,7 +30,7 @@ import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import SearchIcon from '@mui/icons-material/Search'
 import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useMemo, useState } from 'react'
-import { useKeyPressEvent, usePrevious } from 'react-use'
+import { useKeyPressEvent } from 'react-use'
 import { usePathname, useRouter } from 'next/navigation'
 import { debounce } from 'lodash-es'
 
@@ -50,7 +50,7 @@ export const BlogSearchSection = NiceModal.create(() => {
   const [searchText, setSearchText] = useState('')
 
   const pathname = usePathname()
-  const prevPathname = usePrevious(pathname)
+  const [holdHistory, setHoldHistory] = useState(false)
 
   const googleSearchUrl = useMemo(() => {
     if (!searchText.trim()) {
@@ -62,15 +62,17 @@ export const BlogSearchSection = NiceModal.create(() => {
     return url.href
   }, [searchText])
 
-  // pathname 变化之后关闭弹窗
   useListen(pathname, (_, prev) => {
     if (prev) {
+      // 守护 history stack, 避免关闭弹窗触发 history.back
+      setHoldHistory(true)
+      // 到下一页了就关闭弹窗
       modal.hide()
     }
   })
 
-  // pathname 变化之后保持住 useInjectHistory 的状态, 避免触发出栈, 以及 history.back
-  useInjectHistory(modal.visible || pathname !== prevPathname, () => {
+  // 守护 history stack, 避免关闭弹窗触发 history.back
+  useInjectHistory(modal.visible || holdHistory, () => {
     modal.hide()
   })
 
