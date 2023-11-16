@@ -37,8 +37,9 @@ export const useAudio = create<{
   loading: false,
 }))
 
-const props = {
+const props: Parameters<typeof useReactUseAudio>[0] = {
   src: 'https://next-app-storage-04a4aa9a124907-staging.s3.ap-northeast-2.amazonaws.com/public/2023-11-14/qgubmQojbIFy.mp3',
+  loop: true,
 }
 
 export function GlobalAudioPlayer() {
