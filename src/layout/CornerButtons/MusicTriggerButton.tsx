@@ -2,23 +2,14 @@
 
 import styles from './MusicTriggerButton.module.scss'
 
-import { useMediaLoading } from '@/hooks/useMediaLoading'
+import { useAudio } from '@/components/GlobalAudioPlayer'
 
 import { IconButton } from '@mui/material'
 import MusicNoteIcon from '@mui/icons-material/MusicNote'
-import { useAudio } from 'react-use'
 import clsx from 'clsx'
-import { useEffect } from 'react'
 
 export function MusicTriggerButton() {
-  const [audio, state, controls, ref] = useAudio({
-    src: 'https://next-app-storage-04a4aa9a124907-staging.s3.ap-northeast-2.amazonaws.com/public/2023-11-14/qgubmQojbIFy.mp3',
-  })
-  const { loading, setMedia } = useMediaLoading()
-
-  useEffect(() => {
-    setMedia(ref.current)
-  }, [setMedia, ref])
+  const { state, controls, loading } = useAudio()
 
   return (
     <IconButton
@@ -44,7 +35,6 @@ export function MusicTriggerButton() {
           loading && styles.blink
         )}
       />
-      {audio}
     </IconButton>
   )
 }
