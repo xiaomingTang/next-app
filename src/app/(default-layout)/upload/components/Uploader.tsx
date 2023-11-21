@@ -10,7 +10,7 @@ import { setImageSizeForUrl } from '@/utils/urlImageSize'
 import { SA, toPlainError } from '@/errors/utils'
 import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
-import { DefaultDialogTransition } from '@/components/SlideUpTransition'
+import { SlideUpTransition } from '@/components/SlideUpTransition'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { getImageSize } from '@/utils/getImageSize'
@@ -389,7 +389,7 @@ const Uploader = NiceModal.create(
       <Dialog
         fullWidth
         fullScreen={fullScreen}
-        TransitionComponent={DefaultDialogTransition}
+        TransitionComponent={SlideUpTransition}
         {...muiDialogV5(modal)}
         onClose={() => {
           modal.resolve(fileInfos.filter((info) => info.status === 'succeed'))
