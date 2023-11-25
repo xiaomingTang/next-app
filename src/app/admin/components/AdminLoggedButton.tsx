@@ -3,6 +3,7 @@ import { useLoading } from '@/hooks/useLoading'
 import { SvgLoading } from '@/svg'
 import { useUser } from '@/user'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
+import { useInjectHistory } from '@/hooks/useInjectHistory'
 
 import PersonIcon from '@mui/icons-material/Person'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
@@ -24,6 +25,8 @@ export function AdminLoggedButton() {
   const handleClose = () => {
     setAnchorEl(null)
   }
+
+  useInjectHistory(!!anchorEl, handleClose)
 
   if (!user.id) {
     return <></>
@@ -60,7 +63,9 @@ export function AdminLoggedButton() {
             if (reason === 'middleClick') {
               window.open('/', '_blank')
             } else {
-              router.push('/')
+              window.setTimeout(() => {
+                router.push('/')
+              }, 100)
             }
           })}
         >

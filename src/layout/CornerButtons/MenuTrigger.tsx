@@ -1,5 +1,6 @@
 import { cardList } from './CardsTrigger'
 
+import { InjectHistory } from '@/hooks/useInjectHistory'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 
@@ -27,6 +28,12 @@ export function MenuTrigger() {
     <AnchorProvider>
       {(anchorEl, setAnchorEl) => (
         <>
+          <InjectHistory
+            open={!!anchorEl}
+            onPopState={() => {
+              setAnchorEl(null)
+            }}
+          />
           <IconButton
             aria-label='更多菜单'
             aria-controls={anchorEl ? 'header-more-menu' : undefined}
@@ -56,7 +63,9 @@ export function MenuTrigger() {
                   if (reason === 'middleClick') {
                     window.open(pathname, '_blank')
                   } else {
-                    router.push(pathname)
+                    window.setTimeout(() => {
+                      router.push(pathname)
+                    }, 100)
                   }
                 })}
               >

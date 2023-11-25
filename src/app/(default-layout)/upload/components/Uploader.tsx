@@ -12,7 +12,7 @@ import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
 import { AnchorProvider } from '@/components/AnchorProvider'
-import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { InjectHistory, useInjectHistory } from '@/hooks/useInjectHistory'
 import { getImageSize } from '@/utils/getImageSize'
 import { useUser } from '@/user'
 
@@ -240,6 +240,12 @@ const Uploader = NiceModal.create(
       <AnchorProvider>
         {(anchorEl, setAnchorEl) => (
           <>
+            <InjectHistory
+              open={!!anchorEl}
+              onPopState={() => {
+                setAnchorEl(null)
+              }}
+            />
             <IconButton
               edge='start'
               aria-label='设置'

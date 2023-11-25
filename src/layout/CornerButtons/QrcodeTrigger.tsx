@@ -2,6 +2,7 @@
 
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
+import { InjectHistory } from '@/hooks/useInjectHistory'
 
 import QrCodeIcon from '@mui/icons-material/QrCode'
 import FilterCenterFocusIcon from '@mui/icons-material/FilterCenterFocus'
@@ -37,6 +38,12 @@ export function QrcodeTrigger() {
     <AnchorProvider>
       {(anchorEl, setAnchorEl) => (
         <>
+          <InjectHistory
+            open={!!anchorEl}
+            onPopState={() => {
+              setAnchorEl(null)
+            }}
+          />
           <IconButton
             aria-label='二维码菜单'
             aria-controls={anchorEl ? 'header-qrcode-menu' : undefined}
@@ -64,7 +71,9 @@ export function QrcodeTrigger() {
                 if (reason === 'middleClick') {
                   window.open(paths.scanner, '_blank')
                 } else {
-                  router.push(paths.scanner)
+                  window.setTimeout(() => {
+                    router.push(paths.scanner)
+                  }, 100)
                 }
               })}
             >
@@ -83,7 +92,9 @@ export function QrcodeTrigger() {
                 if (reason === 'middleClick') {
                   window.open(paths.generator, '_blank')
                 } else {
-                  router.push(paths.generator)
+                  window.setTimeout(() => {
+                    router.push(paths.generator)
+                  }, 100)
                 }
               })}
             >

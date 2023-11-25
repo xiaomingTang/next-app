@@ -103,3 +103,15 @@ export function useInjectHistory(
     }
   })
 }
+
+export function InjectHistory({
+  open,
+  onPopState,
+}: {
+  open: boolean
+  onPopState: (e: PopStateEvent) => void | Promise<void>
+}) {
+  useInjectHistory(open, onPopState)
+
+  return <></>
+}
