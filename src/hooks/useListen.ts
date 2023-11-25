@@ -1,4 +1,5 @@
-import { useRef, useEffect } from 'react'
+import useEnhancedEffect from '@mui/material/utils/useEnhancedEffect'
+import { useRef } from 'react'
 
 /**
  * @example
@@ -19,9 +20,12 @@ export function useListen<T>(
 ) {
   const prevRef = useRef(value)
   const callbackRef = useRef(callback)
-  callbackRef.current = callback
 
-  useEffect(() => {
+  useEnhancedEffect(() => {
+    callbackRef.current = callback
+  })
+
+  useEnhancedEffect(() => {
     // useEffect 在 dev 环境会执行 2 遍, 此处避免该行为造成的影响
     if (value === prevRef.current) {
       return
