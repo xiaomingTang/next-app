@@ -1,15 +1,32 @@
 import { useListen } from './useListen'
 
-import { IndexManager } from '@/utils/IndexManager'
-
 import { useEventCallback } from '@mui/material'
+import { usePathname } from 'next/navigation'
 import { useRef } from 'react'
 import { useEvent } from 'react-use'
 
-let ignoreIdx = -1
-// 这个 manager 既非 stack, 也非 queue,
-// 叫 stack 只是随便叫的
-const stack = new IndexManager()
+class stack {
+  static list: number[] = []
+
+  static get latest() {
+    return Math.max(...this.list, 0)
+  }
+
+  static push() {
+    const latest = this.latest + 1
+    this.list.push(latest)
+    window.history.pushState(null, '', window.location.href)
+    return latest
+  }
+
+  static drop(n: number) {
+    this.list = this.list.filter((i) => i !== n)
+  }
+
+  static locked = false
+
+  static invalidStackIndex = 0
+}
 
 /**
  * 该 hook 可用于任何需要物理返回键的地方;
@@ -23,53 +40,66 @@ export function useInjectHistory(
   /**
    * 如果需要在用户物理返回时关闭弹窗, 就在该方法中手动调用 modal.hide();
    * 如果拒绝关闭弹窗, 就别 hide() 并 throw Error;
+   * !!! 如果不 hide(), 就必须 throw Error;
    */
   onPopState: (e: PopStateEvent) => void | Promise<void>
 ) {
   // 弹窗维护各自的 index
-  const IndexRef = useRef(-1)
+  const IndexRef = useRef(0)
+  const pathname = usePathname()
+
+  useListen(pathname, (_, prev) => {
+    if (prev) {
+      stack.invalidStackIndex = stack.latest
+    }
+  })
 
   const finalOnPopState = useEventCallback(async (e: PopStateEvent) => {
     // 轮到我了吗? 没轮到就返回
     if (IndexRef.current !== stack.latest) {
       return
     }
-    // 是上一个弹窗关闭而触发的 popstate 吗? 是就返回;
-    // (并且把 ignoreIdx 标志位清掉, 使得下次 popstate 能正常生效)
-    if (IndexRef.current === ignoreIdx) {
-      ignoreIdx = -1
+    // 我是最新的, 我就得负责解锁 (不管我自己关没关掉)
+    if (stack.locked) {
+      stack.locked = false
       return
     }
-    // 必须要立即 drop 掉
-    stack.drop(IndexRef.current)
+    // 不关我的事, 我已经关掉了
+    if (!open) {
+      return
+    }
+    stack.locked = true
     try {
       await onPopState(e)
     } catch (error) {
-      // 抛错时, 恢复 stack
-      stack.push(IndexRef.current)
-      window.history.pushState(null, '', window.location.href)
+      // 不让关闭, 还原所有状态
+      stack.locked = false
+      IndexRef.current = stack.push()
     }
   })
 
   useEvent('popstate', finalOnPopState)
 
-  useListen(!!open, () => {
+  useListen(open, () => {
     if (open) {
-      // modal index 初始化
-      IndexRef.current = stack.latest + 1
-      stack.push(IndexRef.current)
-      window.history.pushState(null, '', window.location.href)
-    } else {
-      if (stack.has(IndexRef.current)) {
-        // stack 内有该 modal index, 说明是其他地方手动调用 modal.hide, 而非物理返回所触发
-        stack.drop(IndexRef.current)
-        // 此时需要先清理 stack, 然后根据新 stack 设置标志位
-        ignoreIdx = stack.latest
-        // 设置标志位是为了避免下一个 modal 被此处触发的 popstate 关闭
-        window.history.back()
-      }
-      // 不管怎么样, modal close 的时候都需要还原该 modal index
-      IndexRef.current = -1
+      // 初始化
+      IndexRef.current = stack.push()
+      return
+    }
+    // 未初始化
+    if (IndexRef.current <= 0) {
+      return
+    }
+    const tempIndex = IndexRef.current
+    stack.drop(IndexRef.current)
+    IndexRef.current = 0
+    if (stack.locked) {
+      stack.locked = false
+      return
+    }
+    if (tempIndex > stack.invalidStackIndex) {
+      stack.locked = true
+      window.history.back()
     }
   })
 }

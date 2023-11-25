@@ -50,7 +50,6 @@ export const BlogSearchSection = NiceModal.create(() => {
   const [searchText, setSearchText] = useState('')
 
   const pathname = usePathname()
-  const [holdHistory, setHoldHistory] = useState(false)
 
   const googleSearchUrl = useMemo(() => {
     if (!searchText.trim()) {
@@ -62,17 +61,15 @@ export const BlogSearchSection = NiceModal.create(() => {
     return url.href
   }, [searchText])
 
+  // pathname 改变的时候关闭弹窗
   useListen(pathname, (_, prev) => {
     if (prev) {
-      // 守护 history stack, 避免关闭弹窗触发 history.back
-      setHoldHistory(true)
-      // 到下一页了就关闭弹窗
       modal.hide()
     }
   })
 
   // 守护 history stack, 避免关闭弹窗触发 history.back
-  useInjectHistory(modal.visible || holdHistory, () => {
+  useInjectHistory(modal.visible, () => {
     modal.hide()
   })
 
