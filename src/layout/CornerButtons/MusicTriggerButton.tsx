@@ -14,6 +14,7 @@ export function MusicTriggerButton() {
   return (
     <IconButton
       aria-label='音乐开关'
+      disabled={globalThis.mp3s.length === 0}
       onClick={() => {
         if (state.paused) {
           controls.play()
