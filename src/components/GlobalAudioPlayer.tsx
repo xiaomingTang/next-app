@@ -5,7 +5,7 @@ import { useListen } from '@/hooks/useListen'
 
 import { create } from 'zustand'
 import { useAudio as useReactUseAudio } from 'react-use'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import type { CustomMP3 } from '@prisma/client'
 
@@ -16,7 +16,8 @@ export const useAudio = create<{
   audio: UseAudioRet[0]
   state: UseAudioRet[1]
   controls: UseAudioRet[2] & {
-    switch: (mp3: CustomMP3) => void
+    switchTo: (mp3: CustomMP3) => void
+    switchToIndex: (n: number) => void
     next: () => void
     prev: () => void
   }
@@ -40,7 +41,8 @@ export const useAudio = create<{
     volume: () => undefined,
     mute: () => undefined,
     unmute: () => undefined,
-    switch: () => undefined,
+    switchTo: () => undefined,
+    switchToIndex: () => undefined,
     next: () => undefined,
     prev: () => undefined,
   },
@@ -71,9 +73,18 @@ export function GlobalAudioPlayer() {
     useAudio.setState({
       controls: {
         ...controls,
-        switch: (mp3) => {
+        switchTo: (mp3) => {
           useAudio.setState({
             activeMp3: mp3,
+          })
+        },
+        switchToIndex: (n) => {
+          const { mp3s } = globalThis
+          if (mp3s.length === 0) {
+            return
+          }
+          useAudio.setState({
+            activeMp3: mp3s[n % mp3s.length],
           })
         },
         next: () => {
@@ -111,6 +122,10 @@ export function GlobalAudioPlayer() {
   useListen(loading, () => {
     useAudio.setState({ loading })
   })
+
+  useEffect(() => {
+    useAudio.getState().controls.switchToIndex(0)
+  }, [])
 
   return <>{audio}</>
 }
