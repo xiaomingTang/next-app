@@ -8,11 +8,11 @@ export default function DefaultLayoutTsx({
   children: React.ReactNode
 }) {
   return (
-    <>
-      <GA />
-      <DefaultLayout>
-        <DefaultBodyContainer>{children}</DefaultBodyContainer>
-      </DefaultLayout>
-    </>
+    <DefaultLayout>
+      <DefaultBodyContainer>
+        <GA />
+        {children}
+      </DefaultBodyContainer>
+    </DefaultLayout>
   )
 }
