@@ -4,6 +4,7 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import FeedIcon from '@mui/icons-material/Feed'
 import SellIcon from '@mui/icons-material/Sell'
 import LinkIcon from '@mui/icons-material/Link'
+import MusicNoteIcon from '@mui/icons-material/MusicNote'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
@@ -33,6 +34,11 @@ export const menuList: NestedMenu[] = [
     name: '短链管理',
     path: '/admin/shortUrl',
     icon: <LinkIcon />,
+  },
+  {
+    name: '歌曲管理',
+    path: '/admin/customMP3',
+    icon: <MusicNoteIcon />,
   },
 ]
 

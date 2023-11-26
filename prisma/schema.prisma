@@ -135,3 +135,12 @@ model Comment {
   name      String   @default("匿名用户")
   content   String   @db.Text()
 }
+
+model CustomMP3 {
+  hash      String   @id
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  mp3       String   @db.VarChar(200)
+  lrc       String   @default("") @db.VarChar(200)
+}
