@@ -37,7 +37,7 @@ async function filterBlogWithAuth<
   B extends {
     type: BlogType
     creator: Pick<User, 'id'>
-  }
+  },
 >(blog?: B | null) {
   if (!blog) {
     throw Boom.notFound('该博客不存在或已删除')
@@ -56,7 +56,7 @@ async function filterBlogsWithAuth<
   B extends {
     type: BlogType
     creator: Pick<User, 'id'>
-  }
+  },
 >(blogs: (B | null | undefined)[]) {
   const self = await getSelf().catch(noop)
   return blogs.filter((b) => {
