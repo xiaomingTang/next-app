@@ -8,6 +8,7 @@ import Providers from '@/common/providers'
 import { seo } from '@/utils/seo'
 import { VConsole } from '@/components/VConsole'
 import { GlobalAudioPlayer } from '@/components/GlobalAudioPlayer'
+import { ServerProvider } from '@/common/providers/ServerProvider'
 
 import type { Metadata, Viewport } from 'next'
 
@@ -59,10 +60,12 @@ export default function RootLayout({
         <script src='/__ENV_CONFIG__.js' />
         <GetInitColorSchemeScript />
         <Providers>
-          <GlobalAudioPlayer />
-          <Polyfills />
-          <Contexts />
-          {children}
+          <ServerProvider>
+            <GlobalAudioPlayer />
+            <Polyfills />
+            <Contexts />
+            {children}
+          </ServerProvider>
         </Providers>
       </body>
     </html>
