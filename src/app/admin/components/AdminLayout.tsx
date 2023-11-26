@@ -8,6 +8,7 @@ import { NestedListItem } from '../menu'
 import { ThemeToggleButton } from '@/layout/CornerButtons/ThemeToggleButton'
 import { AuthRequired } from '@/components/AuthRequired'
 import { seo } from '@/utils/seo'
+import { MusicTriggerButton } from '@/layout/CornerButtons/MusicTriggerButton'
 
 import MenuIcon from '@mui/icons-material/Menu'
 import {
@@ -85,6 +86,7 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
             </Typography>
             <AdminLoggedButton />
             <ThemeToggleButton />
+            <MusicTriggerButton />
           </Toolbar>
         </AppBar>
       </Slide>
