@@ -16,6 +16,7 @@ export const useAudio = create<{
   audio: UseAudioRet[0]
   state: UseAudioRet[1]
   controls: UseAudioRet[2] & {
+    togglePlay: () => Promise<void>
     switchTo: (mp3: CustomMP3) => void
     switchToIndex: (n: number) => void
     next: () => void
@@ -41,6 +42,7 @@ export const useAudio = create<{
     volume: () => undefined,
     mute: () => undefined,
     unmute: () => undefined,
+    togglePlay: async () => undefined,
     switchTo: () => undefined,
     switchToIndex: () => undefined,
     next: () => undefined,
@@ -73,6 +75,14 @@ export function GlobalAudioPlayer() {
     useAudio.setState({
       controls: {
         ...controls,
+        togglePlay: async () => {
+          const { state: audioState, controls: audioControls } =
+            useAudio.getState()
+          if (audioState.paused) {
+            return audioControls.play()
+          }
+          return audioControls.pause()
+        },
         switchTo: (mp3) => {
           useAudio.setState({
             activeMp3: mp3,
