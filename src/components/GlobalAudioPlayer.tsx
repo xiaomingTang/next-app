@@ -6,6 +6,7 @@ import { useListen } from '@/hooks/useListen'
 import { create } from 'zustand'
 import { useAudio as useReactUseAudio } from 'react-use'
 import { useEffect, useMemo } from 'react'
+import { noop } from 'lodash-es'
 
 import type { CustomMP3 } from '@prisma/client'
 
@@ -58,7 +59,6 @@ export function GlobalAudioPlayer() {
   const props: Parameters<typeof useReactUseAudio>[0] = useMemo(
     () => ({
       src: activeMp3?.mp3 ?? '',
-      loop: true,
     }),
     [activeMp3]
   )
@@ -136,6 +136,28 @@ export function GlobalAudioPlayer() {
   useEffect(() => {
     useAudio.getState().controls.switchToIndex(0)
   }, [])
+
+  useEffect(() => {
+    const audioElem = ref.current
+    if (!audioElem) {
+      return noop
+    }
+    const handleEnded = () => {
+      const { controls: audioControls } = useAudio.getState()
+      audioControls.next()
+      window.setTimeout(() => {
+        audioControls.play()
+      }, 0)
+    }
+
+    // 添加 ended 事件监听
+    audioElem.addEventListener('ended', handleEnded)
+
+    // 在组件卸载时清除事件监听
+    return () => {
+      audioElem.removeEventListener('ended', handleEnded)
+    }
+  }, [ref])
 
   return <>{audio}</>
 }
