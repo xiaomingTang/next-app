@@ -9,6 +9,7 @@ import { seo } from '@/utils/seo'
 import { VConsole } from '@/components/VConsole'
 import { GlobalAudioPlayer } from '@/components/GlobalAudioPlayer'
 import { ServerProvider } from '@/common/providers/ServerProvider'
+import { LyricsViewer } from '@/components/LyricsViewer'
 
 import type { Metadata, Viewport } from 'next'
 
@@ -62,6 +63,7 @@ export default function RootLayout({
         <Providers>
           <ServerProvider>
             <GlobalAudioPlayer />
+            <LyricsViewer />
             <Polyfills />
             <Contexts />
             {children}

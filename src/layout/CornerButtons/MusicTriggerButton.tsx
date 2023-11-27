@@ -3,24 +3,24 @@
 import styles from './MusicTriggerButton.module.scss'
 
 import { useAudio } from '@/components/GlobalAudioPlayer'
+import { useLyricsViewer } from '@/components/LyricsViewer/context'
 
 import { IconButton } from '@mui/material'
 import MusicNoteIcon from '@mui/icons-material/MusicNote'
 import clsx from 'clsx'
 
 export function MusicTriggerButton() {
-  const { state, controls, loading } = useAudio()
+  const { state, loading } = useAudio()
 
   return (
     <IconButton
       aria-label='音乐开关'
       disabled={globalThis.mp3s.length === 0}
       onClick={() => {
-        if (state.paused) {
-          controls.play()
-        } else {
-          controls.pause()
-        }
+        useLyricsViewer.toggleVisible()
+        window.setTimeout(() => {
+          useAudio.getState().controls.play()
+        }, 0)
       }}
     >
       <svg width={0} height={0}>
