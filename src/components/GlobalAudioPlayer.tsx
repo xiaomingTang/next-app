@@ -134,10 +134,6 @@ export function GlobalAudioPlayer() {
   })
 
   useEffect(() => {
-    useAudio.getState().controls.switchToIndex(0)
-  }, [])
-
-  useEffect(() => {
     const audioElem = ref.current
     if (!audioElem) {
       return noop
