@@ -26,22 +26,22 @@ import { common } from '@mui/material/colors'
 
 export function LyricsViewer() {
   const theme = useTheme()
-  const { controls, state, activeMp3 } = useAudio()
+  const { controls, state, activeMP3 } = useAudio()
   const visible = useLyricsViewer((s) => s.visible)
   const [isBeforeInit, setIsBeforeInit] = useState(true)
   const {
     data: lyricsString = '',
     error: lyricsError,
     isValidating: lyricsLoading,
-  } = useSWR<string, Error>(['lrc', activeMp3?.lrc, isBeforeInit], async () => {
+  } = useSWR<string, Error>(['lrc', activeMP3?.lrc, isBeforeInit], async () => {
     // 从没打开过歌词的，不加载歌词
     if (isBeforeInit) {
       return ''
     }
-    if (!activeMp3?.lrc) {
+    if (!activeMP3?.lrc) {
       throw new Error('没有歌词')
     }
-    return fetch(activeMp3.lrc)
+    return fetch(activeMP3.lrc)
       .then((res) => res.text())
       .catch(() => {
         throw new Error('网络错误，请稍后重试')
@@ -55,27 +55,27 @@ export function LyricsViewer() {
   })
 
   const text = useMemo(() => {
-    if (!activeMp3) {
+    if (!activeMP3) {
       return '-'
     }
     if (lyricsLoading) {
-      return `${activeMp3.name} - [加载中]`
+      return `${activeMP3.name} - [加载中]`
     }
     if (lyricsError) {
-      return `${activeMp3.name} - [${lyricsError.message || '未知错误'}]`
+      return `${activeMP3.name} - [${lyricsError.message || '未知错误'}]`
     }
     if (lyrics.lrcData.length === 0) {
-      return `${activeMp3.name} - [没有歌词]`
+      return `${activeMP3.name} - [没有歌词]`
     }
     // 保证歌曲标题至少展示 1.5s
     if (state.time < 1.5) {
-      return activeMp3.name
+      return activeMP3.name
     }
     return (
       lyrics.lrcData.toReversed().find((item) => item.timestamp <= state.time)
-        ?.text ?? activeMp3.name
+        ?.text ?? activeMP3.name
     )
-  }, [activeMp3, lyrics, lyricsError, lyricsLoading, state.time])
+  }, [activeMP3, lyrics, lyricsError, lyricsLoading, state.time])
 
   if (mp3s.length === 0) {
     return <></>

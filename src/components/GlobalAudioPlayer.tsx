@@ -13,7 +13,7 @@ import type { CustomMP3 } from '@prisma/client'
 type UseAudioRet = ReturnType<typeof useReactUseAudio>
 
 export const useAudio = create<{
-  activeMp3?: CustomMP3
+  activeMP3?: CustomMP3
   audio: UseAudioRet[0]
   state: UseAudioRet[1]
   controls: UseAudioRet[2] & {
@@ -55,12 +55,12 @@ export const useAudio = create<{
 
 export function GlobalAudioPlayer() {
   const { loading, setMedia } = useMediaLoading()
-  const activeMp3 = useAudio((state) => state.activeMp3)
+  const activeMP3 = useAudio((state) => state.activeMP3)
   const props: Parameters<typeof useReactUseAudio>[0] = useMemo(
     () => ({
-      src: activeMp3?.mp3 ?? '',
+      src: activeMP3?.mp3 ?? '',
     }),
-    [activeMp3]
+    [activeMP3]
   )
 
   const [audio, state, controls, ref] = useReactUseAudio(props)
@@ -85,7 +85,7 @@ export function GlobalAudioPlayer() {
         },
         switchTo: (mp3) => {
           useAudio.setState({
-            activeMp3: mp3,
+            activeMP3: mp3,
           })
         },
         switchToIndex: (n) => {
@@ -94,7 +94,7 @@ export function GlobalAudioPlayer() {
             return
           }
           useAudio.setState({
-            activeMp3: mp3s[n % mp3s.length],
+            activeMP3: mp3s[n % mp3s.length],
           })
         },
         next: () => {
@@ -103,10 +103,10 @@ export function GlobalAudioPlayer() {
             return
           }
           const activeIndex = mp3s.findIndex(
-            (item) => item.hash === activeMp3?.hash
+            (item) => item.hash === activeMP3?.hash
           )
           useAudio.setState({
-            activeMp3: mp3s[(activeIndex + 1 + mp3s.length) % mp3s.length],
+            activeMP3: mp3s[(activeIndex + 1 + mp3s.length) % mp3s.length],
           })
         },
         prev: () => {
@@ -115,10 +115,10 @@ export function GlobalAudioPlayer() {
             return
           }
           const activeIndex = mp3s.findIndex(
-            (item) => item.hash === activeMp3?.hash
+            (item) => item.hash === activeMP3?.hash
           )
           useAudio.setState({
-            activeMp3: mp3s[(activeIndex - 1 + mp3s.length) % mp3s.length],
+            activeMP3: mp3s[(activeIndex - 1 + mp3s.length) % mp3s.length],
           })
         },
       },
