@@ -5,6 +5,8 @@ import { saveMP3 } from '../server'
 import { useLoading } from '@/hooks/useLoading'
 import { SA } from '@/errors/utils'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { upload } from '@D/upload/components/Uploader'
+import { cat } from '@/errors/catchAndToast'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
@@ -12,13 +14,19 @@ import {
   AppBar,
   Dialog,
   DialogContent,
+  FormControl,
+  FormHelperText,
   IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
   TextField,
   Toolbar,
   Typography,
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
+import UploadIcon from '@mui/icons-material/Upload'
 
 import type { CustomMP3 } from '@prisma/client'
 import type { PickAndPartial } from '@/utils/type'
@@ -43,9 +51,12 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
     modal.hide()
   })
   const [loading, withLoading] = useLoading()
-  const { handleSubmit, control, setError } = useForm<
-    Pick<CustomMP3, 'hash' | 'name' | 'mp3' | 'lrc'>
-  >({
+  const {
+    handleSubmit,
+    control,
+    setError,
+    setValue: setFormValue,
+  } = useForm<Pick<CustomMP3, 'hash' | 'name' | 'mp3' | 'lrc'>>({
     defaultValues: mp3,
   })
 
@@ -123,19 +134,10 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
               },
             }}
           />
+
           <Controller
             name='mp3'
             control={control}
-            render={({ field, fieldState: { error } }) => (
-              <TextField
-                {...field}
-                autoFocus
-                size='small'
-                label='mp3'
-                helperText={error?.message ?? ' '}
-                error={!!error}
-              />
-            )}
             rules={{
               required: {
                 value: true,
@@ -146,26 +148,77 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
                 message: '无效 url',
               },
             }}
+            render={({ field, fieldState: { error } }) => (
+              <FormControl size='small'>
+                <InputLabel>mp3</InputLabel>
+                <OutlinedInput
+                  {...field}
+                  label='mp3'
+                  size='small'
+                  endAdornment={
+                    <InputAdornment position='end'>
+                      <IconButton
+                        className='text-primary-main'
+                        aria-label='上传'
+                        onClick={cat(async () => {
+                          const [fileInfo] = await upload([], {
+                            accept: 'audio/*',
+                          })
+                          const url = fileInfo?.url
+                          if (url) {
+                            setFormValue('mp3', url)
+                          }
+                        })}
+                      >
+                        <UploadIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                <FormHelperText>{error?.message ?? ' '}</FormHelperText>
+              </FormControl>
+            )}
           />
+
           <Controller
             name='lrc'
             control={control}
-            render={({ field, fieldState: { error } }) => (
-              <TextField
-                {...field}
-                autoFocus
-                size='small'
-                label='lrc'
-                helperText={error?.message ?? ' '}
-                error={!!error}
-              />
-            )}
             rules={{
               pattern: {
                 value: /^(http|ws)s?:\/\/.+\..+$/,
                 message: '无效 url',
               },
             }}
+            render={({ field, fieldState: { error } }) => (
+              <FormControl size='small'>
+                <InputLabel>lrc</InputLabel>
+                <OutlinedInput
+                  {...field}
+                  label='lrc'
+                  size='small'
+                  endAdornment={
+                    <InputAdornment position='end'>
+                      <IconButton
+                        className='text-primary-main'
+                        aria-label='上传'
+                        onClick={cat(async () => {
+                          const [fileInfo] = await upload([], {
+                            accept: '.lrc',
+                          })
+                          const url = fileInfo?.url
+                          if (url) {
+                            setFormValue('lrc', url)
+                          }
+                        })}
+                      >
+                        <UploadIcon />
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+                <FormHelperText>{error?.message ?? ' '}</FormHelperText>
+              </FormControl>
+            )}
           />
           <LoadingButton loading={loading} variant='contained' type='submit'>
             提交
