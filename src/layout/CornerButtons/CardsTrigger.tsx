@@ -1,5 +1,4 @@
 import { AnchorProvider } from '@/components/AnchorProvider'
-import { InjectHistory } from '@/hooks/useInjectHistory'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 
 import ListIcon from '@mui/icons-material/ArrowDropDown'
@@ -20,12 +19,6 @@ export function CardsTrigger() {
     <AnchorProvider>
       {(anchorEl, setAnchorEl) => (
         <>
-          <InjectHistory
-            open={!!anchorEl}
-            onPopState={() => {
-              setAnchorEl(null)
-            }}
-          />
           <Button
             variant='text'
             color='inherit'
@@ -61,9 +54,7 @@ export function CardsTrigger() {
                   if (reason === 'middleClick') {
                     window.open(pathname, '_blank')
                   } else {
-                    window.setTimeout(() => {
-                      router.push(pathname)
-                    }, 100)
+                    router.push(pathname)
                   }
                 })}
               >

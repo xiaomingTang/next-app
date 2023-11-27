@@ -14,7 +14,6 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useInjectHistory } from '@/hooks/useInjectHistory'
 
 function LoggedButton() {
   const user = useUser()
@@ -31,8 +30,6 @@ function LoggedButton() {
   const handleClose = () => {
     setAnchorEl(null)
   }
-
-  useInjectHistory(!!anchorEl, handleClose)
 
   if (!user.id) {
     return <></>
@@ -72,9 +69,7 @@ function LoggedButton() {
             if (reason === 'middleClick') {
               window.open('/admin', '_blank')
             } else {
-              window.setTimeout(() => {
-                router.push('/admin')
-              }, 100)
+              router.push('/admin')
             }
           })}
         >
