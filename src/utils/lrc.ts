@@ -51,7 +51,7 @@ interface LRCResult {
 export function parseLRC(lrcText: string): LRCResult {
   const lines = lrcText.split('\n')
   const lrcData: LRCEntry[] = []
-  // 默认偏移为0
+  // 默认偏移为0 (注意 offset 单位是 ms)
   let offset = 0
   const metadata: LRCMetadata = {}
 
@@ -64,9 +64,8 @@ export function parseLRC(lrcText: string): LRCResult {
 
       // 处理 offset 元数据
       if (key === 'offset') {
-        const [minutes, seconds] = value.split(':').map(parseFloat)
         // [offset:+/- 表示整体时间戳调整，以毫秒为单位，+ 向上调整时间，- 向下调整时间，即正值使歌词更早出现，负值使其更晚出现]
-        offset = minutes * 60 + seconds
+        offset = parseFloat(value)
       }
 
       metadata[key as keyof LRCMetadata] = value
@@ -76,7 +75,7 @@ export function parseLRC(lrcText: string): LRCResult {
         const time = match[1]
         const text = match[2].trim()
         const [minutes, seconds] = time.split(':').map(parseFloat)
-        const timestamp: number = minutes * 60 + seconds - offset
+        const timestamp: number = minutes * 60 + seconds - offset / 1000
         lrcData.push({ timestamp, text })
       }
     }
