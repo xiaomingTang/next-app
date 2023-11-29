@@ -9,6 +9,7 @@ import { unstable_cache } from 'next/cache'
 import RSS from 'rss'
 
 export async function GET() {
+  console.log('--- rss.xms ---')
   // 跳过 build 阶段
   if (process.env.npm_lifecycle_event === 'build') {
     // 啥也不干, 只是为了避免 sitemap 变成纯静态文件
