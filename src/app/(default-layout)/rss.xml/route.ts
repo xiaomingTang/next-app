@@ -2,11 +2,29 @@ import { SA } from '@/errors/utils'
 import { seo } from '@/utils/seo'
 import { resolvePath } from '@/utils/url'
 import { getTags } from '@ADMIN/tag/server'
-import { getBlogs } from '@ADMIN/blog/server'
+import { prisma } from '@/request/prisma'
 
+import showdown from 'showdown'
 import { headers } from 'next/headers'
 import { unstable_cache } from 'next/cache'
 import RSS from 'rss'
+
+const blogSelect = {
+  hash: true,
+  type: true,
+  createdAt: true,
+  updatedAt: true,
+  title: true,
+  content: true,
+  description: true,
+  tags: {
+    select: {
+      hash: true,
+      name: true,
+      description: true,
+    },
+  },
+}
 
 export async function GET() {
   console.log('--- rss.xms ---')
@@ -30,17 +48,22 @@ export async function GET() {
 
     return new Response(feed.xml())
   }
-  const allBlogs = await unstable_cache(
-    () =>
-      getBlogs({
-        type: 'PUBLISHED',
-      }),
-    ['getBlogs', 'PUBLISHED'],
-    {
-      revalidate: 3600,
-      tags: ['getBlogs'],
-    }
-  )().then(SA.decode)
+
+  // getBlogs 方法需要 admin 权限, 所以这里直接 prisma 取了
+  const allBlogs = await prisma.blog.findMany({
+    where: { type: 'PUBLISHED' },
+    select: blogSelect,
+    orderBy: [
+      {
+        creatorId: 'desc',
+      },
+      {
+        updatedAt: 'desc',
+      },
+    ],
+  })
+
+  const converter = new showdown.Converter()
 
   const allTags = await unstable_cache(() => getTags({}), ['getTags'], {
     revalidate: 3600,
@@ -60,7 +83,7 @@ export async function GET() {
     },
     allBlogs.map((blog) => ({
       title: blog.title,
-      description: blog.description,
+      description: converter.makeHtml(blog.content),
       date: blog.updatedAt,
       url: resolvePath(`/blog/${blog.hash}`).href,
       categories: blog.tags.map((tag) => tag.name),
