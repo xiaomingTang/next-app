@@ -35,13 +35,20 @@ export function FileUploadCatcher() {
 
   // 监听文件拖拽
   useEffect(() => {
+    if (!user.id) {
+      return noop
+    }
     const dndElement = document.documentElement
-    const dragHandler = (e: DragEvent, cb: (files: FileList) => void) => {
-      const files = e.dataTransfer?.files
-      if (files) {
-        e.preventDefault()
-        cb(files)
+    const dragHandler = (e: DragEvent, cb: (files: File[]) => void) => {
+      if (!e.dataTransfer) {
+        return
       }
+      const { types } = e.dataTransfer
+      if (types.filter((type) => type === 'Files').length === 0) {
+        return
+      }
+      e.preventDefault()
+      cb([...e.dataTransfer.files])
     }
     const onDragenter = (e: DragEvent) => {
       dragHandler(e, () => {
@@ -61,7 +68,10 @@ export function FileUploadCatcher() {
     const onDrop = (e: DragEvent) => {
       dragHandler(e, (files) => {
         setDragging(false)
-        upload([...files])
+        const availableFiles = files.filter((f) => f.size > 0)
+        if (availableFiles.length > 0) {
+          upload(availableFiles)
+        }
       })
     }
 
@@ -76,7 +86,7 @@ export function FileUploadCatcher() {
       dndElement.addEventListener('dragleave', onDragleave)
       dndElement.addEventListener('drop', onDrop)
     }
-  }, [])
+  }, [user.id])
 
   return (
     <Fade in={dragging}>
