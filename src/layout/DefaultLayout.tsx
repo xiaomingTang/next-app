@@ -1,6 +1,6 @@
 import { DefaultFooter } from './DefaultFooter'
 import { DefaultHeader } from './DefaultHeader'
-import { FilePasteCatcher } from './components/FilePasteCatcher'
+import { FileUploadCatcher } from './components/FileUploadCatcher'
 
 export default function DefaultLayout({
   children,
@@ -9,7 +9,7 @@ export default function DefaultLayout({
 }) {
   return (
     <>
-      <FilePasteCatcher />
+      <FileUploadCatcher />
       <DefaultHeader />
       {children}
       <DefaultFooter />

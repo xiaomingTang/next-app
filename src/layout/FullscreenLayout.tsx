@@ -1,5 +1,5 @@
 import { DefaultRawHeader } from './DefaultHeader'
-import { FilePasteCatcher } from './components/FilePasteCatcher'
+import { FileUploadCatcher } from './components/FileUploadCatcher'
 
 /**
  * you should import FullscreenLayout.css in page.tsx
@@ -11,7 +11,7 @@ export default function FullscreenLayout({
 }) {
   return (
     <>
-      <FilePasteCatcher />
+      <FileUploadCatcher />
       <DefaultRawHeader />
       {children}
     </>

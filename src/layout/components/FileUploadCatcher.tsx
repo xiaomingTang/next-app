@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import { Box, Fade, Typography, alpha } from '@mui/material'
 import { common } from '@mui/material/colors'
 
-export function FilePasteCatcher() {
+export function FileUploadCatcher() {
   const user = useUser()
   const [dragging, setDragging] = useState(false)
 
