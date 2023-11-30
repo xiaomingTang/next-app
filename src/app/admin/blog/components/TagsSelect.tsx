@@ -63,7 +63,17 @@ function RawMultiSelect<T extends string | number>(
           />
         ))
       }
-      renderInput={(params) => <TextField {...params} {...restProps} />}
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          {...restProps}
+          inputProps={{
+            ...params.inputProps,
+            enterKeyHint: 'enter',
+            ...restProps.inputProps,
+          }}
+        />
+      )}
       onChange={(e, _selectedList) => {
         onChange?.(_selectedList.map(({ value }) => value))
       }}
