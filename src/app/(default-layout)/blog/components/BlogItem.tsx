@@ -143,7 +143,14 @@ export function BlogItem({ sx, selected, ...blog }: BlogItemProps) {
       <Stack direction='column' spacing={1} sx={{ width: '100%' }} aria-hidden>
         <BlogTitle {...blog} />
         <BlogDesc {...blog} />
-        <Stack direction='row' alignItems='center' spacing={1} fontSize='0.8em'>
+        <Stack
+          direction='row'
+          alignItems='center'
+          spacing={1}
+          fontSize='0.8em'
+          useFlexGap
+          flexWrap='wrap'
+        >
           <BlogTime {...blog} />
           {(blog.tags ?? []).map((tag) => (
             <Chip key={tag.hash} label={tag.name} />
