@@ -48,6 +48,10 @@ export function LyricsViewer() {
       })
   })
   const lyrics = useMemo(() => parseLRC(lyricsString), [lyricsString])
+  const reversedLrcData = useMemo(
+    () => lyrics.lrcData.slice().reverse(),
+    [lyrics.lrcData]
+  )
   useListen(visible, () => {
     if (visible) {
       setIsBeforeInit(false)
@@ -64,18 +68,19 @@ export function LyricsViewer() {
     if (lyricsError) {
       return `${activeMP3.name} - [${lyricsError.message || '未知错误'}]`
     }
-    if (lyrics.lrcData.length === 0) {
+    if (reversedLrcData.length === 0) {
       return `${activeMP3.name} - [没有歌词]`
     }
     // 保证歌曲标题至少展示 1.5s
     if (state.time < 1.5) {
       return activeMP3.name
     }
+    // 返回 lrcData 中最后一条小于 state.time 的歌词 (所以才用 reversedLrcData)
     return (
-      lyrics.lrcData.toReversed().find((item) => item.timestamp <= state.time)
-        ?.text ?? activeMP3.name
+      reversedLrcData.find((item) => item.timestamp <= state.time)?.text ??
+      activeMP3.name
     )
-  }, [activeMP3, lyrics, lyricsError, lyricsLoading, state.time])
+  }, [activeMP3, reversedLrcData, lyricsError, lyricsLoading, state.time])
 
   if (mp3s.length === 0) {
     return <></>
