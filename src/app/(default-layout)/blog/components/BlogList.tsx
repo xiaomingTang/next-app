@@ -19,8 +19,13 @@ export function BlogList({ blogs, selectedIndex }: BlogListProps) {
   }
   return (
     <Stack direction='column' spacing={2}>
-      {blogs.map((rec, i) => (
-        <BlogItem selected={selectedIndex === i} {...rec} key={rec.hash} />
+      {blogs.map((blog, i) => (
+        <BlogItem
+          selected={selectedIndex === i}
+          {...blog}
+          key={blog.hash}
+          index={blogs.length > 4 && i + 1}
+        />
       ))}
     </Stack>
   )

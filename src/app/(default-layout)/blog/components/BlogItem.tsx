@@ -32,6 +32,10 @@ function boxShadow(size: 'small' | 'medium', color: string) {
 export type BlogItemProps = LoadingAble<Omit<BlogWithTags, 'content'>> & {
   sx?: SxProps<Theme>
   selected?: boolean
+  /**
+   * 用于在 BlogList 过多的时候标记 index
+   */
+  index?: number | false
 }
 
 function BlogTitle(blog: BlogItemProps) {
@@ -40,6 +44,19 @@ function BlogTitle(blog: BlogItemProps) {
   }
   return (
     <Typography component='h2' sx={{ fontWeight: 'bold' }}>
+      {Number.isInteger(blog.index) && (
+        <Typography
+          component='span'
+          sx={{
+            fontWeight: 'normal',
+            fontSize: '0.8em',
+            opacity: 0.6,
+            pointerEvents: 'none',
+          }}
+        >
+          {blog.index}：
+        </Typography>
+      )}
       {blog.title}
     </Typography>
   )
