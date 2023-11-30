@@ -11,6 +11,7 @@ import clsx from 'clsx'
 
 export function MusicTriggerButton() {
   const { state, loading, activeMP3, controls } = useAudio()
+  const { visible: lyricsViewerVisible } = useLyricsViewer()
 
   return (
     <IconButton
@@ -20,10 +21,12 @@ export function MusicTriggerButton() {
         if (!activeMP3) {
           controls.switchToIndex(0)
         }
+        if (!lyricsViewerVisible) {
+          window.setTimeout(() => {
+            controls.play()
+          }, 0)
+        }
         useLyricsViewer.toggleVisible()
-        window.setTimeout(() => {
-          controls.play()
-        }, 0)
       }}
     >
       <svg width={0} height={0}>
