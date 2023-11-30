@@ -1,6 +1,6 @@
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
-import { Autocomplete, Checkbox, TextField } from '@mui/material'
+import { Autocomplete, Checkbox, Chip, TextField } from '@mui/material'
 import { forwardRef } from 'react'
 
 import type { BaseTextFieldProps } from '@mui/material'
@@ -16,7 +16,7 @@ const checkedIcon = <CheckBoxIcon fontSize='small' />
 interface MultiSelectProps<T extends string | number>
   extends BaseTextFieldProps {
   selectList: SelectableProps<T>[]
-  defaultSelectedList?: T[]
+  selectedList: T[]
   onChange?: (selected: T[]) => void
   onNoMatch?: (s: string) => void
 }
@@ -24,7 +24,7 @@ interface MultiSelectProps<T extends string | number>
 function RawMultiSelect<T extends string | number>(
   {
     selectList,
-    defaultSelectedList,
+    selectedList,
     onChange,
     onNoMatch,
     ...restProps
@@ -32,23 +32,20 @@ function RawMultiSelect<T extends string | number>(
   // 不知道 Autocomplete 需要什么 ref, 等需要的时候再改吧
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
-  // MD Autocomplete 自己有 bug, Chip 没加 key,
-  // 导致控制台一直报红色 warning 很烦
   return (
     <Autocomplete
       ref={ref}
       multiple
       size='small'
       options={selectList}
-      defaultValue={selectList.filter((item) =>
-        defaultSelectedList?.includes(item.value)
-      )}
+      value={selectList.filter((item) => selectedList.includes(item.value))}
       disableCloseOnSelect
       getOptionLabel={(option) => option.label}
       isOptionEqualToValue={(option, value) => option.value === value.value}
       renderOption={(props, option, { selected }) => (
         <li {...props} key={option.value}>
           <Checkbox
+            key={option.value}
             icon={icon}
             checkedIcon={checkedIcon}
             style={{ marginRight: 8 }}
@@ -57,9 +54,18 @@ function RawMultiSelect<T extends string | number>(
           {option.label}
         </li>
       )}
+      renderTags={(tagValue, getTagProps) =>
+        tagValue.map((option, index) => (
+          <Chip
+            {...getTagProps({ index })}
+            key={option.value}
+            label={option.label}
+          />
+        ))
+      }
       renderInput={(params) => <TextField {...params} {...restProps} />}
-      onChange={(e, selectedList) => {
-        onChange?.(selectedList.map(({ value }) => value))
+      onChange={(e, _selectedList) => {
+        onChange?.(_selectedList.map(({ value }) => value))
       }}
       onKeyDown={(e) => {
         if (e.key === 'Enter') {

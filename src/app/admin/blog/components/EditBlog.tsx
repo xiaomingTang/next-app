@@ -246,7 +246,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
             <MultiSelect
               {...field}
               label={`标签${addTagLoading ? ' 添加中...' : ''}`}
-              defaultSelectedList={field.value}
+              selectedList={field.value}
               selectList={allTags.map((t) => ({
                 label: t.name,
                 value: t.hash,
