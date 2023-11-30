@@ -37,6 +37,7 @@ export const menuList: NestedMenu[] = [
   },
   {
     name: '歌曲管理',
+    roles: ['ADMIN'],
     path: '/admin/customMP3',
     icon: <MusicNoteIcon />,
   },
