@@ -1,15 +1,14 @@
 'use client'
 
 import { useLyricsViewer } from './context'
+import { useControlsVisible, useHasShown, useLyrics } from './utils'
 
 import { useAudio } from '../GlobalAudioPlayer'
 import { SlideUpTransition } from '../SlideUpTransition'
 
-import { parseLRC } from '@/utils/lrc'
-import { useListen } from '@/hooks/useListen'
-
 import {
   Box,
+  Fade,
   IconButton,
   Stack,
   Typography,
@@ -20,69 +19,31 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious'
 import SkipNextIcon from '@mui/icons-material/SkipNext'
-import useSWR from 'swr'
-import { useMemo, useState } from 'react'
+import { useHoverDirty } from 'react-use'
+import { useRef } from 'react'
 import { common } from '@mui/material/colors'
 
 export function LyricsViewer() {
   const theme = useTheme()
   const { controls, state, activeMP3 } = useAudio()
   const visible = useLyricsViewer((s) => s.visible)
-  const [isBeforeInit, setIsBeforeInit] = useState(true)
+  const hasShown = useHasShown(visible)
+  const controlsRef = useRef(null)
+  const textRef = useRef(null)
+  const isHoveringControls = useHoverDirty(controlsRef)
+  const isHoveringText = useHoverDirty(textRef)
+  const isHovering = isHoveringControls || isHoveringText
+  const controlsVisible = useControlsVisible(visible, isHovering)
+
   const {
-    data: lyricsString = '',
-    error: lyricsError,
-    isValidating: lyricsLoading,
-  } = useSWR<string, Error>(['lrc', activeMP3?.lrc, isBeforeInit], async () => {
-    // 从没打开过歌词的，不加载歌词
-    if (isBeforeInit) {
-      return ''
-    }
-    if (!activeMP3?.lrc) {
-      throw new Error('没有歌词')
-    }
-    return fetch(activeMP3.lrc)
-      .then((res) => res.text())
-      .catch(() => {
-        throw new Error('网络错误，请稍后重试')
-      })
-  })
-  const lyrics = useMemo(() => parseLRC(lyricsString), [lyricsString])
-  const reversedLrcData = useMemo(
-    () => lyrics.lrcData.slice().reverse(),
-    [lyrics.lrcData]
-  )
-  useListen(visible, () => {
-    if (visible) {
-      setIsBeforeInit(false)
-    }
+    activeLyricsItem: { text },
+  } = useLyrics({
+    enabled: hasShown,
+    mp3: activeMP3,
+    playingTime: state.time,
   })
 
-  const text = useMemo(() => {
-    if (!activeMP3) {
-      return '-'
-    }
-    if (lyricsLoading) {
-      return `${activeMP3.name} - [加载中]`
-    }
-    if (lyricsError) {
-      return `${activeMP3.name} - [${lyricsError.message || '未知错误'}]`
-    }
-    if (reversedLrcData.length === 0) {
-      return `${activeMP3.name} - [没有歌词]`
-    }
-    // 保证歌曲标题至少展示 1.5s
-    if (state.time < 1.5) {
-      return activeMP3.name
-    }
-    // 返回 lrcData 中最后一条小于 state.time 的歌词 (所以才用 reversedLrcData)
-    return (
-      reversedLrcData.find((item) => item.timestamp <= state.time)?.text ??
-      activeMP3.name
-    )
-  }, [activeMP3, reversedLrcData, lyricsError, lyricsLoading, state.time])
-
-  if (mp3s.length === 0) {
+  if (globalThis.mp3s.length === 0) {
     return <></>
   }
 
@@ -92,59 +53,77 @@ export function LyricsViewer() {
         sx={{
           position: 'fixed',
           zIndex: theme.zIndex.fab,
-          bottom: '0.5em',
+          bottom: '1em',
           left: '0',
           width: '100%',
           pointerEvents: 'none',
         }}
       >
         <Stack
-          direction='row'
-          spacing={1}
+          direction='column'
+          spacing={2}
           sx={{
-            pointerEvents: 'auto',
             alignItems: 'center',
             width: 'calc(100% - 32px)',
             maxWidth: '500px',
             ml: '50%',
-            pl: 1,
             transform: 'translateX(-50%)',
-            borderRadius: 1,
-            backgroundColor: alpha(common.white, 0.6),
-            backdropFilter: 'blur(8px)',
-            boxShadow: theme.shadows[10],
           }}
         >
+          {/* 控制条 */}
+          <Fade in={controlsVisible}>
+            <Stack
+              direction='row'
+              spacing={1}
+              ref={controlsRef}
+              sx={{
+                borderRadius: 1,
+                backgroundColor: alpha(common.white, 0.5),
+                backdropFilter: 'blur(8px)',
+                boxShadow: theme.shadows[10],
+                pointerEvents: 'auto',
+              }}
+            >
+              <IconButton
+                onClick={() => {
+                  controls.prev()
+                  window.setTimeout(() => {
+                    controls.play()
+                  }, 0)
+                }}
+              >
+                <SkipPreviousIcon />
+              </IconButton>
+              <IconButton onClick={controls.togglePlay}>
+                {state.paused ? <PlayArrowIcon /> : <PauseIcon />}
+              </IconButton>
+              <IconButton
+                onClick={() => {
+                  controls.next()
+                  window.setTimeout(() => {
+                    controls.play()
+                  }, 0)
+                }}
+              >
+                <SkipNextIcon />
+              </IconButton>
+            </Stack>
+          </Fade>
           {/* 标题 / 歌词 */}
-          <Typography flex='1 1 auto' noWrap variant='h3' fontWeight='bold'>
+          <Typography
+            ref={textRef}
+            // noWrap
+            variant='h3'
+            sx={{
+              pointerEvents: 'auto',
+              maxWidth: '100%',
+              fontWeight: 'bold',
+              textAlign: 'center',
+              cursor: 'pointer',
+            }}
+          >
             {text}
           </Typography>
-          {/* 控制 */}
-          <Stack direction='row' spacing={1} flex='0 0 auto'>
-            <IconButton
-              onClick={() => {
-                controls.prev()
-                window.setTimeout(() => {
-                  controls.play()
-                }, 0)
-              }}
-            >
-              <SkipPreviousIcon />
-            </IconButton>
-            <IconButton onClick={controls.togglePlay}>
-              {state.paused ? <PlayArrowIcon /> : <PauseIcon />}
-            </IconButton>
-            <IconButton
-              onClick={() => {
-                controls.next()
-                window.setTimeout(() => {
-                  controls.play()
-                }, 0)
-              }}
-            >
-              <SkipNextIcon />
-            </IconButton>
-          </Stack>
         </Stack>
       </Box>
     </SlideUpTransition>
