@@ -11,11 +11,11 @@ import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
 import { useLoading } from '@/hooks/useLoading'
-import { getTags, saveTag } from '@ADMIN/tag/server'
 import { SlideUpTransition } from '@/components/SlideUpTransition'
 import { UploadTrigger } from '@/layout/CornerButtons/UploadTrigger'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SvgLoading } from '@/svg'
+import { getTags, saveTag } from '@ADMIN/tag/server'
 
 import { useRouter } from 'next/navigation'
 import PreviewIcon from '@mui/icons-material/Preview'
@@ -91,7 +91,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
     ...pick(blog, 'hash', 'title', 'description', 'content', 'type'),
     tags: blog.tags.map((t) => t.hash),
   }
-  const { handleSubmit, control, getValues } = useForm<FormProps>({
+  const { handleSubmit, control, getValues, setValue } = useForm<FormProps>({
     defaultValues: defaultFormProps,
   })
 
@@ -255,12 +255,13 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
                 if (!s) {
                   return
                 }
-                await saveTag({
+                const tag = await saveTag({
                   hash: '',
                   name: s,
                   description: s,
                 }).then(SA.decode)
                 await mutateAllTags()
+                setValue('tags', [...field.value, tag.hash])
               })}
             />
           )}
