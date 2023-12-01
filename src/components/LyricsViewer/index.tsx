@@ -7,6 +7,7 @@ import { useAudio } from '../GlobalAudioPlayer'
 import { SlideUpTransition } from '../SlideUpTransition'
 
 import { dark } from '@/utils/theme'
+import { useHover } from '@/hooks/useHover'
 
 import {
   Box,
@@ -21,7 +22,6 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious'
 import SkipNextIcon from '@mui/icons-material/SkipNext'
-import { useHoverDirty } from 'react-use'
 import { useRef, useState } from 'react'
 import { common } from '@mui/material/colors'
 import { clamp } from 'lodash-es'
@@ -93,8 +93,8 @@ export function LyricsViewer() {
   const hasShown = useHasShown(visible)
   const controlsRef = useRef(null)
   const textRef = useRef(null)
-  const isHoveringControls = useHoverDirty(controlsRef)
-  const isHoveringText = useHoverDirty(textRef)
+  const isHoveringControls = useHover(controlsRef)
+  const isHoveringText = useHover(textRef)
   const isHovering = isHoveringControls || isHoveringText
   const controlsVisible = useControlsVisible(visible, isHovering)
 
@@ -114,7 +114,7 @@ export function LyricsViewer() {
         sx={{
           position: 'fixed',
           zIndex: theme.zIndex.fab,
-          bottom: '0.5em',
+          bottom: '1em',
           left: '0',
           width: '100%',
           pointerEvents: 'none',
@@ -180,7 +180,7 @@ export function LyricsViewer() {
             variant='h3'
             fontSize={{
               xs: `${
-                20 - clamp(calculateTextSize(activeLyricsItem.text) - 14, 0, 10)
+                20 - clamp(calculateTextSize(activeLyricsItem.text) - 15, 0, 10)
               }px`,
               sm: '20px',
             }}

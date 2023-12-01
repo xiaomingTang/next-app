@@ -47,7 +47,7 @@ export function useControlsVisible(
     } else {
       timerRef.current = window.setTimeout(() => {
         setControlsVisible(false)
-      }, 500)
+      }, 1500)
     }
     return () => {
       window.clearTimeout(timerRef.current)
