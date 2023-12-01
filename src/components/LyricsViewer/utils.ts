@@ -128,10 +128,6 @@ export function useLyrics({
     playingTime,
   ])
 
-  useListen(activeText, () => {
-    console.log({ activeIndex, activeText, playingTime })
-  })
-
   return {
     lyrics,
     lyricsError,
