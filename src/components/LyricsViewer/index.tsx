@@ -22,6 +22,21 @@ import SkipNextIcon from '@mui/icons-material/SkipNext'
 import { useHoverDirty } from 'react-use'
 import { useRef, useState } from 'react'
 import { common } from '@mui/material/colors'
+import { clamp } from 'lodash-es'
+
+function calculateTextSize(text: string) {
+  let size = 0
+
+  for (let i = 0; i < text.length; i += 1) {
+    // 使用正则表达式判断字符是否为中文
+    const isChinese = /[\u4e00-\u9fa5]/.test(text[i])
+
+    // 根据中文和非中文的情况累加大小
+    size += isChinese ? 1 : 0.5
+  }
+
+  return size
+}
 
 const defaultSize = { width: 0, height: 0 }
 
@@ -158,6 +173,12 @@ export function LyricsViewer() {
             ref={textRef}
             noWrap
             variant='h3'
+            fontSize={{
+              xs: `${
+                20 - clamp(calculateTextSize(activeLyricsItem.text) - 14, 0, 10)
+              }px`,
+              sm: '20px',
+            }}
             sx={{
               pointerEvents: 'auto',
               position: 'relative',
@@ -165,7 +186,6 @@ export function LyricsViewer() {
               maxWidth: '100%',
               fontWeight: 'bold',
               textAlign: 'center',
-              fontSize: '20px',
               letterSpacing: '1px',
               cursor: 'pointer',
               userSelect: 'none',
