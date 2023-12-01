@@ -9,7 +9,7 @@ import { useKeyPressEvent } from 'react-use'
 
 export function BlogSearchButton() {
   useKeyPressEvent(
-    (e) => e.ctrlKey && e.key.toLowerCase() === 'f',
+    (e) => e.ctrlKey && e.key.toLowerCase() === 'k',
     (e) => {
       e.preventDefault()
       NiceModal.show(BlogSearchSection)
@@ -19,8 +19,8 @@ export function BlogSearchButton() {
     <>
       <IconButton
         className='text-primary-main'
-        aria-label='搜索博客标题和内容 (ctrl + F)'
-        title='搜索博客标题和内容 (ctrl + F)'
+        aria-label='搜索博客标题和内容 (快捷键 ctrl + K)'
+        title='搜索博客标题和内容 (快捷键 ctrl + K)'
         onClick={() => {
           NiceModal.show(BlogSearchSection)
         }}
