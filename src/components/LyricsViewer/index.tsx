@@ -20,8 +20,54 @@ import PauseIcon from '@mui/icons-material/Pause'
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious'
 import SkipNextIcon from '@mui/icons-material/SkipNext'
 import { useHoverDirty } from 'react-use'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { common } from '@mui/material/colors'
+
+const defaultSize = { width: 0, height: 0 }
+
+function SvgText({ text }: { text: string }) {
+  const [size, setSize] = useState(defaultSize)
+  return (
+    <svg
+      ref={(ref) => {
+        const rect = ref?.parentElement?.getBoundingClientRect()
+        if (rect) {
+          if (rect.width !== size.width || rect.height !== size.height) {
+            setSize({
+              width: rect.width,
+              height: rect.height,
+            })
+          }
+        }
+      }}
+      width={size.width}
+      height={size.height}
+      strokeWidth='1'
+      strokeLinejoin='round'
+      strokeLinecap='round'
+      xmlns='http://www.w3.org/2000/svg'
+      style={{
+        position: 'absolute',
+        top: '0',
+        left: '0',
+        padding: '4px',
+        pointerEvents: 'none',
+      }}
+    >
+      <g fill='#cccccc' stroke='#F2595C'>
+        <text
+          className='svg-text'
+          x='50%'
+          y='50%'
+          textAnchor='middle'
+          alignmentBaseline='middle'
+        >
+          {text}
+        </text>
+      </g>
+    </svg>
+  )
+}
 
 export function LyricsViewer() {
   const theme = useTheme()
@@ -35,9 +81,7 @@ export function LyricsViewer() {
   const isHovering = isHoveringControls || isHoveringText
   const controlsVisible = useControlsVisible(visible, isHovering)
 
-  const {
-    activeLyricsItem: { text },
-  } = useLyrics({
+  const { activeLyricsItem } = useLyrics({
     enabled: hasShown,
     mp3: activeMP3,
     playingTime: state.time,
@@ -53,7 +97,7 @@ export function LyricsViewer() {
         sx={{
           position: 'fixed',
           zIndex: theme.zIndex.fab,
-          bottom: '1em',
+          bottom: '0.5em',
           left: '0',
           width: '100%',
           pointerEvents: 'none',
@@ -61,7 +105,7 @@ export function LyricsViewer() {
       >
         <Stack
           direction='column'
-          spacing={2}
+          spacing={1}
           sx={{
             alignItems: 'center',
             width: 'calc(100% - 32px)',
@@ -112,17 +156,27 @@ export function LyricsViewer() {
           {/* 标题 / 歌词 */}
           <Typography
             ref={textRef}
-            // noWrap
+            noWrap
             variant='h3'
             sx={{
               pointerEvents: 'auto',
+              position: 'relative',
+              padding: '4px',
               maxWidth: '100%',
               fontWeight: 'bold',
               textAlign: 'center',
+              fontSize: '20px',
+              letterSpacing: '1px',
               cursor: 'pointer',
+              userSelect: 'none',
+              color: 'transparent',
+              borderRadius: '4px',
+              backgroundColor: alpha(common.white, 0.2),
+              backdropFilter: 'blur(4px)',
             }}
           >
-            {text}
+            {activeLyricsItem.text}
+            <SvgText text={activeLyricsItem.text} />
           </Typography>
         </Stack>
       </Box>
