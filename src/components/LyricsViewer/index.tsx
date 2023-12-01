@@ -6,6 +6,8 @@ import { useControlsVisible, useHasShown, useLyrics } from './utils'
 import { useAudio } from '../GlobalAudioPlayer'
 import { SlideUpTransition } from '../SlideUpTransition'
 
+import { dark } from '@/utils/theme'
+
 import {
   Box,
   Fade,
@@ -138,6 +140,9 @@ export function LyricsViewer() {
               sx={{
                 borderRadius: 1,
                 backgroundColor: alpha(common.white, 0.5),
+                [dark()]: {
+                  backgroundColor: alpha(common.black, 0.5),
+                },
                 backdropFilter: 'blur(8px)',
                 boxShadow: theme.shadows[10],
                 pointerEvents: 'auto',
