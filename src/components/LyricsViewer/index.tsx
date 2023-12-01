@@ -188,7 +188,6 @@ export function LyricsViewer() {
               textAlign: 'center',
               letterSpacing: '1px',
               cursor: 'pointer',
-              userSelect: 'none',
               color: 'transparent',
               borderRadius: '4px',
               backgroundColor: alpha(common.white, 0.2),
