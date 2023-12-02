@@ -2,7 +2,7 @@ import { parseLRC } from '@/utils/lrc'
 import { useListen } from '@/hooks/useListen'
 
 import useSWR from 'swr'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 
 import type { CustomMP3 } from '@prisma/client'
 
@@ -16,45 +16,6 @@ export function useHasShown(visible: boolean) {
   })
 
   return hasShown
-}
-
-export function useControlsVisible(
-  parentVisible: boolean,
-  isHovering: boolean
-) {
-  const timerRef = useRef(-1)
-  const [controlsVisible, setControlsVisible] = useState(false)
-
-  useEffect(() => {
-    window.clearTimeout(timerRef.current)
-    if (parentVisible) {
-      setControlsVisible(true)
-      timerRef.current = window.setTimeout(() => {
-        setControlsVisible(false)
-      }, 1500)
-    } else {
-      setControlsVisible(false)
-    }
-    return () => {
-      window.clearTimeout(timerRef.current)
-    }
-  }, [parentVisible])
-
-  useEffect(() => {
-    window.clearTimeout(timerRef.current)
-    if (isHovering) {
-      setControlsVisible(true)
-    } else {
-      timerRef.current = window.setTimeout(() => {
-        setControlsVisible(false)
-      }, 1500)
-    }
-    return () => {
-      window.clearTimeout(timerRef.current)
-    }
-  }, [isHovering])
-
-  return controlsVisible
 }
 
 export function useLyrics({

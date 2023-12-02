@@ -1,20 +1,22 @@
 'use client'
 
 import { useLyricsViewer } from './context'
-import { useControlsVisible, useHasShown, useLyrics } from './utils'
+import { useHasShown, useLyrics } from './utils'
 
 import { useAudio } from '../GlobalAudioPlayer'
 import { SlideUpTransition } from '../SlideUpTransition'
 
 import { dark } from '@/utils/theme'
-import { useHover } from '@/hooks/useHover'
+import { useListen } from '@/hooks/useListen'
+import { obj } from '@/utils/tiny'
 
 import {
   Box,
+  ButtonBase,
+  ClickAwayListener,
   Fade,
   IconButton,
   Stack,
-  Typography,
   alpha,
   useTheme,
 } from '@mui/material'
@@ -22,8 +24,8 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious'
 import SkipNextIcon from '@mui/icons-material/SkipNext'
-import { useRef, useState } from 'react'
-import { common } from '@mui/material/colors'
+import { useState } from 'react'
+import { blue, common } from '@mui/material/colors'
 import { clamp } from 'lodash-es'
 
 function calculateTextSize(text: string) {
@@ -91,12 +93,7 @@ export function LyricsViewer() {
   const { controls, state, activeMP3 } = useAudio()
   const visible = useLyricsViewer((s) => s.visible)
   const hasShown = useHasShown(visible)
-  const controlsRef = useRef(null)
-  const textRef = useRef(null)
-  const isHoveringControls = useHover(controlsRef)
-  const isHoveringText = useHover(textRef)
-  const isHovering = isHoveringControls || isHoveringText
-  const controlsVisible = useControlsVisible(visible, isHovering)
+  const [controlsVisible, setControlsVisible] = useState(false)
 
   const { activeLyricsItem } = useLyrics({
     enabled: hasShown,
@@ -104,12 +101,21 @@ export function LyricsViewer() {
     playingTime: state.time,
   })
 
+  useListen(visible, () => {
+    if (visible && !hasShown) {
+      setControlsVisible(true)
+      window.setTimeout(() => {
+        setControlsVisible(false)
+      }, 2000)
+    }
+  })
+
   if (globalThis.mp3s.length === 0) {
     return <></>
   }
 
   return (
-    <SlideUpTransition in={visible}>
+    <SlideUpTransition in={visible} unmountOnExit>
       <Box
         sx={{
           position: 'fixed',
@@ -120,89 +126,104 @@ export function LyricsViewer() {
           pointerEvents: 'none',
         }}
       >
-        <Stack
-          direction='column'
-          spacing={1}
-          sx={{
-            alignItems: 'center',
-            width: 'calc(100% - 32px)',
-            maxWidth: '500px',
-            ml: '50%',
-            transform: 'translateX(-50%)',
-          }}
-        >
-          {/* 控制条 */}
-          <Fade in={controlsVisible}>
-            <Stack
-              direction='row'
-              spacing={1}
-              ref={controlsRef}
-              sx={{
-                borderRadius: 1,
-                backgroundColor: alpha(common.white, 0.5),
-                [dark()]: {
-                  backgroundColor: alpha(common.black, 0.5),
-                },
-                backdropFilter: 'blur(8px)',
-                boxShadow: theme.shadows[10],
-                pointerEvents: 'auto',
-              }}
-            >
-              <IconButton
-                onClick={() => {
-                  controls.prev()
-                  window.setTimeout(() => {
-                    controls.play()
-                  }, 0)
-                }}
-              >
-                <SkipPreviousIcon />
-              </IconButton>
-              <IconButton onClick={controls.togglePlay}>
-                {state.paused ? <PlayArrowIcon /> : <PauseIcon />}
-              </IconButton>
-              <IconButton
-                onClick={() => {
-                  controls.next()
-                  window.setTimeout(() => {
-                    controls.play()
-                  }, 0)
-                }}
-              >
-                <SkipNextIcon />
-              </IconButton>
-            </Stack>
-          </Fade>
-          {/* 标题 / 歌词 */}
-          <Typography
-            ref={textRef}
-            noWrap
-            variant='h3'
-            fontSize={{
-              xs: `${
-                20 - clamp(calculateTextSize(activeLyricsItem.text) - 15, 0, 10)
-              }px`,
-              sm: '20px',
-            }}
+        <ClickAwayListener onClickAway={() => setControlsVisible(false)}>
+          <Stack
+            direction='column'
+            spacing={1}
             sx={{
-              pointerEvents: 'auto',
-              position: 'relative',
-              padding: '4px',
-              maxWidth: '100%',
-              fontWeight: 'bold',
-              textAlign: 'center',
-              letterSpacing: '1px',
-              cursor: 'pointer',
-              color: 'transparent',
-              borderRadius: '4px',
-              backgroundColor: alpha(common.white, 0.2),
-              backdropFilter: 'blur(4px)',
+              alignItems: 'center',
+              width: 'calc(100% - 32px)',
+              maxWidth: '500px',
+              ml: '50%',
+              transform: 'translateX(-50%)',
             }}
           >
-            {activeLyricsItem.text}
-            <SvgText text={activeLyricsItem.text} />
-          </Typography>
-        </Stack>
+            {/* 控制条 */}
+            <Fade in={controlsVisible} unmountOnExit>
+              <Stack
+                direction='row'
+                spacing={1}
+                sx={{
+                  borderRadius: 1,
+                  backgroundColor: alpha(common.white, 0.5),
+                  [dark()]: {
+                    backgroundColor: alpha(common.black, 0.5),
+                  },
+                  backdropFilter: 'blur(8px)',
+                  boxShadow: theme.shadows[10],
+                  pointerEvents: 'auto',
+                }}
+              >
+                <IconButton
+                  onClick={() => {
+                    controls.prev()
+                    window.setTimeout(() => {
+                      controls.play()
+                    }, 0)
+                  }}
+                >
+                  <SkipPreviousIcon />
+                </IconButton>
+                <IconButton onClick={controls.togglePlay}>
+                  {state.paused ? <PlayArrowIcon /> : <PauseIcon />}
+                </IconButton>
+                <IconButton
+                  onClick={() => {
+                    controls.next()
+                    window.setTimeout(() => {
+                      controls.play()
+                    }, 0)
+                  }}
+                >
+                  <SkipNextIcon />
+                </IconButton>
+              </Stack>
+            </Fade>
+            {/* 标题 / 歌词 */}
+            <ButtonBase
+              autoFocus
+              onClick={() => setControlsVisible((prev) => !prev)}
+              sx={{
+                pointerEvents: 'auto',
+                position: 'relative',
+                padding: '4px',
+                maxWidth: '100%',
+                fontWeight: 'bold',
+                textAlign: 'center',
+                letterSpacing: '1px',
+                cursor: 'pointer',
+                color: 'transparent',
+                borderRadius: '4px',
+                backgroundColor: alpha(common.white, 0.1),
+                backdropFilter: 'blur(4px)',
+
+                textShadow: '0 0 4px #5CAEF2',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'clip',
+
+                fontSize: {
+                  xs: `${
+                    20 -
+                    clamp(calculateTextSize(activeLyricsItem.text) - 15, 0, 10)
+                  }px`,
+                  sm: '20px',
+                },
+                ':focus': obj(
+                  controlsVisible && {
+                    outline: `1px solid ${blue[700]}`,
+                  }
+                ),
+                ':focus-visible': {
+                  outline: `1px solid ${blue[700]}`,
+                },
+              }}
+            >
+              {activeLyricsItem.text}
+              <SvgText text={activeLyricsItem.text} />
+            </ButtonBase>
+          </Stack>
+        </ClickAwayListener>
       </Box>
     </SlideUpTransition>
   )
