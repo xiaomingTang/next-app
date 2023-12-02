@@ -39,7 +39,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material'
-import { noop, pick } from 'lodash-es'
+import { isEqual, noop, pick } from 'lodash-es'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
 import { useKeyPressEvent } from 'react-use'
@@ -70,6 +70,18 @@ type FormProps = Pick<
   'hash' | 'title' | 'description' | 'content' | 'type'
 > & {
   tags: string[]
+}
+
+function hasChanged(blog: PartialBlog, formValues: FormProps) {
+  return (
+    blog.content.trim() !== formValues.content.trim() ||
+    blog.description.trim() !== formValues.description.trim() ||
+    blog.title.trim() !== formValues.title.trim() ||
+    !isEqual(
+      blog.tags.map((t) => t.hash),
+      formValues.tags
+    )
+  )
 }
 
 const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
@@ -360,11 +372,13 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
     <Dialog
       fullWidth
       fullScreen
-      // 编辑(hash 非空)或有内容时, 禁用 esc close
-      disableEscapeKeyDown={!!(blog.hash || blog.content || blog.description)}
       TransitionComponent={SlideUpTransition}
       {...muiDialogV5(modal)}
-      onClose={() => {
+      onClose={(_, reason) => {
+        // 内容发生改变时, 禁用 esc close
+        if (reason === 'escapeKeyDown' && hasChanged(blog, getValues())) {
+          return
+        }
         modal.reject(new Error('操作已取消'))
         modal.hide()
       }}
