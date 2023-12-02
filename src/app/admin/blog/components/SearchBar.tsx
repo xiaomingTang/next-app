@@ -135,12 +135,15 @@ export function useBlogEditorSearchBar() {
           name='tags'
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <FormControl size='small' sx={{ minWidth: 200, maxWidth: 500 }}>
+            <FormControl
+              size='small'
+              sx={{ minWidth: 200, maxWidth: 500 }}
+              error={!!error || fetchAllTagsError}
+            >
               <InputLabel>标签</InputLabel>
               <Select
                 {...field}
                 multiple
-                error={!!error || fetchAllTagsError}
                 input={<OutlinedInput label='标签' />}
                 renderValue={(hashes) => (
                   <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>

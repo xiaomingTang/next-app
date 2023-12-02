@@ -246,13 +246,9 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
             name='role'
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <FormControl size='small'>
+              <FormControl size='small' error={!!error}>
                 <InputLabel>角色</InputLabel>
-                <Select
-                  {...field}
-                  error={!!error}
-                  input={<OutlinedInput label='role' />}
-                >
+                <Select {...field} input={<OutlinedInput label='role' />}>
                   <MenuItem key={'ADMIN'} value={'ADMIN'}>
                     {RoleNameMap.ADMIN}
                   </MenuItem>
