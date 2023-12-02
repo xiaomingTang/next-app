@@ -42,7 +42,7 @@ export function CardsTrigger() {
             autoFocus
             onClose={() => setAnchorEl(null)}
             MenuListProps={{
-              'aria-labelledby': '关闭卡片列表',
+              'aria-labelledby': '关闭列表',
             }}
           >
             {cardList.map(({ pathname, title }) => (

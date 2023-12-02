@@ -9,6 +9,7 @@ import { BlogSearchButton } from './CornerButtons/BlogSearchButton'
 import { QrcodeTrigger } from './CornerButtons/QrcodeTrigger'
 import { CardsTrigger } from './CornerButtons/CardsTrigger'
 import { MenuTrigger } from './CornerButtons/MenuTrigger'
+import { ToolsTrigger } from './CornerButtons/ToolsTrigger'
 
 import { dark } from '@/utils/theme'
 
@@ -79,9 +80,9 @@ export function DefaultRawHeader() {
             }}
           >
             <Entry pathname='/' name='首页' />
-            <Entry pathname='/wallpaper' name='壁纸' />
             <Entry pathname='/blog/3EpPJTM2LwB_' name='关于' />
             <CardsTrigger />
+            <ToolsTrigger />
           </Stack>
           <Stack direction='row'>
             <UploadTrigger />
