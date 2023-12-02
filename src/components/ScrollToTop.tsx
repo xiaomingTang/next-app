@@ -28,7 +28,12 @@ export function ScrollToTop({
       <Box ref={elemRef}>
         <Box
           ref={scrollStarterRef}
-          className='-translate-y-10 md:-translate-y-14'
+          sx={{
+            transform: {
+              xs: 'translateY(-40px)',
+              md: 'translateY(-56px)',
+            },
+          }}
         />
         {children}
       </Box>
