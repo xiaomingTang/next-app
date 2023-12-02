@@ -39,6 +39,13 @@ function toFriendsLinkStatus(s: string): FriendsLinkStatus | null {
   return null
 }
 
+/**
+ * hash:
+ *   - 'ACCEPTED': 已接受的所有 hash
+ *   - 'PENDING': 待处理的所有 hash
+ *   - 'REJECTED': 已接受的所有 hash
+ *   - 其他任意特定 hash
+ */
 export default async function Home({ params: { hash } }: Props) {
   // 注意, 这个变量不是 status, 需要使用时自行判断
   const status = toFriendsLinkStatus(hash)
