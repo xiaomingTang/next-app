@@ -197,7 +197,7 @@ export function LyricsViewer() {
                 backgroundColor: alpha(common.white, 0.1),
                 backdropFilter: 'blur(4px)',
 
-                textShadow: '0 0 4px #5CAEF2',
+                textShadow: '0 0 4px gray',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'clip',
