@@ -1,7 +1,7 @@
 import { editBlog } from './EditBlog'
 import { BlogTypeMap } from './constants'
 
-import { deleteBlogs } from '../server'
+import { deleteBlogs, getBlog } from '../server'
 
 import { formatTime } from '@/utils/formatTime'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
@@ -88,7 +88,10 @@ export function BlogEditorBlogList({
                     <CustomLoadingButton
                       variant='contained'
                       onClick={cat(async () => {
-                        await editBlog(blog)
+                        const res = await getBlog({
+                          hash: blog.hash,
+                        }).then(SA.decode)
+                        await editBlog(res)
                         onChange()
                       })}
                     >

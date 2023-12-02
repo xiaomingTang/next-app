@@ -8,6 +8,7 @@ import { useLoading } from '@/hooks/useLoading'
 import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { useUser } from '@/user'
+import { obj } from '@/utils/tiny'
 
 import useSWR from 'swr'
 import { Controller, useForm } from 'react-hook-form'
@@ -62,27 +63,23 @@ export function useBlogEditorSearchBar() {
       handleSubmit(
         withSearchLoading(
           cat(async (e) => {
-            await getBlogs(
-              {
-                title: {
-                  contains: e.title,
-                },
-                // admin 用户展示所有人的博客
-                // 普通用户仅展示自己的博客
-                creatorId: user.role === 'ADMIN' ? undefined : user.id,
-                tags:
-                  e.tags.length === 0
-                    ? {}
-                    : {
-                        some: {
-                          OR: e.tags.map((t) => ({
-                            hash: t,
-                          })),
-                        },
-                      },
+            await getBlogs({
+              title: {
+                contains: e.title,
               },
-              { withContent: true }
-            )
+              // admin 用户展示所有人的博客
+              // 普通用户仅展示自己的博客
+              creatorId: user.role === 'ADMIN' ? undefined : user.id,
+              tags: obj(
+                e.tags.length > 0 && {
+                  some: {
+                    OR: e.tags.map((t) => ({
+                      hash: t,
+                    })),
+                  },
+                }
+              ),
+            })
               .then(SA.decode)
               .then((res) => {
                 setBlogs(res)
