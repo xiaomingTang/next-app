@@ -63,6 +63,7 @@ const muiTheme = createTheme({
     MuiTooltip: {
       defaultProps: {
         placement: 'bottom-start',
+        enterTouchDelay: 0,
       },
     },
     MuiChip: {
