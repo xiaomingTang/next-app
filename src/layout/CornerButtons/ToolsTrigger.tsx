@@ -8,6 +8,7 @@ import { usePathname, useRouter } from 'next/navigation'
 export const toolList = [
   { pathname: '/wallpaper', title: '壁纸' },
   { pathname: '/gotcha', title: '试一试' },
+  { pathname: '/color', title: '色一色' },
 ]
 
 export function ToolsTrigger() {
