@@ -87,6 +87,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      url: resolvePath('/gotcha').href,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.6,
+    },
+    {
+      url: resolvePath('/color').href,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.6,
+    },
+    {
       url: resolvePath('/cards/area').href,
       lastModified: new Date(getCardsLastModifiedTime('AREA')),
       changeFrequency: 'monthly',
