@@ -25,6 +25,10 @@ const IMG_LIST = [
   },
 ]
 
+console.warn(
+  '如果你打开了 F12 且启用了 Network Disable cache，canvas 就会画不上，把 Disable cache 关掉就好了，原因我懒得解释'
+)
+
 export function ColorIndex() {
   const sourceCanvasRef = useRef<HTMLCanvasElement>(null)
   const targetCanvasRef = useRef<HTMLCanvasElement>(null)
@@ -56,7 +60,6 @@ export function ColorIndex() {
       targetCanvas.height = h
       sourceCtx.drawImage(activeImg, 0, 0, w, h)
       const imgData = sourceCtx.getImageData(0, 0, w, h)
-      console.log({ activeImg, imgData })
       setInputImageData(imgData)
     }
   }, [activeImg])
