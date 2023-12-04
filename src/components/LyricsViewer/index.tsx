@@ -25,68 +25,7 @@ import PauseIcon from '@mui/icons-material/Pause'
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious'
 import SkipNextIcon from '@mui/icons-material/SkipNext'
 import { useState } from 'react'
-import { blue, common } from '@mui/material/colors'
-import { clamp } from 'lodash-es'
-
-function calculateTextSize(text: string) {
-  let size = 0
-
-  for (let i = 0; i < text.length; i += 1) {
-    // 使用正则表达式判断字符是否为中文
-    const isChinese = /[\u4e00-\u9fa5]/.test(text[i])
-
-    // 根据中文和非中文的情况累加大小
-    size += isChinese ? 1 : 0.5
-  }
-
-  return size
-}
-
-const defaultSize = { width: 0, height: 0 }
-
-function SvgText({ text }: { text: string }) {
-  const [size, setSize] = useState(defaultSize)
-  return (
-    <svg
-      ref={(ref) => {
-        const rect = ref?.parentElement?.getBoundingClientRect()
-        if (rect) {
-          if (rect.width !== size.width || rect.height !== size.height) {
-            setSize({
-              width: rect.width,
-              height: rect.height,
-            })
-          }
-        }
-      }}
-      width={size.width}
-      height={size.height}
-      strokeWidth='1'
-      strokeLinejoin='round'
-      strokeLinecap='round'
-      xmlns='http://www.w3.org/2000/svg'
-      style={{
-        position: 'absolute',
-        top: '0',
-        left: '0',
-        padding: '4px',
-        pointerEvents: 'none',
-      }}
-    >
-      <g fill='#cccccc' stroke='#F2595C'>
-        <text
-          className='svg-text'
-          x='50%'
-          y='50%'
-          textAnchor='middle'
-          alignmentBaseline='middle'
-        >
-          {text}
-        </text>
-      </g>
-    </svg>
-  )
-}
+import { common, red } from '@mui/material/colors'
 
 export function LyricsViewer() {
   const theme = useTheme()
@@ -120,7 +59,7 @@ export function LyricsViewer() {
         sx={{
           position: 'fixed',
           zIndex: theme.zIndex.fab,
-          bottom: '1em',
+          bottom: '0.5em',
           left: '0',
           width: '100%',
           pointerEvents: 'none',
@@ -133,7 +72,7 @@ export function LyricsViewer() {
             sx={{
               alignItems: 'center',
               width: 'calc(100% - 32px)',
-              maxWidth: '500px',
+              maxWidth: '560px',
               ml: '50%',
               transform: 'translateX(-50%)',
             }}
@@ -145,13 +84,15 @@ export function LyricsViewer() {
                 spacing={1}
                 sx={{
                   borderRadius: 1,
-                  backgroundColor: alpha(common.white, 0.5),
-                  [dark()]: {
-                    backgroundColor: alpha(common.black, 0.5),
-                  },
-                  backdropFilter: 'blur(8px)',
-                  boxShadow: theme.shadows[10],
                   pointerEvents: 'auto',
+
+                  backdropFilter: 'blur(4px)',
+                  color: red[700],
+                  backgroundColor: alpha(common.white, 0.7),
+                  [dark()]: {
+                    color: red[700],
+                    backgroundColor: alpha(common.black, 0.7),
+                  },
                 }}
               >
                 <IconButton
@@ -191,36 +132,29 @@ export function LyricsViewer() {
                 fontWeight: 'bold',
                 textAlign: 'center',
                 letterSpacing: '1px',
+                fontSize: '20px',
+                borderRadius: 1,
                 cursor: 'pointer',
-                color: 'transparent',
-                borderRadius: '4px',
-                backgroundColor: alpha(common.white, 0.1),
+
                 backdropFilter: 'blur(4px)',
-
-                textShadow: '0 0 4px gray',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'clip',
-
-                fontSize: {
-                  xs: `${
-                    20 -
-                    clamp(calculateTextSize(activeLyricsItem.text) - 15, 0, 10)
-                  }px`,
-                  sm: '20px',
+                color: red[700],
+                backgroundColor: alpha(common.white, 0.7),
+                [dark()]: {
+                  color: red[700],
+                  backgroundColor: alpha(common.black, 0.7),
                 },
+
                 ':focus': obj(
                   controlsVisible && {
-                    outline: `1px solid ${blue[700]}`,
+                    outline: `1px solid ${red[700]}`,
                   }
                 ),
                 ':focus-visible': {
-                  outline: `1px solid ${blue[700]}`,
+                  outline: `1px solid ${red[700]}`,
                 },
               }}
             >
               {activeLyricsItem.text}
-              <SvgText text={activeLyricsItem.text} />
             </ButtonBase>
           </Stack>
         </ClickAwayListener>
