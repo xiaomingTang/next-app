@@ -83,9 +83,6 @@ export type BlogWithTags = NonNullable<
   Awaited<ReturnType<typeof getBlog>>['data']
 >
 
-/**
- * withContent 需要 ADMIN 权限
- */
 export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
   prisma.blog
     .findMany({
@@ -96,10 +93,7 @@ export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
       },
       orderBy: [
         {
-          creatorId: 'desc',
-        },
-        {
-          updatedAt: 'desc',
+          createdAt: 'desc',
         },
       ],
     })
@@ -122,10 +116,7 @@ export const privateGetBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
     select: blogSelect,
     orderBy: [
       {
-        creatorId: 'desc',
-      },
-      {
-        updatedAt: 'desc',
+        createdAt: 'desc',
       },
     ],
   })
