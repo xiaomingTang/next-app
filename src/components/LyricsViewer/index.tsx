@@ -87,21 +87,41 @@ export function LyricsViewer() {
     <Box component='svg' sx={progressSx}>
       {!controlsVisible && (
         <g>
-          <rect
+          <Box
+            component='rect'
             width='100%'
             stroke='none'
             fill={red[100]}
             y='100%'
-            height={2}
-            style={{ transform: 'translateY(-2px)' }}
+            height={{
+              xs: 2,
+              md: 1,
+            }}
+            sx={{
+              transform: {
+                xs: 'translateY(-2px)',
+                md: 'translateY(-1px)',
+              },
+            }}
           />
-          <rect
-            width={`${(state.time / state.duration) * 100}%`}
+          <Box
+            component='rect'
+            width={`${
+              ((state.time ?? 0) / Math.max(state.duration ?? 1, 1)) * 100
+            }%`}
             stroke='none'
             fill={red[500]}
             y='100%'
-            height={2}
-            style={{ transform: 'translateY(-2px)' }}
+            height={{
+              xs: 2,
+              md: 1,
+            }}
+            sx={{
+              transform: {
+                xs: 'translateY(-2px)',
+                md: 'translateY(-1px)',
+              },
+            }}
           />
         </g>
       )}
