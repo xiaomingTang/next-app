@@ -16,6 +16,7 @@ import {
   ClickAwayListener,
   Fade,
   IconButton,
+  Slider,
   Stack,
   alpha,
   useTheme,
@@ -27,12 +28,35 @@ import SkipNextIcon from '@mui/icons-material/SkipNext'
 import { useState } from 'react'
 import { common, red } from '@mui/material/colors'
 
+function ps(n: number) {
+  return n.toString().padStart(2, '0')
+}
+
+function timeFormat(sec: number) {
+  const h = Math.floor(sec / 3600)
+  const m = Math.floor(sec / 60)
+  const s = Math.floor(sec) % 60
+
+  if (h > 0) {
+    return `${ps(h)}:${ps(m)}:${ps(s)}`
+  }
+  return `${ps(m)}:${ps(s)}`
+}
+
 export function LyricsViewer() {
   const theme = useTheme()
   const { controls, state, activeMP3 } = useAudio()
   const visible = useLyricsViewer((s) => s.visible)
   const hasShown = useHasShown(visible)
   const [controlsVisible, setControlsVisible] = useState(false)
+  const [slideValue, setSlideValue] = useState(0)
+  const [isSlideSetting, setIsSlideSetting] = useState(false)
+
+  useListen(state.time, () => {
+    if (!isSlideSetting) {
+      setSlideValue(state.time)
+    }
+  })
 
   const { activeLyricsItem } = useLyrics({
     enabled: hasShown,
@@ -83,6 +107,7 @@ export function LyricsViewer() {
                 direction='row'
                 spacing={1}
                 sx={{
+                  position: 'relative',
                   borderRadius: 1,
                   pointerEvents: 'auto',
 
@@ -95,6 +120,33 @@ export function LyricsViewer() {
                   },
                 }}
               >
+                {/* 歌曲进度条 */}
+                <Slider
+                  size='small'
+                  aria-label='歌曲进度条'
+                  valueLabelDisplay='auto'
+                  valueLabelFormat={timeFormat}
+                  value={slideValue}
+                  onChange={(_, newValue) => {
+                    setSlideValue(newValue as number)
+                    setIsSlideSetting(true)
+                  }}
+                  onChangeCommitted={(_, newValue) => {
+                    controls.seek(newValue as number)
+                    setIsSlideSetting(false)
+                  }}
+                  step={1}
+                  min={0}
+                  max={state.duration}
+                  sx={{
+                    position: 'absolute',
+                    width: '100%',
+                    top: 0,
+                    left: 0,
+                    transform: 'translateY(-50%)',
+                    color: red[500],
+                  }}
+                />
                 <IconButton
                   onClick={() => {
                     controls.prev()
@@ -126,7 +178,6 @@ export function LyricsViewer() {
               onClick={() => setControlsVisible((prev) => !prev)}
               sx={{
                 pointerEvents: 'auto',
-                position: 'relative',
                 padding: '4px',
                 maxWidth: '100%',
                 fontWeight: 'bold',
