@@ -47,6 +47,13 @@ export const getTags = SA.encode(async (props: Prisma.TagWhereInput) =>
   prisma.tag.findMany({
     where: props,
     select: tagSelector,
+    orderBy: [
+      {
+        blogs: {
+          _count: 'desc',
+        },
+      },
+    ],
   })
 )
 
