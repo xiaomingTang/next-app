@@ -1,16 +1,11 @@
+import { cardList } from './constants'
+
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 
 import ListIcon from '@mui/icons-material/ArrowDropDown'
 import { Button, Menu, MenuItem } from '@mui/material'
 import { usePathname, useRouter } from 'next/navigation'
-
-export const cardList = [
-  { pathname: '/cards/fruits', title: '水果' },
-  { pathname: '/cards/foods', title: '肉和菜' },
-  { pathname: '/cards/colors', title: '颜色' },
-  { pathname: '/cards/area', title: '国家和地区' },
-]
 
 export function CardsTrigger() {
   const router = useRouter()

@@ -1,21 +1,11 @@
-import { cardList } from './CardsTrigger'
-import { toolList } from './ToolsTrigger'
+import { menuList } from './constants'
 
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 
 import MenuIcon from '@mui/icons-material/Menu'
-import { IconButton, Menu, MenuItem } from '@mui/material'
+import { Divider, IconButton, Menu, MenuItem } from '@mui/material'
 import { usePathname, useRouter } from 'next/navigation'
-
-const menuList = [
-  {
-    pathname: '/blog/3EpPJTM2LwB_',
-    title: '关于',
-  },
-  ...cardList,
-  ...toolList,
-]
 
 export function MenuTrigger() {
   const router = useRouter()
@@ -44,23 +34,29 @@ export function MenuTrigger() {
               'aria-labelledby': '关闭更多菜单',
             }}
           >
-            {menuList.map(({ pathname, title }) => (
-              <MenuItem
-                key={pathname}
-                dense
-                selected={pathname === curPathname}
-                {...triggerMenuItemEvents((e, reason) => {
-                  setAnchorEl(null)
-                  if (reason === 'middleClick') {
-                    window.open(pathname, '_blank')
-                  } else {
-                    router.push(pathname)
-                  }
-                })}
-              >
-                {title}
-              </MenuItem>
-            ))}
+            {menuList.map((item, i) => {
+              if (item === 'divider') {
+                return <Divider key={i} />
+              }
+              const { pathname, title } = item
+              return (
+                <MenuItem
+                  key={pathname}
+                  dense
+                  selected={pathname === curPathname}
+                  {...triggerMenuItemEvents((e, reason) => {
+                    setAnchorEl(null)
+                    if (reason === 'middleClick') {
+                      window.open(pathname, '_blank')
+                    } else {
+                      router.push(pathname)
+                    }
+                  })}
+                >
+                  {title}
+                </MenuItem>
+              )
+            })}
           </Menu>
         </>
       )}

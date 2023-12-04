@@ -1,15 +1,11 @@
+import { toolList } from './constants'
+
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 
 import ListIcon from '@mui/icons-material/ArrowDropDown'
 import { Button, Menu, MenuItem } from '@mui/material'
 import { usePathname, useRouter } from 'next/navigation'
-
-export const toolList = [
-  { pathname: '/wallpaper', title: '壁纸' },
-  { pathname: '/gotcha', title: '试一试' },
-  { pathname: '/color', title: '色一色' },
-]
 
 export function ToolsTrigger() {
   const router = useRouter()
