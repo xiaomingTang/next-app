@@ -2,7 +2,7 @@
 
 import { SA, withRevalidate } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
-import { authValidate, getSelf } from '@/user/server'
+import { getSelf } from '@/user/server'
 import { validateRequest } from '@/request/validator'
 import blogFullTextSearchSql from '@/sql/blog-full-text-search.sql'
 
@@ -86,34 +86,49 @@ export type BlogWithTags = NonNullable<
 /**
  * withContent 需要 ADMIN 权限
  */
-export const getBlogs = SA.encode(
-  async (props: Prisma.BlogWhereInput, config?: { withContent?: boolean }) => {
-    if (config?.withContent) {
-      authValidate(await getSelf(), {
-        roles: [Role.ADMIN],
-      })
-    }
-    return prisma.blog
-      .findMany({
-        where: props,
-        select: blogSelect,
-        orderBy: [
-          {
-            creatorId: 'desc',
-          },
-          {
-            updatedAt: 'desc',
-          },
-        ],
-      })
-      .then((blogs) => filterBlogsWithAuth(blogs))
-      .then((blogs) =>
-        blogs.map((blog) => ({
-          ...blog,
-          content: config?.withContent ? blog.content : '',
-        }))
-      )
-  }
+export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
+  prisma.blog
+    .findMany({
+      where: props,
+      select: {
+        ...blogSelect,
+        content: false,
+      },
+      orderBy: [
+        {
+          creatorId: 'desc',
+        },
+        {
+          updatedAt: 'desc',
+        },
+      ],
+    })
+    .then((blogs) => filterBlogsWithAuth(blogs))
+    .then((blogs) =>
+      blogs.map((blog) => ({
+        ...blog,
+        content: '',
+      }))
+    )
+)
+
+/**
+ * 用于**无需权限**批量获取带 content 的 blogs
+ * @deprecated ⚠️⚠️⚠️ 该方法仅供后台内部调用，前台不可调用 ⚠️⚠️⚠️
+ */
+export const privateGetBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
+  prisma.blog.findMany({
+    where: props,
+    select: blogSelect,
+    orderBy: [
+      {
+        creatorId: 'desc',
+      },
+      {
+        updatedAt: 'desc',
+      },
+    ],
+  })
 )
 
 const saveBlogDto = Type.Object({

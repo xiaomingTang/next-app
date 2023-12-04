@@ -2,29 +2,12 @@ import { SA } from '@/errors/utils'
 import { seo } from '@/utils/seo'
 import { resolvePath } from '@/utils/url'
 import { getTags } from '@ADMIN/tag/server'
-import { prisma } from '@/request/prisma'
+import { privateGetBlogs } from '@/app/admin/blog/server'
 
 import showdown from 'showdown'
 import { headers } from 'next/headers'
 import { unstable_cache } from 'next/cache'
 import RSS from 'rss'
-
-const blogSelect = {
-  hash: true,
-  type: true,
-  createdAt: true,
-  updatedAt: true,
-  title: true,
-  content: true,
-  description: true,
-  tags: {
-    select: {
-      hash: true,
-      name: true,
-      description: true,
-    },
-  },
-}
 
 export async function GET() {
   console.log('--- rss.xms ---')
@@ -49,19 +32,9 @@ export async function GET() {
     return new Response(feed.xml())
   }
 
-  // getBlogs 方法需要 admin 权限, 所以这里直接 prisma 取了
-  const allBlogs = await prisma.blog.findMany({
-    where: { type: 'PUBLISHED' },
-    select: blogSelect,
-    orderBy: [
-      {
-        creatorId: 'desc',
-      },
-      {
-        updatedAt: 'desc',
-      },
-    ],
-  })
+  const allBlogs = await privateGetBlogs({
+    type: 'PUBLISHED',
+  }).then(SA.decode)
 
   const converter = new showdown.Converter()
 
