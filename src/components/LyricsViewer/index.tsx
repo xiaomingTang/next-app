@@ -87,10 +87,10 @@ export function LyricsViewer() {
                   pointerEvents: 'auto',
 
                   backdropFilter: 'blur(4px)',
-                  color: red[700],
+                  color: red[500],
                   backgroundColor: alpha(common.white, 0.7),
                   [dark()]: {
-                    color: red[700],
+                    color: red[500],
                     backgroundColor: alpha(common.black, 0.7),
                   },
                 }}
@@ -137,20 +137,20 @@ export function LyricsViewer() {
                 cursor: 'pointer',
 
                 backdropFilter: 'blur(4px)',
-                color: red[700],
+                color: red[500],
                 backgroundColor: alpha(common.white, 0.7),
                 [dark()]: {
-                  color: red[700],
+                  color: red[500],
                   backgroundColor: alpha(common.black, 0.7),
                 },
 
                 ':focus': obj(
                   controlsVisible && {
-                    outline: `1px solid ${red[700]}`,
+                    outline: `1px solid ${red[500]}`,
                   }
                 ),
                 ':focus-visible': {
-                  outline: `1px solid ${red[700]}`,
+                  outline: `1px solid ${red[500]}`,
                 },
               }}
             >
