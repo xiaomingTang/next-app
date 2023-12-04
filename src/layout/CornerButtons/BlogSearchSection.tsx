@@ -48,6 +48,7 @@ export const BlogSearchSection = NiceModal.create(() => {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [blogs, setBlogs] = useState<BlogWithTags[]>([])
   const [searchText, setSearchText] = useState('')
+  const [isFocusOnInput, setIsFocusOnInput] = useState(false)
 
   const pathname = usePathname()
 
@@ -84,6 +85,9 @@ export const BlogSearchSection = NiceModal.create(() => {
   }, [platform, searchText])
 
   useKeyPressEvent('ArrowUp', (e) => {
+    if (!isFocusOnInput) {
+      return
+    }
     if (blogs.length === 0) {
       return
     }
@@ -97,6 +101,9 @@ export const BlogSearchSection = NiceModal.create(() => {
   })
 
   useKeyPressEvent('ArrowDown', (e) => {
+    if (!isFocusOnInput) {
+      return
+    }
     if (blogs.length === 0) {
       return
     }
@@ -110,6 +117,9 @@ export const BlogSearchSection = NiceModal.create(() => {
   })
 
   useKeyPressEvent('Enter', (e) => {
+    if (!isFocusOnInput) {
+      return
+    }
     const curBlog = blogs[selectedIndex]
     if (curBlog) {
       e.preventDefault()
@@ -187,6 +197,8 @@ export const BlogSearchSection = NiceModal.create(() => {
                     inputProps={{
                       'aria-label': '搜索博客标题和内容 (快捷键 ctrl + K)',
                     }}
+                    onFocus={() => setIsFocusOnInput(true)}
+                    onBlur={() => setIsFocusOnInput(false)}
                   />
                   <IconButton
                     type='submit'
