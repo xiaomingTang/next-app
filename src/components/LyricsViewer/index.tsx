@@ -138,7 +138,8 @@ export function LyricsViewer() {
           zIndex: (theme) => theme.zIndex.fab,
           bottom: '0.5em',
           left: '0',
-          width: '100%',
+          // 这儿必须用 vw, 不能用 %, 因为当 menu/popover 弹出时, 单位为百分比时元素会抖动
+          width: '100vw',
           pointerEvents: 'none',
         }}
       >
