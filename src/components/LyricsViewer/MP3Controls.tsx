@@ -1,3 +1,6 @@
+import { RepeatTrigger } from './RepeatTrigger'
+import { MusicListTrigger } from './MusicListTrigger'
+
 import { useAudio } from '../GlobalAudioPlayer'
 
 import { useListen } from '@/hooks/useListen'
@@ -7,7 +10,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious'
 import SkipNextIcon from '@mui/icons-material/SkipNext'
-import { Slider, IconButton, Stack, alpha } from '@mui/material'
+import { Slider, IconButton, Stack, alpha, Divider } from '@mui/material'
 import { common, red } from '@mui/material/colors'
 import { forwardRef, useState } from 'react'
 
@@ -48,6 +51,7 @@ function RawMP3Controls(_props: {}, ref: React.ForwardedRef<HTMLDivElement>) {
       spacing={1}
       sx={{
         position: 'relative',
+        alignItems: 'center',
         borderRadius: 1,
         pointerEvents: 'auto',
 
@@ -92,9 +96,7 @@ function RawMP3Controls(_props: {}, ref: React.ForwardedRef<HTMLDivElement>) {
         <IconButton
           onClick={() => {
             controls.prev()
-            window.setTimeout(() => {
-              controls.play()
-            }, 0)
+            controls.play()
           }}
         >
           <SkipPreviousIcon />
@@ -105,13 +107,14 @@ function RawMP3Controls(_props: {}, ref: React.ForwardedRef<HTMLDivElement>) {
         <IconButton
           onClick={() => {
             controls.next()
-            window.setTimeout(() => {
-              controls.play()
-            }, 0)
+            controls.play()
           }}
         >
           <SkipNextIcon />
         </IconButton>
+        <Divider orientation='vertical' sx={{ height: '1.5em' }} />
+        <RepeatTrigger />
+        <MusicListTrigger />
       </>
     </Stack>
   )
