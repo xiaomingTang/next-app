@@ -93,8 +93,8 @@ export default async function Home({ params: { blogHash } }: Props) {
               </DefaultAside>
               <BlogPage {...blog} />
               <FESEO
-                title={seo.title(blog.title)}
-                description={seo.description(blog.description)}
+                title={blog.title}
+                description={blog.description}
                 keywords={[
                   ...blog.tags.map((tag) => tag.name),
                   ...blog.tags.map((tag) => tag.description),

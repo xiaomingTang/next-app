@@ -1,11 +1,14 @@
 'use client'
 
+import { seo } from '@/utils/seo'
+
 import { useEffect } from 'react'
 
 interface FESEOProps {
   title?: string
   description?: string
   keywords?: string
+  asFull?: boolean
 }
 
 /**
@@ -17,6 +20,7 @@ export function FESEO({
   title = '',
   description = '',
   keywords = '',
+  asFull = false,
 }: FESEOProps) {
   useEffect(() => {
     const descriptionElem = document.querySelector<HTMLElement>(
@@ -26,15 +30,15 @@ export function FESEO({
       `meta[name="keywords"]`
     )
     if (title) {
-      document.title = title
+      document.title = seo.title(title, asFull)
     }
     if (descriptionElem && description) {
-      descriptionElem.innerText = description
+      descriptionElem.innerText = seo.description(description, asFull)
     }
     if (keywordsElem && keywords) {
-      keywordsElem.innerText = keywords
+      keywordsElem.innerText = seo.keywords(keywords, asFull)
     }
-  }, [description, keywords, title])
+  }, [asFull, description, keywords, title])
 
   return <></>
 }
