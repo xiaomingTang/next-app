@@ -46,7 +46,6 @@ export function LyricsViewer() {
     pointerEvents: 'auto',
     position: 'relative',
     padding: '4px',
-    maxWidth: '100%',
     fontWeight: 'bold',
     textAlign: 'center',
     letterSpacing: '1px',
@@ -136,7 +135,7 @@ export function LyricsViewer() {
         sx={{
           position: 'fixed',
           zIndex: (theme) => theme.zIndex.fab,
-          bottom: '0.5em',
+          bottom: '0',
           left: '0',
           // 这儿必须用 vw, 不能用 %, 因为当 menu/popover 弹出时, 单位为百分比时元素会抖动
           width: '100vw',
@@ -146,7 +145,6 @@ export function LyricsViewer() {
         <ClickAwayListener onClickAway={() => setControlsVisible(false)}>
           <Stack
             direction='column'
-            spacing={1}
             sx={{
               alignItems: 'center',
               width: 'calc(100% - 32px)',
@@ -160,14 +158,16 @@ export function LyricsViewer() {
               <MP3Controls />
             </Fade>
             {/* 标题 / 歌词 */}
-            <ButtonBase
-              autoFocus
-              onClick={() => setControlsVisible((prev) => !prev)}
-              sx={lyricsSx}
-            >
-              {activeLyricsItem.text}
-              {progressBar}
-            </ButtonBase>
+            <Box sx={{ maxWidth: '100%', py: 1, pointerEvents: 'auto' }}>
+              <ButtonBase
+                autoFocus
+                onClick={() => setControlsVisible((prev) => !prev)}
+                sx={lyricsSx}
+              >
+                {activeLyricsItem.text}
+                {progressBar}
+              </ButtonBase>
+            </Box>
           </Stack>
         </ClickAwayListener>
       </Box>
