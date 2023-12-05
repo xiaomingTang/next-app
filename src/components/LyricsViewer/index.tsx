@@ -102,9 +102,6 @@ export function LyricsViewer() {
           />
           <Box
             component='rect'
-            width={`${
-              ((state.time ?? 0) / Math.max(state.duration ?? 1, 1)) * 100
-            }%`}
             stroke='none'
             fill={red[500]}
             y='100%'
@@ -117,6 +114,12 @@ export function LyricsViewer() {
                 xs: 'translateY(-2px)',
                 md: 'translateY(-1px)',
               },
+            }}
+            // 这儿动态的样式用 style，避免 dev 模式下 mui 不断往 header 创建 style
+            style={{
+              width: `${
+                ((state.time ?? 0) / Math.max(state.duration ?? 1, 1)) * 100
+              }%`,
             }}
           />
         </g>
