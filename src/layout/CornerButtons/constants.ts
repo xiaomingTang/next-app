@@ -12,8 +12,8 @@ export const cardList: PathItem[] = [
 
 export const toolList: PathItem[] = [
   { pathname: '/wallpaper', title: '壁纸' },
-  { pathname: '/gotcha', title: '试一试' },
   { pathname: '/color', title: '色一色' },
+  { pathname: '/gotcha', title: '试一试' },
 ]
 
 export const menuList: (PathItem | 'divider')[] = [
