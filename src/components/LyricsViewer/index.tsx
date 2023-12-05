@@ -39,9 +39,6 @@ export function LyricsViewer() {
   useListen(visible, () => {
     if (visible && !hasShown) {
       setControlsVisible(true)
-      window.setTimeout(() => {
-        setControlsVisible(false)
-      }, 2000)
     }
   })
 
