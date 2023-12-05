@@ -22,9 +22,7 @@ export function MusicTriggerButton() {
           controls.switchToIndex(0)
         }
         if (!lyricsViewerVisible) {
-          window.setTimeout(() => {
-            controls.play()
-          }, 0)
+          controls.play()
         }
         useLyricsViewer.toggleVisible()
       }}

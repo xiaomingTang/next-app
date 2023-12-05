@@ -2,6 +2,8 @@
 
 import { useMediaLoading } from '@/hooks/useMediaLoading'
 import { useListen } from '@/hooks/useListen'
+import { remainder } from '@/utils/math'
+import { sleepMs } from '@/utils/time'
 
 import { create } from 'zustand'
 import { useAudio as useReactUseAudio } from 'react-use'
@@ -9,6 +11,12 @@ import { useEffect, useMemo } from 'react'
 import { noop } from 'lodash-es'
 
 import type { CustomMP3 } from '@prisma/client'
+
+export type RepeatMode =
+  | 'Repeat-Playlist'
+  | 'Repeat-Single'
+  | 'Play-in-Order'
+  | 'Pause-when-Finished'
 
 type UseAudioRet = ReturnType<typeof useReactUseAudio>
 
@@ -25,6 +33,9 @@ export const useAudio = create<{
   }
   ref?: UseAudioRet[3]
   loading: boolean
+  settings: {
+    repeatMode: RepeatMode
+  }
 }>(() => ({
   audio: <></>,
   state: {
@@ -51,6 +62,9 @@ export const useAudio = create<{
   },
   ref: undefined,
   loading: false,
+  settings: {
+    repeatMode: 'Repeat-Playlist',
+  },
 }))
 
 export function GlobalAudioPlayer() {
@@ -75,6 +89,10 @@ export function GlobalAudioPlayer() {
     useAudio.setState({
       controls: {
         ...controls,
+        play: async () => {
+          await sleepMs(0)
+          return controls.play()
+        },
         togglePlay: async () => {
           const { state: audioState, controls: audioControls } =
             useAudio.getState()
@@ -94,7 +112,7 @@ export function GlobalAudioPlayer() {
             return
           }
           useAudio.setState({
-            activeMP3: mp3s[n % mp3s.length],
+            activeMP3: mp3s[remainder(n, mp3s.length)],
           })
         },
         next: () => {
@@ -106,7 +124,7 @@ export function GlobalAudioPlayer() {
             (item) => item.hash === activeMP3?.hash
           )
           useAudio.setState({
-            activeMP3: mp3s[(activeIndex + 1 + mp3s.length) % mp3s.length],
+            activeMP3: mp3s[remainder(activeIndex + 1, mp3s.length)],
           })
         },
         prev: () => {
@@ -118,7 +136,7 @@ export function GlobalAudioPlayer() {
             (item) => item.hash === activeMP3?.hash
           )
           useAudio.setState({
-            activeMP3: mp3s[(activeIndex - 1 + mp3s.length) % mp3s.length],
+            activeMP3: mp3s[remainder(activeIndex - 1, mp3s.length)],
           })
         },
       },
@@ -139,11 +157,33 @@ export function GlobalAudioPlayer() {
       return noop
     }
     const handleEnded = () => {
-      const { controls: audioControls } = useAudio.getState()
-      audioControls.next()
-      window.setTimeout(() => {
-        audioControls.play()
-      }, 0)
+      const {
+        controls: audioControls,
+        settings: { repeatMode },
+        activeMP3: mp3,
+      } = useAudio.getState()
+      const hasNext = mp3 !== globalThis.mp3s[globalThis.mp3s.length - 1]
+      switch (repeatMode) {
+        case 'Pause-when-Finished':
+          break
+        case 'Repeat-Single':
+          audioControls.play()
+          break
+        case 'Repeat-Playlist':
+          audioControls.next()
+          audioControls.play()
+          break
+        case 'Play-in-Order': {
+          if (!hasNext) {
+            break
+          }
+          audioControls.next()
+          audioControls.play()
+          break
+        }
+        default:
+          break
+      }
     }
 
     // 添加 ended 事件监听
