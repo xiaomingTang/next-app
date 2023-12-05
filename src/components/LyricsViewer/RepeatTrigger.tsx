@@ -56,7 +56,6 @@ export function RepeatTrigger() {
       {(anchorEl, setAnchorEl) => (
         <>
           <IconButton
-            edge='start'
             aria-label='设置歌曲循环模式'
             aria-controls={anchorEl ? 'repeat-setting' : undefined}
             onClick={(e) => {

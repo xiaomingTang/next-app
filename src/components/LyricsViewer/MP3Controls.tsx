@@ -10,7 +10,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import PauseIcon from '@mui/icons-material/Pause'
 import SkipPreviousIcon from '@mui/icons-material/SkipPrevious'
 import SkipNextIcon from '@mui/icons-material/SkipNext'
-import { Slider, IconButton, Stack, alpha, Divider } from '@mui/material'
+import { Slider, IconButton, Box, alpha, Divider } from '@mui/material'
 import { common, red } from '@mui/material/colors'
 import { forwardRef, useState } from 'react'
 
@@ -44,13 +44,12 @@ function RawMP3Controls(_props: {}, ref: React.ForwardedRef<HTMLDivElement>) {
   })
 
   return (
-    <Stack
+    <Box
       {..._props}
       ref={ref}
-      direction='row'
-      spacing={1}
       sx={{
         position: 'relative',
+        display: 'flex',
         alignItems: 'center',
         borderRadius: 1,
         pointerEvents: 'auto',
@@ -93,6 +92,8 @@ function RawMP3Controls(_props: {}, ref: React.ForwardedRef<HTMLDivElement>) {
       />
       {/* 上一曲、播放、下一曲 */}
       <>
+        <RepeatTrigger />
+        <Divider orientation='vertical' sx={{ height: '1.5em', mx: 1 }} />
         <IconButton
           onClick={() => {
             controls.prev()
@@ -112,11 +113,10 @@ function RawMP3Controls(_props: {}, ref: React.ForwardedRef<HTMLDivElement>) {
         >
           <SkipNextIcon />
         </IconButton>
-        <Divider orientation='vertical' sx={{ height: '1.5em' }} />
-        <RepeatTrigger />
+        <Divider orientation='vertical' sx={{ height: '1.5em', mx: 1 }} />
         <MusicListTrigger />
       </>
-    </Stack>
+    </Box>
   )
 }
 

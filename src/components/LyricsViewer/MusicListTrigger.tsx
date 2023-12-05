@@ -11,7 +11,6 @@ export function MusicListTrigger() {
       {(anchorEl, setAnchorEl) => (
         <>
           <IconButton
-            edge='start'
             aria-label='歌曲目录'
             aria-controls={anchorEl ? 'music-list' : undefined}
             onClick={(e) => {
