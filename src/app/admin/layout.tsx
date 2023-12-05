@@ -2,6 +2,7 @@ import { AdminLayout as RawAdminLayout } from './components/AdminLayout'
 
 import { AuthRequired } from '@/components/AuthRequired'
 import { Forbidden } from '@/components/Forbidden'
+import { FileUploadCatcher } from '@/layout/components/FileUploadCatcher'
 
 export default function AdminLayout({
   children,
@@ -10,6 +11,7 @@ export default function AdminLayout({
 }) {
   return (
     <AuthRequired roles={['ADMIN', 'USER']} fallback={<Forbidden />}>
+      <FileUploadCatcher />
       <RawAdminLayout>{children}</RawAdminLayout>
     </AuthRequired>
   )
