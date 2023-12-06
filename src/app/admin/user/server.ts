@@ -5,11 +5,13 @@ import { prisma } from '@/request/prisma'
 import { authValidate, getSelf } from '@/user/server'
 import { validateRequest } from '@/request/validator'
 import { generatePassword } from '@/utils/password'
+import { sleepMs } from '@/utils/time'
 
 import Boom from '@hapi/boom'
 import { Role } from '@prisma/client'
 import { Type } from '@sinclair/typebox'
 import { noop } from 'lodash-es'
+import { nanoid } from 'nanoid'
 
 import type { Static } from '@sinclair/typebox'
 import type { Prisma } from '@prisma/client'
@@ -137,4 +139,11 @@ export const deleteUsers = SA.encode(async (ids: number[]) => {
       role: Role.USER,
     },
   })
+})
+
+export const requestQrcodeToken = SA.encode(async () => {
+  const token = nanoid(12)
+  await sleepMs(3000)
+  throw new Error('hello')
+  return token
 })
