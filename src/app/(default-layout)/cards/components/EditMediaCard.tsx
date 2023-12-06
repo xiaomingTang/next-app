@@ -32,7 +32,6 @@ import {
   FormControl,
   InputLabel,
   FormHelperText,
-  DialogActions,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
@@ -346,8 +345,6 @@ const MediaCardModal = NiceModal.create(
             {audioElem}
             {videoElem}
           </Stack>
-        </DialogContent>
-        <DialogActions>
           <LoadingButton
             loading={loading}
             variant='contained'
@@ -357,7 +354,7 @@ const MediaCardModal = NiceModal.create(
           >
             提交
           </LoadingButton>
-        </DialogActions>
+        </DialogContent>
       </Dialog>
     )
   }
