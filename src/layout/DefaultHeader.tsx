@@ -33,9 +33,9 @@ export function DefaultRawHeader() {
         position='fixed'
         sx={{
           zIndex: theme.zIndex.appBar,
-          height: '56px',
-          [theme.breakpoints.down('sm')]: {
-            height: '40px',
+          height: {
+            xs: '40px',
+            sm: '56px',
           },
           backdropFilter: 'blur(8px)',
           boxShadow: 'none',
@@ -62,8 +62,9 @@ export function DefaultRawHeader() {
             direction='row'
             sx={{
               flex: '1 1 0%',
-              [theme.breakpoints.up('sm')]: {
-                display: 'none',
+              display: {
+                xs: 'flex',
+                sm: 'none',
               },
             }}
           >
@@ -75,8 +76,9 @@ export function DefaultRawHeader() {
             direction='row'
             sx={{
               flex: '1 1 0%',
-              [theme.breakpoints.down('sm')]: {
-                display: 'none',
+              display: {
+                xs: 'none',
+                sm: 'flex',
               },
             }}
           >
@@ -100,13 +102,12 @@ export function DefaultRawHeader() {
 }
 
 export function DefaultHeaderShim() {
-  const theme = useTheme()
   return (
     <Box
       sx={{
-        height: '56px',
-        [theme.breakpoints.down('sm')]: {
-          height: '40px',
+        height: {
+          xs: '40px',
+          sm: '56px',
         },
         flex: 'none',
         pointerEvents: 'none',
