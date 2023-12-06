@@ -100,7 +100,7 @@ const MediaCardModal = NiceModal.create(
 
     const header = (
       <AppBar sx={{ position: 'relative' }}>
-        <Toolbar variant='dense'>
+        <Toolbar>
           <Box sx={{ flex: 1 }}>
             {mediaCard.hash && mediaCard.updatedAt ? (
               <Tooltip title={`上次编辑于 ${formatTime(mediaCard.updatedAt)}`}>

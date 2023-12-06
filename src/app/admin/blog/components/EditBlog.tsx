@@ -126,7 +126,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
 
   const header = (
     <AppBar sx={{ position: 'relative' }}>
-      <Toolbar variant='dense'>
+      <Toolbar>
         <IconButton
           edge='start'
           aria-label='取消编辑'

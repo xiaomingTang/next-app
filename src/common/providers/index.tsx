@@ -117,6 +117,11 @@ const muiTheme = createTheme({
         size: 'small',
       },
     },
+    MuiToolbar: {
+      defaultProps: {
+        variant: 'dense',
+      },
+    },
   },
 })
 

@@ -311,7 +311,7 @@ const Uploader = NiceModal.create(
     const header = (
       <>
         <AppBar sx={{ position: 'relative' }}>
-          <Toolbar variant='dense'>
+          <Toolbar>
             <Box sx={{ flex: 1 }}>
               {settingTriggerElem}
               {copyTriggerElem}
