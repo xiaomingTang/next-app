@@ -258,7 +258,6 @@ const MediaCardModal = NiceModal.create(
             <OutlinedInput
               {...field}
               label='audio'
-              size='small'
               endAdornment={
                 <InputAdornment position='end'>
                   <IconButton
@@ -293,7 +292,6 @@ const MediaCardModal = NiceModal.create(
             <OutlinedInput
               {...field}
               label='video'
-              size='small'
               endAdornment={
                 <InputAdornment position='end'>
                   <IconButton

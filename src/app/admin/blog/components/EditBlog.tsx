@@ -153,7 +153,6 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
         </Box>
         <UploadTrigger />
         <CustomLoadingButton
-          size='small'
           color='inherit'
           title='保存 [快捷键 ctrl + s]'
           onClick={onSubmit}
@@ -161,7 +160,6 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
           保存
         </CustomLoadingButton>
         <IconButton
-          size='small'
           edge='end'
           aria-label='预览'
           onClick={cat(

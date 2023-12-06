@@ -63,7 +63,7 @@ export function TagEditTagList({
                 <TableCell>{formatTime(tag.createdAt)}</TableCell>
                 <TableCell>
                   <AuthRequired roles={['ADMIN']} userIds={[tag.creatorId]}>
-                    <ButtonGroup size='small'>
+                    <ButtonGroup>
                       <CustomLoadingButton
                         variant='contained'
                         onClick={cat(async () => {

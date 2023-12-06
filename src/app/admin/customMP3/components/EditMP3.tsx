@@ -153,7 +153,6 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
                 <OutlinedInput
                   {...field}
                   label='mp3'
-                  size='small'
                   endAdornment={
                     <InputAdornment position='end'>
                       <IconButton
@@ -194,7 +193,6 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
                 <OutlinedInput
                   {...field}
                   label='lrc'
-                  size='small'
                   endAdornment={
                     <InputAdornment position='end'>
                       <IconButton

@@ -222,7 +222,6 @@ const Uploader = NiceModal.create(
             <FormControlLabel
               control={
                 <Checkbox
-                  size='small'
                   checked={field.value}
                   disabled={user.role !== 'ADMIN'}
                   {...field}

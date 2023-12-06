@@ -36,7 +36,6 @@ function RawMultiSelect<T extends string | number>(
     <Autocomplete
       ref={ref}
       multiple
-      size='small'
       options={selectList}
       value={selectList.filter((item) => selectedList.includes(item.value))}
       disableCloseOnSelect

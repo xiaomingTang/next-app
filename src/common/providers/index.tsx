@@ -53,6 +53,7 @@ const muiTheme = createTheme({
     MuiIconButton: {
       defaultProps: {
         color: 'inherit',
+        size: 'small',
       },
       styleOverrides: {
         root: {
@@ -97,6 +98,21 @@ const muiTheme = createTheme({
       },
     },
     MuiTextField: {
+      defaultProps: {
+        size: 'small',
+      },
+    },
+    MuiButtonGroup: {
+      defaultProps: {
+        size: 'small',
+      },
+    },
+    MuiOutlinedInput: {
+      defaultProps: {
+        size: 'small',
+      },
+    },
+    MuiAutocomplete: {
       defaultProps: {
         size: 'small',
       },

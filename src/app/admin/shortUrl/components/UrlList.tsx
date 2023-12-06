@@ -108,7 +108,7 @@ export function UrlEditUrlList({
                 <TableCell>{url.limit}</TableCell>
                 <TableCell>{formatTime(url.timeout)}</TableCell>
                 <TableCell>
-                  <ButtonGroup size='small'>
+                  <ButtonGroup>
                     <CustomLoadingButton
                       variant='contained'
                       onClick={cat(async () => {

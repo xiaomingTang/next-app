@@ -21,7 +21,6 @@ export function Forbidden() {
       您的权限不足, 您可以
       <CustomLoadingButton
         variant='contained'
-        size='small'
         sx={{ marginLeft: '0.5em' }}
         onClick={cat(async () => {
           if (user.id) {

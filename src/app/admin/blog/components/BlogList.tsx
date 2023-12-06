@@ -84,7 +84,7 @@ export function BlogEditorBlogList({
                 <TableCell>{formatTime(blog.updatedAt)}</TableCell>
                 <TableCell>{formatTime(blog.createdAt)}</TableCell>
                 <TableCell>
-                  <ButtonGroup size='small'>
+                  <ButtonGroup>
                     <CustomLoadingButton
                       variant='contained'
                       onClick={cat(async () => {
