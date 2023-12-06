@@ -192,7 +192,6 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
         <TextField
           {...field}
           label='标题'
-          size='small'
           helperText={error?.message ?? ' '}
           error={!!error}
         />
@@ -219,11 +218,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
       name='type'
       control={control}
       render={({ field, fieldState: { error } }) => (
-        <FormControl
-          size='small'
-          error={!!error}
-          sx={{ minWidth: 200, maxWidth: 500 }}
-        >
+        <FormControl error={!!error} sx={{ minWidth: 200, maxWidth: 500 }}>
           <InputLabel>状态</InputLabel>
           <Select
             {...field}
@@ -248,12 +243,11 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
       control={control}
       render={({ field, fieldState: { error } }) => (
         <FormControl
-          size='small'
           sx={{ minWidth: 200, maxWidth: 500 }}
           error={!!fetchAllTagsError || !!error}
         >
           {isLoadingAllTags ? (
-            <TextField label='标签列表加载中...' disabled size='small' />
+            <TextField label='标签列表加载中...' disabled />
           ) : (
             <MultiSelect
               {...field}
@@ -300,7 +294,6 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
         <TextField
           {...field}
           label='简介'
-          size='small'
           helperText={error?.message ?? ' '}
           error={!!error}
           multiline
@@ -341,7 +334,6 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
           multiline
           minRows={8}
           maxRows={30}
-          size='small'
           helperText={error?.message ?? ' '}
           error={!!error}
           inputProps={{

@@ -117,7 +117,6 @@ export function useBlogEditorSearchBar() {
           render={({ field, fieldState: { error } }) => (
             <TextField
               {...field}
-              size='small'
               label='标题'
               helperText={error?.message ?? ' '}
               error={!!error}
@@ -136,7 +135,6 @@ export function useBlogEditorSearchBar() {
           control={control}
           render={({ field, fieldState: { error } }) => (
             <FormControl
-              size='small'
               sx={{ minWidth: 200, maxWidth: 500 }}
               error={!!error || fetchAllTagsError}
             >

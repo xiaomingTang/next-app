@@ -102,7 +102,6 @@ export function useTagEditorSearchBar() {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='标签名【支持模糊搜索】'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -122,7 +121,6 @@ export function useTagEditorSearchBar() {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='描述【支持模糊搜索】'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -142,7 +140,6 @@ export function useTagEditorSearchBar() {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='hash'
                 helperText={error?.message ?? ' '}
                 error={!!error}

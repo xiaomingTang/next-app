@@ -98,7 +98,6 @@ export function useUserEditorSearchBar() {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='用户名【支持模糊搜索】'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -118,7 +117,6 @@ export function useUserEditorSearchBar() {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='邮箱【支持模糊搜索】'
                 helperText={error?.message ?? ' '}
                 error={!!error}

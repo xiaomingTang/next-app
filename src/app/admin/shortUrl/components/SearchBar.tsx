@@ -109,7 +109,6 @@ export function useUrlEditorSearchBar() {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='链接【支持模糊搜索】'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -129,7 +128,6 @@ export function useUrlEditorSearchBar() {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='描述'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -149,7 +147,6 @@ export function useUrlEditorSearchBar() {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='hash'
                 helperText={error?.message ?? ' '}
                 error={!!error}

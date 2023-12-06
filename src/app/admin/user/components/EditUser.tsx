@@ -170,7 +170,6 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
               <TextField
                 {...field}
                 autoFocus
-                size='small'
                 label='用户名'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -197,7 +196,6 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='邮箱'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -220,7 +218,6 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='密码'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -246,7 +243,7 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
             name='role'
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <FormControl size='small' error={!!error}>
+              <FormControl error={!!error}>
                 <InputLabel>角色</InputLabel>
                 <Select {...field} input={<OutlinedInput label='role' />}>
                   <MenuItem key={'ADMIN'} value={'ADMIN'}>

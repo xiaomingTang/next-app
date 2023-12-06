@@ -243,7 +243,6 @@ export function WallpaperRoot() {
             <TextField
               type='number'
               label='宽度 W'
-              size='small'
               value={inputWidth}
               sx={inputProps}
               onChange={(e) => {
@@ -255,7 +254,6 @@ export function WallpaperRoot() {
             <TextField
               type='number'
               label='高度 H'
-              size='small'
               value={inputHeight}
               sx={inputProps}
               onChange={(e) => {

@@ -91,6 +91,16 @@ const muiTheme = createTheme({
         color: 'inherit',
       },
     },
+    MuiFormControl: {
+      defaultProps: {
+        size: 'small',
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        size: 'small',
+      },
+    },
   },
 })
 

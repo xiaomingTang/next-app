@@ -101,7 +101,6 @@ const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
               <TextField
                 {...field}
                 autoFocus
-                size='small'
                 label='name'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -128,7 +127,6 @@ const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='description'
                 helperText={error?.message ?? ' '}
                 error={!!error}

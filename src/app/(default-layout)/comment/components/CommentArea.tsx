@@ -44,7 +44,6 @@ export function CommentArea() {
               label='留言内容'
               placeholder='仅站长可见'
               multiline
-              size='small'
               sx={{ width: '100%' }}
               helperText={error?.message ?? ' '}
               error={!!error}
@@ -77,7 +76,6 @@ export function CommentArea() {
           render={({ field, fieldState: { error } }) => (
             <TextField
               {...field}
-              size='small'
               sx={{ width: '100%' }}
               label='邮箱 (可选)'
               placeholder='留下邮箱, 我才能回复你'
@@ -102,7 +100,6 @@ export function CommentArea() {
           render={({ field, fieldState: { error } }) => (
             <TextField
               {...field}
-              size='small'
               sx={{ width: '100%' }}
               label='怎么称呼你呢 (可选)'
               helperText={error?.message ?? ' '}

@@ -113,7 +113,6 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
               <TextField
                 {...field}
                 autoFocus
-                size='small'
                 label='name'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -149,7 +148,7 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <FormControl size='small'>
+              <FormControl>
                 <InputLabel>mp3</InputLabel>
                 <OutlinedInput
                   {...field}
@@ -190,7 +189,7 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <FormControl size='small'>
+              <FormControl>
                 <InputLabel>lrc</InputLabel>
                 <OutlinedInput
                   {...field}

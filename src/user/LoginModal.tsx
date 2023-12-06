@@ -98,7 +98,6 @@ export const LoginModal = NiceModal.create(() => {
               <TextField
                 {...field}
                 autoFocus
-                size='small'
                 label='邮箱'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -121,7 +120,6 @@ export const LoginModal = NiceModal.create(() => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='密码'
                 type={passwordVisible ? 'text' : 'password'}
                 helperText={error?.message ?? ' '}

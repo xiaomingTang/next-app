@@ -139,7 +139,6 @@ const MediaCardModal = NiceModal.create(
           <TextField
             {...field}
             label='title'
-            size='small'
             helperText={error?.message ?? ' '}
             error={!!error}
           />
@@ -169,7 +168,6 @@ const MediaCardModal = NiceModal.create(
           <TextField
             {...field}
             label='description'
-            size='small'
             helperText={error?.message ?? ' '}
             error={!!error}
           />
@@ -195,7 +193,6 @@ const MediaCardModal = NiceModal.create(
           <TextField
             {...field}
             label='order'
-            size='small'
             type='number'
             helperText={error?.message ?? ' '}
             error={!!error}
@@ -222,7 +219,7 @@ const MediaCardModal = NiceModal.create(
         name='image'
         control={control}
         render={({ field, fieldState: { error } }) => (
-          <FormControl size='small'>
+          <FormControl>
             <InputLabel>image</InputLabel>
             <OutlinedInput
               {...field}
@@ -256,7 +253,7 @@ const MediaCardModal = NiceModal.create(
         name='audio'
         control={control}
         render={({ field, fieldState: { error } }) => (
-          <FormControl size='small'>
+          <FormControl>
             <InputLabel>audio</InputLabel>
             <OutlinedInput
               {...field}
@@ -291,7 +288,7 @@ const MediaCardModal = NiceModal.create(
         name='video'
         control={control}
         render={({ field, fieldState: { error } }) => (
-          <FormControl size='small'>
+          <FormControl>
             <InputLabel>video</InputLabel>
             <OutlinedInput
               {...field}

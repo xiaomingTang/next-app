@@ -94,7 +94,7 @@ export function Gotcha() {
           name='hostname'
           control={control}
           render={({ field, fieldState: { error } }) => (
-            <FormControl size='small' error={!!error}>
+            <FormControl error={!!error}>
               <InputLabel>网址</InputLabel>
               <OutlinedInput
                 {...field}
