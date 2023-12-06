@@ -51,7 +51,8 @@ export function ScrollToTop({
           sx={{
             position: 'fixed',
             bottom: '48px',
-            right: '16px',
+            // 避免有弹出层设置 overflow: hidden 导致的按钮抖动
+            left: 'calc(100vw - 48px - 16px - 16px)',
             backgroundColor: common.white,
             [dark()]: {
               backgroundColor: grey[800],
