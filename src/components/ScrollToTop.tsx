@@ -8,27 +8,42 @@ import {
   CircularProgress,
   Fab,
   Fade,
+  NoSsr,
   circularProgressClasses,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material'
 import { useRef } from 'react'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { common, grey } from '@mui/material/colors'
 
+const SIZE_MAP = {
+  small: 40,
+  medium: 48,
+  large: 56,
+}
+
 export function ScrollToTop({
+  size: inputSize,
   children,
 }: {
+  size?: 'small' | 'medium' | 'large'
   children: React.ReactNode | React.ReactNode[]
 }) {
+  const isSmall = useMediaQuery(useTheme().breakpoints.down('sm'))
+  const size = inputSize ?? (isSmall ? 'small' : 'medium')
+  const w = SIZE_MAP[size]
   const elemRef = useRef<HTMLDivElement>(null)
   const scrollStarterRef = useRef<HTMLDivElement>(null)
   const { percent } = useElementScroll({ elem: elemRef })
 
   return (
-    <>
+    <NoSsr>
       <Box ref={elemRef}>
         <Box
           ref={scrollStarterRef}
           sx={{
+            // header height
             transform: {
               xs: 'translateY(-40px)',
               md: 'translateY(-56px)',
@@ -39,7 +54,7 @@ export function ScrollToTop({
       </Box>
       <Fade in={percent > 0}>
         <Fab
-          size='medium'
+          size={size}
           onClick={() => {
             scrollStarterRef.current?.scrollIntoView({
               behavior: 'smooth',
@@ -52,7 +67,7 @@ export function ScrollToTop({
             position: 'fixed',
             bottom: '48px',
             // 避免有弹出层设置 overflow: hidden 导致的按钮抖动
-            left: 'calc(100vw - 48px - 16px - 16px)',
+            left: `calc(100vw - ${w}px - 16px - 16px)`,
             backgroundColor: common.white,
             [dark()]: {
               backgroundColor: grey[800],
@@ -62,7 +77,7 @@ export function ScrollToTop({
           <KeyboardArrowUpIcon color='primary' />
           <CircularProgress
             variant='determinate'
-            size={48}
+            size={w}
             color='primary'
             sx={{
               position: 'absolute',
@@ -78,6 +93,6 @@ export function ScrollToTop({
           />
         </Fab>
       </Fade>
-    </>
+    </NoSsr>
   )
 }
