@@ -30,14 +30,15 @@ export function DefaultRawHeader() {
   return (
     <Slide appear={false} direction='down' in={!trigger}>
       <AppBar
+        position='fixed'
         sx={{
-          boxShadow: 'none',
           zIndex: theme.zIndex.appBar,
           height: '56px',
           [theme.breakpoints.down('sm')]: {
             height: '40px',
           },
           backdropFilter: 'blur(8px)',
+          boxShadow: 'none',
           color: 'text.primary',
           backgroundColor: alpha(theme.palette.grey[300], 0.6),
           [dark()]: {

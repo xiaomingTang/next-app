@@ -65,7 +65,7 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
   ]
   return (
     <Dialog {...muiDialogV5(modal)} fullWidth maxWidth='xs'>
-      <AppBar position='relative' sx={{ paddingRight: '0' }}>
+      <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
             新建用户信息展示
@@ -118,7 +118,7 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
         modal.hide()
       }}
     >
-      <AppBar position='relative' sx={{ paddingRight: '0' }}>
+      <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
             {user.id ? '编辑用户' : '新建用户'}

@@ -92,8 +92,8 @@ export function FileUploadCatcher() {
     <Fade in={dragging}>
       <Box
         sx={{
-          zIndex: (theme) => theme.zIndex.tooltip + 1000,
           position: 'fixed',
+          zIndex: (theme) => theme.zIndex.tooltip + 1000,
           left: 0,
           top: 0,
           right: 0,
