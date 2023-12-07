@@ -143,13 +143,20 @@ export const deleteUsers = SA.encode(async (ids: number[]) => {
 /**
  * TODO: 下面几个方法都需要限流
  */
-export const requestQrcodeToken = SA.encode(async () =>
-  prisma.qrcodeLoginToken.create({
+export const requestQrcodeToken = SA.encode(async (prevToken?: string) => {
+  if (prevToken) {
+    await prisma.qrcodeLoginToken.delete({
+      where: {
+        token: prevToken,
+      },
+    })
+  }
+  return prisma.qrcodeLoginToken.create({
     data: {
       token: nanoid(18),
     },
   })
-)
+})
 
 export const confirmQrcodeLogin = SA.encode(async (token: string) => {
   // 注册用户才能访问

@@ -19,6 +19,11 @@ interface QrcodeLoginProps {
   setLoginType: React.Dispatch<React.SetStateAction<LoginType>>
 }
 
+// 全局使用
+const prevTokenRef = {
+  current: '',
+}
+
 export function QrcodeLogin({ loginType, setLoginType }: QrcodeLoginProps) {
   const modal = useModal()
   const {
@@ -32,9 +37,12 @@ export function QrcodeLogin({ loginType, setLoginType }: QrcodeLoginProps) {
       if (loginType === 'email') {
         throw new Error('不是二维码登录')
       }
-      return requestQrcodeToken()
+      return requestQrcodeToken(prevTokenRef.current)
         .then(SA.decode)
-        .then((res) => res.token)
+        .then((res) => {
+          prevTokenRef.current = res.token
+          return res.token
+        })
         .catch((e) => {
           toast.error(e.message)
           throw e
