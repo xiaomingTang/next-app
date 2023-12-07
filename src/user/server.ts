@@ -10,6 +10,7 @@ import Boom from '@hapi/boom'
 import { omit } from 'lodash-es'
 import { Role } from '@prisma/client'
 
+import type { PickAndPartial } from '@/utils/type'
 import type { User } from '@prisma/client'
 
 interface LoginProps {
@@ -19,6 +20,32 @@ interface LoginProps {
 
 const EXPIRE_DURATION = 60 * 60 * 24 * 3
 const authorizationKey = 'Authorization'
+
+export async function setCookieAsUser(
+  user: PickAndPartial<User, 'email' | 'password'>
+) {
+  const token = jwt.sign(
+    omit(user, 'email', 'password'),
+    process.env.JWT_SECRET,
+    {
+      expiresIn: EXPIRE_DURATION,
+    }
+  )
+
+  const proto = headers().get('origin') ?? ''
+
+  cookies().set({
+    name: authorizationKey,
+    value: token,
+    httpOnly: true,
+    // 保证前端失效后，后端再失效
+    // 同时能避免服务端和客户端时间差导致的 bug
+    maxAge: EXPIRE_DURATION - 60,
+    secure: proto.startsWith('https') || proto.startsWith('http://localhost'),
+    sameSite: 'lax',
+    path: '/',
+  })
+}
 
 export const login = SA.encode(
   async ({ email, password }: LoginProps): Promise<User> => {
@@ -38,23 +65,8 @@ export const login = SA.encode(
       throw Boom.unauthorized('账号或密码不正确')
     }
 
-    const token = jwt.sign(omit(user, 'email'), process.env.JWT_SECRET, {
-      expiresIn: EXPIRE_DURATION,
-    })
+    setCookieAsUser(user)
 
-    const proto = headers().get('origin') ?? ''
-
-    cookies().set({
-      name: authorizationKey,
-      value: token,
-      httpOnly: true,
-      // 保证前端失效后，后端再失效
-      // 同时能避免服务端和客户端时间差导致的 bug
-      maxAge: EXPIRE_DURATION - 60,
-      secure: proto.startsWith('https') || proto.startsWith('http://localhost'),
-      sameSite: 'lax',
-      path: '/',
-    })
     return {
       ...user,
       password: '',
