@@ -85,7 +85,7 @@ export const requestUploadFiles = SA.encode(
       if (config.files.some((f) => f.size > 5 * 1024 * 1024)) {
         throw Boom.forbidden('最大支持上传尺寸: 5 MB')
       }
-      const today = new Date(new Date().toDateString())
+      const today = new Date(Date.now())
       const nextDay = new Date(today)
       nextDay.setDate(today.getDate() + 1)
       const [todayUploaded, totalUploaded] = await prisma.$transaction([
