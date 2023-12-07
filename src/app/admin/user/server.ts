@@ -2,10 +2,9 @@
 
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
-import { authValidate, getSelf } from '@/user/server'
+import { authValidate, getSelf, setCookieAsUser } from '@/user/server'
 import { validateRequest } from '@/request/validator'
 import { generatePassword } from '@/utils/password'
-import { sleepMs } from '@/utils/time'
 
 import Boom from '@hapi/boom'
 import { Role } from '@prisma/client'
@@ -141,9 +140,72 @@ export const deleteUsers = SA.encode(async (ids: number[]) => {
   })
 })
 
-export const requestQrcodeToken = SA.encode(async () => {
-  const token = nanoid(12)
-  await sleepMs(3000)
-  throw new Error('hello')
-  return token
+/**
+ * TODO: 下面几个方法都需要限流
+ */
+export const requestQrcodeToken = SA.encode(async () =>
+  prisma.qrcodeLoginToken.create({
+    data: {
+      token: nanoid(18),
+    },
+  })
+)
+
+export const confirmQrcodeLogin = SA.encode(async (token: string) => {
+  // 注册用户才能访问
+  const self = await getSelf()
+  const now = new Date(Date.now())
+  const before = new Date(now)
+  before.setSeconds(now.getSeconds() - 90)
+  return prisma.qrcodeLoginToken
+    .update({
+      where: {
+        token,
+        createdAt: {
+          gt: before,
+          lt: now,
+        },
+      },
+      data: {
+        userId: self.id,
+      },
+    })
+    .then(noop)
+    .catch(() => {
+      throw Boom.badRequest('二维码已失效，请重新扫码')
+    })
+})
+
+export const requestQrcodeLogin = SA.encode(async (token: string) => {
+  const now = new Date(Date.now())
+  const before = new Date(now)
+  before.setSeconds(now.getSeconds() - 10)
+  const tokenInfo = await prisma.qrcodeLoginToken.findUnique({
+    where: {
+      token,
+      userId: {
+        gt: 0,
+      },
+      updatedAt: {
+        gt: before,
+        lt: now,
+      },
+    },
+  })
+  const userId = tokenInfo?.userId
+  if (!userId) {
+    throw Boom.badRequest('请扫码授权登录')
+  }
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+  })
+  if (!user) {
+    throw Boom.badRequest('用户不存在')
+  }
+  setCookieAsUser(user)
+  return mosaic(user, {
+    password: '',
+  })
 })

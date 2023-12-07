@@ -1,5 +1,5 @@
 import { SA } from '@/errors/utils'
-import { requestQrcodeToken } from '@/app/admin/user/server'
+import { requestQrcodeLogin, requestQrcodeToken } from '@/app/admin/user/server'
 import { resolvePath } from '@/utils/url'
 
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -9,6 +9,8 @@ import useSWR from 'swr'
 import { blue } from '@mui/material/colors'
 import toast from 'react-hot-toast'
 import { useMemo } from 'react'
+import { useModal } from '@ebay/nice-modal-react'
+import { noop } from 'lodash-es'
 
 import type { LoginType } from './type'
 
@@ -18,7 +20,13 @@ interface QrcodeLoginProps {
 }
 
 export function QrcodeLogin({ loginType, setLoginType }: QrcodeLoginProps) {
-  const { data, error, isValidating, mutate } = useSWR<string, Error>(
+  const modal = useModal()
+  const {
+    data: token,
+    error,
+    isValidating,
+    mutate,
+  } = useSWR<string, Error>(
     ['requestQrcodeToken', loginType],
     () => {
       if (loginType === 'email') {
@@ -26,18 +34,42 @@ export function QrcodeLogin({ loginType, setLoginType }: QrcodeLoginProps) {
       }
       return requestQrcodeToken()
         .then(SA.decode)
+        .then((res) => res.token)
         .catch((e) => {
           toast.error(e.message)
           throw e
         })
+    },
+    {
+      refreshInterval: 60 * 1000,
     }
   )
+
+  useSWR(
+    ['requestQrcodeLogin', token],
+    async () => {
+      if (!token || isValidating) {
+        return null
+      }
+      return requestQrcodeLogin(token)
+        .then(SA.decode)
+        .then((user) => {
+          modal.resolve(user)
+          modal.hide()
+        })
+        .catch(noop)
+    },
+    {
+      refreshInterval: 1 * 1000,
+    }
+  )
+
   const qrcodeStr = useMemo(() => {
-    if (isValidating || error || !data) {
+    if (isValidating || error || !token) {
       return '数据加载未完成'
     }
-    return resolvePath(`/qr-login?token=${data}`).href
-  }, [data, error, isValidating])
+    return resolvePath(`/qr-login/token/${token}`).href
+  }, [token, error, isValidating])
 
   return (
     <Stack spacing={2} alignItems='center'>
@@ -51,6 +83,7 @@ export function QrcodeLogin({ loginType, setLoginType }: QrcodeLoginProps) {
           size={148}
           style={{
             opacity: isValidating || error ? 0.2 : 1,
+            transition: 'opacity 0.3s',
           }}
         />
         {isValidating && (
