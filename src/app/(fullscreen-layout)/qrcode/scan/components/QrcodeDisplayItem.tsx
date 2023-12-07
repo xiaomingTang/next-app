@@ -2,6 +2,7 @@ import { AnchorProvider } from '@/components/AnchorProvider'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 import { geneRunOnly } from '@/utils/runOnce'
 import { useVisibilityState } from '@/hooks/useVisibilityState'
+import { isValidUrl } from '@/utils/url'
 
 import {
   Button,
@@ -25,14 +26,6 @@ interface QrcodeDisplayItemProps {
   canvasSize: {
     width: number
     height: number
-  }
-}
-
-function isValidUrl(s: string) {
-  try {
-    return Boolean(new URL(s))
-  } catch (error) {
-    return false
   }
 }
 

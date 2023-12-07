@@ -1,6 +1,7 @@
 'use client'
 
 import { QrcodeDisplayItem } from './QrcodeDisplayItem'
+import { useQrcodeHandler } from './QrcodeHandlers'
 
 import { toPlainError } from '@/errors/utils'
 import { getUserVideo } from '@/utils/media/video'
@@ -39,6 +40,8 @@ export function QrcodeScanner({
     width: 1,
     height: 1,
   })
+
+  useQrcodeHandler(QRContent?.data)
 
   useEffect(() => {
     const video = videoRef.current
