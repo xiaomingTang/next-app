@@ -53,7 +53,7 @@ export const FriendsLinkResultTip = NiceModal.create(
           ]
     return (
       <Dialog {...muiDialogV5(modal)} fullWidth maxWidth='xs'>
-        <AppBar position='relative' sx={{ paddingRight: '0' }}>
+        <AppBar sx={{ paddingRight: '0' }}>
           <Toolbar>
             <Typography sx={{ flex: 1 }} variant='h6' component='div'>
               友链审核结果 tip

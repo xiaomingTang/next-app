@@ -65,7 +65,7 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
   ]
   return (
     <Dialog {...muiDialogV5(modal)} fullWidth maxWidth='xs'>
-      <AppBar position='relative' sx={{ paddingRight: '0' }}>
+      <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
             新建用户信息展示
@@ -118,7 +118,7 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
         modal.hide()
       }}
     >
-      <AppBar position='relative' sx={{ paddingRight: '0' }}>
+      <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
             {user.id ? '编辑用户' : '新建用户'}
@@ -170,7 +170,6 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
               <TextField
                 {...field}
                 autoFocus
-                size='small'
                 label='用户名'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -197,7 +196,6 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='邮箱'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -220,7 +218,6 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='密码'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -246,7 +243,7 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
             name='role'
             control={control}
             render={({ field, fieldState: { error } }) => (
-              <FormControl size='small' error={!!error}>
+              <FormControl error={!!error}>
                 <InputLabel>角色</InputLabel>
                 <Select {...field} input={<OutlinedInput label='role' />}>
                   <MenuItem key={'ADMIN'} value={'ADMIN'}>

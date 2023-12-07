@@ -72,7 +72,6 @@ function RawBlogContent(
         {mode === 'production' && blog.creator.id === user.id && (
           <IconButton
             color='primary'
-            size='small'
             sx={{
               verticalAlign: 'baseline',
               position: 'absolute',

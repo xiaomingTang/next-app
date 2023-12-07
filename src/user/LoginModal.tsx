@@ -55,7 +55,7 @@ export const LoginModal = NiceModal.create(() => {
         modal.hide()
       }}
     >
-      <AppBar position='relative' sx={{ paddingRight: '0' }}>
+      <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
             登录
@@ -98,7 +98,6 @@ export const LoginModal = NiceModal.create(() => {
               <TextField
                 {...field}
                 autoFocus
-                size='small'
                 label='邮箱'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -121,7 +120,6 @@ export const LoginModal = NiceModal.create(() => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='密码'
                 type={passwordVisible ? 'text' : 'password'}
                 helperText={error?.message ?? ' '}

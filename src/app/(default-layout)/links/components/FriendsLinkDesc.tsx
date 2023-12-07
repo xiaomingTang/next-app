@@ -39,7 +39,6 @@ export function FriendsLinkDesc() {
               <>
                 需要先
                 <Button
-                  size='small'
                   title={`${anchorEl ? '收起' : '展开'}本站友链信息`}
                   sx={{
                     fontWeight: 'bold',

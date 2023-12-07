@@ -50,7 +50,7 @@ export function UserEditUserList({
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{RoleNameMap[user.role]}</TableCell>
                 <TableCell>
-                  <ButtonGroup size='small'>
+                  <ButtonGroup>
                     <CustomLoadingButton
                       variant='contained'
                       onClick={cat(async () => {

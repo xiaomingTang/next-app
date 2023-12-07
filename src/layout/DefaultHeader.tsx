@@ -30,14 +30,15 @@ export function DefaultRawHeader() {
   return (
     <Slide appear={false} direction='down' in={!trigger}>
       <AppBar
+        position='fixed'
         sx={{
-          boxShadow: 'none',
           zIndex: theme.zIndex.appBar,
-          height: '56px',
-          [theme.breakpoints.down('sm')]: {
-            height: '40px',
+          height: {
+            xs: '40px',
+            sm: '56px',
           },
           backdropFilter: 'blur(8px)',
+          boxShadow: 'none',
           color: 'text.primary',
           backgroundColor: alpha(theme.palette.grey[300], 0.6),
           [dark()]: {
@@ -61,8 +62,9 @@ export function DefaultRawHeader() {
             direction='row'
             sx={{
               flex: '1 1 0%',
-              [theme.breakpoints.up('sm')]: {
-                display: 'none',
+              display: {
+                xs: 'flex',
+                sm: 'none',
               },
             }}
           >
@@ -74,8 +76,9 @@ export function DefaultRawHeader() {
             direction='row'
             sx={{
               flex: '1 1 0%',
-              [theme.breakpoints.down('sm')]: {
-                display: 'none',
+              display: {
+                xs: 'none',
+                sm: 'flex',
               },
             }}
           >
@@ -99,13 +102,12 @@ export function DefaultRawHeader() {
 }
 
 export function DefaultHeaderShim() {
-  const theme = useTheme()
   return (
     <Box
       sx={{
-        height: '56px',
-        [theme.breakpoints.down('sm')]: {
-          height: '40px',
+        height: {
+          xs: '40px',
+          sm: '56px',
         },
         flex: 'none',
         pointerEvents: 'none',

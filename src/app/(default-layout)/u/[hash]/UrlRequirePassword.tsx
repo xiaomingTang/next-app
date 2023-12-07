@@ -50,7 +50,6 @@ export function UrlRequirePassword({ hash }: { hash: string }) {
           <TextField
             {...field}
             autoFocus
-            size='small'
             label='密码'
             helperText={error?.message ?? ' '}
             error={!!error}

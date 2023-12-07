@@ -107,7 +107,7 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
         modal.hide()
       }}
     >
-      <AppBar position='relative' sx={{ paddingRight: '0' }}>
+      <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
             {shortUrl.hash ? '编辑短链' : '新建短链'}
@@ -156,7 +156,6 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
               <TextField
                 {...field}
                 autoFocus
-                size='small'
                 label='url'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -180,7 +179,6 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
               <TextField
                 {...field}
                 autoFocus
-                size='small'
                 label='描述'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -198,7 +196,6 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
             control={control}
             render={({ field, fieldState: { error } }) => (
               <FormControl
-                size='small'
                 error={!!error}
                 sx={{ minWidth: 200, maxWidth: 500 }}
               >
@@ -229,7 +226,6 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='访问密码 (可缺省)'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -243,7 +239,6 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
               <TextField
                 {...field}
                 label='可访问次数 (可缺省)'
-                size='small'
                 type='number'
                 helperText={error?.message ?? ' '}
                 error={!!error}

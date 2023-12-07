@@ -53,6 +53,7 @@ const muiTheme = createTheme({
     MuiIconButton: {
       defaultProps: {
         color: 'inherit',
+        size: 'small',
       },
       styleOverrides: {
         root: {
@@ -89,6 +90,41 @@ const muiTheme = createTheme({
         // 它应该需要 1.5em, 但是 mui 不允许设置这个值...
         // fontSize: 'inherit',
         color: 'inherit',
+      },
+    },
+    MuiFormControl: {
+      defaultProps: {
+        size: 'small',
+      },
+    },
+    MuiTextField: {
+      defaultProps: {
+        size: 'small',
+      },
+    },
+    MuiButtonGroup: {
+      defaultProps: {
+        size: 'small',
+      },
+    },
+    MuiOutlinedInput: {
+      defaultProps: {
+        size: 'small',
+      },
+    },
+    MuiAutocomplete: {
+      defaultProps: {
+        size: 'small',
+      },
+    },
+    MuiAppBar: {
+      defaultProps: {
+        position: 'relative',
+      },
+    },
+    MuiToolbar: {
+      defaultProps: {
+        variant: 'dense',
       },
     },
   },

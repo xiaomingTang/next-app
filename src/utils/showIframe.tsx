@@ -30,8 +30,8 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
   })
 
   const header = (
-    <AppBar sx={{ position: 'relative' }}>
-      <Toolbar variant='dense'>
+    <AppBar>
+      <Toolbar>
         <Box sx={{ flex: 1 }}>{title}</Box>
         <IconButton
           edge='end'

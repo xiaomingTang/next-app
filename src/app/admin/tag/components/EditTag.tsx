@@ -58,7 +58,7 @@ const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
         modal.hide()
       }}
     >
-      <AppBar position='relative' sx={{ paddingRight: '0' }}>
+      <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
             {tag.hash ? '编辑标签' : '新建标签'}
@@ -101,7 +101,6 @@ const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
               <TextField
                 {...field}
                 autoFocus
-                size='small'
                 label='name'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -128,7 +127,6 @@ const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='description'
                 helperText={error?.message ?? ' '}
                 error={!!error}

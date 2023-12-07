@@ -206,7 +206,6 @@ const Uploader = NiceModal.create(
         render={({ field }) => (
           <TextField
             {...field}
-            size='small'
             disabled={user.role !== 'ADMIN'}
             label='存储目录(可缺省)'
           />
@@ -219,11 +218,10 @@ const Uploader = NiceModal.create(
         name='randomFilenameByServer'
         control={control}
         render={({ field }) => (
-          <FormControl size='small'>
+          <FormControl>
             <FormControlLabel
               control={
                 <Checkbox
-                  size='small'
                   checked={field.value}
                   disabled={user.role !== 'ADMIN'}
                   {...field}
@@ -312,8 +310,8 @@ const Uploader = NiceModal.create(
 
     const header = (
       <>
-        <AppBar sx={{ position: 'relative' }}>
-          <Toolbar variant='dense'>
+        <AppBar>
+          <Toolbar>
             <Box sx={{ flex: 1 }}>
               {settingTriggerElem}
               {copyTriggerElem}

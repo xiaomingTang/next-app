@@ -109,7 +109,6 @@ export function FileInfoDisplay({
               <CustomLoadingButton
                 aria-label='删除该文件'
                 color='error'
-                size='small'
                 onClick={onDelete}
               >
                 删除
@@ -183,7 +182,7 @@ export function FileInfoDisplay({
             {info.file.name}
           </Typography>
           {info.url && (
-            <ButtonGroup size='small' variant='outlined'>
+            <ButtonGroup variant='outlined'>
               <CopyToClipboard
                 text={copyableTexts.raw}
                 onCopy={() => toast.success('复制成功')}

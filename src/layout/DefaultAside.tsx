@@ -10,6 +10,7 @@ type DefaultAsideProps = BoxProps & {
 
 const ASIDE_WIDTH = 256
 const ASIDE_MARGIN = 0
+// 17 是竖直滚动条的宽度
 const SCROLL_BAR_WIDTH = 17
 
 export function DefaultAside({
@@ -45,7 +46,6 @@ export function DefaultAside({
                 SCROLL_BAR_WIDTH / 2
               }px)`,
         [theme.breakpoints.down(
-          // 17 是竖直滚动条的宽度
           theme.v.screens.desktop +
             ASIDE_WIDTH * 2 +
             ASIDE_MARGIN * 2 +

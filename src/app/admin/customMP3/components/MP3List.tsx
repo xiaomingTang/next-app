@@ -63,7 +63,7 @@ export function MP3EditMP3List({
                 <TableCell>{formatTime(mp3.createdAt)}</TableCell>
                 <TableCell>
                   <AuthRequired roles={['ADMIN']}>
-                    <ButtonGroup size='small'>
+                    <ButtonGroup>
                       <CustomLoadingButton
                         variant='contained'
                         onClick={cat(async () => {

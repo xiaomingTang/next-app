@@ -70,7 +70,7 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
         modal.hide()
       }}
     >
-      <AppBar position='relative' sx={{ paddingRight: '0' }}>
+      <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
             {mp3.hash ? '编辑歌曲' : '新建歌曲'}
@@ -113,7 +113,6 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
               <TextField
                 {...field}
                 autoFocus
-                size='small'
                 label='name'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -149,12 +148,11 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <FormControl size='small'>
+              <FormControl>
                 <InputLabel>mp3</InputLabel>
                 <OutlinedInput
                   {...field}
                   label='mp3'
-                  size='small'
                   endAdornment={
                     <InputAdornment position='end'>
                       <IconButton
@@ -190,12 +188,11 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <FormControl size='small'>
+              <FormControl>
                 <InputLabel>lrc</InputLabel>
                 <OutlinedInput
                   {...field}
                   label='lrc'
-                  size='small'
                   endAdornment={
                     <InputAdornment position='end'>
                       <IconButton

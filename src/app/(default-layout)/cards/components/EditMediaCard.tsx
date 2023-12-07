@@ -32,7 +32,6 @@ import {
   FormControl,
   InputLabel,
   FormHelperText,
-  DialogActions,
   useMediaQuery,
   useTheme,
 } from '@mui/material'
@@ -99,8 +98,8 @@ const MediaCardModal = NiceModal.create(
     )
 
     const header = (
-      <AppBar sx={{ position: 'relative' }}>
-        <Toolbar variant='dense'>
+      <AppBar>
+        <Toolbar>
           <Box sx={{ flex: 1 }}>
             {mediaCard.hash && mediaCard.updatedAt ? (
               <Tooltip title={`上次编辑于 ${formatTime(mediaCard.updatedAt)}`}>
@@ -139,7 +138,6 @@ const MediaCardModal = NiceModal.create(
           <TextField
             {...field}
             label='title'
-            size='small'
             helperText={error?.message ?? ' '}
             error={!!error}
           />
@@ -169,7 +167,6 @@ const MediaCardModal = NiceModal.create(
           <TextField
             {...field}
             label='description'
-            size='small'
             helperText={error?.message ?? ' '}
             error={!!error}
           />
@@ -195,7 +192,6 @@ const MediaCardModal = NiceModal.create(
           <TextField
             {...field}
             label='order'
-            size='small'
             type='number'
             helperText={error?.message ?? ' '}
             error={!!error}
@@ -222,7 +218,7 @@ const MediaCardModal = NiceModal.create(
         name='image'
         control={control}
         render={({ field, fieldState: { error } }) => (
-          <FormControl size='small'>
+          <FormControl>
             <InputLabel>image</InputLabel>
             <OutlinedInput
               {...field}
@@ -256,12 +252,11 @@ const MediaCardModal = NiceModal.create(
         name='audio'
         control={control}
         render={({ field, fieldState: { error } }) => (
-          <FormControl size='small'>
+          <FormControl>
             <InputLabel>audio</InputLabel>
             <OutlinedInput
               {...field}
               label='audio'
-              size='small'
               endAdornment={
                 <InputAdornment position='end'>
                   <IconButton
@@ -291,12 +286,11 @@ const MediaCardModal = NiceModal.create(
         name='video'
         control={control}
         render={({ field, fieldState: { error } }) => (
-          <FormControl size='small'>
+          <FormControl>
             <InputLabel>video</InputLabel>
             <OutlinedInput
               {...field}
               label='video'
-              size='small'
               endAdornment={
                 <InputAdornment position='end'>
                   <IconButton
@@ -351,8 +345,6 @@ const MediaCardModal = NiceModal.create(
             {audioElem}
             {videoElem}
           </Stack>
-        </DialogContent>
-        <DialogActions>
           <LoadingButton
             loading={loading}
             variant='contained'
@@ -362,7 +354,7 @@ const MediaCardModal = NiceModal.create(
           >
             提交
           </LoadingButton>
-        </DialogActions>
+        </DialogContent>
       </Dialog>
     )
   }

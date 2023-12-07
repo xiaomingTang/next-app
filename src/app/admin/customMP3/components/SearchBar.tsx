@@ -90,7 +90,6 @@ export function useMP3EditorSearchBar() {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='歌名【支持模糊搜索】'
                 helperText={error?.message ?? ' '}
                 error={!!error}
@@ -110,7 +109,6 @@ export function useMP3EditorSearchBar() {
             render={({ field, fieldState: { error } }) => (
               <TextField
                 {...field}
-                size='small'
                 label='hash'
                 helperText={error?.message ?? ' '}
                 error={!!error}
