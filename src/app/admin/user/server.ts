@@ -145,17 +145,29 @@ export const deleteUsers = SA.encode(async (ids: number[]) => {
  */
 export const requestQrcodeToken = SA.encode(async (prevToken?: string) => {
   if (prevToken) {
-    await prisma.qrcodeLoginToken.delete({
-      where: {
-        token: prevToken,
-      },
-    })
+    await prisma.qrcodeLoginToken
+      .delete({
+        where: {
+          token: prevToken,
+        },
+      })
+      .catch(noop)
   }
   return prisma.qrcodeLoginToken.create({
     data: {
       token: nanoid(18),
     },
   })
+})
+
+export const disableQrcodeToken = SA.encode(async (token: string) => {
+  await prisma.qrcodeLoginToken
+    .delete({
+      where: {
+        token,
+      },
+    })
+    .catch(noop)
 })
 
 export const confirmQrcodeLogin = SA.encode(async (token: string) => {
