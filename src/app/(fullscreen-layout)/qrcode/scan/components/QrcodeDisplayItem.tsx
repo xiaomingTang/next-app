@@ -3,6 +3,7 @@ import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 import { geneRunOnly } from '@/utils/runOnce'
 import { useVisibilityState } from '@/hooks/useVisibilityState'
 import { isValidUrl } from '@/utils/url'
+import { isPointInsideQuadrilateral } from '@/utils/math'
 
 import {
   Button,
@@ -15,7 +16,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import TextFieldsIcon from '@mui/icons-material/TextFields'
 import LinkIcon from '@mui/icons-material/Link'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { toast } from 'react-hot-toast'
 
@@ -37,6 +38,34 @@ export function QrcodeDisplayItem({
   const visibilityState = useVisibilityState()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const runOnce = useMemo(() => geneRunOnly(1), [qrcode.data, visibilityState])
+  const [point, setPoint] = useState({ x: -1, y: -1 })
+
+  useEffect(() => {
+    setPoint((prev) => {
+      const {
+        topLeftCorner,
+        topRightCorner,
+        bottomLeftCorner,
+        bottomRightCorner,
+      } = qrcode.location
+      if (
+        prev.x > 0 &&
+        prev.y > 0 &&
+        isPointInsideQuadrilateral(prev, [
+          topLeftCorner,
+          topRightCorner,
+          bottomRightCorner,
+          bottomLeftCorner,
+        ])
+      ) {
+        return prev
+      }
+      return {
+        x: (topLeftCorner.x + bottomRightCorner.x) / 2,
+        y: (topLeftCorner.y + bottomRightCorner.y) / 2,
+      }
+    })
+  }, [qrcode.location])
 
   return (
     <AnchorProvider>
@@ -58,20 +87,8 @@ export function QrcodeDisplayItem({
               minWidth: 'unset',
               height: '3em',
               borderRadius: '3em',
-              left: `${
-                ((qrcode.location.topLeftCorner.x +
-                  qrcode.location.bottomRightCorner.x) /
-                  2 /
-                  canvasSize.width) *
-                100
-              }%`,
-              top: `${
-                ((qrcode.location.topLeftCorner.y +
-                  qrcode.location.bottomRightCorner.y) /
-                  2 /
-                  canvasSize.height) *
-                100
-              }%`,
+              left: `${(point.x / canvasSize.width) * 100}%`,
+              top: `${(point.y / canvasSize.height) * 100}%`,
               transform: 'translate(-50%,-50%)',
               padding: '1em',
             }}
