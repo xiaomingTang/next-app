@@ -23,7 +23,7 @@ interface EmailLoginProps {
   setLoginType: React.Dispatch<React.SetStateAction<LoginType>>
 }
 
-export function EmailLogin({ setLoginType }: EmailLoginProps) {
+export function EmailLogin({ loginType, setLoginType }: EmailLoginProps) {
   const modal = useModal()
   const [passwordVisible, setPasswordVisible] = useState(false)
   const [loading, withLoading] = useLoading()
@@ -121,6 +121,10 @@ export function EmailLogin({ setLoginType }: EmailLoginProps) {
       }}
     />
   )
+
+  if (loginType !== 'email') {
+    return <></>
+  }
 
   return (
     <Stack component='form' onSubmit={onSubmit}>

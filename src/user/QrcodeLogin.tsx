@@ -1,5 +1,9 @@
 import { SA } from '@/errors/utils'
-import { requestQrcodeLogin, requestQrcodeToken } from '@/app/admin/user/server'
+import {
+  disableQrcodeToken,
+  requestQrcodeLogin,
+  requestQrcodeToken,
+} from '@/app/admin/user/server'
 import { resolvePath } from '@/utils/url'
 
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -8,7 +12,7 @@ import { QRCodeSVG } from 'qrcode.react'
 import useSWR from 'swr'
 import { blue } from '@mui/material/colors'
 import toast from 'react-hot-toast'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { useModal } from '@ebay/nice-modal-react'
 import { noop } from 'lodash-es'
 
@@ -19,25 +23,18 @@ interface QrcodeLoginProps {
   setLoginType: React.Dispatch<React.SetStateAction<LoginType>>
 }
 
-// 全局使用
-const prevTokenRef = {
-  current: '',
-}
-
 export function QrcodeLogin({ loginType, setLoginType }: QrcodeLoginProps) {
+  const prevTokenRef = useRef('')
   const modal = useModal()
   const {
-    data: token,
+    data: token = '',
     error,
     isValidating,
     mutate,
   } = useSWR<string, Error>(
-    ['requestQrcodeToken', loginType],
-    () => {
-      if (loginType === 'email') {
-        throw new Error('不是二维码登录')
-      }
-      return requestQrcodeToken(prevTokenRef.current)
+    loginType === 'qrcode' ? 'requestQrcodeToken' : null,
+    () =>
+      requestQrcodeToken(prevTokenRef.current)
         .then(SA.decode)
         .then((res) => {
           prevTokenRef.current = res.token
@@ -46,27 +43,22 @@ export function QrcodeLogin({ loginType, setLoginType }: QrcodeLoginProps) {
         .catch((e) => {
           toast.error(e.message)
           throw e
-        })
-    },
+        }),
     {
       refreshInterval: 60 * 1000,
     }
   )
 
   useSWR(
-    ['requestQrcodeLogin', token],
-    async () => {
-      if (!token || isValidating) {
-        return null
-      }
-      return requestQrcodeLogin(token)
+    token && !isValidating ? 'requestQrcodeLogin' : null,
+    async () =>
+      requestQrcodeLogin(token)
         .then(SA.decode)
         .then((user) => {
           modal.resolve(user)
           modal.hide()
         })
-        .catch(noop)
-    },
+        .catch(noop),
     {
       refreshInterval: 1 * 1000,
     }
@@ -78,6 +70,20 @@ export function QrcodeLogin({ loginType, setLoginType }: QrcodeLoginProps) {
     }
     return resolvePath(`/qr-login/token/${token}`).href
   }, [token, error, isValidating])
+
+  useEffect(
+    () => () => {
+      // 如果离开 qrcode
+      if (loginType === 'qrcode' && prevTokenRef.current) {
+        disableQrcodeToken(prevTokenRef.current)
+      }
+    },
+    [loginType]
+  )
+
+  if (loginType !== 'qrcode') {
+    return <></>
+  }
 
   return (
     <Stack spacing={2} alignItems='center'>

@@ -60,12 +60,8 @@ export const LoginModal = NiceModal.create(
           </Toolbar>
         </AppBar>
         <DialogContent>
-          {loginType === 'email' && (
-            <EmailLogin loginType={loginType} setLoginType={setLoginType} />
-          )}
-          {loginType === 'qrcode' && (
-            <QrcodeLogin loginType={loginType} setLoginType={setLoginType} />
-          )}
+          <EmailLogin loginType={loginType} setLoginType={setLoginType} />
+          <QrcodeLogin loginType={loginType} setLoginType={setLoginType} />
         </DialogContent>
       </Dialog>
     )
