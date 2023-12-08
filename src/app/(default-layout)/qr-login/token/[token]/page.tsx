@@ -1,5 +1,7 @@
 import { QRLoginConfirm } from './QRLoginConfirm'
 
+import { AuthRequired } from '@/components/AuthRequired'
+import { Forbidden } from '@/components/Forbidden'
 import { seo } from '@/utils/seo'
 
 export const metadata = seo.defaults({
@@ -12,5 +14,9 @@ interface Props {
 }
 
 export default function Home({ params: { token } }: Props) {
-  return <QRLoginConfirm token={token} />
+  return (
+    <AuthRequired fallback={<Forbidden />}>
+      <QRLoginConfirm token={token} />
+    </AuthRequired>
+  )
 }
