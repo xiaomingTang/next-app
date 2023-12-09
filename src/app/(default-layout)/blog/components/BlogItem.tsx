@@ -124,9 +124,9 @@ export function BlogItem({ sx, selected, ...blog }: BlogItemProps) {
       ref={ref}
       LinkComponent={Link}
       disabled={blog.loading}
-      href={blog.loading ? '/' : `/blog/${blog.hash}`}
+      href={`/blog/${blog.hash}`}
       aria-label={blogDescAriaLabel}
-      role={blog.loading ? 'none' : undefined}
+      role={blog.loading ? 'none' : 'link'}
       sx={{
         p: 2,
         width: '100%',
