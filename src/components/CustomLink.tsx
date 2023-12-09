@@ -7,9 +7,7 @@ import type { LinkProps } from 'next/link'
 
 export function geneLink(defaultProps?: Partial<LinkProps>) {
   function RawLink(
-    {
-      ...props
-    }: LinkProps & {
+    props: LinkProps & {
       children?: React.ReactNode | React.ReactNode[]
     },
     ref: React.ForwardedRef<HTMLAnchorElement>
