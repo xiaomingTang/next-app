@@ -3,8 +3,8 @@
 import { upload } from '@D/upload/components/Uploader'
 import { useUser } from '@/user'
 import { dark } from '@/utils/theme'
+import { cat } from '@/errors/catchAndToast'
 
-import { noop } from 'lodash-es'
 import { useEffect, useState } from 'react'
 import { Box, Fade, Typography, alpha } from '@mui/material'
 import { common } from '@mui/material/colors'
@@ -15,18 +15,16 @@ export function FileUploadCatcher() {
 
   // 监听文件粘贴
   useEffect(() => {
-    if (!user.id) {
-      return noop
-    }
-    const onPaste = (e: ClipboardEvent) => {
+    const onPaste = cat(async (e: ClipboardEvent) => {
       // 需要把文件夹过滤掉 (文件夹没有 type)
       const files = Array.from(e.clipboardData?.files ?? []).filter(
         (f) => f.size > 0
       )
       if (files.length > 0) {
-        upload(files)
+        await useUser.login()
+        await upload(files)
       }
-    }
+    })
     window.addEventListener('paste', onPaste)
     return () => {
       window.removeEventListener('paste', onPaste)
@@ -35,11 +33,11 @@ export function FileUploadCatcher() {
 
   // 监听文件拖拽
   useEffect(() => {
-    if (!user.id) {
-      return noop
-    }
     const dndElement = document.documentElement
-    const dragHandler = (e: DragEvent, cb: (files: File[]) => void) => {
+    const dragHandler = (
+      e: DragEvent,
+      cb: (files: File[]) => void | Promise<void>
+    ) => {
       if (!e.dataTransfer) {
         return
       }
@@ -66,13 +64,17 @@ export function FileUploadCatcher() {
       })
     }
     const onDrop = (e: DragEvent) => {
-      dragHandler(e, (files) => {
-        setDragging(false)
-        const availableFiles = files.filter((f) => f.size > 0)
-        if (availableFiles.length > 0) {
-          upload(availableFiles)
-        }
-      })
+      dragHandler(
+        e,
+        cat(async (files) => {
+          setDragging(false)
+          const availableFiles = files.filter((f) => f.size > 0)
+          if (availableFiles.length > 0) {
+            await useUser.login()
+            await upload(availableFiles)
+          }
+        })
+      )
     }
 
     dndElement.addEventListener('dragenter', onDragenter)
@@ -89,7 +91,7 @@ export function FileUploadCatcher() {
   }, [user.id])
 
   return (
-    <Fade in={dragging}>
+    <Fade in={dragging} unmountOnExit style={{ pointerEvents: 'none' }}>
       <Box
         sx={{
           position: 'fixed',
