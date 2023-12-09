@@ -1,6 +1,6 @@
-'use client'
+import { STYLE } from '@/config'
 
-import { Box, useTheme } from '@mui/material'
+import { Box } from '@mui/material'
 
 type DefaultBodyContainerProps = React.HTMLAttributes<HTMLDivElement>
 
@@ -8,13 +8,12 @@ export function DefaultBodyContainer({
   children,
   ...restProps
 }: DefaultBodyContainerProps) {
-  const theme = useTheme()
   return (
     <Box
       component='main'
       sx={{
         width: '100%',
-        maxWidth: theme.v.screens.desktop,
+        maxWidth: STYLE.width.desktop,
         minHeight: '100vh',
         mx: 'auto',
         p: 2,

@@ -1,5 +1,7 @@
 'use client'
 
+import { STYLE } from '@/config'
+
 import { Box, useTheme } from '@mui/material'
 
 import type { BoxProps } from '@mui/material'
@@ -35,18 +37,16 @@ export function DefaultAside({
         left:
           placement === 'left'
             ? `calc(50vw - ${
-                theme.v.screens.desktop / 2 +
+                STYLE.width.desktop / 2 +
                 ASIDE_WIDTH +
                 ASIDE_MARGIN +
                 SCROLL_BAR_WIDTH / 2
               }px)`
             : `calc(50vw + ${
-                theme.v.screens.desktop / 2 +
-                ASIDE_MARGIN -
-                SCROLL_BAR_WIDTH / 2
+                STYLE.width.desktop / 2 + ASIDE_MARGIN - SCROLL_BAR_WIDTH / 2
               }px)`,
         [theme.breakpoints.down(
-          theme.v.screens.desktop +
+          STYLE.width.desktop +
             ASIDE_WIDTH * 2 +
             ASIDE_MARGIN * 2 +
             SCROLL_BAR_WIDTH

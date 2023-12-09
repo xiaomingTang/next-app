@@ -12,6 +12,7 @@ import { MenuTrigger } from './CornerButtons/MenuTrigger'
 import { ToolsTrigger } from './CornerButtons/ToolsTrigger'
 
 import { dark } from '@/utils/theme'
+import { STYLE } from '@/config'
 
 import {
   AppBar,
@@ -53,7 +54,7 @@ export function DefaultRawHeader() {
             width: '100%',
             px: 1,
             alignItems: 'center',
-            maxWidth: theme.v.screens.desktop,
+            maxWidth: STYLE.width.desktop,
             m: 'auto',
           }}
         >
