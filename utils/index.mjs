@@ -44,10 +44,18 @@ const generateAppDirEntry = (entry) => {
 export const webpackConfig = (config, { dev }) => {
   // svg loader
   // https://react-svgr.com/docs/webpack/#use-svgr-and-asset-svg-in-the-same-project
+  // https://github.com/gregberge/svgr/issues/860#issuecomment-1653928947
+  const nextImageLoaderRule = config.module.rules.find((rule) =>
+    rule.test?.test?.('.svg')
+  )
+
+  nextImageLoaderRule.resourceQuery = {
+    not: [...nextImageLoaderRule.resourceQuery.not, /icon/],
+  }
+
   config.module.rules.push({
-    test: /\.svg$/,
-    include: resolveRoot('src/svg'),
-    issuer: /\.(js|ts)x?$/,
+    resourceQuery: /icon/, // *.svg?icon
+    issuer: nextImageLoaderRule.issuer,
     use: [
       {
         loader: '@svgr/webpack',
@@ -70,10 +78,12 @@ export const webpackConfig = (config, { dev }) => {
       },
     ],
   })
+
   config.module.rules.push({
     test: /\.sql$/,
     use: 'raw-loader',
   })
+
   config.resolve.alias['@'] = resolveRoot('src')
   config.resolve.alias['@APP'] = resolveRoot('src/app')
   config.resolve.alias['@ADMIN'] = resolveRoot('src/app/admin')

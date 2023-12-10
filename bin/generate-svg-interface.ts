@@ -35,9 +35,8 @@ function geneSvgInterface() {
           `该 display name(${displayName}) 已存在, 文件路径为 ${filePath}, 请修改文件名.`
         )
       }
-      nameMap[
-        displayName
-      ] = `export { default as ${COMPONENT_NAME_PREFIX}${displayName} } from '${relativePath}'`
+      nameMap[displayName] =
+        `export { default as ${COMPONENT_NAME_PREFIX}${displayName} } from '${relativePath}?icon'`
     } else if (fullFileName !== '.DS_Store') {
       console.error(`[${fullFileName} is not a .svg file]: ${filePath}`)
     }
