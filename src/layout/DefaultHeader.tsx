@@ -10,6 +10,7 @@ import { QrcodeTrigger } from './CornerButtons/QrcodeTrigger'
 import { CardsTrigger } from './CornerButtons/CardsTrigger'
 import { MenuTrigger } from './CornerButtons/MenuTrigger'
 import { ToolsTrigger } from './CornerButtons/ToolsTrigger'
+import { HEADER_ID } from './constants'
 
 import { dark } from '@/utils/theme'
 import { STYLE } from '@/config'
@@ -32,6 +33,7 @@ export function DefaultRawHeader() {
   return (
     <Slide appear={false} direction='down' in={!trigger}>
       <AppBar
+        id={HEADER_ID}
         position='fixed'
         sx={{
           zIndex: theme.zIndex.appBar,
