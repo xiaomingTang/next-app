@@ -1,8 +1,6 @@
 import type { User } from '@prisma/client'
 
 declare global {
-  type AppEnv = 'production' | 'preprod'
-
   type SimpleUser = Omit<User, 'password' | 'email'> &
     Pick<Partial<User>, 'password' | 'email'>
 

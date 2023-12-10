@@ -1,6 +1,6 @@
 'use client'
 
-import { DefaultDialogTransition } from '@/components/SlideUpTransition'
+import { DefaultDialogTransition } from '@/components/Transitions'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'

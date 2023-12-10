@@ -1,8 +1,6 @@
-'use client'
-
 import { STYLE } from '@/config'
 
-import { Box, useTheme } from '@mui/material'
+import { Box } from '@mui/material'
 
 import type { BoxProps } from '@mui/material'
 
@@ -21,7 +19,6 @@ export function DefaultAside({
   sx,
   ...props
 }: DefaultAsideProps) {
-  const theme = useTheme()
   return (
     <Box
       {...props}
@@ -45,12 +42,12 @@ export function DefaultAside({
             : `calc(50vw + ${
                 STYLE.width.desktop / 2 + ASIDE_MARGIN - SCROLL_BAR_WIDTH / 2
               }px)`,
-        [theme.breakpoints.down(
+        [`@media screen and (max-width: ${
           STYLE.width.desktop +
-            ASIDE_WIDTH * 2 +
-            ASIDE_MARGIN * 2 +
-            SCROLL_BAR_WIDTH
-        )]: {
+          ASIDE_WIDTH * 2 +
+          ASIDE_MARGIN * 2 +
+          SCROLL_BAR_WIDTH
+        }px)`]: {
           display: 'none',
         },
       }}

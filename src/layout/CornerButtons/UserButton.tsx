@@ -1,5 +1,3 @@
-'use client'
-
 import { useUser } from '@/user'
 import { useLoading } from '@/hooks/useLoading'
 import { SvgLoading } from '@/svg'

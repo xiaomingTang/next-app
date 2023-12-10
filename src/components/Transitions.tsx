@@ -1,5 +1,3 @@
-'use client'
-
 import { forwardRef } from 'react'
 import Slide from '@mui/material/Slide'
 import { Fade } from '@mui/material'

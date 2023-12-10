@@ -77,7 +77,7 @@ const getBlogWithSource = SA.encode(async (blogHash: string) => {
 export default async function Home({ params: { blogHash } }: Props) {
   return (
     <>
-      <Suspense fallback={<BlogPage loading size={5} />}>
+      <Suspense fallback={<BlogPage loading size={4} />}>
         <ServerComponent
           api={unstable_cache(
             () => getBlogWithSource(blogHash),

@@ -1,5 +1,3 @@
-'use client'
-
 import { Skeleton, Typography } from '@mui/material'
 import SellIcon from '@mui/icons-material/Sell'
 

@@ -1,5 +1,3 @@
-'use client'
-
 import Anchor from '@/components/Anchor'
 import { SvgGithub } from '@/svg'
 import { dark } from '@/utils/theme'

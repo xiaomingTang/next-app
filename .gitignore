@@ -11,8 +11,6 @@
 # next.js
 /.next/
 /out/
-/public/__ENV_CONFIG__.js
-/public/__ENV_CONFIG__.d.ts
 /bin/runtime-scripts/public-config/local.json
 
 # production

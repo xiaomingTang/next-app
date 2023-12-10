@@ -5,7 +5,7 @@ import { useHasShown, useLyrics } from './utils'
 import { MP3Controls } from './MP3Controls'
 
 import { useAudio } from '../GlobalAudioPlayer'
-import { SlideUpTransition } from '../SlideUpTransition'
+import { SlideUpTransition } from '../Transitions'
 
 import { dark } from '@/utils/theme'
 import { useListen } from '@/hooks/useListen'

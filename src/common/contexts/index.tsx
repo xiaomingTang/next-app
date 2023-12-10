@@ -1,6 +1,7 @@
 'use client'
 
 import { ToastContext } from './ToastContext'
+import { GlobalStyles } from './GlobalStyles'
 
 import { useUser } from '@/user'
 
@@ -13,6 +14,7 @@ export default function Contexts() {
 
   return (
     <>
+      <GlobalStyles />
       <ToastContext />
     </>
   )

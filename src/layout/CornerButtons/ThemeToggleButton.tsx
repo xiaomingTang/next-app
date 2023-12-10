@@ -1,5 +1,3 @@
-'use client'
-
 import { DiffMode } from '@/components/Diff'
 
 import { IconButton, useColorScheme } from '@mui/material'

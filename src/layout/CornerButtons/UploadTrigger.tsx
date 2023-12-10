@@ -1,5 +1,3 @@
-'use client'
-
 import { cat } from '@/errors/catchAndToast'
 import { upload } from '@D/upload/components/Uploader'
 import { useUser } from '@/user'

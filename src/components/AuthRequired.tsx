@@ -2,7 +2,6 @@
 
 import { useUser } from '@/user'
 
-import { NoSsr } from '@mui/material'
 import { noop } from 'lodash-es'
 import { useEffect } from 'react'
 
@@ -49,24 +48,20 @@ export function AuthRequired({
     }
   }, [disabled, user.id, silence])
 
-  const getChildren = () => {
-    if (disabled) {
-      return children
-    }
+  if (disabled) {
+    return children
+  }
 
-    if (!user.id) {
-      return fallback
-    }
-
-    if (
-      user.role === 'ADMIN' ||
-      roles.includes(user.role) ||
-      userIds.includes(user.id)
-    ) {
-      return children
-    }
+  if (!user.id) {
     return fallback
   }
 
-  return <NoSsr>{getChildren()}</NoSsr>
+  if (
+    user.role === 'ADMIN' ||
+    roles.includes(user.role) ||
+    userIds.includes(user.id)
+  ) {
+    return children
+  }
+  return fallback
 }

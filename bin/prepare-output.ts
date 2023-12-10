@@ -20,15 +20,9 @@ async function main() {
   fs.copySync(p('.next/cache'), p('out/.next/cache'))
   fs.copySync(p('.next/server'), p('out/.next/server'))
   fs.copySync(p('.next/static'), p('out/.next/static'))
-  fs.copySync(p('bin/runtime-scripts'), p('out/bin/runtime-scripts'))
 
   // 配置 dotenv, 因为宝塔没办法通过命令行传 .env 文件写 env
   fs.copySync(p('node_modules/dotenv'), p('out/node_modules/dotenv'))
-  const serverStr = fs.readFileSync(p('out/server.js'), 'utf-8')
-  fs.writeFileSync(
-    p('out/server.js'),
-    `require("./bin/runtime-scripts/pre-run.js");${serverStr}`
-  )
 
   // 宝塔会自动(无法禁止) install package.json 的 deps, 所以直接删掉 deps
   const packageJson = fs.readJSONSync(p('out/package.json'))

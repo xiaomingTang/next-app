@@ -1,6 +1,6 @@
 'use client'
 
-import { DefaultDialogTransition } from '@/components/SlideUpTransition'
+import { DefaultDialogTransition } from '@/components/Transitions'
 import { cat } from '@/errors/catchAndToast'
 import { searchBlog } from '@ADMIN/blog/server'
 import { SA } from '@/errors/utils'

@@ -1,3 +1,4 @@
+import 'server-only'
 import Boom from '@hapi/boom'
 
 import { createHmac } from 'node:crypto'

@@ -1,3 +1,4 @@
+import 'client-only'
 import { random } from 'lodash-es'
 import { toast } from 'react-hot-toast'
 

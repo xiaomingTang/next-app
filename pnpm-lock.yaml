@@ -50,6 +50,9 @@ dependencies:
   case:
     specifier: ^1.6.3
     version: 1.6.3
+  client-only:
+    specifier: ^0.0.1
+    version: 0.0.1
   clsx:
     specifier: ^2.0.0
     version: 2.0.0
@@ -143,6 +146,9 @@ dependencies:
   sass:
     specifier: ^1.69.5
     version: 1.69.5
+  server-only:
+    specifier: ^0.0.1
+    version: 0.0.1
   sharp:
     specifier: ^0.33.0
     version: 0.33.0
@@ -9737,6 +9743,10 @@ packages:
     resolution: {integrity: sha512-owoXEFjWRllis8/M1Q+Cw5k8ZH40e3zhp/ovX+Xr/vi1qj6QesbyXXViFbpNvWvPNAD62SutwEXavefrLJWj7w==}
     dependencies:
       randombytes: 2.1.0
+
+  /server-only@0.0.1:
+    resolution: {integrity: sha512-qepMx2JxAa5jjfzxG79yPPq+8BuFToHd1hm7kI+Z4zAq1ftQiP7HcxMhDDItrbtwVeLg/cY2JnKnrcFkmiswNA==}
+    dev: false
 
   /set-function-length@1.1.1:
     resolution: {integrity: sha512-VoaqjbBJKiWtg4yRcKBQ7g7wnGnLV3M8oLvVWwOk2PdYY6PEFegR1vezXR0tw6fZGF9csVakIRjrJiy2veSBFQ==}

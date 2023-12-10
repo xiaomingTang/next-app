@@ -1,5 +1,3 @@
-'use client'
-
 /* eslint-disable @next/next/no-sync-scripts */
 
 import Script from 'next/script'

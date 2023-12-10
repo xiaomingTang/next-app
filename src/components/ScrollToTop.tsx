@@ -8,7 +8,6 @@ import {
   CircularProgress,
   Fab,
   Fade,
-  NoSsr,
   circularProgressClasses,
   useMediaQuery,
   useTheme,
@@ -38,7 +37,7 @@ export function ScrollToTop({
   const { percent } = useElementScroll({ elem: elemRef })
 
   return (
-    <NoSsr>
+    <>
       <Box ref={elemRef}>
         <Box
           ref={scrollStarterRef}
@@ -93,6 +92,6 @@ export function ScrollToTop({
           />
         </Fab>
       </Fade>
-    </NoSsr>
+    </>
   )
 }

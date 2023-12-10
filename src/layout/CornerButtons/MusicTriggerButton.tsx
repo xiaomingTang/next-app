@@ -1,5 +1,3 @@
-'use client'
-
 import styles from './MusicTriggerButton.module.scss'
 
 import { useAudio } from '@/components/GlobalAudioPlayer'

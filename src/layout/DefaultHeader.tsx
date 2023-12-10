@@ -23,6 +23,7 @@ import {
   useScrollTrigger,
   useTheme,
 } from '@mui/material'
+import { grey } from '@mui/material/colors'
 
 export function DefaultRawHeader() {
   const trigger = useScrollTrigger()
@@ -41,9 +42,9 @@ export function DefaultRawHeader() {
           backdropFilter: 'blur(8px)',
           boxShadow: 'none',
           color: 'text.primary',
-          backgroundColor: alpha(theme.palette.grey[300], 0.6),
+          backgroundColor: alpha(grey[300], 0.6),
           [dark()]: {
-            backgroundColor: alpha(theme.palette.grey[900], 0.6),
+            backgroundColor: alpha(grey[900], 0.6),
           },
         }}
       >

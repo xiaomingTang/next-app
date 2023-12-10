@@ -1,5 +1,3 @@
-'use client'
-
 import { BlogSearchSection } from './BlogSearchSection'
 
 import { IconButton } from '@mui/material'

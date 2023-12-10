@@ -57,8 +57,6 @@ export default function RootLayout({
     <html lang='zh-cn' suppressHydrationWarning>
       <body>
         <VConsole />
-        {/* TODO: 这个 ENV_CONFIG 的实现可能有问题 */}
-        <script src='/__ENV_CONFIG__.js' />
         <GetInitColorSchemeScript />
         <Providers>
           <ServerProvider>

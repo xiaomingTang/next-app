@@ -1,5 +1,3 @@
-'use client'
-
 import { Link } from '@/components/CustomLink'
 
 import { IconButton } from '@mui/material'

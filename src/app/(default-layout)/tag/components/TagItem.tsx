@@ -1,5 +1,3 @@
-'use client'
-
 import { Link } from '@/components/CustomLink'
 
 import { Button, Skeleton, Tooltip, Typography } from '@mui/material'

@@ -1,3 +1,5 @@
+import 'client-only'
+
 type Listener = ((
   e: React.MouseEvent<HTMLLIElement, MouseEvent>,
   reason: 'click'

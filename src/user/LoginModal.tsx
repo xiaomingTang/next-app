@@ -1,5 +1,3 @@
-'use client'
-
 import { QrcodeLogin } from './QrcodeLogin'
 import { EmailLogin } from './EmailLogin'
 
