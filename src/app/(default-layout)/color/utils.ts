@@ -1,10 +1,4 @@
-import {
-  hsl2Rgb,
-  hsv2Rgb,
-  imageDataStatistics,
-  rgb2Hsl,
-  rgb2Hsv,
-} from './convert'
+import { hsl2Rgb, hsv2Rgb, rgb2Hsl, rgb2Hsv } from './convert'
 
 export async function file2Img(f: Blob) {
   return new Promise<HTMLImageElement>((resolve, reject) => {
