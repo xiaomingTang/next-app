@@ -5,9 +5,9 @@ import { imageDataStatistics } from './convert'
 
 import { ImageWithState } from '@/components/ImageWithState'
 
-import { Box, Slider, Stack, Typography } from '@mui/material'
+import { Box, ButtonBase, Slider, Stack, Typography } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import clsx from 'clsx'
+import { blue } from '@mui/material/colors'
 
 const colors: number[] = []
 for (let i = 0; i < 360; i += 3) {
@@ -83,27 +83,37 @@ export function ColorIndex() {
     <>
       <Stack direction='row' spacing={1} sx={{ mb: 2 }}>
         {IMG_LIST.map((item, i) => (
-          <ImageWithState
+          <ButtonBase
             key={item.src}
-            src={item.src}
-            alt={item.title}
-            width={100}
-            height={50}
-            crossOrigin='anonymous'
-            className={clsx(
-              'cursor-pointer rounded',
-              i === imgIdx && ' shadow-[0_0_8px] shadow-primary-700'
-            )}
+            aria-label='图片选择'
+            autoFocus={i === 0}
             onClick={() => setImgIdx(i)}
-            onLoad={(e) => {
-              const img = e.target as HTMLImageElement
-              setImgList((prev) => {
-                const next = [...prev]
-                next[i] = img
-                return next
-              })
+            sx={{
+              display: 'inline-flex',
+              borderRadius: 1,
+              overflow: 'hidden',
+              boxShadow: i === imgIdx ? `0 0 8px ${blue[700]}` : '',
+              ':focus-visible': {
+                outline: `1px solid ${blue[700]}`,
+              },
             }}
-          />
+          >
+            <ImageWithState
+              src={item.src}
+              alt={item.title}
+              width={100}
+              height={50}
+              crossOrigin='anonymous'
+              onLoad={(e) => {
+                const img = e.target as HTMLImageElement
+                setImgList((prev) => {
+                  const next = [...prev]
+                  next[i] = img
+                  return next
+                })
+              }}
+            />
+          </ButtonBase>
         ))}
       </Stack>
       <Box
