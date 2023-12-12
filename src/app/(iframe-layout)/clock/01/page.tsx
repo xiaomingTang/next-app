@@ -29,7 +29,7 @@ function RawIndex() {
       <HandsWrapper>
         {/* h */}
         <Hand
-          center={[100, 100]}
+          center={[103, 100]}
           width={50}
           height={6}
           color={blue[500]}
@@ -37,7 +37,7 @@ function RawIndex() {
         />
         {/* m */}
         <Hand
-          center={[100, 100]}
+          center={[103, 100]}
           width={65}
           height={4}
           color={green[500]}
@@ -45,7 +45,7 @@ function RawIndex() {
         />
         {/* s */}
         <Hand
-          center={[100, 100]}
+          center={[103, 100]}
           width={80}
           height={2}
           color={pink[500]}
