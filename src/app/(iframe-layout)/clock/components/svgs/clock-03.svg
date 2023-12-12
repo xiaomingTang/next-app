@@ -1,18 +1,17 @@
-<svg xml:space="preserve" width="210mm" height="210mm" version="1.1" style="background-color:#fff"
-  viewBox="0 0 21000 21000" shape-rendering="geometricPrecision" text-rendering="geometricPrecision"
+<svg viewBox="0 0 21000 21000" shape-rendering="geometricPrecision" text-rendering="geometricPrecision"
   image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <style>
       svg {
-        background-color: #fff;
+        background-color: var(--bg, #fff);
       }
 
       .bg {
-        fill: #fff
+        fill: var(--bg, #fff);
       }
 
       .fg {
-        fill: #201922;
+        fill: currentColor;
       }
     </style>
   </defs>

@@ -1,0 +1,15 @@
+export const clocks = [
+  { index: '01', title: '花草' },
+  { index: '02', title: '婚礼-新人-手捧花' },
+  { index: '03', title: '乐器' },
+  { index: '04', title: '两只猫头鹰站树上' },
+  { index: '05', title: '罗马数字' },
+  { index: '06', title: '猫-水缸-鱼' },
+  { index: '07', title: '猫头鹰' },
+  { index: '08', title: '美女-侧脸' },
+  { index: '09', title: '闹钟' },
+  { index: '10', title: '求婚' },
+  { index: '11', title: '三美女剪影' },
+  { index: '12', title: '万花筒-皇冠' },
+  { index: '13', title: '摇滚乐队' },
+]
