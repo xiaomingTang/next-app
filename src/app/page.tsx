@@ -1,3 +1,4 @@
+import { Clock } from '@I/clock/components/Clock'
 import { BlogList, BlogListLoading } from '@D/blog/components/BlogList'
 import { TagItem } from '@D/tag/components/TagItem'
 import { seo } from '@/utils/seo'
@@ -15,7 +16,6 @@ import { Dial, Hands } from '@I/clock/theme/13/exports'
 
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
-import { Box } from '@mui/material'
 
 export const metadata = seo.defaults({
   title: '博客列表页',
@@ -27,16 +27,10 @@ export default async function Home() {
       <DefaultBodyContainer>
         <GA />
         <DefaultAside placement='left'>
-          <Box
-            sx={{
-              mt: 1,
-              position: 'relative',
-              '--bg': '#eee',
-            }}
-          >
+          <Clock>
             <Dial width='100%' height='100%' />
             <Hands />
-          </Box>
+          </Clock>
         </DefaultAside>
         <ScrollToTop>
           {/* tag list */}

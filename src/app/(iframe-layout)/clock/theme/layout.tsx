@@ -1,6 +1,6 @@
-import { seo } from '@/utils/seo'
+import { Clock } from '../components/Clock'
 
-import { Box } from '@mui/material'
+import { seo } from '@/utils/seo'
 
 export const metadata = seo.defaults({
   title: '在线时钟',
@@ -10,15 +10,12 @@ export const metadata = seo.defaults({
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <Box
+    <Clock
       sx={{
-        position: 'relative',
-        width: '100%',
         height: '100vh',
-        '--bg': '#eee',
       }}
     >
       {children}
-    </Box>
+    </Clock>
   )
 }
