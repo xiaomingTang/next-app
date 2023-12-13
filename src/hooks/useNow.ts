@@ -2,7 +2,7 @@ import 'client-only'
 
 import { useState, useEffect } from 'react'
 
-export function useNowDate(intervalMs = 300) {
+export function useNowDate(intervalMs = 250) {
   const [date, setDate] = useState(new Date())
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export function useNowDate(intervalMs = 300) {
   return date
 }
 
-export function useNow(intervalMs = 300) {
+export function useNow(intervalMs = 250) {
   const [timestamp, setTimestamp] = useState(Date.now())
 
   useEffect(() => {
