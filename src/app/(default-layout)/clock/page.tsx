@@ -1,7 +1,10 @@
+import { HoverableClock } from './HoverableClock'
+
 import { seo } from '@/utils/seo'
 import { clocks } from '@I/clock/constants'
+import { Clock } from '@I/clock/components/Clock'
 
-import { Box, Grid } from '@mui/material'
+import { Grid } from '@mui/material'
 
 export const metadata = seo.defaults({
   title: '时钟橱窗',
@@ -12,7 +15,7 @@ export const metadata = seo.defaults({
 export default function Index() {
   return (
     <Grid container sx={{ width: '100%' }} spacing={2}>
-      {clocks.map(({ dial, hands, title }) => (
+      {clocks.map(({ dial, hands, title }, i) => (
         <Grid
           key={title}
           item
@@ -23,24 +26,24 @@ export default function Index() {
             position: 'relative',
           }}
         >
-          <Box
+          <HoverableClock
+            clockIframePath={`/clock/theme/${(i + 1)
+              .toString()
+              .padStart(2, '0')}`}
             sx={{
               position: 'relative',
               pb: '100%',
             }}
           >
-            <Box
+            <Clock
               sx={{
                 position: 'absolute',
-                width: '100%',
-                height: '100%',
-                '--bg': '#eee',
               }}
             >
               {dial}
               {hands}
-            </Box>
-          </Box>
+            </Clock>
+          </HoverableClock>
         </Grid>
       ))}
     </Grid>

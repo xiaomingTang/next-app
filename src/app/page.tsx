@@ -1,3 +1,5 @@
+import { HoverableClock } from './(default-layout)/clock/HoverableClock'
+
 import { Clock } from '@I/clock/components/Clock'
 import { BlogList, BlogListLoading } from '@D/blog/components/BlogList'
 import { TagItem } from '@D/tag/components/TagItem'
@@ -27,10 +29,12 @@ export default async function Home() {
       <DefaultBodyContainer>
         <GA />
         <DefaultAside placement='left'>
-          <Clock>
-            <Dial width='100%' height='100%' />
-            <Hands />
-          </Clock>
+          <HoverableClock clockIframePath='/clock/theme/13'>
+            <Clock>
+              <Dial width='100%' height='100%' />
+              <Hands />
+            </Clock>
+          </HoverableClock>
         </DefaultAside>
         <ScrollToTop>
           {/* tag list */}
