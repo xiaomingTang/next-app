@@ -1,6 +1,14 @@
 import { clocks } from './constants'
 
+import { seo } from '@/utils/seo'
+
 import { Box, Grid } from '@mui/material'
+
+export const metadata = seo.defaults({
+  title: '时钟橱窗',
+  description: '展示各种各样的时钟',
+  keywords: '时钟,钟表,表,时间,表盘,表针,clock,dial',
+})
 
 export default function Index() {
   return (
