@@ -94,7 +94,8 @@ export function HoverableClock({
           <Box
             sx={{
               position: 'relative',
-              width: '300px',
+              width: '100%',
+              maxWidth: '300px',
               height: '300px',
               mx: 'auto',
             }}
@@ -120,6 +121,7 @@ export function HoverableClock({
               sx={{
                 p: 1,
                 borderRadius: 1,
+                wordBreak: 'break-word',
                 cursor: 'copy',
                 backgroundColor: grey[200],
                 [dark()]: {
