@@ -4,6 +4,7 @@ import Anchor from '@/components/Anchor'
 import { DefaultLayoutScrollFlag } from '@/layout/components/ScrollFlag'
 import { ImageWithState } from '@/components/ImageWithState'
 import { ENV_CONFIG } from '@/config'
+import { resolvePath } from '@/utils/url'
 
 import { Button } from '@mui/material'
 import { createElement } from 'react'
@@ -90,6 +91,8 @@ function Video({ src = '', poster = '' }: { src?: string; poster?: string }) {
   )
 }
 
+const thisSiteUrl = resolvePath('/')
+
 function formatIframeSrc(src?: string) {
   if (!src) {
     return null
@@ -119,6 +122,8 @@ function formatIframeSrc(src?: string) {
 
   // 以下是所有白名单
   const whiteListPatterns: RemotePattern[] = [
+    { hostname: thisSiteUrl.hostname },
+    { hostname: `**.${thisSiteUrl.hostname}` },
     { hostname: 'youtu.be' },
     { hostname: 'youtube.com' },
     { hostname: 'bilibili.com' },
