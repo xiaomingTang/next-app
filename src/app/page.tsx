@@ -10,9 +10,12 @@ import { getBlogs } from '@ADMIN/blog/server'
 import { GA } from '@/analytics/GA'
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
+import { DefaultAside } from '@/layout/DefaultAside'
+import { Dial, Hands } from '@I/clock/theme/13/exports'
 
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
+import { Box } from '@mui/material'
 
 export const metadata = seo.defaults({
   title: '博客列表页',
@@ -23,6 +26,18 @@ export default async function Home() {
     <DefaultLayout>
       <DefaultBodyContainer>
         <GA />
+        <DefaultAside placement='left'>
+          <Box
+            sx={{
+              mt: 1,
+              position: 'relative',
+              '--bg': '#eee',
+            }}
+          >
+            <Dial width='100%' height='100%' />
+            <Hands />
+          </Box>
+        </DefaultAside>
         <ScrollToTop>
           {/* tag list */}
           <Suspense
