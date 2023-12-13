@@ -1,5 +1,4 @@
-import { clocks } from './constants'
-
+import { clocks } from '@/app/(iframe-layout)/clock/constants'
 import { seo } from '@/utils/seo'
 
 import { Box, Grid } from '@mui/material'
@@ -12,7 +11,7 @@ export const metadata = seo.defaults({
 
 export default function Index() {
   return (
-    <Grid container sx={{ width: '100%' }}>
+    <Grid container sx={{ width: '100%' }} spacing={2}>
       {clocks.map(({ dial, hands, title }) => (
         <Grid
           key={title}
@@ -20,7 +19,6 @@ export default function Index() {
           xs={6}
           sm={4}
           md={3}
-          lg={2}
           sx={{
             position: 'relative',
           }}
