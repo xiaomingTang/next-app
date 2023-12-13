@@ -1,16 +1,15 @@
 'use client'
 
-import Dial from './dial.svg?icon'
-
 import { Hand } from '../../components/Hand'
 import { HandsWrapper } from '../../components/HandsWrapper'
 
 import { useNowDate } from '@/hooks/useNow'
+import { SvgDial02 } from '@/svg'
 
 import { NoSsr } from '@mui/material'
 import { blue, green, pink } from '@mui/material/colors'
 
-export { Dial }
+export const Dial = SvgDial02
 
 function RawHands() {
   const now = useNowDate()

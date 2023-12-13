@@ -44,7 +44,7 @@ function geneSvgInterface() {
 
   const content = Object.values(nameMap).join('\n')
   if (content) {
-    fs.writeFileSync(output, `${content}\n`, { flag: 'w' })
+    fs.writeFileSync(output, `'use client'\n\n${content}\n`, { flag: 'w' })
     console.info(`info of .svg files has been write into [ ${output} ]`)
   } else {
     console.error('no available .svg file')
