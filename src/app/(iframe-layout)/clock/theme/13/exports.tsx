@@ -25,7 +25,7 @@ function RawHands() {
         width={22}
         height={6}
         color={blue[500]}
-        degree={(h % 12) * 30 - 90}
+        degree={((h % 12) + m / 60) * 30 - 90}
       />
       {/* m */}
       <Hand
@@ -33,7 +33,7 @@ function RawHands() {
         width={28}
         height={4}
         color={green[500]}
-        degree={(m % 60) * 6 - 90}
+        degree={(m + s / 60) * 6 - 90}
       />
       {/* s */}
       <Hand
@@ -41,7 +41,7 @@ function RawHands() {
         width={34}
         height={2}
         color={pink[500]}
-        degree={(s % 60) * 6 - 90}
+        degree={s * 6 - 90}
       />
     </HandsWrapper>
   )
