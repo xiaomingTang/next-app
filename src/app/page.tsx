@@ -1,9 +1,5 @@
-import {
-  BlogList,
-  BlogListLoading,
-} from './(default-layout)/blog/components/BlogList'
-import { TagItem } from './(default-layout)/tag/components/TagItem'
-
+import { BlogList, BlogListLoading } from '@D/blog/components/BlogList'
+import { TagItem } from '@D/tag/components/TagItem'
 import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { AlertError } from '@/components/Error'

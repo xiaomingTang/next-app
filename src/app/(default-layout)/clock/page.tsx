@@ -1,6 +1,6 @@
-import { clocks } from '@/app/(iframe-layout)/clock/constants'
 import { seo } from '@/utils/seo'
 
+import { clocks } from '@I/clock/constants'
 import { Box, Grid } from '@mui/material'
 
 export const metadata = seo.defaults({

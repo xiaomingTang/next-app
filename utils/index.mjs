@@ -89,6 +89,7 @@ export const webpackConfig = (config, { dev }) => {
   config.resolve.alias['@ADMIN'] = resolveRoot('src/app/admin')
   config.resolve.alias['@D'] = resolveRoot('src/app/(default-layout)')
   config.resolve.alias['@F'] = resolveRoot('src/app/(fullscreen-layout)')
+  config.resolve.alias['@I'] = resolveRoot('src/app/(iframe-layout)')
   config.resolve.alias['@ROOT'] = resolveRoot()
   if (!dev) {
     // https://stackoverflow.com/a/69166434

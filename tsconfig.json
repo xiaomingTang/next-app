@@ -25,6 +25,7 @@
       "@ADMIN/*": ["./src/app/admin/*"],
       "@D/*": ["./src/app/(default-layout)/*"],
       "@F/*": ["./src/app/(fullscreen-layout)/*"],
+      "@I/*": ["./src/app/(iframe-layout)/*"],
       "@ROOT/*": ["./*"]
     }
   },
