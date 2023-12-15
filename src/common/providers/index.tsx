@@ -1,7 +1,5 @@
 'use client'
 
-import EmotionProvider from './EmotionProvider'
-
 import {
   Experimental_CssVarsProvider as ThemeProvider,
   experimental_extendTheme as createTheme,
@@ -136,11 +134,9 @@ export default function Providers({
         revalidateOnFocus: false,
       }}
     >
-      <EmotionProvider>
-        <ThemeProvider theme={muiTheme}>
-          <NiceModal.Provider>{children}</NiceModal.Provider>
-        </ThemeProvider>
-      </EmotionProvider>
+      <ThemeProvider theme={muiTheme}>
+        <NiceModal.Provider>{children}</NiceModal.Provider>
+      </ThemeProvider>
     </SWRConfig>
   )
 }

@@ -10,6 +10,8 @@ import { VConsole } from '@/components/VConsole'
 import { GlobalAudioPlayer } from '@/components/GlobalAudioPlayer'
 import { LyricsViewer } from '@/components/LyricsViewer'
 
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
+
 import type { Metadata, Viewport } from 'next'
 
 export const metadata: Metadata = {
@@ -55,15 +57,17 @@ export default function RootLayout({
   return (
     <html lang='zh-cn' suppressHydrationWarning>
       <body>
-        <VConsole />
-        <GetInitColorSchemeScript />
-        <Providers>
-          <GlobalAudioPlayer />
-          <LyricsViewer />
-          <Polyfills />
-          <Contexts />
-          {children}
-        </Providers>
+        <AppRouterCacheProvider options={{ key: 'emo' }}>
+          <VConsole />
+          <GetInitColorSchemeScript />
+          <Providers>
+            <GlobalAudioPlayer />
+            <LyricsViewer />
+            <Polyfills />
+            <Contexts />
+            {children}
+          </Providers>
+        </AppRouterCacheProvider>
       </body>
     </html>
   )
