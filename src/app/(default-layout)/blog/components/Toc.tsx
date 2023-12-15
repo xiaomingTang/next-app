@@ -104,7 +104,6 @@ export function Toc() {
     }
     setElement(
       <Box
-        component='ul'
         className='shadow'
         sx={{
           mt: 1,
@@ -115,9 +114,11 @@ export function Toc() {
       >
         <Typography sx={{ fontWeight: 'bold' }}>目录</Typography>
         <Divider sx={{ my: 1 }} />
-        {root.children.map((item) => (
-          <TocItem key={`${item.depth}-${item.id}`} {...item} />
-        ))}
+        <Box component='ul'>
+          {root.children.map((item) => (
+            <TocItem key={`${item.depth}-${item.id}`} {...item} />
+          ))}
+        </Box>
       </Box>
     )
   }, [])
