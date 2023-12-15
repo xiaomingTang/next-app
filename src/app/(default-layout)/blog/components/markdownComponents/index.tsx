@@ -52,7 +52,6 @@ function geneHeading(tag: `h${number}`) {
         <Anchor
           href={elementHash}
           aria-label={`超链接, 指向页面内 heading`}
-          tabIndex={-1}
           className='user-anchor'
           onClick={(e) => {
             e.preventDefault()
