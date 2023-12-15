@@ -4,7 +4,7 @@ import { seo } from '@/utils/seo'
 import { clocks } from '@I/clock/constants'
 import { Clock } from '@I/clock/components/Clock'
 
-import { Grid } from '@mui/material'
+import Grid from '@mui/material/Grid'
 
 export const metadata = seo.defaults({
   title: '时钟橱窗',

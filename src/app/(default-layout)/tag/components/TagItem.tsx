@@ -1,6 +1,9 @@
 import { Link } from '@/components/CustomLink'
 
-import { Button, Skeleton, Tooltip, Typography } from '@mui/material'
+import Button from '@mui/material/Button'
+import Skeleton from '@mui/material/Skeleton'
+import Tooltip from '@mui/material/Tooltip'
+import Typography from '@mui/material/Typography'
 
 import type { SxProps, Theme } from '@mui/material'
 import type { LoadingAble } from '@/components/ServerComponent'

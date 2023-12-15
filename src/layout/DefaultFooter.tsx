@@ -2,7 +2,8 @@ import Anchor from '@/components/Anchor'
 import { SvgGithub } from '@/svg'
 import { dark } from '@/utils/theme'
 
-import { Stack, Typography } from '@mui/material'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 import { common, grey } from '@mui/material/colors'
 
 const year = new Date().getFullYear()

@@ -1,6 +1,5 @@
-'use client'
-
-import { Divider, Typography } from '@mui/material'
+import Divider from '@mui/material/Divider'
+import Typography from '@mui/material/Typography'
 
 export function RecommendSep() {
   return (

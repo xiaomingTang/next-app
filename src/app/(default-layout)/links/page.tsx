@@ -14,7 +14,7 @@ import { AlertError } from '@/components/Error'
 
 import { Suspense } from 'react'
 import { unstable_cache } from 'next/cache'
-import { Divider } from '@mui/material'
+import Divider from '@mui/material/Divider'
 
 export const metadata = seo.defaults({
   title: '友链',

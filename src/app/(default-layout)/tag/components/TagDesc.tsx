@@ -1,4 +1,5 @@
-import { Skeleton, Typography } from '@mui/material'
+import Skeleton from '@mui/material/Skeleton'
+import Typography from '@mui/material/Typography'
 import SellIcon from '@mui/icons-material/Sell'
 
 import type { LoadingAble } from '@/components/ServerComponent'

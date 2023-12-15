@@ -1,10 +1,9 @@
-'use client'
-
 import { BlogItem } from './BlogItem'
 
 import { shuffledArray7 } from '@/constants'
 
-import { Stack, Typography } from '@mui/material'
+import Stack from '@mui/material/Stack'
+import Typography from '@mui/material/Typography'
 
 import type { BlogWithTags } from '@ADMIN/blog/server'
 

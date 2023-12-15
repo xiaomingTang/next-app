@@ -1,6 +1,4 @@
-'use client'
-
-import { Alert } from '@mui/material'
+import Alert from '@mui/material/Alert'
 
 import type { PlainError } from '@/errors/utils'
 

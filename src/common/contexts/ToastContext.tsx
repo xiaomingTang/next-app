@@ -1,5 +1,3 @@
-'use client'
-
 import { SvgError, SvgLoading, SvgSuccess } from '@/svg'
 
 import { Toaster } from 'react-hot-toast'

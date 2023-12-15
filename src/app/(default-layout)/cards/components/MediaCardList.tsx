@@ -1,11 +1,9 @@
-'use client'
-
 import { MediaCardItem, MediaCardUploadTrigger } from './MediaCardItem'
 
 import { shuffledArray7 } from '@/constants'
 import { AuthRequired } from '@/components/AuthRequired'
 
-import { Grid } from '@mui/material'
+import Grid from '@mui/material/Grid'
 
 import type { MediaCardType } from '@prisma/client'
 import type { MediaCardWithUser } from '../server'

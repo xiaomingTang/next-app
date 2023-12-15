@@ -1,6 +1,8 @@
 import { LinkWithReplace } from '@/components/CustomLink'
 
-import { Box, Button, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
 
 export function QRLoginStatus({ status }: { status: 'success' | 'failed' }) {
   return (
