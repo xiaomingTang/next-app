@@ -8,13 +8,13 @@ import MusicNoteIcon from '@mui/icons-material/MusicNote'
 import clsx from 'clsx'
 
 export function MusicTriggerButton() {
-  const { state, loading, activeMP3, controls } = useAudio()
+  const { state, mp3s, loading, activeMP3, controls } = useAudio()
   const { visible: lyricsViewerVisible } = useLyricsViewer()
 
   return (
     <IconButton
       aria-label='音乐开关'
-      disabled={globalThis.mp3s.length === 0}
+      disabled={mp3s.length === 0}
       onClick={() => {
         if (!activeMP3) {
           controls.switchToIndex(0)
@@ -34,7 +34,7 @@ export function MusicTriggerButton() {
       <MusicNoteIcon
         sx={{ fill: 'url(#musicIconLinearColors)' }}
         className={clsx(
-          state.paused ? styles.shake : styles.rotate,
+          mp3s.length > 0 && (state.paused ? styles.shake : styles.rotate),
           loading && styles.blink
         )}
       />

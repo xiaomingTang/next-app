@@ -25,7 +25,7 @@ import { common, red } from '@mui/material/colors'
 import type { SxProps, Theme } from '@mui/material'
 
 export function LyricsViewer() {
-  const { state, activeMP3 } = useAudio()
+  const { state, mp3s, activeMP3 } = useAudio()
   const visible = useLyricsViewer((s) => s.visible)
   const hasShown = useHasShown(visible)
   const [controlsVisible, setControlsVisible] = useState(false)
@@ -127,7 +127,7 @@ export function LyricsViewer() {
     </Box>
   )
 
-  if (globalThis.mp3s.length === 0) {
+  if (mp3s.length === 0) {
     return <></>
   }
 

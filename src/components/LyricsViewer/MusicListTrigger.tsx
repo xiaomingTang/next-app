@@ -5,7 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import { IconButton, ListItemText, Menu, MenuItem } from '@mui/material'
 
 export function MusicListTrigger() {
-  const { activeMP3, controls } = useAudio()
+  const { mp3s, activeMP3, controls } = useAudio()
   return (
     <AnchorProvider>
       {(anchorEl, setAnchorEl) => (
@@ -37,7 +37,7 @@ export function MusicListTrigger() {
               'aria-labelledby': '关闭歌曲目录',
             }}
           >
-            {globalThis.mp3s.map((mp3) => (
+            {mp3s.map((mp3) => (
               <MenuItem
                 key={mp3.hash}
                 selected={activeMP3?.hash === mp3.hash}

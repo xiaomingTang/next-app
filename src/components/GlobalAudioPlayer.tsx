@@ -4,11 +4,14 @@ import { useMediaLoading } from '@/hooks/useMediaLoading'
 import { useListen } from '@/hooks/useListen'
 import { remainder } from '@/utils/math'
 import { sleepMs } from '@/utils/time'
+import { getMP3s } from '@/app/admin/customMP3/server'
+import { SA } from '@/errors/utils'
 
 import { create } from 'zustand'
 import { useAudio as useReactUseAudio } from 'react-use'
 import { useEffect, useMemo } from 'react'
 import { noop } from 'lodash-es'
+import useSWR from 'swr'
 
 import type { CustomMP3 } from '@prisma/client'
 
@@ -21,6 +24,7 @@ export type RepeatMode =
 type UseAudioRet = ReturnType<typeof useReactUseAudio>
 
 export const useAudio = create<{
+  mp3s: CustomMP3[]
   activeMP3?: CustomMP3
   audio: UseAudioRet[0]
   state: UseAudioRet[1]
@@ -37,6 +41,7 @@ export const useAudio = create<{
     repeatMode: RepeatMode
   }
 }>(() => ({
+  mp3s: [],
   audio: <></>,
   state: {
     buffered: [],
@@ -68,8 +73,10 @@ export const useAudio = create<{
 }))
 
 export function GlobalAudioPlayer() {
+  const { data: rawMp3s } = useSWR('getMP3s', () => getMP3s({}).then(SA.decode))
   const { loading, setMedia } = useMediaLoading()
   const activeMP3 = useAudio((state) => state.activeMP3)
+  const mp3s = useAudio((state) => state.mp3s)
   const props: Parameters<typeof useReactUseAudio>[0] = useMemo(
     () => ({
       src: activeMP3?.mp3 ?? '',
@@ -79,6 +86,9 @@ export function GlobalAudioPlayer() {
 
   const [audio, state, controls, ref] = useReactUseAudio(props)
 
+  useListen(rawMp3s, () => {
+    useAudio.setState({ mp3s: rawMp3s })
+  })
   useListen(audio, () => {
     useAudio.setState({ audio })
   })
@@ -107,7 +117,6 @@ export function GlobalAudioPlayer() {
           })
         },
         switchToIndex: (n) => {
-          const { mp3s } = globalThis
           if (mp3s.length === 0) {
             return
           }
@@ -116,7 +125,6 @@ export function GlobalAudioPlayer() {
           })
         },
         next: () => {
-          const { mp3s } = globalThis
           if (mp3s.length === 0) {
             return
           }
@@ -128,7 +136,6 @@ export function GlobalAudioPlayer() {
           })
         },
         prev: () => {
-          const { mp3s } = globalThis
           if (mp3s.length === 0) {
             return
           }
@@ -162,7 +169,7 @@ export function GlobalAudioPlayer() {
         settings: { repeatMode },
         activeMP3: mp3,
       } = useAudio.getState()
-      const hasNext = mp3 !== globalThis.mp3s[globalThis.mp3s.length - 1]
+      const hasNext = mp3 !== mp3s[mp3s.length - 1]
       switch (repeatMode) {
         case 'Pause-when-Finished':
           break
@@ -193,7 +200,7 @@ export function GlobalAudioPlayer() {
     return () => {
       audioElem.removeEventListener('ended', handleEnded)
     }
-  }, [ref])
+  }, [mp3s, ref])
 
   return <>{audio}</>
 }
