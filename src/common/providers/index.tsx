@@ -10,11 +10,6 @@ import NiceModal from '@ebay/nice-modal-react'
 import { SWRConfig } from 'swr'
 
 const muiTheme = createTheme({
-  v: {
-    screens: {
-      desktop: 1024,
-    },
-  },
   colorSchemes: {
     light: {
       palette: {
