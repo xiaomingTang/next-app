@@ -1,6 +1,5 @@
 'use client'
 
-import { DiffMode } from '@/components/Diff'
 import { SvgError, SvgLoading, SvgSuccess } from '@/svg'
 
 import { Toaster } from 'react-hot-toast'
@@ -10,14 +9,7 @@ export function ToastContext() {
     <Toaster
       gutter={8}
       toastOptions={{
-        style: {
-          borderRadius: '4px',
-          padding: '4px 8px',
-          backgroundColor: DiffMode({
-            dark: '#ccc',
-            light: 'white',
-          }),
-        },
+        className: 'toaster',
         success: {
           icon: (
             <SvgSuccess className='fill-primary-light text-[18px] flex-[0_0_auto]' />

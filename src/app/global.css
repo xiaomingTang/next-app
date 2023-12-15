@@ -10,3 +10,15 @@
 input[type='file']::-webkit-file-upload-button {
   cursor: pointer;
 }
+
+.toaster {
+  border-radius: 4px;
+  padding: 4px 8px;
+  background-color: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  .toaster {
+    background-color: #ccc;
+  }
+}
