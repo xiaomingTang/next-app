@@ -202,5 +202,16 @@ export function GlobalAudioPlayer() {
     }
   }, [mp3s, ref])
 
+  useEffect(() => {
+    if (!activeMP3 || !state.playing) {
+      return noop
+    }
+    const prevTitle = document.title
+    document.title = `🎵 ${activeMP3.name} | ${prevTitle}`
+    return () => {
+      document.title = prevTitle
+    }
+  }, [activeMP3, state.playing])
+
   return <>{audio}</>
 }
