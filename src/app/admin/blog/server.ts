@@ -33,6 +33,17 @@ const blogSelect = {
   creator: true,
 }
 
+function mosaicBlogUser<T extends { creator: Partial<User> }>(blog: T): T {
+  return {
+    ...blog,
+    creator: {
+      ...blog.creator,
+      password: blog.creator.password ? '' : undefined,
+      email: blog.creator.email ? '' : undefined,
+    },
+  }
+}
+
 async function filterBlogWithAuth<
   B extends {
     type: BlogType
@@ -43,11 +54,11 @@ async function filterBlogWithAuth<
     throw Boom.notFound('该博客不存在或已删除')
   }
   if (blog.type === 'PUBLISHED') {
-    return blog
+    return mosaicBlogUser(blog)
   }
   const self = await getSelf()
   if (self.role === Role.ADMIN || blog.creator.id === self.id) {
-    return blog
+    return mosaicBlogUser(blog)
   }
   throw Boom.forbidden('你无权操作该博客')
 }
@@ -59,7 +70,7 @@ async function filterBlogsWithAuth<
   },
 >(blogs: (B | null | undefined)[]) {
   const self = await getSelf().catch(noop)
-  return blogs.filter((b) => {
+  const filteredBlogs = blogs.filter((b) => {
     if (!b) {
       return false
     }
@@ -68,6 +79,7 @@ async function filterBlogsWithAuth<
     }
     return !!self && (self.role === Role.ADMIN || b.creator.id === self.id)
   }) as B[]
+  return filteredBlogs.map((item) => mosaicBlogUser(item))
 }
 
 export const getBlog = SA.encode(async (props: Prisma.BlogWhereUniqueInput) =>
