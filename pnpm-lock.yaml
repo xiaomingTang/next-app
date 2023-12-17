@@ -110,6 +110,9 @@ dependencies:
   postcss:
     specifier: 8.4.32
     version: 8.4.32
+  province-city-china:
+    specifier: ^8.5.7
+    version: 8.5.7
   qrcode.react:
     specifier: ^3.1.0
     version: 3.1.0(react@18.2.0)
@@ -3413,6 +3416,10 @@ packages:
     resolution: {integrity: sha512-ZeV/Op4bZsWXuw5Tg05WwRI8BlKiRFhsixPcAM+5BKYSiUZiMKIi713tfT3drBq8+T0E1arNZgYSA9QYcglWNA==}
     dependencies:
       '@prisma/debug': 5.7.0
+
+  /@province-city-china/types@8.5.7:
+    resolution: {integrity: sha512-RZ1TX52jLevxx+00yLMzunHR2H6XIc7FY8C7qF0YUzXhYrRS4krqWSDY8kpq/76nonbp01ibif35wvmP3R+s4Q==}
+    dev: false
 
   /@rollup/plugin-babel@5.3.1(@babel/core@7.23.6)(rollup@2.79.1):
     resolution: {integrity: sha512-WFfdLWU/xVWKeRQnKmIAQULUI7Il0gZnBIH/ZFO069wYIfPu+8zrfp/KMW0atmELoRDq8FbiP3VCss9MhCut7Q==}
@@ -9196,6 +9203,12 @@ packages:
 
   /property-information@6.4.0:
     resolution: {integrity: sha512-9t5qARVofg2xQqKtytzt+lZ4d1Qvj8t5B8fEwXK6qOfgRLgH/b13QlgEyDh033NOS31nXeFbYv7CLUDG1CeifQ==}
+    dev: false
+
+  /province-city-china@8.5.7:
+    resolution: {integrity: sha512-6snhGKmXBgNDJluFYVNgudIA+FWJjha+6/Lci/ZWBDDp3uPs5zFlErrfeTRfN182owSNDp9oF4/f6/qPoL9+Xw==}
+    dependencies:
+      '@province-city-china/types': 8.5.7
     dev: false
 
   /proxy-from-env@1.1.0:
