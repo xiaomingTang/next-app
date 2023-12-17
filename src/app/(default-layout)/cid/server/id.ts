@@ -1,5 +1,7 @@
 'use server'
 
+import { isProvinceDisabled, type Gender } from './constants'
+
 import { SA } from '@/errors/utils'
 import { rand } from '@/utils/array'
 
@@ -7,13 +9,10 @@ import rawLevelDate from 'province-city-china/dist/level.json'
 import { clamp, random } from 'lodash-es'
 import Boom from '@hapi/boom'
 
-import type { Area, City, Province, Level } from 'province-city-china'
-import type { Gender } from './constants'
+import type { Area, City, Province } from 'province-city-china'
 
 // 屏蔽掉台湾
-const levelDate = rawLevelDate.filter(
-  (item) => item.code !== '710000'
-) as Level[]
+const levelDate = rawLevelDate.filter((item) => !isProvinceDisabled(item))
 
 /**
  * 计算身份证号码的校验位
@@ -30,9 +29,9 @@ function calcVerification(id: string) {
   return matchMap[sum % 11]
 }
 
-function normalizeProvince(
-  province: Province | undefined
-): Province | undefined {
+function normalizeProvince(province: undefined): undefined
+function normalizeProvince(province: Province): Province
+function normalizeProvince(province: Province | undefined) {
   if (!province) {
     return undefined
   }
@@ -43,7 +42,9 @@ function normalizeProvince(
   }
 }
 
-function normalizeCity(city: City | undefined): City | undefined {
+function normalizeCity(city: undefined): undefined
+function normalizeCity(city: City): City
+function normalizeCity(city: City | undefined) {
   if (!city) {
     return undefined
   }
@@ -55,7 +56,9 @@ function normalizeCity(city: City | undefined): City | undefined {
   }
 }
 
-function normalizeArea(area: City | Area | undefined): Area | undefined {
+function normalizeArea(area: undefined): undefined
+function normalizeArea(area: City | Area): Area
+function normalizeArea(area: City | Area | undefined) {
   if (!area) {
     return undefined
   }
@@ -115,6 +118,9 @@ function getData(provinceCode?: string, cityCode?: string, areaCode?: string) {
   const area = !areaCode
     ? rand(areaList)
     : areaList.find((item) => item.area === areaCode)
+  if (!city) {
+    throw Boom.badRequest('不存在该市')
+  }
   return {
     province: normalizeProvince(province),
     city: normalizeCity(city),
@@ -193,10 +199,6 @@ export interface RandomUserConfig {
    * 1 - 31
    */
   date?: number
-  /**
-   * 固话区号
-   */
-  districtCode?: string
 }
 
 export interface RandomUserRet {
@@ -206,6 +208,10 @@ export interface RandomUserRet {
   gender: Gender
   id: string
   birthday: Date
+  /**
+   * 固话区号
+   */
+  // districtCode?: string
 }
 
 function generateId(user: Omit<RandomUserRet, 'id'>) {
@@ -252,7 +258,7 @@ export const generateRandomUser = SA.encode(
       }
       const year = config.year ?? now.getFullYear() - age
       const month = config.month ?? random(0, 11, false)
-      const date = config.date ?? random(0, 31, false)
+      const date = config.date ?? random(1, 31, false)
       const birthday = new Date(year, month, date)
       const gender = config.gender ?? rand(['male', 'female'])
       const user: RandomUserRet = {
@@ -273,3 +279,15 @@ export const generateRandomUser = SA.encode(
     return result
   }
 )
+
+export const getProvinceList = SA.encode(async () =>
+  rawLevelDate.map(normalizeProvince)
+)
+
+export const getProvince = SA.encode(async (provinceCode: string) => {
+  const province = levelDate.find((item) => item.province === provinceCode)
+  if (!province) {
+    throw Boom.notFound('你查询的省份信息不可用')
+  }
+  return province
+})
