@@ -1,3 +1,5 @@
+import { formatTime } from '@/utils/formatTime'
+
 import Boom from '@hapi/boom'
 import { revalidateTag, revalidatePath } from 'next/cache'
 
@@ -92,7 +94,7 @@ function serverActionEncoder<Args extends unknown[], Ret>(
 ): Func<Args, Promise<ServerResponse<Ret>>> {
   return async (...args) => {
     try {
-      console.log('[api-log]: ', ...args)
+      console.log(`[api-log]: ${formatTime(new Date())}`, ...args)
       const ret = await func(...args)
       return {
         data: ret,
