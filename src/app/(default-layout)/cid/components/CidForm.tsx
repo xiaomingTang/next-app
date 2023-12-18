@@ -13,6 +13,7 @@ import { useLoading } from '@/hooks/useLoading'
 import Anchor from '@/components/Anchor'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 import { useUser } from '@/user'
+import { Delay } from '@/components/Delay'
 
 import { useState } from 'react'
 import {
@@ -76,7 +77,7 @@ function RandomName({ gender }: { gender?: Gender }) {
       </Typography>
       {name}
       {error && ` - ${toPlainError(error).message}`}
-      {isValidating && ' - 加载中'}
+      {isValidating && <Delay delayMs={500}> - 加载中</Delay>}
     </Anchor>
   )
 }
