@@ -40,7 +40,7 @@ interface FormProps {
   s: string
 }
 
-export const BlogSearchSection = NiceModal.create(() => {
+export const SearchSection = NiceModal.create(() => {
   const platform = useRawPlatform()
   const router = useRouter()
   const modal = useModal()
@@ -193,7 +193,7 @@ export const BlogSearchSection = NiceModal.create(() => {
                     sx={{ ml: 1, flex: 1 }}
                     autoFocus
                     autoComplete='off'
-                    placeholder='搜索博客标题和内容 (快捷键 ctrl + K)'
+                    placeholder='搜索 [ctrl + K]'
                     inputProps={{
                       'aria-label': '搜索博客标题和内容 (快捷键 ctrl + K)',
                     }}

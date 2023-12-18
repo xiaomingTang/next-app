@@ -5,7 +5,7 @@ import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
 import { Entry } from './CornerButtons/Entries'
 import { MusicTriggerButton } from './CornerButtons/MusicTriggerButton'
 import { UploadTrigger } from './CornerButtons/UploadTrigger'
-import { BlogSearchButton } from './CornerButtons/BlogSearchButton'
+import { SearchButton } from './CornerButtons/search/SearchButton'
 import { QrcodeTrigger } from './CornerButtons/QrcodeTrigger'
 import { CardsTrigger } from './CornerButtons/CardsTrigger'
 import { MenuTrigger } from './CornerButtons/MenuTrigger'
@@ -95,7 +95,7 @@ export function DefaultRawHeader() {
             <UploadTrigger />
             <UserButton />
             <QrcodeTrigger />
-            <BlogSearchButton />
+            <SearchButton />
             <ThemeToggleButton />
             <MusicTriggerButton />
           </Stack>
