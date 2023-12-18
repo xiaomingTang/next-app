@@ -33,7 +33,10 @@ const blogSelect = {
   creator: true,
 }
 
-function mosaicBlogUser<T extends { creator: Partial<User> }>(blog: T): T {
+function mosaicBlogUser<T extends { creator?: Partial<User> }>(blog: T): T {
+  if (!blog.creator) {
+    return blog
+  }
   return {
     ...blog,
     creator: {
