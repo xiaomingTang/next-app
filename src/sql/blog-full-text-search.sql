@@ -5,21 +5,31 @@
  */
 
 SELECT
-    `tytcn`.`Blog`.`hash`,
-    `tytcn`.`Blog`.`type`,
-    `tytcn`.`Blog`.`createdAt`,
-    `tytcn`.`Blog`.`updatedAt`,
-    `tytcn`.`Blog`.`title`,
-    `tytcn`.`Blog`.`content`,
-    `tytcn`.`Blog`.`description`,
-    `tytcn`.`Blog`.`creatorId`
-FROM `tytcn`.`Blog`
+    JSON_OBJECT(
+        'id',
+        u.`id`,
+        'name',
+        u.`name`,
+        'role',
+        u.`role`
+    ) AS `user`,
+    b.`hash`,
+    b.`type`,
+    b.`createdAt`,
+    b.`updatedAt`,
+    b.`title`,
+    -- 不需要查询 content 字段，只需要返回的时候带上这个字段
+    "" AS `content`,
+    b.`description`,
+    b.`creatorId`
+FROM `tytcn`.`Blog` AS b
+    JOIN `tytcn`.`User` AS u ON b.`creatorId` = u.`id`
 WHERE (
-        `tytcn`.`Blog`.`type` = "PUBLISHED"
+        b.`type` = "PUBLISHED"
         AND MATCH (
-            `tytcn`.`Blog`.`title`,
-            `tytcn`.`Blog`.`description`,
-            `tytcn`.`Blog`.`content`
+            b.`title`,
+            b.`description`,
+            b.`content`
         ) AGAINST (? IN NATURAL LANGUAGE MODE)
     )
-LIMIT 5
+LIMIT 5;
