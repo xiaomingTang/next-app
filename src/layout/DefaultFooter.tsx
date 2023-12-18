@@ -74,9 +74,13 @@ export function DefaultFooter() {
         <Anchor href='https://beian.miit.gov.cn/'>赣ICP备2021003257号-1</Anchor>
       </Stack>
       <Typography>
-        Powered by
-        <Anchor href='https://nextjs.org/' className='ml-1'>
-          Next.js
+        Powered by <Anchor href='https://nextjs.org/'>Next.js</Anchor>
+        <Typography
+          component='span'
+          sx={{ borderLeft: '1px solid currentColor', opacity: 0.25, mx: 1 }}
+        />
+        <Anchor href='/rss.xml' target='_blank'>
+          RSS
         </Anchor>
       </Typography>
     </Stack>
