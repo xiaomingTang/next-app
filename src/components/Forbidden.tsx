@@ -1,6 +1,7 @@
 'use client'
 
 import { CustomLoadingButton } from './CustomLoadingButton'
+import Anchor from './Anchor'
 
 import { RoleNameMap } from '@/constants'
 import { cat } from '@/errors/catchAndToast'
@@ -14,14 +15,14 @@ export function Forbidden() {
   return (
     <Box
       sx={{
-        padding: '0.5em',
+        p: 1,
       }}
     >
       {!!user.id && `${user.name} [${RoleNameMap[user.role]}]: `}
       您的权限不足, 您可以
       <CustomLoadingButton
         variant='contained'
-        sx={{ marginLeft: '0.5em' }}
+        sx={{ mx: 1 }}
         onClick={cat(async () => {
           if (user.id) {
             await useUser.logout()
@@ -31,6 +32,7 @@ export function Forbidden() {
       >
         {user.id ? '切换登录' : '登录'}
       </CustomLoadingButton>
+      或者<Anchor href='/'>返回首页</Anchor>
     </Box>
   )
 }
