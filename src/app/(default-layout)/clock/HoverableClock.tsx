@@ -4,6 +4,7 @@ import { useHover } from '@/hooks/useHover'
 import { dark } from '@/utils/theme'
 import { resolvePath } from '@/utils/url'
 import Anchor from '@/components/Anchor'
+import { useInjectHistory } from '@/hooks/useInjectHistory'
 
 import CloseIcon from '@mui/icons-material/Close'
 import {
@@ -38,6 +39,11 @@ export function HoverableClock({
   const text = `<iframe src="${clockHref}" style="border: 0; width: 300px; height: 300px;" />`
   const [hover, setElem] = useHover()
   const [dialogOpen, setDialogOpen] = useState(false)
+
+  useInjectHistory(dialogOpen, () => {
+    setDialogOpen(false)
+  })
+
   return (
     <Box
       ref={setElem}
