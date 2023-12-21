@@ -47,7 +47,16 @@ export function MusicListTrigger() {
                   setAnchorEl(null)
                 }}
               >
-                <ListItemText>{mp3.name}</ListItemText>
+                <ListItemText
+                  primary={mp3.name}
+                  primaryTypographyProps={{
+                    sx: {
+                      maxWidth: '14em',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    },
+                  }}
+                />
               </MenuItem>
             ))}
           </Menu>
