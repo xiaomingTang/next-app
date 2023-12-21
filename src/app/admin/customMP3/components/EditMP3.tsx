@@ -128,8 +128,8 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
                 message: '最少 2 个字',
               },
               maxLength: {
-                value: 16,
-                message: '最多 16 个字',
+                value: 50,
+                message: '最多 50 个字',
               },
             }}
           />

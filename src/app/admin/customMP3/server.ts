@@ -46,7 +46,7 @@ const saveMP3Dto = Type.Object({
     Type.Union([
       Type.String({
         minLength: 6,
-        maxLength: 16,
+        maxLength: 50,
       }),
       Type.String({
         maxLength: 0,
