@@ -27,17 +27,10 @@ interface Props {
 export async function generateMetadata({
   params: { blogHash },
 }: Props): Promise<Metadata> {
-  const { data: blog } = await unstable_cache(
-    () =>
-      getBlog({
-        hash: blogHash,
-      }),
-    ['getBlog', blogHash],
-    {
-      revalidate: 10,
-      tags: [`getBlog:${blogHash}`],
-    }
-  )()
+  // 由于可能涉及到未发布博客，因此不能缓存
+  const { data: blog } = await getBlog({
+    hash: blogHash,
+  })
 
   return seo.defaults({
     title: blog?.title,
@@ -79,14 +72,8 @@ export default async function Home({ params: { blogHash } }: Props) {
     <>
       <Suspense fallback={<BlogPage loading size={4} />}>
         <ServerComponent
-          api={unstable_cache(
-            () => getBlogWithSource(blogHash),
-            ['getBlog', blogHash],
-            {
-              revalidate: 10,
-              tags: [`getBlog:${blogHash}`],
-            }
-          )}
+          // 由于可能涉及到未发布博客，因此不能缓存
+          api={() => getBlogWithSource(blogHash)}
           render={(blog) => (
             <>
               <DefaultAside placement='right'>
