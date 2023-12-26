@@ -47,6 +47,9 @@ dependencies:
   '@sinclair/typebox':
     specifier: ^0.31.28
     version: 0.31.28
+  '@zimi/utils':
+    specifier: ^0.17.0
+    version: 0.17.0
   autoprefixer:
     specifier: 10.4.16
     version: 10.4.16(postcss@8.4.32)
@@ -239,8 +242,8 @@ devDependencies:
     specifier: ^6.15.0
     version: 6.15.0(eslint@8.56.0)(typescript@5.3.3)
   '@zimi/type-utils':
-    specifier: ^0.16.0
-    version: 0.16.0
+    specifier: ^0.17.0
+    version: 0.17.0
   commitizen:
     specifier: ^4.3.0
     version: 4.3.0(typescript@5.3.3)
@@ -4578,9 +4581,15 @@ packages:
   /@xtuc/long@4.2.2:
     resolution: {integrity: sha512-NuHqBY1PB/D8xU6s/thBgOAiAP7HOYDQ32+BFZILJ8ivkUkAHQnWfn6WhL79Owj1qmUnoN/YPhktdIoucipkAQ==}
 
-  /@zimi/type-utils@0.16.0:
-    resolution: {integrity: sha512-hzt2ugYhh1tipoW5/+XIxFCpgYzbg0WbOSMvPDxjxX9etx4yzOUPrtDS6EbJadaJDkEgbkY8syk+JOaliNAQOw==}
+  /@zimi/type-utils@0.17.0:
+    resolution: {integrity: sha512-C0nBob1K7wu0kWb7ZpKz3yYZHC99YknVnRfh6iNy1P9OA4DysxC+qMswdgQ/OLbvmywusX2ulYfi3ah8BDbsrA==}
     dev: true
+
+  /@zimi/utils@0.17.0:
+    resolution: {integrity: sha512-A7MBfJC77QHHUzj1RyRwA1fFlHROB8c1QBZkT/ujDEcu8LkMCMi1xB5yrhWXU3fgU20LP3N/bWv6kQVcip/p0Q==}
+    dependencies:
+      lodash-es: 4.17.21
+    dev: false
 
   /JSONStream@1.3.5:
     resolution: {integrity: sha512-E+iruNOY8VV9s4JEbe1aNEm6MiszPRr/UfcHMz0TQh1BXSxHK+ASV1R6W4HpjBhSeS+54PIsAMCBmwD06LLsqQ==}

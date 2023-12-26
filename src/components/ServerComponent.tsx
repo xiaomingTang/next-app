@@ -1,7 +1,6 @@
 'use server'
 
-import type { AnyObj } from '@/type-utils/Object'
-import type { Or } from '@/type-utils/Or'
+import type { AnyObj, Or } from '@zimi/type-utils'
 import type { PlainError, ServerResponse } from '@/errors/utils'
 
 interface ServerComponentProps<T> {
