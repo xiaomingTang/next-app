@@ -17,6 +17,7 @@ import { MDXRemote } from 'next-mdx-remote'
 import { Typography, NoSsr, IconButton, Skeleton, alpha } from '@mui/material'
 import { PhotoProvider } from 'react-photo-view'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { forwardRef, useRef, useState } from 'react'
 import { common } from '@mui/material/colors'
 
@@ -175,6 +176,7 @@ function RawBlogContent(
       </Typography>
       {/* 版权声明 */}
       <Typography
+        component='div'
         sx={{
           mt: 2,
           p: 2,
@@ -184,14 +186,26 @@ function RawBlogContent(
           color: alpha(common.white, 0.7),
         }}
       >
-        版权声明: 自由转载-非商用-非衍生-保持署名{' '}
-        <Anchor
-          href='https://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh'
-          bold={false}
-          style={{ color: 'inherit' }}
-        >
-          (创意共享 3.0 许可证)
-        </Anchor>
+        <Typography>
+          如非特别声明，本站作品均为原创，遵循
+          <Typography component='span' fontWeight='bold'>
+            【自由转载-保持署名-非商用-非衍生{' '}
+            <Anchor
+              href='https://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh'
+              bold={false}
+              style={{ color: 'inherit', verticalAlign: 'middle' }}
+            >
+              创意共享 3.0 许可证
+              <sup>
+                <OpenInNewIcon fontSize='inherit' />
+              </sup>
+            </Anchor>
+            】。
+          </Typography>
+        </Typography>
+        <Typography mt={2}>
+          对于转载作品，如需二次转载，请遵循原作许可。
+        </Typography>
       </Typography>
     </>
   )
