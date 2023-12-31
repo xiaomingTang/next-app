@@ -1,13 +1,8 @@
-import { LevelLine } from './Line'
+import { LevelAxis } from './Axis'
 
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 
 import Box from '@mui/material/Box'
-
-const hTotal = 10
-const hList = Array.from(new Array(hTotal - 1)).map((_, i) => i + 1)
-const vTotal = 10
-const vList = Array.from(new Array(vTotal - 1)).map((_, i) => i + 1)
 
 export function LevelWrapper({
   children,
@@ -32,22 +27,7 @@ export function LevelWrapper({
           overflow: 'hidden',
         }}
       >
-        {hList.map((i) => (
-          <LevelLine
-            key={`h-${i}`}
-            orientation='horizontal'
-            percentage={i / hTotal}
-            highlight={i * 2 === hTotal}
-          />
-        ))}
-        {vList.map((i) => (
-          <LevelLine
-            key={`v-${i}`}
-            orientation='vertical'
-            percentage={i / vTotal}
-            highlight={i * 2 === vTotal}
-          />
-        ))}
+        <LevelAxis />
         {children}
       </Box>
     </Box>
