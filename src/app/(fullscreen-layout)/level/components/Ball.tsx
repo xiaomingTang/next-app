@@ -93,7 +93,7 @@ export function LevelBall() {
             // dominantBaseline 需要设置到 text 上, safari 不会从父节点继承该属性
             dominantBaseline='central'
           >
-            {Math.abs(Math.round(x * 1800) / 10 - 90)}°
+            {Math.abs(Math.round(x * 1800) / 10 - 90).toFixed(1)}°
           </text>
           {/* y 偏转角 */}
           <text
@@ -104,7 +104,7 @@ export function LevelBall() {
             // dominantBaseline 需要设置到 text 上, safari 不会从父节点继承该属性
             dominantBaseline='central'
           >
-            {Math.abs(Math.round(y * 1800) / 10 - 90)}°
+            {Math.abs(Math.round(y * 1800) / 10 - 90).toFixed(1)}°
           </text>
         </g>
       </Box>
