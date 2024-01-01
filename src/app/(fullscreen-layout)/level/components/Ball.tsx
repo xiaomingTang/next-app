@@ -1,10 +1,11 @@
 'use client'
 
 import { useLevelPosition } from './usePosition'
+import { RequestDeviceOrientationPermission } from './RequestDeviceOrientationPermission'
 
 import { useDeviceOrientation } from '@/hooks/useDeviceOrientation'
 
-import { Alert, Box } from '@mui/material'
+import { Box } from '@mui/material'
 import { blue, red } from '@mui/material/colors'
 import { useMemo } from 'react'
 
@@ -108,20 +109,7 @@ export function LevelBall() {
           </text>
         </g>
       </Box>
-      {!isNumber(beta) && (
-        <Alert
-          severity='warning'
-          sx={{
-            position: 'absolute',
-            zIndex: 1,
-            top: 0,
-            left: 0,
-            width: '100%',
-          }}
-        >
-          正在检测陀螺仪
-        </Alert>
-      )}
+      {!isNumber(beta) && <RequestDeviceOrientationPermission />}
     </>
   )
 }
