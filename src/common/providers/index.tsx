@@ -59,6 +59,11 @@ const muiTheme = createTheme({
         placement: 'bottom-start',
         enterTouchDelay: 0,
       },
+      styleOverrides: {
+        tooltip: {
+          fontSize: '0.75rem',
+        },
+      },
     },
     MuiChip: {
       defaultProps: {
