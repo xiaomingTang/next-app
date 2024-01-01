@@ -32,6 +32,10 @@ declare global {
     code?: number
     message: string
   }
+
+  interface IosDeviceOrientationEvent {
+    requestPermission?: () => Promise<PermissionState>
+  }
 }
 
 export {}
