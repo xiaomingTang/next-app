@@ -1,3 +1,4 @@
+import { noop } from 'lodash-es'
 import { useCallback, useEffect, useState } from 'react'
 
 function getRequestPermission() {
@@ -22,7 +23,7 @@ export function useRequestDeviceOrientationPermission() {
   }, [])
 
   useEffect(() => {
-    requestPermission()
+    requestPermission().catch(noop)
   }, [requestPermission])
 
   return {
