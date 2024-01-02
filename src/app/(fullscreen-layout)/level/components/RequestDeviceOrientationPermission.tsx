@@ -2,6 +2,7 @@ import Anchor from '@/components/Anchor'
 import { useRequestDeviceOrientationPermission } from '@/hooks/useRequestDeviceOrientationPermission'
 
 import { Alert, Tooltip, Typography } from '@mui/material'
+import toast from 'react-hot-toast'
 
 export function RequestDeviceOrientationPermission() {
   const { permissionState, requestPermission } =
@@ -12,7 +13,16 @@ export function RequestDeviceOrientationPermission() {
   }
 
   const anchor = (
-    <Anchor className='select-none' onClick={requestPermission}>
+    <Anchor
+      className='select-none'
+      onClick={() => {
+        requestPermission().then((res) => {
+          if (res === 'prompt') {
+            toast.error('你的设备可能不支持陀螺仪')
+          }
+        })
+      }}
+    >
       申请权限
     </Anchor>
   )
