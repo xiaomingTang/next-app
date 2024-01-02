@@ -15,7 +15,7 @@ export function useLevelPosition() {
   const gammaPercent = !isNumber(gamma) ? 0.5 : remainder(gamma + 90, 180) / 180
 
   const x = useMemo(() => {
-    switch (angle) {
+    switch (remainder(angle, 360)) {
       case 270:
         return 1 - betaPercent
       case 90:
@@ -28,7 +28,7 @@ export function useLevelPosition() {
   }, [angle, betaPercent, gammaPercent])
 
   const y = useMemo(() => {
-    switch (angle) {
+    switch (remainder(angle, 360)) {
       case 90:
         return 1 - gammaPercent
       case 270:
