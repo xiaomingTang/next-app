@@ -1,8 +1,8 @@
 import { useDeviceOrientation } from '@/hooks/useDeviceOrientation'
+import { useOrientation } from '@/hooks/useOrientation'
 import { remainder } from '@/utils/math'
 
 import { useMemo } from 'react'
-import { useOrientation } from 'react-use'
 
 function isNumber(n: unknown): n is number {
   return typeof n === 'number' && Number.isFinite(n)
