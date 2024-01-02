@@ -50,9 +50,7 @@ export function RequestDeviceOrientationPermission() {
           <Typography>如果申请无效，请尝试重启浏览器后重试；</Typography>
           <Typography>
             <b>如果仍旧无效</b>，可尝试
-            <Tooltip open title={clearDataTip}>
-              {clearDataAnchor}
-            </Tooltip>
+            <Tooltip title={clearDataTip}>{clearDataAnchor}</Tooltip>
             并重试。
           </Typography>
         </>
