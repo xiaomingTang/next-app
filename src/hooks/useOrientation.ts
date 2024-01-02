@@ -35,20 +35,16 @@ export function useOrientation(initialState = defaultState) {
 
     onChange()
 
-    const onOrientationChange = () => {
-      onChange()
-      /**
-       * fix: ipad 在迅速连续翻转设备 (0-90-180) 时, 只会触发一次 orientationchange 事件,
-       * 导致最终 angle 是错误的 90 (正确应该是 180)
-       */
-      timerRef.current = window.setTimeout(onChange, 1000)
+    if (window.screen.orientation) {
+      window.screen.orientation.addEventListener('change', onChange)
+    } else {
+      window.addEventListener('orientationchange', onChange)
     }
-
-    window.addEventListener('orientationchange', onOrientationChange)
 
     return () => {
       mounted = false
-      window.removeEventListener('orientationchange', onOrientationChange)
+      window.screen.orientation?.removeEventListener('change', onChange)
+      window.removeEventListener('orientationchange', onChange)
     }
   }, [initialState.angle, initialState.type])
 
