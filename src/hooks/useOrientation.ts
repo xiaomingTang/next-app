@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import type { OrientationState } from 'react-use/lib/useOrientation'
 
@@ -8,22 +8,30 @@ const defaultState: OrientationState = {
 }
 
 export function useOrientation(initialState = defaultState) {
-  const timerRef = useRef(-1)
   const [state, setState] = useState(initialState)
 
   useEffect(() => {
     let mounted = true
+    // 强行 as 为 undefined, 避免漏了兼容性判断
+    const orientation = window.screen.orientation as
+      | ScreenOrientation
+      | undefined
+
     const onChange = () => {
       if (!mounted) {
         return
       }
-      window.clearTimeout(timerRef.current)
-      const angle = window.screen.orientation?.angle ?? window.orientation
-      const type = window.screen.orientation?.type ?? ''
-      if (typeof angle === 'number') {
+      if (orientation) {
         setState({
-          angle,
-          type,
+          type: orientation.type,
+          angle: orientation.angle,
+        })
+        return
+      }
+      if (typeof window.orientation === 'number') {
+        setState({
+          angle: window.orientation,
+          type: '',
         })
         return
       }
@@ -35,15 +43,15 @@ export function useOrientation(initialState = defaultState) {
 
     onChange()
 
-    if (window.screen.orientation) {
-      window.screen.orientation.addEventListener('change', onChange)
+    if (orientation) {
+      orientation.addEventListener('change', onChange)
     } else {
       window.addEventListener('orientationchange', onChange)
     }
 
     return () => {
       mounted = false
-      window.screen.orientation?.removeEventListener('change', onChange)
+      orientation?.removeEventListener('change', onChange)
       window.removeEventListener('orientationchange', onChange)
     }
   }, [initialState.angle, initialState.type])
