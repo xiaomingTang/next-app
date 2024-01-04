@@ -6,7 +6,7 @@ export function Delay({
   children,
   delayMs = 0,
 }: {
-  children: React.ReactNode | React.ReactNode[]
+  children?: React.ReactNode | React.ReactNode[]
   delayMs?: number
 }) {
   const [visible, setVisible] = useState(false)
