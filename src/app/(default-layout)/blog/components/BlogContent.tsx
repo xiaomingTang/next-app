@@ -188,12 +188,12 @@ function RawBlogContent(
       >
         <Typography>
           如非特别声明，本站作品均为原创，遵循
-          <Typography component='span' fontWeight='bold'>
+          <b>
             【自由转载-保持署名-非商用-非衍生{' '}
             <Anchor
               href='https://creativecommons.org/licenses/by-nc-nd/3.0/deed.zh'
               bold={false}
-              style={{ color: 'inherit', verticalAlign: 'middle' }}
+              style={{ color: 'inherit' }}
             >
               创意共享 3.0 许可证
               <sup>
@@ -201,7 +201,7 @@ function RawBlogContent(
               </sup>
             </Anchor>
             】。
-          </Typography>
+          </b>
         </Typography>
         <Typography mt={2}>
           对于转载作品，如需二次转载，请遵循原作许可。
