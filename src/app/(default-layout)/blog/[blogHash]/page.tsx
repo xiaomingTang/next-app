@@ -78,7 +78,7 @@ export default async function Home({ params: { blogHash } }: Props) {
             <>
               <DefaultAside placement='right'>
                 <Delay>
-                  <Toc />
+                  <Toc mt={1} />
                 </Delay>
               </DefaultAside>
               <BlogPage {...blog} />

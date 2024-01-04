@@ -27,7 +27,7 @@
     justify-content: flex-start;
     align-items: center;
 
-    & > .user-anchor {
+    & .user-anchor {
       position: absolute;
       float: left;
       display: inline-flex;
@@ -38,7 +38,15 @@
       opacity: 0;
     }
     .user-anchor:focus-visible,
-    &:hover > .user-anchor {
+    &:hover .user-anchor {
+      opacity: 1;
+    }
+
+    .user-heading-menu-trigger {
+      opacity: 0;
+    }
+    .user-heading-menu-trigger:focus-visible,
+    &:hover .user-heading-menu-trigger {
       opacity: 1;
     }
   }

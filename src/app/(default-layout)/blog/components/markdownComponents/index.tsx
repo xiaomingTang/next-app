@@ -1,38 +1,60 @@
 'use client'
 
+import { encodeToId } from './utils'
+
+import { Toc, useTocList } from '../Toc'
+
 import Anchor from '@/components/Anchor'
 import { DefaultLayoutScrollFlag } from '@/layout/components/ScrollFlag'
 import { ImageWithState } from '@/components/ImageWithState'
 import { ENV_CONFIG } from '@/config'
 import { resolvePath } from '@/utils/url'
+import { AnchorProvider } from '@/components/AnchorProvider'
+import { useDefaultAsideDetail } from '@/layout/utils'
 
-import { Button } from '@mui/material'
-import { createElement } from 'react'
+import {
+  Button,
+  ClickAwayListener,
+  IconButton,
+  NoSsr,
+  Tooltip,
+  useEventCallback,
+} from '@mui/material'
+import { createElement, useEffect } from 'react'
 import LinkIcon from '@mui/icons-material/Link'
+import ListIcon from '@mui/icons-material/List'
 import { matchRemotePattern } from 'next/dist/shared/lib/match-remote-pattern'
 
 import type { RemotePattern } from 'next/dist/shared/lib/image-config'
 import type { MDXComponents } from 'mdx/types'
-
-export function encodeToId(s: unknown) {
-  if (typeof s === 'number' || typeof s === 'string') {
-    const rawId = `${s}`
-      .replace(/[^\u4e00-\u9fa5\-_a-zA-Z0-9]/g, '-')
-      .split('-')
-      .filter(Boolean)
-      .join('-')
-    return rawId ? `user-content-${rawId}` : ''
-  }
-  return ''
-}
 
 type HeadingProps = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLHeadingElement>,
   HTMLHeadingElement
 >
 
+function EscListener({ onEsc }: { onEsc: (e: KeyboardEvent) => void }) {
+  const handler = useEventCallback((e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onEsc(e)
+    }
+  })
+
+  useEffect(() => {
+    window.addEventListener('keydown', handler)
+
+    return () => {
+      window.removeEventListener('keydown', handler)
+    }
+  }, [handler])
+
+  return <></>
+}
+
 function geneHeading(tag: `h${number}`) {
   return function Heading(props: HeadingProps) {
+    const { visible: asideVisible } = useDefaultAsideDetail()
+    const tocList = useTocList()
     const propsWithDefault: HeadingProps = {
       ...props,
       tabIndex: props.tabIndex ?? -1,
@@ -48,10 +70,14 @@ function geneHeading(tag: `h${number}`) {
       tag,
       propsWithDefault,
       <>
-        <DefaultLayoutScrollFlag id={id} inline />
+        <DefaultLayoutScrollFlag
+          id={id}
+          inline
+          className='user-heading-scroll-flag'
+        />
         <Anchor
           href={elementHash}
-          aria-label={`超链接, 指向页面内 heading`}
+          aria-label='超链接, 指向页面内 heading'
           className='user-anchor'
           onClick={(e) => {
             e.preventDefault()
@@ -65,6 +91,39 @@ function geneHeading(tag: `h${number}`) {
           <LinkIcon className='align-baseline' />
         </Anchor>
         {propsWithDefault.children}
+        <NoSsr>
+          {/* TODO: setAnchorEl(null) after hash change */}
+          {tocList.length > 0 && !asideVisible && (
+            <AnchorProvider>
+              {(anchorEl, setAnchorEl) => (
+                <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+                  <span>
+                    <Tooltip
+                      open={!!anchorEl}
+                      title={<Toc onClick={() => setAnchorEl(null)} />}
+                    >
+                      <IconButton
+                        aria-label='目录'
+                        className='user-heading-menu-trigger'
+                        onClick={(e) => {
+                          setAnchorEl((prev) => {
+                            if (!prev) {
+                              return e.currentTarget
+                            }
+                            return null
+                          })
+                        }}
+                      >
+                        <ListIcon />
+                        <EscListener onEsc={() => setAnchorEl(null)} />
+                      </IconButton>
+                    </Tooltip>
+                  </span>
+                </ClickAwayListener>
+              )}
+            </AnchorProvider>
+          )}
+        </NoSsr>
       </>
     )
   }

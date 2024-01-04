@@ -1,10 +1,14 @@
 'use client'
 
 import { BLOG_MARKDOWN_ID } from './constants'
-import { encodeToId } from './markdownComponents'
+import { decodeToText } from './markdownComponents/utils'
 
+import { create } from 'zustand'
 import { Box, Divider, Link, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { forwardRef, useEffect } from 'react'
+import clsx from 'clsx'
+
+import type { BoxProps } from '@mui/material'
 
 type HeadingTree = {
   text: string
@@ -16,14 +20,12 @@ type HeadingTree = {
 function getHeadings() {
   const article = document.querySelector(`#${BLOG_MARKDOWN_ID}`)
   const headings = Array.from(
-    article?.querySelectorAll(
-      'h1.user-heading,h2.user-heading,h3.user-heading,h4.user-heading,h5.user-heading,h6.user-heading'
-    ) ?? []
+    article?.querySelectorAll('.user-heading-scroll-flag') ?? []
   ) as HTMLElement[]
   const headingInfos = headings.map<HeadingTree>((h) => ({
-    text: h.innerText,
-    id: encodeToId(h.innerText),
-    depth: +h.tagName.slice(1),
+    text: decodeToText(h.getAttribute('id')) || '出错了',
+    id: h.getAttribute('id') ?? '',
+    depth: +(h.parentElement?.tagName.slice(1) ?? 1),
     children: [],
   }))
   return headingInfos
@@ -93,8 +95,14 @@ function TocItem(tree: HeadingTree) {
   )
 }
 
-export function Toc() {
-  const [element, setElement] = useState(<></>)
+const useRawTocStore = create<{
+  tocList: HeadingTree[]
+}>(() => ({
+  tocList: [],
+}))
+
+export function useTocList() {
+  const tocList = useRawTocStore((s) => s.tocList)
 
   useEffect(() => {
     const headings = getHeadings()
@@ -102,26 +110,47 @@ export function Toc() {
     if (root.children.length === 0) {
       return
     }
-    setElement(
-      <Box
-        className='shadow'
-        sx={{
-          mt: 1,
-          p: 1,
-          borderRadius: 1,
-          backgroundColor: 'background.paper',
-        }}
-      >
-        <Typography sx={{ fontWeight: 'bold' }}>目录</Typography>
-        <Divider sx={{ my: 1 }} />
-        <Box component='ul'>
-          {root.children.map((item) => (
-            <TocItem key={`${item.depth}-${item.id}`} {...item} />
-          ))}
-        </Box>
-      </Box>
-    )
+    useRawTocStore.setState({
+      tocList: root.children,
+    })
   }, [])
 
-  return element
+  return tocList
 }
+
+function RawToc(
+  { className, sx, children, ...props }: BoxProps,
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
+  const tocList = useTocList()
+
+  if (tocList.length === 0) {
+    return <></>
+  }
+
+  return (
+    <Box
+      className={clsx('shadow', className)}
+      ref={ref}
+      sx={{
+        p: 1,
+        borderRadius: 1,
+        backgroundColor: 'background.paper',
+        color: 'var(--custom-fg)',
+        ...sx,
+      }}
+      {...props}
+    >
+      <Typography sx={{ fontWeight: 'bold' }}>目录</Typography>
+      <Divider sx={{ my: 1 }} />
+      <Box component='ul'>
+        {tocList.map((item) => (
+          <TocItem key={`${item.depth}-${item.id}`} {...item} />
+        ))}
+      </Box>
+      {children}
+    </Box>
+  )
+}
+
+export const Toc = forwardRef(RawToc)

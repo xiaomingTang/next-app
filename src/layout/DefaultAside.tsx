@@ -1,47 +1,23 @@
 'use client'
 
-import { HEADER_ID } from './constants'
+import {
+  ASIDE_MARGIN,
+  ASIDE_WIDTH,
+  SCROLL_BAR_WIDTH,
+  useDefaultAsideDetail,
+} from './utils'
 
 import { STYLE } from '@/config'
 import { obj } from '@/utils/tiny'
 import { useDelayedValue } from '@/hooks/useDelayedValue'
 import { sleepMs } from '@/utils/time'
 
-import { Box, useMediaQuery, useScrollTrigger } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { Box, useScrollTrigger } from '@mui/material'
 
 import type { BoxProps } from '@mui/material'
 
 type DefaultAsideProps = BoxProps & {
   placement: 'left' | 'right'
-}
-
-const ASIDE_WIDTH = 256
-const ASIDE_MARGIN = 0
-// 17 是竖直滚动条的宽度
-const SCROLL_BAR_WIDTH = 17
-
-const wideQuery = `@media screen and (min-width: ${
-  STYLE.width.desktop + ASIDE_WIDTH * 2 + ASIDE_MARGIN * 2 + SCROLL_BAR_WIDTH
-}px)`
-
-function useAsideDetail() {
-  const [hasHeader, setHasHeader] = useState(false)
-  const [visible, setVisible] = useState(false)
-  const isWide = useMediaQuery(wideQuery)
-
-  useEffect(() => {
-    setVisible(isWide)
-  }, [isWide])
-
-  useEffect(() => {
-    setHasHeader(!!document.querySelector(`#${HEADER_ID}`))
-  }, [])
-
-  return {
-    hasHeader,
-    visible,
-  }
 }
 
 export function DefaultAside({
@@ -51,7 +27,7 @@ export function DefaultAside({
   ...props
 }: DefaultAsideProps) {
   const trigger = useScrollTrigger()
-  const { hasHeader, visible } = useAsideDetail()
+  const { hasHeader, visible } = useDefaultAsideDetail()
   const visibility =
     useDelayedValue(async () => {
       if (visible) {
