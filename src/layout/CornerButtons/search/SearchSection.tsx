@@ -251,10 +251,7 @@ export const SearchSection = NiceModal.create(() => {
       <DialogContent
         sx={{
           height: '400px',
-          backgroundColor: '#eee',
-          [dark()]: {
-            backgroundColor: '#4d4d4d',
-          },
+          backgroundColor: 'var(--custom-bg)',
         }}
       >
         <Box sx={{ pointerEvents: 'none', pt: 2 }} />

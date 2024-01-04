@@ -10,7 +10,7 @@ export function Clock({ sx, children, ...props }: BoxProps) {
         position: 'relative',
         width: '100%',
         height: '100%',
-        '--bg': '#eee',
+        '--bg': '#eeeeee',
         [dark()]: {
           '--bg': '#4d4d4d',
           color: grey[400],

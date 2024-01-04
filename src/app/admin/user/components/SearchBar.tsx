@@ -90,6 +90,7 @@ export function useUserEditorSearchBar() {
             borderRadius: 1,
             marginBottom: 2,
             background: 'background.paper',
+            color: 'var(--custom-fg)',
           }}
         >
           <Controller

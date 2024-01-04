@@ -14,21 +14,23 @@ export function GlobalStyles() {
   --vh: 1vh;
   font-size: 16px;
   line-height: 1.5;
+  --custom-bg: #eeeeee;
+  --custom-fg: #1a2027;
+}
+
+:root[data-mui-color-scheme='dark'] {
+  --custom-fg: #eeeeee;
+  --custom-bg: #1a2027;
 }
 
 html, body {
   margin: 0;
   padding: 0;
-  color: #1a2027;
-  background-color: #eee;
+  color: var(--custom-fg);
+  background-color: var(--custom-bg);
   font-family: -apple-system, system-ui, 'Segoe UI', Roboto, Ubuntu, Cantarell,
     'Noto Sans', sans-serif, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC',
     'Hiragino Sans GB', 'Microsoft YaHei', Arial;
-}
-
-[data-mui-color-scheme='dark'] body {
-  color: #eee;
-  background-color: #4d4d4d;
 }
 `,
       }}
