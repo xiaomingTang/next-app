@@ -19,7 +19,7 @@ export function GlobalStyles() {
 }
 
 :root[data-mui-color-scheme='dark'] {
-  --custom-fg: #eeeeee;
+  --custom-fg: #bdbdbd;
   --custom-bg: #1a2027;
 }
 
