@@ -88,8 +88,8 @@ export function DefaultRawHeader() {
           >
             <Entry pathname='/' name='首页' />
             <Entry pathname='/blog/3EpPJTM2LwB_' name='关于' />
-            <CardsTrigger />
             <ToolsTrigger />
+            <CardsTrigger />
           </Stack>
           <Stack direction='row'>
             <UploadTrigger />
