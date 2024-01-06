@@ -4,6 +4,7 @@ import { useUser } from '@/user'
 
 import { noop } from 'lodash-es'
 import { useEffect } from 'react'
+import { NoSsr } from '@mui/material'
 
 import type { Role, User } from '@prisma/client'
 
@@ -32,7 +33,7 @@ const defaultRoles: Role[] = ['USER']
 const defaultUserIds: User['id'][] = []
 const defaultFallback = <></>
 
-export function AuthRequired({
+function RawAuthRequired({
   silence = false,
   disabled = false,
   roles = defaultRoles,
@@ -64,4 +65,12 @@ export function AuthRequired({
     return children
   }
   return fallback
+}
+
+export function AuthRequired(props: AuthRequiredProps) {
+  return (
+    <NoSsr>
+      <RawAuthRequired {...props} />
+    </NoSsr>
+  )
 }
