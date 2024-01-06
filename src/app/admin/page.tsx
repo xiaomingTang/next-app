@@ -1,5 +1,15 @@
-import { redirect } from 'next/navigation'
+'use client'
+
+import Anchor from '@/components/Anchor'
+
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
-  redirect('/admin/blog')
+  useRouter().replace('/admin/blog')
+
+  return (
+    <>
+      正在跳转 <Anchor href='/admin/blog'>/admin/blog</Anchor>
+    </>
+  )
 }
