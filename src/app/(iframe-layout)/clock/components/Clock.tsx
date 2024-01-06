@@ -1,7 +1,4 @@
-import { dark } from '@/utils/theme'
-
 import { Box, type BoxProps } from '@mui/material'
-import { grey } from '@mui/material/colors'
 
 export function Clock({ sx, children, ...props }: BoxProps) {
   return (
@@ -10,11 +7,8 @@ export function Clock({ sx, children, ...props }: BoxProps) {
         position: 'relative',
         width: '100%',
         height: '100%',
-        '--bg': '#eeeeee',
-        [dark()]: {
-          '--bg': '#4d4d4d',
-          color: grey[400],
-        },
+        '--bg': 'var(--custom-bg)',
+        color: 'var(--custom-fg)',
         ...sx,
       }}
       {...props}
