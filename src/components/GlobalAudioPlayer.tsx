@@ -87,7 +87,7 @@ export function GlobalAudioPlayer() {
   const [audio, state, controls, ref] = useReactUseAudio(props)
 
   useListen(rawMp3s, () => {
-    useAudio.setState({ mp3s: rawMp3s })
+    useAudio.setState({ mp3s: rawMp3s ?? [] })
   })
   useListen(audio, () => {
     useAudio.setState({ audio })
