@@ -9,8 +9,8 @@ import { useRef } from 'react'
  *   const [count, setCount] = useState(0)
  *
  *   // will be triggered when count changed
- *   useListen(count, (prev, next) => {
- *     console.log(prev, next)
+ *   useListen(count, (next, prev) => {
+ *     console.log(next, prev)
  *   })
  * }
  * ```
@@ -28,6 +28,7 @@ export function useListen<T>(
     if (value === prevRef.current && !isFirstCallbackRef.current) {
       return
     }
+    isFirstCallbackRef.current = false
     callbackRef(value, prevRef.current)
     prevRef.current = value
   }, [value, callbackRef])
