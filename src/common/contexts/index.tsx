@@ -5,12 +5,8 @@ import { GlobalStyles } from './GlobalStyles'
 
 import { useUser } from '@/user'
 
-import { useEffect } from 'react'
-
 export default function Contexts() {
-  useEffect(() => {
-    useUser.init()
-  }, [])
+  useUser.useInit()
 
   return (
     <>

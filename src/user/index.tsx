@@ -8,6 +8,8 @@ import { SA } from '@/errors/utils'
 
 import NiceModal from '@ebay/nice-modal-react'
 import { create } from 'zustand'
+import { useEffect } from 'react'
+import { isEqual } from 'lodash-es'
 
 import type { NiceModalHocProps } from '@ebay/nice-modal-react'
 import type { User } from '@prisma/client'
@@ -29,31 +31,36 @@ let promise: Promise<User> | null = null
 export const useUser = withStatic(useRawUser, {
   getUser() {
     try {
-      return JSON.parse(
-        localStorage.getItem(USER_STORAGE_KEY) ?? ''
-      ) as Required<User>
+      return {
+        ...defaultUser,
+        ...JSON.parse(localStorage.getItem(USER_STORAGE_KEY) ?? ''),
+      } as Required<User>
     } catch (error) {
       return defaultUser
     }
   },
   updateUser(u: Partial<User>) {
     const newUser = {
-      ...defaultUser,
       ...useUser.getUser(),
       ...u,
     }
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser))
-    useRawUser.setState(newUser)
+    // 同一个 user 避免状态更新
+    const REPLACE_FLAG = true
+    useUser.setState((prev) => {
+      if (isEqual(prev, newUser)) {
+        return prev
+      }
+      return newUser
+    }, REPLACE_FLAG)
   },
   reset() {
-    const newUser = {
-      ...defaultUser,
-    }
-    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(newUser))
-    useRawUser.setState(newUser)
+    useUser.updateUser(defaultUser)
   },
-  init() {
-    useRawUser.setState(useUser.getUser())
+  useInit() {
+    useEffect(() => {
+      useUser.updateUser({})
+    }, [])
   },
   /**
    * @WARNING !!!
@@ -64,6 +71,10 @@ export const useUser = withStatic(useRawUser, {
     if (promise) {
       return promise
     }
+    const memoedUser = useUser.getState()
+    if (memoedUser.id > 0) {
+      return memoedUser
+    }
     const user = useUser.getUser()
     if (user.id > 0) {
       useUser.updateUser({})
@@ -72,13 +83,13 @@ export const useUser = withStatic(useRawUser, {
     promise = new Promise((resolve, reject) => {
       NiceModal.show<User, NiceModalHocProps, {}>(LoginModal)
         .then((u) => {
-          useUser.updateUser(u)
           promise = null
+          useUser.updateUser(u)
           resolve(u)
         })
         .catch((err) => {
           promise = null
-          useRawUser.setState(defaultUser)
+          useUser.reset()
           reject(err)
         })
     })
@@ -86,7 +97,6 @@ export const useUser = withStatic(useRawUser, {
   },
   async logout() {
     await logout().then(SA.decode)
-    localStorage.removeItem(USER_STORAGE_KEY)
-    useRawUser.setState(defaultUser)
+    useUser.reset()
   },
 })
