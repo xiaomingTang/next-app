@@ -9,7 +9,3 @@ export function encodeToId(s: unknown) {
   }
   return ''
 }
-
-export function decodeToText(s: string | null) {
-  return (s ?? '').slice(13)
-}

@@ -1,7 +1,6 @@
 'use client'
 
 import { BLOG_MARKDOWN_ID } from './constants'
-import { decodeToText } from './markdownComponents/utils'
 
 import { create } from 'zustand'
 import { Box, Divider, Link, Typography } from '@mui/material'
@@ -20,14 +19,20 @@ type HeadingTree = {
 function getHeadings() {
   const article = document.querySelector(`#${BLOG_MARKDOWN_ID}`)
   const headings = Array.from(
-    article?.querySelectorAll('.user-heading-scroll-flag') ?? []
+    article?.querySelectorAll(
+      'h1.user-heading,h2.user-heading,h3.user-heading,h4.user-heading,h5.user-heading,h6.user-heading'
+    ) ?? []
   ) as HTMLElement[]
-  const headingInfos = headings.map<HeadingTree>((h) => ({
-    text: decodeToText(h.getAttribute('id')) || '出错了',
-    id: h.getAttribute('id') ?? '',
-    depth: +(h.parentElement?.tagName.slice(1) ?? 1),
-    children: [],
-  }))
+  const headingInfos = headings.map<HeadingTree>((h) => {
+    const textElem = h.querySelector<HTMLSpanElement>('.user-heading-text')
+    const idElem = h.querySelector<HTMLSpanElement>('.user-heading-scroll-flag')
+    return {
+      text: textElem?.innerText || '出错了',
+      id: idElem?.getAttribute('id') ?? '',
+      depth: +(h.tagName.slice(1) ?? 1),
+      children: [],
+    }
+  })
   return headingInfos
 }
 

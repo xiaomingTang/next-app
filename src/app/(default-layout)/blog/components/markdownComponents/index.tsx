@@ -82,15 +82,16 @@ function geneHeading(tag: `h${number}`) {
           onClick={(e) => {
             e.preventDefault()
             const url = new URL(window.location.href)
-            const hash = `#${id}`
-            url.hash = hash
+            url.hash = elementHash
             window.history.replaceState(null, '', url)
-            document.querySelector(hash)?.scrollIntoView({ behavior: 'smooth' })
+            document
+              .querySelector(elementHash)
+              ?.scrollIntoView({ behavior: 'smooth' })
           }}
         >
           <LinkIcon className='align-baseline' />
         </Anchor>
-        {propsWithDefault.children}
+        <span className='user-heading-text'>{propsWithDefault.children}</span>
         <NoSsr>
           {/* TODO: setAnchorEl(null) after hash change */}
           {tocList.length > 0 && !asideVisible && (
