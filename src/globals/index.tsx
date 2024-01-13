@@ -1,26 +1,18 @@
 import { EmptyErrorFallback } from './EmptyErrorFallback'
 import { GlobalStyles } from './GlobalStyles'
 import { ToastContext } from './ToastContext'
+import { GlobalBusinessHooks } from './GlobalBusinessHooks'
 
 import { GlobalAudioPlayer } from '@/components/GlobalAudioPlayer'
 import { LyricsViewer } from '@/components/LyricsViewer'
-import { useUser } from '@/user'
 import Polyfills from '@/globals/polyfills'
 
 import { ErrorBoundary } from 'next/dist/client/components/error-boundary'
 
 /**
- * 全局业务 hook
- */
-function BusinessHooks() {
-  useUser.useInit()
-  return <></>
-}
-
-/**
  * 全局基础组件
  */
-function BaseComponents() {
+function GlobalBaseComponents() {
   return (
     <>
       <GlobalStyles />
@@ -33,7 +25,7 @@ function BaseComponents() {
 /**
  * 全局业务组件
  */
-function BusinessComponents() {
+function GlobalBusinessComponents() {
   return (
     <>
       <GlobalAudioPlayer />
@@ -46,13 +38,13 @@ export function Globals() {
   return (
     <>
       <ErrorBoundary errorComponent={EmptyErrorFallback}>
-        <BusinessHooks />
+        <GlobalBusinessHooks />
       </ErrorBoundary>
       <ErrorBoundary errorComponent={EmptyErrorFallback}>
-        <BaseComponents />
+        <GlobalBaseComponents />
       </ErrorBoundary>
       <ErrorBoundary errorComponent={EmptyErrorFallback}>
-        <BusinessComponents />
+        <GlobalBusinessComponents />
       </ErrorBoundary>
     </>
   )
