@@ -3,7 +3,7 @@
 import { useEffect } from 'react'
 import { throttle } from 'lodash-es'
 
-function PolyfillVH() {
+export function PolyfillVH() {
   useEffect(() => {
     const onResize = throttle(
       () => {
@@ -27,12 +27,4 @@ function PolyfillVH() {
   }, [])
 
   return <></>
-}
-
-export default function Polyfills() {
-  return (
-    <>
-      <PolyfillVH />
-    </>
-  )
 }

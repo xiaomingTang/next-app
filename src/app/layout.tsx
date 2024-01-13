@@ -2,13 +2,10 @@
 import './global.css'
 
 import { GetInitColorSchemeScript } from '@/components/GetColorScheme'
-import Contexts from '@/common/contexts'
-import Polyfills from '@/common/polyfills'
-import Providers from '@/common/providers'
 import { seo } from '@/utils/seo'
 import { VConsole } from '@/components/VConsole'
-import { GlobalAudioPlayer } from '@/components/GlobalAudioPlayer'
-import { LyricsViewer } from '@/components/LyricsViewer'
+import { Globals } from '@/globals'
+import Providers from '@/globals/providers'
 
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 
@@ -61,10 +58,7 @@ export default function RootLayout({
           <VConsole />
           <GetInitColorSchemeScript />
           <Providers>
-            <GlobalAudioPlayer />
-            <LyricsViewer />
-            <Polyfills />
-            <Contexts />
+            <Globals />
             {children}
           </Providers>
         </AppRouterCacheProvider>
