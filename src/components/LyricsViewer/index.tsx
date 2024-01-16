@@ -46,6 +46,7 @@ export function LyricsViewer() {
     pointerEvents: 'auto',
     position: 'relative',
     padding: '4px',
+    minWidth: '4em',
     fontWeight: 'bold',
     textAlign: 'center',
     letterSpacing: '1px',
@@ -167,7 +168,7 @@ export function LyricsViewer() {
                 onClick={() => setControlsVisible((prev) => !prev)}
                 sx={lyricsSx}
               >
-                {activeLyricsItem.text}
+                {activeLyricsItem.text.trim() || '...'}
                 {progressBar}
               </ButtonBase>
             </Box>
