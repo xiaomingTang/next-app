@@ -79,7 +79,7 @@ const defaultAudioStore: AudioStore = {
 export const useAudio = createSsrStore(() => defaultAudioStore, {
   name: 'audioPlayer',
   storage: createJsonStorage({
-    partialKeys: ['activeMP3', 'settings'],
+    partialKeys: ['activeMP3', 'settings', 'mp3s'],
   }),
 })
 
