@@ -1,5 +1,8 @@
 'use client'
 
+import { createSsrStore } from './ssrStore/createSsrStore'
+import { createJsonStorage } from './ssrStore/createJsonStorage'
+
 import { useMediaLoading } from '@/hooks/useMediaLoading'
 import { useListen } from '@/hooks/useListen'
 import { remainder } from '@/utils/math'
@@ -7,7 +10,6 @@ import { sleepMs } from '@/utils/time'
 import { getMP3s } from '@/app/admin/customMP3/server'
 import { SA } from '@/errors/utils'
 
-import { create } from 'zustand'
 import { useAudio as useReactUseAudio } from 'react-use'
 import { useEffect, useMemo } from 'react'
 import { noop } from 'lodash-es'
@@ -23,7 +25,7 @@ export type RepeatMode =
 
 type UseAudioRet = ReturnType<typeof useReactUseAudio>
 
-export const useAudio = create<{
+interface AudioStore {
   mp3s: CustomMP3[]
   activeMP3?: CustomMP3
   audio: UseAudioRet[0]
@@ -40,7 +42,9 @@ export const useAudio = create<{
   settings: {
     repeatMode: RepeatMode
   }
-}>(() => ({
+}
+
+const defaultAudioStore: AudioStore = {
   mp3s: [],
   audio: <></>,
   state: {
@@ -70,7 +74,14 @@ export const useAudio = create<{
   settings: {
     repeatMode: 'Repeat-Playlist',
   },
-}))
+}
+
+export const useAudio = createSsrStore(() => defaultAudioStore, {
+  name: 'audioPlayer',
+  storage: createJsonStorage({
+    partialKeys: ['activeMP3', 'settings'],
+  }),
+})
 
 export function GlobalAudioPlayer() {
   const { data: rawMp3s } = useSWR('getMP3s', () => getMP3s({}).then(SA.decode))
