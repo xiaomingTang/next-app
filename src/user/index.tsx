@@ -28,6 +28,15 @@ const useRawUser = create(() => defaultUser)
 
 let promise: Promise<User> | null = null
 
+/**
+ * bug 描述: 当请求发出的顺序 [api-x  ->  api-login],
+ * 而 api-login 先返回, 并设置用户态,
+ * 然后 api-x 后返回 401, 会清空用户态;
+ *
+ * 因此, 需要拒绝距离 login 时间间隔过近的 resetUser 调用
+ */
+let LAST_AUTH_TIME = 0
+
 export const useUser = withStatic(useRawUser, {
   getUser() {
     try {
@@ -55,6 +64,10 @@ export const useUser = withStatic(useRawUser, {
     }, REPLACE_FLAG)
   },
   reset() {
+    // 见 LAST_AUTH_TIME 的解释
+    if (Date.now() - LAST_AUTH_TIME < 1000) {
+      return
+    }
     useUser.updateUser(defaultUser)
   },
   useInit() {
@@ -84,6 +97,7 @@ export const useUser = withStatic(useRawUser, {
       NiceModal.show<User, NiceModalHocProps, {}>(LoginModal)
         .then((u) => {
           promise = null
+          LAST_AUTH_TIME = Date.now()
           useUser.updateUser(u)
           resolve(u)
         })
