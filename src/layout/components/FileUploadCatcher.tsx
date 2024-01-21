@@ -83,10 +83,10 @@ export function FileUploadCatcher() {
     dndElement.addEventListener('drop', onDrop)
 
     return () => {
-      dndElement.addEventListener('dragenter', onDragenter)
-      dndElement.addEventListener('dragover', onDragover)
-      dndElement.addEventListener('dragleave', onDragleave)
-      dndElement.addEventListener('drop', onDrop)
+      dndElement.removeEventListener('dragenter', onDragenter)
+      dndElement.removeEventListener('dragover', onDragover)
+      dndElement.removeEventListener('dragleave', onDragleave)
+      dndElement.removeEventListener('drop', onDrop)
     }
   }, [user.id])
 
