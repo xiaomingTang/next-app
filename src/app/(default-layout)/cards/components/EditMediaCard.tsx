@@ -10,6 +10,7 @@ import { DefaultDialogTransition } from '@/components/Transitions'
 import { useLoading } from '@/hooks/useLoading'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { numberFormat } from '@/utils/numberFormat'
+import { SilentError } from '@/errors/SilentError'
 
 import { useRouter } from 'next/navigation'
 import UploadIcon from '@mui/icons-material/Upload'
@@ -59,7 +60,7 @@ const MediaCardModal = NiceModal.create(
     const router = useRouter()
     const modal = useModal()
     useInjectHistory(modal.visible, () => {
-      modal.reject(new Error('操作已取消'))
+      modal.reject(new SilentError('操作已取消'))
       modal.hide()
     })
     const fullScreen = useMediaQuery(useTheme().breakpoints.down('sm'))
@@ -120,7 +121,7 @@ const MediaCardModal = NiceModal.create(
             edge='end'
             aria-label='取消编辑'
             onClick={() => {
-              modal.reject(new Error('操作已取消'))
+              modal.reject(new SilentError('操作已取消'))
               modal.hide()
             }}
           >
@@ -326,7 +327,7 @@ const MediaCardModal = NiceModal.create(
         TransitionComponent={DefaultDialogTransition}
         {...muiDialogV5(modal)}
         onClose={() => {
-          modal.reject(new Error('操作已取消'))
+          modal.reject(new SilentError('操作已取消'))
           modal.hide()
         }}
       >

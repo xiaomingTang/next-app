@@ -5,6 +5,7 @@ import { saveTag } from '../server'
 import { useLoading } from '@/hooks/useLoading'
 import { SA } from '@/errors/utils'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { SilentError } from '@/errors/SilentError'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
@@ -38,7 +39,7 @@ const defaultEmptyTag: PartialTag = {
 const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
   const modal = useModal()
   useInjectHistory(modal.visible, () => {
-    modal.reject(new Error('操作已取消'))
+    modal.reject(new SilentError('操作已取消'))
     modal.hide()
   })
   const [loading, withLoading] = useLoading()
@@ -54,7 +55,7 @@ const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
       fullWidth
       maxWidth='xs'
       onClose={() => {
-        modal.reject(new Error('操作已取消'))
+        modal.reject(new SilentError('操作已取消'))
         modal.hide()
       }}
     >
@@ -66,7 +67,7 @@ const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
           <IconButton
             edge='end'
             onClick={() => {
-              modal.reject(new Error('操作已取消'))
+              modal.reject(new SilentError('操作已取消'))
               modal.hide()
             }}
             aria-label='close'

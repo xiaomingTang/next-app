@@ -1,6 +1,7 @@
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { resolvePath } from '@/utils/url'
 import { ENV_CONFIG } from '@/config'
+import { SilentError } from '@/errors/SilentError'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import {
@@ -23,7 +24,7 @@ export const FriendsLinkResultTip = NiceModal.create(
   ({ link }: { link: SimpleFriendsLink }) => {
     const modal = useModal()
     useInjectHistory(modal.visible, () => {
-      modal.reject(new Error('操作已取消'))
+      modal.reject(new SilentError('操作已取消'))
       modal.hide()
     })
     const texts =

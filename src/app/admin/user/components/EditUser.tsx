@@ -7,6 +7,7 @@ import { SA } from '@/errors/utils'
 import { RoleNameMap } from '@/constants'
 import { ENV_CONFIG } from '@/config'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { SilentError } from '@/errors/SilentError'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
@@ -51,7 +52,7 @@ const defaultEmptyUser: PartialUser = {
 const UserTip = NiceModal.create(({ user }: { user: User }) => {
   const modal = useModal()
   useInjectHistory(modal.visible, () => {
-    modal.reject(new Error('操作已取消'))
+    modal.reject(new SilentError('操作已取消'))
     modal.hide()
   })
   const texts = [
@@ -114,7 +115,7 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
       fullWidth
       maxWidth='xs'
       onClose={() => {
-        modal.reject(new Error('操作已取消'))
+        modal.reject(new SilentError('操作已取消'))
         modal.hide()
       }}
     >
@@ -126,7 +127,7 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
           <IconButton
             edge='end'
             onClick={() => {
-              modal.reject(new Error('操作已取消'))
+              modal.reject(new SilentError('操作已取消'))
               modal.hide()
             }}
             aria-label='close'

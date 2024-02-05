@@ -2,6 +2,7 @@
 
 import { DefaultDialogTransition } from '@/components/Transitions'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { SilentError } from '@/errors/SilentError'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import {
@@ -25,7 +26,7 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
   const fullScreen = useMediaQuery(useTheme().breakpoints.down('md'))
 
   useInjectHistory(modal.visible, () => {
-    modal.reject(new Error('操作已取消'))
+    modal.reject(new SilentError('操作已取消'))
     modal.hide()
   })
 
@@ -37,7 +38,7 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
           edge='end'
           aria-label='关闭弹窗'
           onClick={() => {
-            modal.reject(new Error('操作已取消'))
+            modal.reject(new SilentError('操作已取消'))
             modal.hide()
           }}
         >
@@ -55,7 +56,7 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
       TransitionComponent={DefaultDialogTransition}
       {...muiDialogV5(modal)}
       onClose={() => {
-        modal.reject(new Error('操作已取消'))
+        modal.reject(new SilentError('操作已取消'))
         modal.hide()
       }}
     >

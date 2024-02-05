@@ -7,6 +7,7 @@ import { SA } from '@/errors/utils'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { upload } from '@D/upload/components/Uploader'
 import { cat } from '@/errors/catchAndToast'
+import { SilentError } from '@/errors/SilentError'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
@@ -47,7 +48,7 @@ const defaultEmptyMP3: PartialMP3 = {
 const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
   const modal = useModal()
   useInjectHistory(modal.visible, () => {
-    modal.reject(new Error('操作已取消'))
+    modal.reject(new SilentError('操作已取消'))
     modal.hide()
   })
   const [loading, withLoading] = useLoading()
@@ -66,7 +67,7 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
       fullWidth
       maxWidth='xs'
       onClose={() => {
-        modal.reject(new Error('操作已取消'))
+        modal.reject(new SilentError('操作已取消'))
         modal.hide()
       }}
     >
@@ -78,7 +79,7 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
           <IconButton
             edge='end'
             onClick={() => {
-              modal.reject(new Error('操作已取消'))
+              modal.reject(new SilentError('操作已取消'))
               modal.hide()
             }}
             aria-label='close'

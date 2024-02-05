@@ -9,6 +9,7 @@ import { useLoading } from '@/hooks/useLoading'
 import { SA, toPlainError } from '@/errors/utils'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { useUser } from '@/user'
+import { SilentError } from '@/errors/SilentError'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
@@ -43,7 +44,7 @@ const EditUrlModal = NiceModal.create(
     const isAdmin = useUser().role === 'ADMIN'
     const modal = useModal()
     useInjectHistory(modal.visible, () => {
-      modal.reject(new Error('操作已取消'))
+      modal.reject(new SilentError('操作已取消'))
       modal.hide()
     })
     const [loading, withLoading] = useLoading()
@@ -66,7 +67,7 @@ const EditUrlModal = NiceModal.create(
         fullWidth
         maxWidth='xs'
         onClose={() => {
-          modal.reject(new Error('操作已取消'))
+          modal.reject(new SilentError('操作已取消'))
           modal.hide()
         }}
       >
@@ -78,7 +79,7 @@ const EditUrlModal = NiceModal.create(
             <IconButton
               edge='end'
               onClick={() => {
-                modal.reject(new Error('操作已取消'))
+                modal.reject(new SilentError('操作已取消'))
                 modal.hide()
               }}
               aria-label='close'

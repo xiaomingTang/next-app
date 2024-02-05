@@ -2,6 +2,7 @@ import { QrcodeLogin } from './QrcodeLogin'
 import { EmailLogin } from './EmailLogin'
 
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { SilentError } from '@/errors/SilentError'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import {
@@ -21,7 +22,7 @@ export const LoginModal = NiceModal.create(
   ({ defaultLoginType = 'email' }: { defaultLoginType?: LoginType }) => {
     const modal = useModal()
     useInjectHistory(modal.visible, () => {
-      modal.reject(new Error('操作已取消'))
+      modal.reject(new SilentError('操作已取消'))
       modal.hide()
     })
     const [loginType, setLoginType] = useState(defaultLoginType)
@@ -36,7 +37,7 @@ export const LoginModal = NiceModal.create(
           if (reason === 'backdropClick') {
             return
           }
-          modal.reject(new Error('操作已取消'))
+          modal.reject(new SilentError('操作已取消'))
           modal.hide()
         }}
       >
@@ -48,7 +49,7 @@ export const LoginModal = NiceModal.create(
             <IconButton
               edge='end'
               onClick={() => {
-                modal.reject(new Error('操作已取消'))
+                modal.reject(new SilentError('操作已取消'))
                 modal.hide()
               }}
               aria-label='关闭登录弹窗'

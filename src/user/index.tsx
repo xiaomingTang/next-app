@@ -78,7 +78,7 @@ export const useUser = withStatic(useRawUser, {
   /**
    * @WARNING !!!
    * 该方法会抛错:
-   * - new Error('操作已取消')
+   * - new SilentError('操作已取消')
    */
   async login(): Promise<User> {
     if (promise) {

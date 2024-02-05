@@ -16,6 +16,7 @@ import { UploadTrigger } from '@/layout/CornerButtons/UploadTrigger'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SvgLoading } from '@/svg'
 import { getTags, saveTag } from '@ADMIN/tag/server'
+import { SilentError } from '@/errors/SilentError'
 
 import { useRouter } from 'next/navigation'
 import PreviewIcon from '@mui/icons-material/Preview'
@@ -88,7 +89,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
   const router = useRouter()
   const modal = useModal()
   useInjectHistory(modal.visible, () => {
-    modal.reject(new Error('操作已取消'))
+    modal.reject(new SilentError('操作已取消'))
     modal.hide()
   })
   const {
@@ -131,7 +132,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
           edge='start'
           aria-label='取消编辑'
           onClick={() => {
-            modal.reject(new Error('操作已取消'))
+            modal.reject(new SilentError('操作已取消'))
             modal.hide()
           }}
         >
@@ -369,7 +370,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
         if (reason === 'escapeKeyDown' && hasChanged(blog, getValues())) {
           return
         }
-        modal.reject(new Error('操作已取消'))
+        modal.reject(new SilentError('操作已取消'))
         modal.hide()
       }}
     >
