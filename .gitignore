@@ -51,3 +51,5 @@ next-env.d.ts
 
 /.ssl/*
 !/.ssl/.gitkeep
+/.bak/*
+!/.bak/.gitkeep

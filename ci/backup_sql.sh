@@ -1,7 +1,7 @@
 #!/usr/bin/zsh
 
 # 备份文件名
-DB_BACKUP_FILE=".bak/.bak.sql-$(date +%Y-%m-%d-%H-%M-%S).sql"
+DB_BACKUP_FILE="../.bak/.bak.sql-$(date +%Y-%m-%d-%H-%M-%S).sql"
 # 执行备份
 mysqldump -u$DB_USER -p$DB_PASSWORD $DB_NAME > $DB_BACKUP_FILE
 
