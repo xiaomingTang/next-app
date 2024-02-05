@@ -22,8 +22,8 @@ SELECT
     "" AS `content`,
     b.`description`,
     b.`creatorId`
-FROM `tytcn`.`Blog` AS b
-    JOIN `tytcn`.`User` AS u ON b.`creatorId` = u.`id`
+FROM `16px`.`Blog` AS b
+    JOIN `16px`.`User` AS u ON b.`creatorId` = u.`id`
 WHERE (
         b.`type` = "PUBLISHED"
         AND MATCH (
