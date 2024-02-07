@@ -139,7 +139,7 @@ model Comment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   email     String   @default("")
-  name      String   @default("匿名用户")
+  name      String   @default("")
   content   String   @db.Text()
 }
 
