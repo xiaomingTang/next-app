@@ -52,7 +52,7 @@ export async function sendToDingTalk(
     }
     if (resContent.errcode !== 0) {
       console.error(resContent)
-      throw Boom.badRequest(`发送到钉钉失败: ${resContent.errcode}`)
+      throw Boom.badRequest(`发送到钉钉失败: ${resContent.errmsg}`)
     }
   })
 }
