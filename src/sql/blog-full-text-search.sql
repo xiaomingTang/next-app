@@ -1,7 +1,7 @@
 /**
  * 由于 prisma 暂不支持 NATURAL LANGUAGE MODE, 所以只能执行 raw query.
  * 该 sql 需要执行前置命令:
- * ALTER TABLE `tytcn`.`Blog` ADD FULLTEXT `fulltext_title_description_content` (`title`, `description`, `content`) WITH PARSER NGRAM;
+ * ALTER TABLE `16px`.`Blog` ADD FULLTEXT `fulltext_title_description_content` (`title`, `description`, `content`) WITH PARSER NGRAM;
  */
 
 SELECT
