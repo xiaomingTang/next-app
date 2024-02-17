@@ -41,12 +41,11 @@ export function DefaultFooter() {
         <Stack spacing={1} direction='row' justifyContent='center'>
           <Typography aria-label={`版权声明: ${year} 年`}>© {year}</Typography>
           <Anchor
-            href='https://github.com/xiaomingTang'
+            href='https://github.com/xiaomingTang/next-app/commits/main'
             className='flex justify-center items-center'
-            aria-label='王小明的 github'
+            title={`最近更新: ${process.env.NEXT_PUBLIC_LAST_COMMIT_MESSAGE}`}
           >
-            <SvgGithub />
-            小明
+            <SvgGithub /> 最近更新
           </Anchor>
         </Stack>
         <Stack spacing={1} direction='row' justifyContent='center'>
@@ -57,21 +56,7 @@ export function DefaultFooter() {
             向站长留言
           </Anchor>
         </Stack>
-        <Stack spacing={1} direction='row' justifyContent='center'>
-          <Anchor
-            href='https://github.com/xiaomingTang/next-app'
-            className='flex justify-center items-center'
-          >
-            本站源码
-          </Anchor>
-          <Anchor
-            href='https://github.com/xiaomingTang/next-app/commits/main'
-            className='flex justify-center items-center'
-          >
-            站点更新记录
-          </Anchor>
-        </Stack>
-        <Anchor href='https://beian.miit.gov.cn/'>赣ICP备2021003257号-1</Anchor>
+        <Anchor href='https://beian.miit.gov.cn/'>赣ICP备2021003257号-2</Anchor>
       </Stack>
       <Typography>
         Powered by <Anchor href='https://nextjs.org/'>Next.js</Anchor>

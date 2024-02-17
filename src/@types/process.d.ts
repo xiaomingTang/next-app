@@ -3,6 +3,7 @@ declare namespace NodeJS {
     PORT: string
     NEXT_PUBLIC_ORIGIN: string
     MYSQLDB_URI: string
+    NEXT_PUBLIC_LAST_COMMIT_MESSAGE: string
     JWT_SECRET: string
     ADMIN_EMAIL: string
     ADMIN_PASSWORD: string
