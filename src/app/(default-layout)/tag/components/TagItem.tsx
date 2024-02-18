@@ -47,7 +47,7 @@ export function TagItem(tag: TagItemProps) {
       sx={{ borderRadius: 99, fontSize: `${REM}rem`, ...tag.sx }}
       role={tag.loading ? 'none' : undefined}
     >
-      <Typography>
+      <Typography component='span'>
         {tag.loading ? (
           <Skeleton width={tag.size * REM * 16} height={REM * 24} />
         ) : (
