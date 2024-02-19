@@ -5,6 +5,7 @@ import { dark } from '@/utils/theme'
 import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { common, grey } from '@mui/material/colors'
+import Image from 'next/image'
 
 const year = new Date().getFullYear()
 
@@ -56,7 +57,21 @@ export function DefaultFooter() {
             向站长留言
           </Anchor>
         </Stack>
-        <Anchor href='https://beian.miit.gov.cn/'>赣ICP备2021003257号-2</Anchor>
+        <Anchor href='https://beian.miit.gov.cn/' className='block text-center'>
+          赣ICP备2021003257号-2
+        </Anchor>
+        <Anchor
+          href='https://beian.mps.gov.cn/#/query/webSearch?code=44030002002476'
+          className='flex justify-center items-center'
+        >
+          <Image
+            alt=''
+            src='/static/images/公网安备-64x64.png'
+            width={16}
+            height={16}
+          />{' '}
+          粤公网安备44030002002476号
+        </Anchor>
       </Stack>
       <Typography>
         Powered by <Anchor href='https://nextjs.org/'>Next.js</Anchor>
