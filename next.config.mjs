@@ -40,15 +40,6 @@ const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   images: imageConfig,
   webpack: webpackConfig,
-  async redirects() {
-    return [
-      {
-        source: '/fruits',
-        destination: '/cards/fruits',
-        permanent: true,
-      },
-    ]
-  },
   async headers() {
     /**
      * scripts & static 里面的内容不应该变化 (实在要变就改名),
@@ -77,7 +68,7 @@ const nextConfig = {
         ],
       },
       {
-        source: '/(__ENV_CONFIG__\\.js|manifest\\.json|favicon.ico)',
+        source: '/(manifest\\.json|favicon\\.ico)',
         headers: [
           {
             key: 'Cache-Control',
