@@ -223,7 +223,7 @@ function Iframe({ src = '' }: { src?: string }) {
 
 export const markdownComponents: MDXComponents = {
   Button,
-  a: (props) => <Anchor {...props} ref={null} />,
+  a: (props) => <Anchor {...props} rel='noopener nofollow ugc' ref={null} />,
   img: ({ src, alt }) => <ImageWithState src={src} alt={alt} preview />,
   h1: geneHeading('h1'),
   h2: geneHeading('h2'),

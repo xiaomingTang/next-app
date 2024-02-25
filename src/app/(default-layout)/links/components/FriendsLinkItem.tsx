@@ -70,54 +70,37 @@ function FriendsLinkDesc(friendsLink: FriendsLinkItemProps) {
 export function FriendsLinkItem({ sx, ...friendsLink }: FriendsLinkItemProps) {
   const router = useRouter()
   const isAdmin = useUser().role === 'ADMIN'
-  const friendsLinkDescAriaLabel = friendsLink.loading
-    ? '加载中'
-    : `友链站点：${friendsLink.name}；简介是：${friendsLink.description}`
+  const friendsLinkDescAriaLabel = `友链站点：${friendsLink.name}；简介是：${friendsLink.description}`
 
-  return (
-    <ButtonBase
-      sx={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        p: 2,
-        width: '100%',
-        textAlign: 'start',
-        borderRadius: 1,
-        ':focus-visible': {
-          outline: `1px solid ${blue[700]}`,
-        },
-        backgroundColor: common.white,
-        boxShadow: boxShadow('small', common.white),
-        ':hover': {
-          backgroundColor: alpha(blue[100], 0.66),
-          boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
-        },
-        [dark()]: {
-          backgroundColor: alpha(common.black, 0.55),
-          boxShadow: boxShadow('small', alpha(common.black, 0.55)),
-          ':hover': {
-            backgroundColor: alpha(common.black, 0.35),
-            boxShadow: boxShadow('medium', alpha(common.black, 0.35)),
-          },
-        },
-        ...sx,
-      }}
-      disabled={friendsLink.loading}
-      rel='noopener'
-      aria-label={friendsLinkDescAriaLabel}
-      role={friendsLink.loading ? 'none' : undefined}
-      onClick={cat(async () => {
-        if (friendsLink.loading) {
-          return
-        }
-        if (isAdmin) {
-          await editFriendsLink(friendsLink)
-          router.refresh()
-        } else {
-          window.open(friendsLink.url, '_blank', 'noopener')
-        }
-      })}
-    >
+  const btnSx: SxProps = {
+    display: 'flex',
+    alignItems: 'flex-start',
+    p: 2,
+    width: '100%',
+    textAlign: 'start',
+    borderRadius: 1,
+    ':focus-visible': {
+      outline: `1px solid ${blue[700]}`,
+    },
+    backgroundColor: common.white,
+    boxShadow: boxShadow('small', common.white),
+    ':hover': {
+      backgroundColor: alpha(blue[100], 0.66),
+      boxShadow: boxShadow('medium', alpha(blue[100], 0.66)),
+    },
+    [dark()]: {
+      backgroundColor: alpha(common.black, 0.55),
+      boxShadow: boxShadow('small', alpha(common.black, 0.55)),
+      ':hover': {
+        backgroundColor: alpha(common.black, 0.35),
+        boxShadow: boxShadow('medium', alpha(common.black, 0.35)),
+      },
+    },
+    ...sx,
+  }
+
+  const children = (
+    <>
       <ImageWithState
         src={friendsLink.image || '/pwa/android-chrome-512x512.png'}
         width={60}
@@ -136,6 +119,43 @@ export function FriendsLinkItem({ sx, ...friendsLink }: FriendsLinkItemProps) {
         <FriendsLinkName {...friendsLink} />
         <FriendsLinkDesc {...friendsLink} />
       </Stack>
+    </>
+  )
+
+  if (friendsLink.loading) {
+    return (
+      <ButtonBase sx={btnSx} disabled role='none'>
+        {children}
+      </ButtonBase>
+    )
+  }
+
+  if (isAdmin) {
+    return (
+      <ButtonBase
+        sx={btnSx}
+        aria-label={friendsLinkDescAriaLabel}
+        onClick={cat(async () => {
+          await editFriendsLink(friendsLink)
+          router.refresh()
+        })}
+      >
+        {children}
+      </ButtonBase>
+    )
+  }
+
+  return (
+    <ButtonBase
+      sx={btnSx}
+      aria-label={friendsLinkDescAriaLabel}
+      LinkComponent='a'
+      // 由于是友链, 所以不应添加 nofollow 等值, 仅一个为了安全的 noopener
+      rel='noopener'
+      target='_blank'
+      href={friendsLink.url}
+    >
+      {children}
     </ButtonBase>
   )
 }
