@@ -54,7 +54,7 @@ export default forwardRef(function Anchor(
     APP_URL.hostname
   )
   const finalTarget = target ?? (isExternal ? '_blank' : '_self')
-  const finalRel = rel ?? isExternal ? 'noopener nofollow' : undefined
+  const finalRel = rel ?? (isExternal ? 'noopener nofollow' : undefined)
 
   const anchor = (
     <a
