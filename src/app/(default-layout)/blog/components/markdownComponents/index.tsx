@@ -98,12 +98,20 @@ function geneHeading(tag: `h${number}`) {
             <AnchorProvider>
               {(anchorEl, setAnchorEl) => (
                 <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
-                  <span>
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                    }}
+                  >
                     <Tooltip
                       open={!!anchorEl}
                       title={<Toc onClick={() => setAnchorEl(null)} />}
                     >
                       <IconButton
+                        sx={{
+                          p: 0,
+                          ml: '4px',
+                        }}
                         aria-label='目录'
                         className='user-heading-menu-trigger'
                         onClick={(e) => {
@@ -223,7 +231,7 @@ function Iframe({ src = '' }: { src?: string }) {
 
 export const markdownComponents: MDXComponents = {
   Button,
-  a: (props) => <Anchor {...props} rel='noopener nofollow ugc' ref={null} />,
+  a: (props) => <Anchor {...props} ref={null} />,
   img: ({ src, alt }) => <ImageWithState src={src} alt={alt} preview />,
   h1: geneHeading('h1'),
   h2: geneHeading('h2'),
