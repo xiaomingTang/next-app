@@ -7,7 +7,6 @@ import { MusicTriggerButton } from './CornerButtons/MusicTriggerButton'
 import { UploadTrigger } from './CornerButtons/UploadTrigger'
 import { SearchButton } from './CornerButtons/search/SearchButton'
 import { QrcodeTrigger } from './CornerButtons/QrcodeTrigger'
-import { CardsTrigger } from './CornerButtons/CardsTrigger'
 import { MenuTrigger } from './CornerButtons/MenuTrigger'
 import { ToolsTrigger } from './CornerButtons/ToolsTrigger'
 import { HEADER_ID } from './constants'
@@ -89,7 +88,6 @@ export function DefaultRawHeader() {
             <Entry pathname='/' name='首页' />
             <Entry pathname='/blog/3EpPJTM2LwB_' name='关于' />
             <ToolsTrigger />
-            <CardsTrigger />
           </Stack>
           <Stack direction='row'>
             <UploadTrigger />

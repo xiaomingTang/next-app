@@ -1,4 +1,3 @@
-import { getMediaCards } from '@D/cards/server'
 import { SA } from '@/errors/utils'
 import { resolvePath } from '@/utils/url'
 import { getTags } from '@ADMIN/tag/server'
@@ -8,7 +7,6 @@ import { headers } from 'next/headers'
 import { unstable_cache } from 'next/cache'
 
 import type { MetadataRoute } from 'next'
-import type { MediaCardType } from '@prisma/client'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // 跳过 build 阶段
@@ -49,22 +47,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: 'monthly',
     priority: 0.6,
   }))
-
-  const cards = await unstable_cache(
-    () => getMediaCards({}),
-    ['getMediaCards'],
-    {
-      revalidate: 3600,
-      tags: ['getMediaCards'],
-    }
-  )().then(SA.decode)
-
-  const getCardsLastModifiedTime = (type: MediaCardType) =>
-    Math.max(
-      ...cards
-        .filter((c) => c.type === type)
-        .map((c) => new Date(c.updatedAt).getTime())
-    )
 
   return [
     {
@@ -114,30 +96,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: resolvePath('/gotcha').href,
       lastModified: new Date(),
       changeFrequency: 'yearly',
-      priority: 0.2,
-    },
-    {
-      url: resolvePath('/cards/area').href,
-      lastModified: new Date(getCardsLastModifiedTime('AREA')),
-      changeFrequency: 'monthly',
-      priority: 0.2,
-    },
-    {
-      url: resolvePath('/cards/colors').href,
-      lastModified: new Date(getCardsLastModifiedTime('COLOR')),
-      changeFrequency: 'monthly',
-      priority: 0.2,
-    },
-    {
-      url: resolvePath('/cards/foods').href,
-      lastModified: new Date(getCardsLastModifiedTime('FOOD')),
-      changeFrequency: 'monthly',
-      priority: 0.2,
-    },
-    {
-      url: resolvePath('/cards/fruits').href,
-      lastModified: new Date(getCardsLastModifiedTime('FRUIT')),
-      changeFrequency: 'monthly',
       priority: 0.2,
     },
     {
