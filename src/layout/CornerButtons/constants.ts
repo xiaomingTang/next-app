@@ -17,6 +17,10 @@ export const menuList: (PathItem | 'divider')[] = [
     pathname: '/blog/3EpPJTM2LwB_',
     title: '关于',
   },
+  {
+    pathname: '/links',
+    title: '友链',
+  },
   'divider',
   ...toolList,
 ]

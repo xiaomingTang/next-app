@@ -41,17 +41,14 @@ export function DefaultFooter() {
       >
         <Stack spacing={1} direction='row' justifyContent='center'>
           <Typography aria-label={`版权声明: ${year} 年`}>© {year}</Typography>
+        </Stack>
+        <Stack spacing={1} direction='row' justifyContent='center'>
           <Anchor
             href='https://github.com/xiaomingTang/next-app/commits/main'
             className='flex justify-center items-center'
             title={`最近更新: ${process.env.NEXT_PUBLIC_LAST_COMMIT_MESSAGE}`}
           >
             <SvgGithub /> 最近更新
-          </Anchor>
-        </Stack>
-        <Stack spacing={1} direction='row' justifyContent='center'>
-          <Anchor href='/links' className='flex justify-center items-center'>
-            友链
           </Anchor>
           <Anchor href='/comment' className='flex justify-center items-center'>
             向站长留言

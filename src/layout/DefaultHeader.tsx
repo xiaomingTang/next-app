@@ -87,6 +87,7 @@ export function DefaultRawHeader() {
           >
             <Entry pathname='/' name='首页' />
             <Entry pathname='/blog/3EpPJTM2LwB_' name='关于' />
+            <Entry pathname='/links' name='友链' />
             <ToolsTrigger />
           </Stack>
           <Stack direction='row'>
