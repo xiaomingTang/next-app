@@ -41,15 +41,7 @@ const saveCommentDto = Type.Object({
 export const saveComment = SA.encode(
   async (props: Static<typeof saveCommentDto>) => {
     const { name, email, content } = validateRequest(saveCommentDto, props)
-    const res = await prisma.comment.create({
-      data: {
-        hash: nanoid(12),
-        name,
-        email,
-        content,
-      },
-    })
-    await sendToDingTalk({
+    sendToDingTalk({
       msgtype: 'text',
       at: {},
       text: {
@@ -60,6 +52,13 @@ export const saveComment = SA.encode(
 ${content}`,
       },
     })
-    return res
+    return prisma.comment.create({
+      data: {
+        hash: nanoid(12),
+        name,
+        email,
+        content,
+      },
+    })
   }
 )
