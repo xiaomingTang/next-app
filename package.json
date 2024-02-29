@@ -8,7 +8,7 @@
     "preinstall": "npx only-allow pnpm",
     "postinstall": "npx prisma generate",
     "prepare": "husky install && bash -c 'chmod ug+x ./deploy.sh' && bash -c 'chmod ug+x .husky/*'",
-    "beforeRun": "cross-env NEXT_PUBLIC_APP_ENV=production tsx bin/pre-run.ts",
+    "beforeRun": "tsx bin/pre-run.ts",
     "predev": "pnpm run beforeRun",
     "dev": "next dev",
     "prebuild": "rimraf .next out && pnpm run beforeRun",

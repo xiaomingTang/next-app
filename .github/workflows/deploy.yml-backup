@@ -9,7 +9,6 @@ on:
 env:
   # https://stackoverflow.com/a/75486166
   CI: true
-  NEXT_PUBLIC_APP_ENV: ${{ secrets.NEXT_PUBLIC_APP_ENV }}
   NEXT_PUBLIC_ORIGIN: ${{ secrets.NEXT_PUBLIC_ORIGIN }}
 
   ANALYZE: ${{ secrets.ANALYZE }}
