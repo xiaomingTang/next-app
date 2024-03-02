@@ -1,6 +1,7 @@
 'use client'
 
-import { upload } from '@D/upload/components/Uploader'
+import { useGlobalFileCatcherHandler } from './useGlobalFileCatcherHandler'
+
 import { useUser } from '@/user'
 import { dark } from '@/utils/theme'
 import { cat } from '@/errors/catchAndToast'
@@ -8,6 +9,21 @@ import { cat } from '@/errors/catchAndToast'
 import { useEffect, useState } from 'react'
 import { Box, Fade, Typography, alpha } from '@mui/material'
 import { common } from '@mui/material/colors'
+
+function dragHandler(
+  e: DragEvent,
+  cb: (files: File[]) => void | Promise<void>
+) {
+  if (!e.dataTransfer) {
+    return
+  }
+  const { types } = e.dataTransfer
+  if (types.filter((type) => type === 'Files').length === 0) {
+    return
+  }
+  e.preventDefault()
+  cb([...e.dataTransfer.files])
+}
 
 export function FileUploadCatcher() {
   const user = useUser()
@@ -21,8 +37,7 @@ export function FileUploadCatcher() {
         (f) => f.size > 0
       )
       if (files.length > 0) {
-        await useUser.login()
-        await upload(files)
+        await useGlobalFileCatcherHandler.getState().handler(files)
       }
     })
     window.addEventListener('paste', onPaste)
@@ -34,20 +49,6 @@ export function FileUploadCatcher() {
   // 监听文件拖拽
   useEffect(() => {
     const dndElement = document.documentElement
-    const dragHandler = (
-      e: DragEvent,
-      cb: (files: File[]) => void | Promise<void>
-    ) => {
-      if (!e.dataTransfer) {
-        return
-      }
-      const { types } = e.dataTransfer
-      if (types.filter((type) => type === 'Files').length === 0) {
-        return
-      }
-      e.preventDefault()
-      cb([...e.dataTransfer.files])
-    }
     const onDragenter = (e: DragEvent) => {
       dragHandler(e, () => {
         setDragging(true)
@@ -70,8 +71,7 @@ export function FileUploadCatcher() {
           setDragging(false)
           const availableFiles = files.filter((f) => f.size > 0)
           if (availableFiles.length > 0) {
-            await useUser.login()
-            await upload(availableFiles)
+            await useGlobalFileCatcherHandler.getState().handler(files)
           }
         })
       )
