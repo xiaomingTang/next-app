@@ -19,6 +19,7 @@ export function SelfPeer() {
       <Button
         variant='outlined'
         color={peerDisconnected ? 'error' : 'primary'}
+        title={peerDisconnected ? '连接已断开' : undefined}
         sx={{
           width: '100%',
           maxWidth: '410px',
