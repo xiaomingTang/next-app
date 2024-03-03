@@ -1,5 +1,5 @@
 import { usePeerListener } from '../hooks/usePeerListener'
-import { usePeer } from '../store'
+import { usePeer } from '../store/usePeer'
 
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SlideUpTransition } from '@/components/Transitions'

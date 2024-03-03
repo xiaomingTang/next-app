@@ -3,7 +3,7 @@ import { withStatic } from '@/utils/withStatic'
 import { create } from 'zustand'
 import { Peer } from 'peerjs'
 
-import type { Connections } from './constants'
+import type { Connections } from '../constants'
 import type {
   CallOption,
   DataConnection,

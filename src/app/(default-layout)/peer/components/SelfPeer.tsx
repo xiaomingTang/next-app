@@ -1,5 +1,5 @@
 import { usePeerState } from '../hooks/usePeerState'
-import { usePeer } from '../store'
+import { usePeer } from '../store/usePeer'
 
 import { Button, Typography } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'

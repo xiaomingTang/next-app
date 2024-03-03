@@ -1,4 +1,4 @@
-import { usePeer } from '../store'
+import { usePeer } from '../store/usePeer'
 import { useConnectionState } from '../hooks/usePeerState'
 
 import { cat } from '@/errors/catchAndToast'
