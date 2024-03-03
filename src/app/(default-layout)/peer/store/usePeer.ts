@@ -70,8 +70,8 @@ export const usePeer = withStatic(useRawPeer, {
 
     useRawPeer.setState(() => ({
       dataConnections: [
-        connection,
         ...prevConnections.filter((item) => item.peer !== peerId),
+        connection,
       ],
       activeConnection: {
         type: 'data',
@@ -105,8 +105,8 @@ export const usePeer = withStatic(useRawPeer, {
 
     useRawPeer.setState(() => ({
       mediaConnections: [
-        connection,
         ...prevConnections.filter((item) => item.peer !== peerId),
+        connection,
       ],
       activeConnection: {
         type: 'media',
