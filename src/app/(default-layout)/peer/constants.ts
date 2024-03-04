@@ -7,6 +7,46 @@ import type {
   PeerErrorType,
 } from 'peerjs'
 
+export interface TextMessageIns {
+  id: string
+  type: 'text'
+  value: string
+}
+
+export interface ImageMessageIns {
+  id: string
+  type: 'image'
+  value: string
+}
+
+export interface AudioMessageIns {
+  id: string
+  type: 'audio'
+  value: string
+}
+
+export interface VideoMessageIns {
+  id: string
+  type: 'video'
+  value: string
+}
+
+export type MessageIns =
+  | TextMessageIns
+  | ImageMessageIns
+  | AudioMessageIns
+  | VideoMessageIns
+
+/**
+ * @TODO: 判断需要更严格, 如添加唯一标识
+ */
+export function isMessageIns(msg: unknown): msg is MessageIns {
+  return (
+    !!msg &&
+    ['text', 'image', 'audio', 'video'].includes((msg as MessageIns).type)
+  )
+}
+
 export type Connections =
   | {
       type: 'data'

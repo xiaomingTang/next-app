@@ -3,7 +3,7 @@ import { withStatic } from '@/utils/withStatic'
 import { create } from 'zustand'
 import { Peer } from 'peerjs'
 
-import type { Connections } from '../constants'
+import type { Connections, MessageIns } from '../constants'
 import type {
   CallOption,
   DataConnection,
@@ -80,6 +80,18 @@ export const usePeer = withStatic(useRawPeer, {
     }))
 
     return connection
+  },
+  send(data: MessageIns, chunked?: boolean) {
+    if (!data.value) {
+      throw new Error('发送的内容为空')
+    }
+    const {
+      activeConnection: { connection, type },
+    } = useRawPeer.getState()
+    if (!connection || type !== 'data' || !connection.open) {
+      throw new Error('没有可用的连接')
+    }
+    ;(connection as DataConnection).send(data, chunked)
   },
   callPeer(
     peerId: string,
