@@ -4,9 +4,17 @@ import {
   usePeerListener,
 } from './usePeerListener'
 
+import { useListen } from '@/hooks/useListen'
+
 import { useEffect, useState } from 'react'
 
-import type { Peer, DataConnection, MediaConnection } from 'peerjs'
+import type {
+  Peer,
+  DataConnection,
+  MediaConnection,
+  PeerError,
+  PeerErrorType,
+} from 'peerjs'
 
 export function usePeerState(peer: Peer) {
   const [disconnected, setDisconnected] = useState(peer.disconnected)
@@ -34,6 +42,23 @@ export function usePeerState(peer: Peer) {
   return {
     disconnected,
   }
+}
+
+export function usePeerError(peer: Peer) {
+  const { disconnected } = usePeerState(peer)
+  const [error, setError] = useState<PeerError<`${PeerErrorType}`> | null>(null)
+
+  useListen(disconnected, () => {
+    if (!disconnected) {
+      setError(null)
+    }
+  })
+
+  usePeerListener(peer, 'error', (e) => {
+    setError(e)
+  })
+
+  return error
 }
 
 const CONNECTION_TIMEOUT = 10000

@@ -1,5 +1,9 @@
-import { usePeerState } from '../hooks/usePeerState'
+import { usePeerError, usePeerState } from '../hooks/usePeerState'
 import { usePeer } from '../store/usePeer'
+import { PeerErrorMap } from '../constants'
+
+import { useIsOnline } from '@/hooks/useIsOnline'
+import { useListen } from '@/hooks/useListen'
 
 import { Button, Typography } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
@@ -7,8 +11,17 @@ import CopyToClipboard from 'react-copy-to-clipboard'
 import toast from 'react-hot-toast'
 
 export function SelfPeer() {
+  const isOnline = useIsOnline()
   const { peer, peerId } = usePeer()
   const { disconnected: peerDisconnected } = usePeerState(peer)
+  const peerError = usePeerError(peer)
+
+  useListen(isOnline, () => {
+    if (isOnline && peerError) {
+      peer.reconnect()
+    }
+  })
+
   return (
     <CopyToClipboard
       text={peerId}
@@ -19,7 +32,7 @@ export function SelfPeer() {
       <Button
         variant='outlined'
         color={peerDisconnected ? 'error' : 'primary'}
-        title={peerDisconnected ? '连接已断开' : undefined}
+        title={peerError?.type && PeerErrorMap[peerError.type]}
         sx={{
           width: '100%',
           maxWidth: '410px',
