@@ -1,7 +1,5 @@
 import { usePeer } from '../store/usePeer'
-import { usePeerListener } from '../hooks/usePeerListener'
 import { usePeerMessage } from '../store/useMessage'
-import { isMessageIns } from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { toError } from '@/errors/utils'
@@ -14,41 +12,18 @@ import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import { nanoid } from 'nanoid'
 
-import type { DataConnection, MediaConnection } from 'peerjs'
-
-function onlyDataConnection(
-  connection: DataConnection | MediaConnection | null
-): DataConnection | null {
-  if (!connection) {
-    return connection
-  }
-  if (connection.type === 'data') {
-    return connection as DataConnection
-  }
-  return null
-}
-
 export function MessageEditor() {
-  const { peer } = usePeer()
+  const { peer, activeConnectionInfo } = usePeer()
   const { messages } = usePeerMessage()
 
-  useListen(messages, () => {
-    console.log(messages)
-  })
+  usePeerMessage.useInit(peer)
 
-  /**
-   * @WARNING
-   * 艹了, connection 需要区分 in / out;
-   * peer.on('connection') 拿到的是对方的连接, 可以绑定 data 事件;
-   * peer.connect() 返回的是我们自己的连接, 可以发送信息(如 .send);
-   */
-  usePeerListener(peer, 'connection', (connection) => {
-    connection.on('data', (data) => {
-      if (isMessageIns(data)) {
-        usePeerMessage.addMessage(connection.peer, data)
-      }
-    })
-  })
+  useListen(
+    messages[activeConnectionInfo?.targetPeerId ?? ''],
+    (messageList) => {
+      console.log(messageList)
+    }
+  )
 
   const { handleSubmit, control } = useForm<{
     inputText: string

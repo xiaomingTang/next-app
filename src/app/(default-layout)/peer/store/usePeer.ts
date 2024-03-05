@@ -1,82 +1,113 @@
+import { isDC, isMC } from '../utils'
+
 import { withStatic } from '@/utils/withStatic'
 
 import { create } from 'zustand'
-import { Peer } from 'peerjs'
+import Peer from 'peerjs'
+import { immer } from 'zustand/middleware/immer'
 
-import type { Connections, MessageIns } from '../constants'
 import type {
   CallOption,
   DataConnection,
   MediaConnection,
   PeerConnectOption,
 } from 'peerjs'
+import type { InOutConnection, MessageIns } from '../type'
 
 interface PeerStore {
   peer: Peer
   peerId: string
-  dataConnections: DataConnection[]
-  mediaConnections: MediaConnection[]
-  activeConnection: Connections
+  connectionInfos: InOutConnection[]
+  activeConnectionInfo: InOutConnection | null
 }
 
-const useRawPeer = create<PeerStore>(() => {
-  const url = new URL(process.env.NEXT_PUBLIC_PEER_SERVER)
-  const peer = new Peer({
-    // debug: 3,
-    host: url.hostname,
-    port: +url.port,
-    secure: url.protocol === 'https:',
-    path: url.pathname,
-  })
-
-  peer.once('open', (peerId) => {
-    useRawPeer.setState({
-      peerId,
+export const useRawPeer = create<PeerStore>()(
+  immer(() => {
+    const url = new URL(process.env.NEXT_PUBLIC_PEER_SERVER)
+    const peer = new Peer({
+      // debug: 3,
+      host: url.hostname,
+      port: +url.port,
+      secure: url.protocol === 'https:',
+      path: url.pathname,
     })
+
+    peer.once('open', (peerId) => {
+      useRawPeer.setState({
+        peerId,
+      })
+    })
+
+    console.log('[peer]: created')
+
+    return {
+      peer,
+      peerId: '',
+      connectionInfos: [] as InOutConnection[],
+      activeConnectionInfo: null as InOutConnection | null,
+    }
   })
-
-  console.log('[peer]: created')
-
-  return {
-    peer,
-    peerId: '',
-    dataConnections: [],
-    mediaConnections: [],
-    activeConnection: {
-      type: 'data',
-      connection: null,
-    },
-  }
-})
+)
 
 export const usePeer = withStatic(useRawPeer, {
-  connect(peerId: string, options?: PeerConnectOption): DataConnection {
-    const { peer, dataConnections: prevConnections } = useRawPeer.getState()
-    const prevConnection = prevConnections.find((item) => item.peer === peerId)
+  addConnection(
+    connection: DataConnection | MediaConnection,
+    type: 'in' | 'out'
+  ) {
+    const peerId = connection.peer
 
-    if (prevConnection && prevConnection.open) {
-      useRawPeer.setState({
-        activeConnection: {
-          type: 'data',
-          connection: prevConnection,
+    useRawPeer.setState((prev) => {
+      const prevConnectionInfo = prev.connectionInfos.find(
+        (item) => item.targetPeerId === peerId
+      )
+
+      const newConnectionInfo: InOutConnection = {
+        targetPeerId: peerId,
+        dc: {
+          in: null,
+          out: null,
         },
+        mc: {
+          in: null,
+          out: null,
+        },
+      }
+
+      if (isDC(connection)) {
+        ;(prevConnectionInfo ?? newConnectionInfo).dc[type] = connection
+      }
+      if (isMC(connection)) {
+        ;(prevConnectionInfo ?? newConnectionInfo).mc[type] = connection
+      }
+
+      if (!prevConnectionInfo) {
+        prev.connectionInfos = [...prev.connectionInfos, newConnectionInfo]
+      }
+    })
+  },
+  connect(peerId: string, options?: PeerConnectOption): DataConnection {
+    const { peer, connectionInfos } = useRawPeer.getState()
+    const prevConnectionInfo = connectionInfos.find(
+      (item) => item.targetPeerId === peerId
+    )
+
+    if (prevConnectionInfo && prevConnectionInfo.dc.out?.open) {
+      useRawPeer.setState({
+        activeConnectionInfo: prevConnectionInfo,
       })
-      return prevConnection
+      return prevConnectionInfo.dc.out
     }
 
-    prevConnection?.close()
+    prevConnectionInfo?.dc.out?.close()
 
     const connection = peer.connect(peerId, options)
 
-    useRawPeer.setState(() => ({
-      dataConnections: [
-        ...prevConnections.filter((item) => item.peer !== peerId),
-        connection,
-      ],
-      activeConnection: {
-        type: 'data',
-        connection,
-      },
+    usePeer.addConnection(connection, 'out')
+
+    useRawPeer.setState((prev) => ({
+      activeConnectionInfo:
+        prev.connectionInfos.find((item) => item.targetPeerId === peerId) ??
+        null,
     }))
 
     return connection
@@ -85,45 +116,38 @@ export const usePeer = withStatic(useRawPeer, {
     if (!data.value) {
       throw new Error('发送的内容为空')
     }
-    const {
-      activeConnection: { connection, type },
-    } = useRawPeer.getState()
-    if (!connection || type !== 'data' || !connection.open) {
+    const connection = useRawPeer.getState().activeConnectionInfo?.dc.out
+    if (!connection?.open) {
       throw new Error('没有可用的连接')
     }
-    ;(connection as DataConnection).send(data, chunked)
+    return connection.send(data, chunked)
   },
   callPeer(
     peerId: string,
     stream: MediaStream,
     options?: CallOption
   ): MediaConnection {
-    const { peer, mediaConnections: prevConnections } = useRawPeer.getState()
-    const prevConnection = prevConnections.find((item) => item.peer === peerId)
+    const { peer, connectionInfos } = useRawPeer.getState()
+    const prevConnectionInfo = connectionInfos.find(
+      (item) => item.targetPeerId === peerId
+    )
 
-    if (prevConnection && prevConnection.open) {
+    if (prevConnectionInfo && prevConnectionInfo.mc.out?.open) {
       useRawPeer.setState({
-        activeConnection: {
-          type: 'media',
-          connection: prevConnection,
-        },
+        activeConnectionInfo: prevConnectionInfo,
       })
-      return prevConnection
+      return prevConnectionInfo.mc.out
     }
 
-    prevConnection?.close()
+    prevConnectionInfo?.mc.out?.close()
 
     const connection = peer.call(peerId, stream, options)
+    usePeer.addConnection(connection, 'out')
 
-    useRawPeer.setState(() => ({
-      mediaConnections: [
-        ...prevConnections.filter((item) => item.peer !== peerId),
-        connection,
-      ],
-      activeConnection: {
-        type: 'media',
-        connection,
-      },
+    useRawPeer.setState((prev) => ({
+      activeConnectionInfo:
+        prev.connectionInfos.find((item) => item.targetPeerId === peerId) ??
+        null,
     }))
 
     return connection
@@ -132,12 +156,16 @@ export const usePeer = withStatic(useRawPeer, {
     if (!connection) {
       return false
     }
-    const { dataConnections, mediaConnections } = useRawPeer.getState()
-    if (connection.type === 'data') {
-      return dataConnections.some((item) => item.peer === connection.peer)
+    const { connectionInfos } = useRawPeer.getState()
+    if (isDC(connection)) {
+      return connectionInfos.some(
+        (item) => item.dc.out?.peer === connection.peer
+      )
     }
-    if (connection.type === 'media') {
-      return mediaConnections.some((item) => item.peer === connection.peer)
+    if (isMC(connection)) {
+      return connectionInfos.some(
+        (item) => item.mc.out?.peer === connection.peer
+      )
     }
     return false
   },

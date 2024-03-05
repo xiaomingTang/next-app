@@ -36,7 +36,7 @@ export function usePeerState(peer: Peer) {
   }
 }
 
-const CONNECTION_TIMEOUT = 5000
+const CONNECTION_TIMEOUT = 10000
 
 export function useDataConnectionState(connection: DataConnection | null) {
   const [state, setState] = useState<RTCIceConnectionState>('new')

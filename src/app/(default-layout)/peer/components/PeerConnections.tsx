@@ -59,8 +59,9 @@ const CONNECTION_STATE_MAP: Record<
 }
 
 export function PeerConnections() {
-  const { activeConnection } = usePeer()
-  const state = useConnectionState(activeConnection.connection)
+  const { activeConnectionInfo } = usePeer()
+  const connection = activeConnectionInfo?.dc.out
+  const state = useConnectionState(connection ?? null)
   const { handleSubmit, control, setValue } = useForm<{
     peerId: string
   }>({
@@ -69,7 +70,7 @@ export function PeerConnections() {
     },
   })
 
-  useListen(activeConnection.connection?.peer, (peerId) => {
+  useListen(connection?.peer, (peerId) => {
     setValue('peerId', peerId ?? '')
   })
 
@@ -120,20 +121,16 @@ export function PeerConnections() {
       <Button
         type='submit'
         variant='outlined'
-        color={
-          activeConnection.connection
-            ? CONNECTION_STATE_MAP[state].color
-            : 'primary'
-        }
+        color={connection ? CONNECTION_STATE_MAP[state].color : 'primary'}
       >
-        {!activeConnection.connection && '连接'}
-        {activeConnection.connection && (
+        {!connection && '连接'}
+        {connection && (
           <>
             {CONNECTION_STATE_MAP[state].text}
-            {activeConnection.type === 'media' && (
+            {connection.type === 'media' && (
               <PhotoCameraIcon fontSize='inherit' sx={{ ml: 1 }} />
             )}
-            {activeConnection.type === 'data' && (
+            {connection.type === 'data' && (
               <SpeakerNotesIcon fontSize='inherit' sx={{ ml: 1 }} />
             )}
           </>

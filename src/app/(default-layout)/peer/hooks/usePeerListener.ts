@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useEventCallback } from '@mui/material'
 
-import type { DataConnectionEvents, MediaConnectionEvents } from '../constants'
+import type { DataConnectionEvents, MediaConnectionEvents } from '../type'
 import type { DataConnection, MediaConnection, Peer, PeerEvents } from 'peerjs'
 import type { EventListener } from 'eventemitter3'
 

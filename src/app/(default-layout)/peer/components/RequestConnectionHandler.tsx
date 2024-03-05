@@ -15,44 +15,33 @@ import {
 } from '@mui/material'
 import toast from 'react-hot-toast'
 
-import type { Connections } from '../constants'
+import type { DataConnection, MediaConnection } from 'peerjs'
 
 export function RequestConnectionHandler() {
   const { peer } = usePeer()
-  const [requestConnection, setRequestConnection] = useState<Connections>({
-    type: 'data',
-    connection: null,
-  })
+  const [requestConnection, setRequestConnection] = useState<
+    DataConnection | MediaConnection | null
+  >(null)
 
-  const closeDialog = () =>
-    setRequestConnection({
-      type: 'data',
-      connection: null,
-    })
+  const closeDialog = () => setRequestConnection(null)
 
-  useInjectHistory(!!requestConnection.connection, closeDialog)
+  useInjectHistory(!!requestConnection, closeDialog)
 
   usePeerListener(peer, 'connection', (e) => {
     if (!usePeer.hasConnection(e)) {
-      setRequestConnection({
-        type: 'data',
-        connection: e,
-      })
+      setRequestConnection(e)
     }
   })
 
   usePeerListener(peer, 'call', (e) => {
     if (!usePeer.hasConnection(e)) {
-      setRequestConnection({
-        type: 'media',
-        connection: e,
-      })
+      setRequestConnection(e)
     }
   })
 
   return (
     <Dialog
-      open={!!requestConnection.connection}
+      open={!!requestConnection}
       fullWidth
       TransitionComponent={SlideUpTransition}
       onClose={closeDialog}
@@ -63,18 +52,16 @@ export function RequestConnectionHandler() {
         </Typography>
       </DialogTitle>
       <DialogContent>
-        <Typography>对方 ID: {requestConnection.connection?.peer}</Typography>
-        {requestConnection.connection?.label && (
-          <Typography>
-            对方标签: {requestConnection.connection?.label}
-          </Typography>
+        <Typography>对方 ID: {requestConnection?.peer}</Typography>
+        {requestConnection?.label && (
+          <Typography>对方标签: {requestConnection?.label}</Typography>
         )}
       </DialogContent>
       <DialogActions>
         <Button onClick={closeDialog}>取消</Button>
         <Button
           onClick={() => {
-            const peerId = requestConnection.connection?.peer
+            const peerId = requestConnection?.peer
             if (peerId) {
               usePeer.connect(peerId)
             } else {
