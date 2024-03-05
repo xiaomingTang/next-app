@@ -1,8 +1,11 @@
 import { usePeerListener } from '../hooks/usePeerListener'
 import { usePeer } from '../store/usePeer'
+import { isDC } from '../utils'
 
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SlideUpTransition } from '@/components/Transitions'
+import { getUserVideo } from '@/utils/media/video'
+import { toPlainError } from '@/errors/utils'
 
 import { useState } from 'react'
 import {
@@ -60,12 +63,24 @@ export function RequestConnectionHandler() {
       <DialogActions>
         <Button onClick={closeDialog}>取消</Button>
         <Button
-          onClick={() => {
-            const peerId = requestConnection?.peer
-            if (peerId) {
-              usePeer.connect(peerId)
-            } else {
+          onClick={async () => {
+            if (!requestConnection) {
               toast.error('连接不存在')
+              closeDialog()
+              return
+            }
+            if (isDC(requestConnection)) {
+              usePeer.connect(requestConnection.peer)
+              closeDialog()
+              return
+            }
+            try {
+              const stream = await getUserVideo()
+              // TODO: 改为 answer
+              // TODO: usePeer 新增 answer
+              usePeer.callPeer(requestConnection.peer, stream)
+            } catch (err) {
+              toast.error(toPlainError(err).message)
             }
             closeDialog()
           }}
