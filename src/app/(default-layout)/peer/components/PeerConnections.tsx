@@ -14,8 +14,6 @@ import {
   Stack,
 } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import PhotoCameraIcon from '@mui/icons-material/PhotoCamera'
-import SpeakerNotesIcon from '@mui/icons-material/SpeakerNotes'
 import { Controller, useForm } from 'react-hook-form'
 import { useMemo } from 'react'
 
@@ -59,9 +57,8 @@ const CONNECTION_STATE_MAP: Record<
 }
 
 export function PeerConnections() {
-  const { activeConnectionInfo } = usePeer()
-  const connection = activeConnectionInfo?.dc.out
-  const state = useConnectionState(connection ?? null)
+  const connection = usePeer().activeConnectionInfo?.dc.out ?? null
+  const state = useConnectionState(connection)
   const { handleSubmit, control, setValue } = useForm<{
     peerId: string
   }>({
@@ -124,17 +121,7 @@ export function PeerConnections() {
         color={connection ? CONNECTION_STATE_MAP[state].color : 'primary'}
       >
         {!connection && '连接'}
-        {connection && (
-          <>
-            {CONNECTION_STATE_MAP[state].text}
-            {connection.type === 'media' && (
-              <PhotoCameraIcon fontSize='inherit' sx={{ ml: 1 }} />
-            )}
-            {connection.type === 'data' && (
-              <SpeakerNotesIcon fontSize='inherit' sx={{ ml: 1 }} />
-            )}
-          </>
-        )}
+        {connection && CONNECTION_STATE_MAP[state].text}
       </Button>
     </Stack>
   )
