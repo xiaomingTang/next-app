@@ -4,6 +4,7 @@ import { SelfPeer } from './components/SelfPeer'
 import { PeerConnections } from './components/PeerConnections'
 import { RequestConnectionHandler } from './components/RequestConnectionHandler'
 import { MessageEditor } from './components/MessageEditor'
+import { MessageViewer } from './components/MessageViewer'
 
 import { Stack } from '@mui/material'
 
@@ -20,6 +21,7 @@ export function PeerClient() {
       >
         <SelfPeer />
         <PeerConnections />
+        <MessageViewer />
         <MessageEditor />
       </Stack>
       <RequestConnectionHandler />

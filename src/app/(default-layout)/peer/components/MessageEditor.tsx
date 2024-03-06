@@ -1,9 +1,7 @@
 import { usePeer } from '../store/usePeer'
-import { usePeerMessage } from '../store/useMessage'
 
 import { cat } from '@/errors/catchAndToast'
 import { toError } from '@/errors/utils'
-import { useListen } from '@/hooks/useListen'
 
 import { Button, Stack, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
@@ -13,18 +11,6 @@ import toast from 'react-hot-toast'
 import { nanoid } from 'nanoid'
 
 export function MessageEditor() {
-  const { peer, activeConnectionInfo } = usePeer()
-  const { messages } = usePeerMessage()
-
-  usePeerMessage.useInit(peer)
-
-  useListen(
-    messages[activeConnectionInfo?.targetPeerId ?? ''],
-    (messageList) => {
-      console.log(messageList)
-    }
-  )
-
   const { handleSubmit, control } = useForm<{
     inputText: string
   }>({
@@ -85,6 +71,8 @@ export function MessageEditor() {
               {...field}
               sx={{
                 flex: '1 1 auto',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-all',
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
