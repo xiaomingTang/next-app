@@ -4,6 +4,7 @@ import { PeerErrorMap } from '../constants'
 
 import { useIsOnline } from '@/hooks/useIsOnline'
 import { useListen } from '@/hooks/useListen'
+import { useVisibilityState } from '@/hooks/useVisibilityState'
 
 import { Button, Typography } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
@@ -12,12 +13,19 @@ import toast from 'react-hot-toast'
 
 export function SelfPeer() {
   const isOnline = useIsOnline()
+  const isVisible = useVisibilityState()
   const { peer, peerId } = usePeer()
   const { disconnected: peerDisconnected } = usePeerState(peer)
   const peerError = usePeerError(peer)
 
   useListen(isOnline, () => {
     if (isOnline && peerError) {
+      peer.reconnect()
+    }
+  })
+
+  useListen(isVisible, () => {
+    if (isVisible && peerError) {
       peer.reconnect()
     }
   })
