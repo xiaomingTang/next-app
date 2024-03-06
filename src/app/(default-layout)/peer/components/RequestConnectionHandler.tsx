@@ -47,7 +47,13 @@ export function RequestConnectionHandler() {
       open={!!requestConnection}
       fullWidth
       TransitionComponent={SlideUpTransition}
-      onClose={closeDialog}
+      onClose={(_, reason) => {
+        // 防止误点击, 因此屏蔽 backdropClick
+        if (reason === 'backdropClick') {
+          return
+        }
+        closeDialog()
+      }}
     >
       <DialogTitle>
         <Typography fontWeight='bold' fontSize='1.2em'>
@@ -63,6 +69,8 @@ export function RequestConnectionHandler() {
       <DialogActions>
         <Button onClick={closeDialog}>取消</Button>
         <Button
+          autoFocus
+          variant='contained'
           onClick={async () => {
             if (!requestConnection) {
               toast.error('连接不存在')
