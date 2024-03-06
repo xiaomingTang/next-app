@@ -19,13 +19,13 @@ export function SelfPeer() {
   const peerError = usePeerError(peer)
 
   useListen(isOnline, () => {
-    if (isOnline && peerError) {
+    if (isOnline && peerError?.type === 'network') {
       peer.reconnect()
     }
   })
 
   useListen(isVisible, () => {
-    if (isVisible && peerError) {
+    if (isVisible && peerError?.type === 'network') {
       peer.reconnect()
     }
   })
