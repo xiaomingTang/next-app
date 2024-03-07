@@ -41,7 +41,6 @@ export function TextMessageElem(message: TextMessageIns) {
     <MessageWrapperWithRole role={role} message={message}>
       <Typography
         sx={{
-          float: 'right',
           p: 1,
           borderRadius: 1,
           border: '1px solid',
