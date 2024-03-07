@@ -1,4 +1,5 @@
 import { TextMessageElem } from './TextMessageElem'
+import { ImageMessageElem } from './ImageMessageElem'
 
 import { usePeerMessage } from '../../store/useMessage'
 import { usePeer } from '../../store/usePeer'
@@ -50,6 +51,8 @@ export function MessageViewer() {
         switch (item.type) {
           case 'text':
             return <TextMessageElem key={item.id} {...item} />
+          case 'image':
+            return <ImageMessageElem key={item.id} {...item} />
           default:
             // 新增 "不支持的消息类型" 类型组件
             return (
