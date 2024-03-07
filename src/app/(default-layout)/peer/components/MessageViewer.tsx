@@ -2,14 +2,45 @@ import { usePeerMessage } from '../store/useMessage'
 import { usePeer } from '../store/usePeer'
 
 import { dark } from '@/utils/theme'
+import { formatTime } from '@/utils/formatTime'
 
 import { Box, Typography, alpha } from '@mui/material'
 import { common, blue } from '@mui/material/colors'
 
-function Text({ text, role }: { text: string; role: 'master' | 'guest' }) {
+import type { TextMessageIns } from '../type'
+
+const clearBoth = (
+  <Box
+    sx={{
+      width: '100%',
+      height: 0,
+      clear: 'both',
+      visibility: 'hidden',
+    }}
+  />
+)
+
+function Text({
+  role,
+  value: text,
+  date,
+}: TextMessageIns & { role: 'master' | 'guest' }) {
   if (role === 'guest') {
     return (
       <Box sx={{ py: 1 }}>
+        <Typography
+          sx={{
+            fontSize: '11px',
+            ml: '4px',
+            mb: 1,
+            color: alpha(common.black, 0.6),
+            [dark()]: {
+              color: alpha(common.white, 0.5),
+            },
+          }}
+        >
+          {formatTime(date)}
+        </Typography>
         <Typography
           sx={{
             display: 'inline-block',
@@ -40,15 +71,23 @@ function Text({ text, role }: { text: string; role: 'master' | 'guest' }) {
     <Box
       sx={{
         py: 1,
-        '&:after': {
-          content: '" "',
-          display: 'block',
-          height: 0,
-          clear: 'both',
-          visibility: 'hidden',
-        },
       }}
     >
+      <Typography
+        sx={{
+          float: 'right',
+          fontSize: '11px',
+          mr: '4px',
+          mb: 1,
+          color: alpha(common.black, 0.6),
+          [dark()]: {
+            color: alpha(common.white, 0.5),
+          },
+        }}
+      >
+        {formatTime(date)}
+      </Typography>
+      {clearBoth}
       <Typography
         sx={{
           float: 'right',
@@ -74,6 +113,7 @@ function Text({ text, role }: { text: string; role: 'master' | 'guest' }) {
       >
         {text}
       </Typography>
+      {clearBoth}
     </Box>
   )
 }
@@ -102,13 +142,29 @@ export function MessageViewer() {
         },
       }}
     >
-      {messageList.map((item, idx) => (
-        <Text
-          key={item.id}
-          text={item.value}
-          role={idx % 2 ? 'master' : 'guest'}
-        />
-      ))}
+      {messageList.map((item, idx) => {
+        switch (item.type) {
+          case 'text':
+            return (
+              <Text
+                key={item.id}
+                role={idx % 2 ? 'master' : 'guest'}
+                {...item}
+              />
+            )
+          default:
+            // 新增 "不支持的消息类型" 类型组件
+            return (
+              <Text
+                key={item.id}
+                role={idx % 2 ? 'master' : 'guest'}
+                {...item}
+                type='text'
+                value='不支持的消息类型'
+              />
+            )
+        }
+      })}
     </Box>
   )
 }
