@@ -35,6 +35,9 @@ export function MessageEditor() {
           allMessageTypes,
           'file'
         )
+        if (!url) {
+          throw new Error(`文件转 DataURL 失败: ${f.name}`)
+        }
         return usePeer.send({
           type,
           value: url,

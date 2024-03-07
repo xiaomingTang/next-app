@@ -1,22 +1,33 @@
+import 'react-photo-view/dist/react-photo-view.css'
+
 import { TextMessageElem } from './TextMessageElem'
 import { ImageMessageElem } from './ImageMessageElem'
 import { MediaMessageElem } from './MediaMessageElem'
+import { FileMessageElem } from './FileMessageElem'
 
 import { usePeerMessage } from '../../store/useMessage'
 import { usePeer } from '../../store/usePeer'
 
 import { dark } from '@/utils/theme'
 import { useListen } from '@/hooks/useListen'
+import { useInjectHistory } from '@/hooks/useInjectHistory'
 
 import { Box, alpha } from '@mui/material'
 import { common } from '@mui/material/colors'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import { PhotoProvider } from 'react-photo-view'
 
 export function MessageViewer() {
   const { peer, activeConnectionInfo } = usePeer()
   const { messages } = usePeerMessage()
   const messageList = messages[activeConnectionInfo?.targetPeerId ?? ''] ?? []
   const containerRef = useRef<HTMLElement>(null)
+  const [previewVisible, setPreviewVisible] = useState(false)
+  const closeRef = useRef<() => void>()
+
+  useInjectHistory(previewVisible, () => {
+    closeRef.current?.()
+  })
 
   usePeerMessage.useInit(peer)
 
@@ -48,27 +59,29 @@ export function MessageViewer() {
         },
       }}
     >
-      {messageList.map((item) => {
-        switch (item.type) {
-          case 'text':
-            return <TextMessageElem key={item.id} {...item} />
-          case 'image':
-            return <ImageMessageElem key={item.id} {...item} />
-          case 'audio':
-            return <MediaMessageElem key={item.id} {...item} />
-          case 'video':
-            return <MediaMessageElem key={item.id} {...item} />
-          default:
-            return (
-              <TextMessageElem
-                key={item.id}
-                {...item}
-                type='text'
-                value='未知消息类型'
-              />
-            )
-        }
-      })}
+      <PhotoProvider
+        onVisibleChange={(visible) => {
+          setPreviewVisible(visible)
+        }}
+        toolbarRender={({ onClose }) => {
+          closeRef.current = onClose
+          return <></>
+        }}
+      >
+        {messageList.map((item) => {
+          switch (item.type) {
+            case 'image':
+              return <ImageMessageElem key={item.id} {...item} />
+            case 'audio':
+            case 'video':
+              return <MediaMessageElem key={item.id} {...item} />
+            case 'file':
+              return <FileMessageElem key={item.id} {...item} />
+            default:
+              return <TextMessageElem key={item.id} {...item} />
+          }
+        })}
+      </PhotoProvider>
     </Box>
   )
 }

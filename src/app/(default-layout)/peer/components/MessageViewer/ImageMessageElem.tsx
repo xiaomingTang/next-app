@@ -2,7 +2,7 @@ import { MessageWrapperWithRole } from './MessageWrapper'
 
 import { usePeer } from '../../store/usePeer'
 
-import Image from 'next/image'
+import { ImageWithState } from '@/components/ImageWithState'
 
 import type { ImageMessageIns } from '../../type'
 
@@ -13,10 +13,11 @@ export function ImageMessageElem(message: ImageMessageIns) {
 
   return (
     <MessageWrapperWithRole role={role} message={message}>
-      <Image
+      <ImageWithState
         src={imageSrc}
+        preview
         width={240}
-        height={240}
+        height={120}
         alt='图片加载失败'
         style={{
           borderRadius: '4px',
