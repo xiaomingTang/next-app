@@ -54,12 +54,12 @@ sshpass -p $P1_SSH_PASSWORD ssh -t $P1_SSH_USER@$P1_SSH_HOST "zsh -s $P1_REMOTE_
   app_name=$4
 
   source ~/.zshrc
-  pm2 delete $app_name
 
   cd $remote_dir
   unzip -q -o $file_name
   mv $file_name .bak/$file_name
 
+  pm2 delete $app_name
   log_file_name=".bak/.bak.log-$(date +%Y-%m-%d-%H-%M-%S).log"
   pm2 start node --name $app_name --log $log_file_name -- server.js
   # 限制 log 备份文件数量
