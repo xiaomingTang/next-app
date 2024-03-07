@@ -16,6 +16,7 @@ async function main() {
   fs.copySync(p('.env'), p('out/.env'))
   fs.copySync(p('.npmrc'), p('out/.npmrc'))
   fs.copySync(p('README.md'), p('out/README.md'))
+  fs.copySync(p('launch.sh'), p('out/launch.sh'))
   fs.copySync(p('bin'), p('out/bin'))
   fs.copySync(p('public'), p('out/public'))
   fs.copySync(p('.next/standalone'), p('out'))
