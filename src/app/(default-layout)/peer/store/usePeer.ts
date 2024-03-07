@@ -4,6 +4,7 @@ import { usePeerMessage } from './useMessage'
 import { isDC, isMC } from '../utils'
 
 import { withStatic } from '@/utils/withStatic'
+import { numberFormat } from '@/utils/numberFormat'
 
 import { create } from 'zustand'
 import Peer from 'peerjs'
@@ -28,11 +29,13 @@ interface PeerStore {
 export const useRawPeer = create<PeerStore>()(
   immer(() => {
     const url = new URL(process.env.NEXT_PUBLIC_PEER_SERVER)
+    const secure = url.protocol === 'https:'
+    const port = numberFormat(url.port) || (secure ? 443 : 80)
     const peer = new Peer({
       // debug: 3,
       host: url.hostname,
-      port: +url.port,
-      secure: url.protocol === 'https:',
+      port,
+      secure,
       path: url.pathname,
     })
 
