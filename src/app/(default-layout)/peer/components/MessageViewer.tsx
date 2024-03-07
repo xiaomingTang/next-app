@@ -3,9 +3,11 @@ import { usePeer } from '../store/usePeer'
 
 import { dark } from '@/utils/theme'
 import { formatTime } from '@/utils/formatTime'
+import { useListen } from '@/hooks/useListen'
 
 import { Box, Typography, alpha } from '@mui/material'
 import { common, blue } from '@mui/material/colors'
+import { useRef } from 'react'
 
 import type { TextMessageIns } from '../type'
 
@@ -20,11 +22,9 @@ const clearBoth = (
   />
 )
 
-function Text({
-  role,
-  value: text,
-  date,
-}: TextMessageIns & { role: 'master' | 'guest' }) {
+function Text({ value: text, date, src }: TextMessageIns) {
+  const { peerId } = usePeer()
+  const role = src === peerId ? 'master' : 'guest'
   if (role === 'guest') {
     return (
       <Box sx={{ py: 1 }}>
@@ -122,11 +122,23 @@ export function MessageViewer() {
   const { peer, activeConnectionInfo } = usePeer()
   const { messages } = usePeerMessage()
   const messageList = messages[activeConnectionInfo?.targetPeerId ?? ''] ?? []
+  const containerRef = useRef<HTMLElement>(null)
 
   usePeerMessage.useInit(peer)
 
+  useListen(messageList, () => {
+    const container = containerRef.current
+    if (container && messageList.length > 0) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: 'smooth',
+      })
+    }
+  })
+
   return (
     <Box
+      ref={containerRef}
       className='scrollbar-thin'
       sx={{
         width: '100%',
@@ -142,22 +154,15 @@ export function MessageViewer() {
         },
       }}
     >
-      {messageList.map((item, idx) => {
+      {messageList.map((item) => {
         switch (item.type) {
           case 'text':
-            return (
-              <Text
-                key={item.id}
-                role={idx % 2 ? 'master' : 'guest'}
-                {...item}
-              />
-            )
+            return <Text key={item.id} {...item} />
           default:
             // 新增 "不支持的消息类型" 类型组件
             return (
               <Text
                 key={item.id}
-                role={idx % 2 ? 'master' : 'guest'}
                 {...item}
                 type='text'
                 value='不支持的消息类型'

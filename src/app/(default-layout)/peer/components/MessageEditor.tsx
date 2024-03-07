@@ -1,23 +1,38 @@
 import { usePeer } from '../store/usePeer'
+import { file2DataURL } from '../../color/utils'
 
 import { cat } from '@/errors/catchAndToast'
 import { toError } from '@/errors/utils'
+import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCatcherHandler'
 
 import { Button, Stack, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { nanoid } from 'nanoid'
 
 export function MessageEditor() {
-  const { handleSubmit, control } = useForm<{
+  const { handleSubmit, control, setValue } = useForm<{
     inputText: string
   }>({
     defaultValues: {
       inputText: '',
     },
   })
+
+  useGlobalFileCatcherHandler.useUpdateHandler(
+    cat(async (files) => {
+      const f = files[0]
+      if (!f) {
+        return
+      }
+      const url = await file2DataURL(f)
+      usePeer.send({
+        type: 'image',
+        value: url,
+      })
+    })
+  )
 
   const onSubmit = useMemo(
     () =>
@@ -37,15 +52,14 @@ export function MessageEditor() {
             usePeer.send({
               type: 'text',
               value: trimmedText,
-              id: nanoid(12),
-              date: new Date(),
             })
+            setValue('inputText', '')
           } catch (error) {
             toast.error(toError(error).message)
           }
         })
       ),
-    [handleSubmit]
+    [handleSubmit, setValue]
   )
 
   return (

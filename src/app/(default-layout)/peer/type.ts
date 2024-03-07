@@ -30,6 +30,8 @@ export interface InOutConnection {
 interface BaseMessageIns {
   id: string
   date: Date
+  src: string
+  dest: string
 }
 
 export interface TextMessageIns extends BaseMessageIns {

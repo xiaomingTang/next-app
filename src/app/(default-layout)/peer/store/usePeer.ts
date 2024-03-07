@@ -1,3 +1,6 @@
+// eslint-disable-next-line import/no-cycle
+import { usePeerMessage } from './useMessage'
+
 import { isDC, isMC } from '../utils'
 
 import { withStatic } from '@/utils/withStatic'
@@ -5,6 +8,7 @@ import { withStatic } from '@/utils/withStatic'
 import { create } from 'zustand'
 import Peer from 'peerjs'
 import { immer } from 'zustand/middleware/immer'
+import { nanoid } from 'nanoid'
 
 import type {
   CallOption,
@@ -112,7 +116,10 @@ export const usePeer = withStatic(useRawPeer, {
 
     return connection
   },
-  send(data: MessageIns, chunked?: boolean) {
+  send(
+    data: Omit<MessageIns, 'src' | 'dest' | 'id' | 'date'>,
+    chunked?: boolean
+  ) {
     if (!data.value) {
       throw new Error('发送的内容为空')
     }
@@ -120,7 +127,15 @@ export const usePeer = withStatic(useRawPeer, {
     if (!connection?.open) {
       throw new Error('没有可用的连接')
     }
-    return connection.send(data, chunked)
+    const sendData: MessageIns = {
+      ...data,
+      id: nanoid(12),
+      date: new Date(),
+      src: useRawPeer.getState().peerId,
+      dest: connection.peer,
+    }
+    usePeerMessage.addMessage(connection.peer, sendData)
+    return connection.send(sendData, chunked)
   },
   callPeer(
     peerId: string,
