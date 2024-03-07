@@ -1,13 +1,38 @@
 import { hsl2Rgb, hsv2Rgb, rgb2Hsl, rgb2Hsv } from './convert'
 
-export async function file2Img(f: Blob) {
-  return new Promise<HTMLImageElement>((resolve, reject) => {
+export async function file2DataURL(f: Blob) {
+  return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
-    const img = new Image()
 
     const unbindEvents = () => {
       reader.onerror = null
       reader.onabort = null
+      reader.onload = null
+    }
+
+    const onError = () => {
+      unbindEvents()
+      reject(new Error('文件转 DataURL 失败'))
+    }
+
+    reader.readAsDataURL(f)
+    reader.onerror = onError
+    reader.onabort = onError
+
+    reader.onload = () => {
+      unbindEvents()
+      resolve(reader.result as string)
+    }
+  })
+}
+
+export async function file2Img(f: Blob) {
+  const dataUrl = await file2DataURL(f)
+
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image()
+
+    const unbindEvents = () => {
       img.onabort = null
       img.oncancel = null
       img.onerror = null
@@ -19,20 +44,15 @@ export async function file2Img(f: Blob) {
       reject(new Error('文件转图片预览失败'))
     }
 
-    reader.readAsDataURL(f)
-    reader.onerror = onError
-    reader.onabort = onError
-
-    reader.onload = () => {
-      img.src = reader.result as string
-      img.onabort = onError
-      img.oncancel = onError
-      img.onerror = onError
-      img.onload = () => {
-        unbindEvents()
-        resolve(img)
-      }
+    img.onabort = onError
+    img.oncancel = onError
+    img.onerror = onError
+    img.onload = () => {
+      unbindEvents()
+      resolve(img)
     }
+
+    img.src = dataUrl
   })
 }
 
