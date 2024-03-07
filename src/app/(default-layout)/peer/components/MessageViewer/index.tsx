@@ -1,4 +1,4 @@
-import { TextMessageElem } from './TextMessage'
+import { TextMessageElem } from './TextMessageElem'
 
 import { usePeerMessage } from '../../store/useMessage'
 import { usePeer } from '../../store/usePeer'
