@@ -1,5 +1,5 @@
-import { usePeerMessage } from '../store/useMessage'
-import { usePeer } from '../store/usePeer'
+import { usePeerMessage } from '../../store/useMessage'
+import { usePeer } from '../../store/usePeer'
 
 import { dark } from '@/utils/theme'
 import { formatTime } from '@/utils/formatTime'
@@ -9,7 +9,7 @@ import { Box, Typography, alpha } from '@mui/material'
 import { common, blue } from '@mui/material/colors'
 import { useRef } from 'react'
 
-import type { TextMessageIns } from '../type'
+import type { TextMessageIns } from '../../type'
 
 const clearBoth = (
   <Box

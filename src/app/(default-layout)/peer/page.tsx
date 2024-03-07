@@ -1,4 +1,4 @@
-import { PeerClient } from './PeerClient'
+import { PeerClient } from './components/PeerClient'
 
 import { AuthRequired } from '@/components/AuthRequired'
 import { Forbidden } from '@/components/Forbidden'
