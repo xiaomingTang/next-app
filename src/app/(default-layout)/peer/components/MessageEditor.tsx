@@ -1,9 +1,11 @@
 import { usePeer } from '../store/usePeer'
 import { file2DataURL } from '../../color/utils'
+import { allMessageTypes } from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { toError } from '@/errors/utils'
 import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCatcherHandler'
+import { restrictPick } from '@/utils/array'
 
 import { Button, Stack, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
@@ -20,21 +22,28 @@ export function MessageEditor() {
     },
   })
 
-  useGlobalFileCatcherHandler.useUpdateHandler(
-    cat(async (files) => {
-      const f = files[0]
-      if (!f) {
-        return
-      }
-      // @TODO: 大文件分片
-      // @TODO: 区分 image / audio / video / file
-      const url = await file2DataURL(f)
-      usePeer.send({
-        type: 'image',
-        value: url,
+  useGlobalFileCatcherHandler.useUpdateHandler(async (files) => {
+    if (files.length === 0) {
+      return
+    }
+
+    const promises = files.map(
+      cat(async (f) => {
+        const url = await file2DataURL(f)
+        const type = restrictPick(
+          f.type.split('/')[0] ?? '',
+          allMessageTypes,
+          'file'
+        )
+        return usePeer.send({
+          type,
+          value: url,
+        })
       })
-    })
-  )
+    )
+
+    await Promise.allSettled(promises)
+  })
 
   const onSubmit = useMemo(
     () =>

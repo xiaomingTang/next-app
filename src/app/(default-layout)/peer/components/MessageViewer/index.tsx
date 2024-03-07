@@ -1,5 +1,6 @@
 import { TextMessageElem } from './TextMessageElem'
 import { ImageMessageElem } from './ImageMessageElem'
+import { MediaMessageElem } from './MediaMessageElem'
 
 import { usePeerMessage } from '../../store/useMessage'
 import { usePeer } from '../../store/usePeer'
@@ -53,14 +54,17 @@ export function MessageViewer() {
             return <TextMessageElem key={item.id} {...item} />
           case 'image':
             return <ImageMessageElem key={item.id} {...item} />
+          case 'audio':
+            return <MediaMessageElem key={item.id} {...item} />
+          case 'video':
+            return <MediaMessageElem key={item.id} {...item} />
           default:
-            // 新增 "不支持的消息类型" 类型组件
             return (
               <TextMessageElem
                 key={item.id}
                 {...item}
                 type='text'
-                value='不支持的消息类型'
+                value='未知消息类型'
               />
             )
         }
