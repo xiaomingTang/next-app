@@ -38,6 +38,7 @@ export function MessageEditor() {
               type: 'text',
               value: trimmedText,
               id: nanoid(12),
+              date: new Date(),
             })
           } catch (error) {
             toast.error(toError(error).message)

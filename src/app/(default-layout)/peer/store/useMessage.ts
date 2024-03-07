@@ -33,7 +33,10 @@ export const usePeerMessage = withStatic(useRawPeerMessage, {
       usePeer.addConnection(connection, 'in')
       connection.on('data', (data) => {
         if (isMessageIns(data)) {
-          usePeerMessage.addMessage(connection.peer, data)
+          usePeerMessage.addMessage(connection.peer, {
+            ...data,
+            date: new Date(),
+          })
         }
       })
     })

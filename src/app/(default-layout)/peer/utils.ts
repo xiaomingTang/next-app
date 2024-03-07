@@ -23,8 +23,12 @@ export function isMC(
  * @TODO: 判断需要更严格, 如添加唯一标识
  */
 export function isMessageIns(msg: unknown): msg is MessageIns {
-  return (
-    !!msg &&
-    ['text', 'image', 'audio', 'video'].includes((msg as MessageIns).type)
-  )
+  const allMessageTypes: MessageIns['type'][] = [
+    'text',
+    'image',
+    'audio',
+    'video',
+    'file',
+  ]
+  return !!msg && allMessageTypes.includes((msg as MessageIns).type)
 }

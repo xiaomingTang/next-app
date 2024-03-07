@@ -27,27 +27,33 @@ export interface InOutConnection {
   }
 }
 
-export interface TextMessageIns {
+interface BaseMessageIns {
   id: string
+  date: Date
+}
+
+export interface TextMessageIns extends BaseMessageIns {
   type: 'text'
   value: string
 }
 
-export interface ImageMessageIns {
-  id: string
+export interface ImageMessageIns extends BaseMessageIns {
   type: 'image'
   value: string
 }
 
-export interface AudioMessageIns {
-  id: string
+export interface AudioMessageIns extends BaseMessageIns {
   type: 'audio'
   value: string
 }
 
-export interface VideoMessageIns {
-  id: string
+export interface VideoMessageIns extends BaseMessageIns {
   type: 'video'
+  value: string
+}
+
+export interface FileMessageIns extends BaseMessageIns {
+  type: 'file'
   value: string
 }
 
@@ -56,6 +62,7 @@ export type MessageIns =
   | ImageMessageIns
   | AudioMessageIns
   | VideoMessageIns
+  | FileMessageIns
 
 interface EventsWithError<ErrorType extends string> {
   error: (error: PeerError<`${ErrorType}`>) => void
