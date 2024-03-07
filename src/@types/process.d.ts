@@ -1,6 +1,7 @@
 declare namespace NodeJS {
   export interface ProcessEnv {
     NEXT_PUBLIC_ORIGIN: string
+    NEXT_PUBLIC_PEER_SERVER: string
     MYSQLDB_URI: string
     NEXT_PUBLIC_LAST_COMMIT_MESSAGE: string
     JWT_SECRET: string

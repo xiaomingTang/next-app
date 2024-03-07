@@ -14,9 +14,9 @@ export function withStatic<T extends object, S extends StaticFuncs>(
   Object.keys(staticFuncs).forEach((key) => {
     if (key in useStore) {
       if (isDev) {
-        throw new Error(`protected key: ${key}`)
+        throw new Error(`protected key: "${key}"`)
       } else {
-        console.error(`protected key: ${key}`)
+        console.error(`protected key: "${key}"`)
       }
       return
     }

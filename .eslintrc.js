@@ -29,6 +29,7 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
     // tsc 会检查, 无需 lint
     'no-dupe-class-members': 'off',
+    'no-param-reassign': 'off',
     'import/prefer-default-export': 'off',
     '@typescript-eslint/ban-types': [
       'error',
