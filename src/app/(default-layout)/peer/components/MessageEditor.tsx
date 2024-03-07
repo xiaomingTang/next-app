@@ -26,6 +26,8 @@ export function MessageEditor() {
       if (!f) {
         return
       }
+      // @TODO: 大文件分片
+      // @TODO: 区分 image / audio / video / file
       const url = await file2DataURL(f)
       usePeer.send({
         type: 'image',
