@@ -1,3 +1,5 @@
+import { allMessageTypes } from './constants'
+
 import type { MessageIns } from './type'
 import type { DataConnection, MediaConnection } from 'peerjs'
 
@@ -23,12 +25,5 @@ export function isMC(
  * @TODO: 判断需要更严格, 如添加唯一标识
  */
 export function isMessageIns(msg: unknown): msg is MessageIns {
-  const allMessageTypes: MessageIns['type'][] = [
-    'text',
-    'image',
-    'audio',
-    'video',
-    'file',
-  ]
   return !!msg && allMessageTypes.includes((msg as MessageIns).type)
 }

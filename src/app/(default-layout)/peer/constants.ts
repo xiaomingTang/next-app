@@ -1,3 +1,4 @@
+import type { MessageIns } from './type'
 import type { PeerErrorType } from 'peerjs'
 
 export const PeerErrorMap: Record<PeerErrorType, string> = {
@@ -56,3 +57,11 @@ export const PeerErrorMap: Record<PeerErrorType, string> = {
    */
   webrtc: 'webrtc 错误',
 }
+
+export const allMessageTypes: MessageIns['type'][] = [
+  'text',
+  'image',
+  'audio',
+  'video',
+  'file',
+]
