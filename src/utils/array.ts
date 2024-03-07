@@ -20,3 +20,23 @@ export function weightedRandom<T>(arr: ArrayLike<T>): T {
 
   return arr[0]
 }
+
+export function restrictPick<S, T extends S>(
+  value: S,
+  array: T[]
+): T | undefined
+export function restrictPick<S, T extends S>(
+  value: S,
+  array: T[],
+  defaultValue: T
+): T
+export function restrictPick<S, T extends S>(
+  value: S,
+  array: T[],
+  defaultValue?: T
+): T | undefined {
+  if (array.includes(value as T)) {
+    return value as T
+  }
+  return defaultValue
+}
