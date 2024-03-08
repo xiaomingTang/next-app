@@ -48,9 +48,8 @@ export function MessageViewer() {
       className='scrollbar-thin'
       sx={{
         width: '100%',
-        height: '50vh',
-        maxHeight: '600px',
-        minHeight: '300px',
+        height: '100%',
+        flexShrink: 1,
         p: 2,
         borderRadius: 1,
         overflow: 'auto',

@@ -1,11 +1,11 @@
 import { usePeer } from '../store/usePeer'
-import { file2DataURL } from '../../color/utils'
 import { allMessageTypes } from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { toError } from '@/errors/utils'
 import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCatcherHandler'
 import { restrictPick } from '@/utils/array'
+import { file2DataURL } from '@/app/(default-layout)/color/utils'
 
 import { Button, Stack, TextField } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
@@ -82,7 +82,6 @@ export function MessageEditor() {
       spacing={1}
       direction='row'
       sx={{
-        alignItems: 'flex-end',
         width: '100%',
       }}
       onSubmit={onSubmit}

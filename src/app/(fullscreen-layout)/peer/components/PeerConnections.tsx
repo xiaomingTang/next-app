@@ -104,7 +104,7 @@ export function PeerConnections() {
       component='form'
       direction='row'
       spacing={1}
-      sx={{ width: '100%', maxWidth: '450px', alignItems: 'center' }}
+      sx={{ width: '100%', maxWidth: '450px' }}
       onSubmit={onSubmit}
     >
       <Controller
