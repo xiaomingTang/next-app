@@ -1,5 +1,7 @@
 import { sleepMs } from './time'
 
+import { ENV_CONFIG } from '@/config'
+
 import { useEffect } from 'react'
 import { noop } from 'lodash-es'
 import { useEventCallback } from '@mui/material'
@@ -36,4 +38,14 @@ export function useLoopCall(enabled: boolean, callback: Func) {
     }
     return loopCall(callbackRef)
   }, [callbackRef, enabled])
+}
+
+export function assertNever(val: never) {
+  if (typeof val === 'undefined') {
+    return
+  }
+  if (ENV_CONFIG.public.nodeEnv !== 'production') {
+    throw new Error(`restrict not satisfied: assert never, got ${typeof val}`)
+  }
+  console.error(`restrict not satisfied: assert never, got ${typeof val}:`, val)
 }
