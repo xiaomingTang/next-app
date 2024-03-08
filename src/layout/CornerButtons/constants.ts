@@ -4,6 +4,7 @@ interface PathItem {
 }
 
 export const toolList: PathItem[] = [
+  { pathname: '/peer', title: 'peer' },
   { pathname: '/clock', title: '时钟橱窗' },
   { pathname: '/level', title: '在线水平仪' },
   { pathname: '/cid', title: '随机生成身份证' },
