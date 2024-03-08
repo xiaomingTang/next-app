@@ -43,6 +43,7 @@ export function MessageWrapperWithRole({
             fontSize: '11px',
             ml: '4px',
             mb: 1,
+            userSelect: 'none',
             color: alpha(common.black, 0.6),
             [dark()]: {
               color: alpha(common.white, 0.5),
@@ -74,6 +75,7 @@ export function MessageWrapperWithRole({
           fontSize: '11px',
           mr: '4px',
           mb: 1,
+          userSelect: 'none',
           color: alpha(common.black, 0.6),
           [dark()]: {
             color: alpha(common.white, 0.5),

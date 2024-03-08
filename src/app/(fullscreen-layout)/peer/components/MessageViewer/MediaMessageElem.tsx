@@ -21,6 +21,7 @@ export function MediaMessageElem(message: AudioMessageIns | VideoMessageIns) {
         style={{
           width: 240,
           height,
+          userSelect: 'none',
         }}
       />
     </MessageWrapperWithRole>

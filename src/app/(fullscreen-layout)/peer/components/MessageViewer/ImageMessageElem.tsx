@@ -25,6 +25,7 @@ export function ImageMessageElem(message: ImageMessageIns) {
           objectFit: 'cover',
           width: 240,
           height: 120,
+          userSelect: 'none',
         }}
       />
     </MessageWrapperWithRole>
