@@ -11,6 +11,7 @@ import { usePeer } from '../../store/usePeer'
 import { dark } from '@/utils/theme'
 import { useListen } from '@/hooks/useListen'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { assertNever } from '@/utils/function'
 
 import { Box, alpha } from '@mui/material'
 import { common } from '@mui/material/colors'
@@ -70,6 +71,8 @@ export function MessageViewer() {
       >
         {messageList.map((item) => {
           switch (item.type) {
+            case 'text':
+              return <TextMessageElem key={item.id} {...item} />
             case 'image':
               return <ImageMessageElem key={item.id} {...item} />
             case 'audio':
@@ -78,7 +81,8 @@ export function MessageViewer() {
             case 'file':
               return <FileMessageElem key={item.id} {...item} />
             default:
-              return <TextMessageElem key={item.id} {...item} />
+              assertNever(item)
+              return <></>
           }
         })}
       </PhotoProvider>
