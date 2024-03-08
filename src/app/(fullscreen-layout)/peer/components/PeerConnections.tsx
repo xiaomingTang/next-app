@@ -92,12 +92,19 @@ export function PeerConnections() {
 
   // 从 url 上获取 target peer id, 并填充到输入框中
   useEffect(() => {
+    let timer = -1
     const url = new URL(window.location.href)
     const target = url.searchParams.get(TARGET_PID_SEARCH_PARAM)
     if (target) {
       setValue('peerId', target)
+      timer = window.setTimeout(() => {
+        onSubmit()
+      }, 0)
     }
-  }, [setValue])
+    return () => {
+      window.clearTimeout(timer)
+    }
+  }, [onSubmit, setValue])
 
   return (
     <Stack
