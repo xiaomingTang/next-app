@@ -1,5 +1,6 @@
 import { usePeer } from '../store/usePeer'
 import { useConnectionState } from '../hooks/usePeerState'
+import { TARGET_PID_SEARCH_PARAM } from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { useListen } from '@/hooks/useListen'
@@ -15,7 +16,7 @@ import {
 } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { Controller, useForm } from 'react-hook-form'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 import type { ButtonOwnProps } from '@mui/material'
 
@@ -57,7 +58,8 @@ const CONNECTION_STATE_MAP: Record<
 }
 
 export function PeerConnections() {
-  const connection = usePeer().activeConnectionInfo?.dc.out ?? null
+  const { activeConnectionInfo } = usePeer()
+  const connection = activeConnectionInfo?.dc.out ?? null
   const state = useConnectionState(connection)
   const { handleSubmit, control, setValue } = useForm<{
     peerId: string
@@ -78,18 +80,31 @@ export function PeerConnections() {
           const { peerId } = e
           if (typeof peerId === 'string' && peerId) {
             usePeer.connect(peerId)
+            // 发起连接后立即移除 url 上的 searchParam
+            const url = new URL(window.location.href)
+            url.searchParams.delete(TARGET_PID_SEARCH_PARAM)
+            window.history.replaceState(null, '', url)
           }
         })
       ),
     [handleSubmit]
   )
 
+  // 从 url 上获取 target peer id, 并填充到输入框中
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    const target = url.searchParams.get(TARGET_PID_SEARCH_PARAM)
+    if (target) {
+      setValue('peerId', target)
+    }
+  }, [setValue])
+
   return (
     <Stack
       component='form'
       direction='row'
       spacing={1}
-      sx={{ width: '100%', maxWidth: '410px', alignItems: 'center' }}
+      sx={{ width: '100%', maxWidth: '450px', alignItems: 'center' }}
       onSubmit={onSubmit}
     >
       <Controller

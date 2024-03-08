@@ -1,15 +1,19 @@
 import { usePeerError, usePeerState } from '../hooks/usePeerState'
 import { usePeer } from '../store/usePeer'
-import { PeerErrorMap } from '../constants'
+import { PeerErrorMap, TARGET_PID_SEARCH_PARAM } from '../constants'
 
 import { useIsOnline } from '@/hooks/useIsOnline'
 import { useListen } from '@/hooks/useListen'
 import { useVisibilityState } from '@/hooks/useVisibilityState'
+import { openSimpleModal } from '@/components/SimpleModal'
 
-import { Button, Typography } from '@mui/material'
+import QrCode2Icon from '@mui/icons-material/QrCode2'
+import { Button, Stack, Typography } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import toast from 'react-hot-toast'
+import { QRCodeSVG } from 'qrcode.react'
+import { noop } from 'lodash-es'
 
 export function SelfPeer() {
   const isOnline = useIsOnline()
@@ -31,33 +35,59 @@ export function SelfPeer() {
   })
 
   return (
-    <CopyToClipboard
-      text={peerId}
-      onCopy={() => {
-        toast.success('复制成功')
+    <Stack
+      direction='row'
+      spacing={1}
+      sx={{
+        width: '100%',
+        maxWidth: '450px',
       }}
     >
-      <Button
-        variant='outlined'
-        color={peerDisconnected ? 'error' : 'primary'}
-        title={peerError?.type && PeerErrorMap[peerError.type]}
-        sx={{
-          width: '100%',
-          maxWidth: '410px',
+      <CopyToClipboard
+        text={peerId}
+        onCopy={() => {
+          toast.success('复制成功')
         }}
       >
-        我的 ID:
-        <Typography
+        <Button
+          variant='outlined'
+          color={peerDisconnected ? 'error' : 'primary'}
+          title={peerError?.type && PeerErrorMap[peerError.type]}
           sx={{
-            mx: 1,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
+            width: '100%',
           }}
         >
-          {peerId}
-        </Typography>
-        {peerId && <ContentCopyIcon fontSize='inherit' />}
+          我的 ID:
+          <Typography
+            sx={{
+              mx: 1,
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+            }}
+          >
+            {peerId}
+          </Typography>
+          {peerId && <ContentCopyIcon fontSize='inherit' />}
+        </Button>
+      </CopyToClipboard>
+      <Button
+        variant='outlined'
+        aria-label='分享当前页面连接二维码'
+        onClick={() => {
+          const url = new URL(window.location.href)
+          url.searchParams.set(TARGET_PID_SEARCH_PARAM, peerId)
+          openSimpleModal({
+            title: '扫码连接',
+            content: (
+              <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
+                <QRCodeSVG value={url.href} size={148} />
+              </Stack>
+            ),
+          }).catch(noop)
+        }}
+      >
+        <QrCode2Icon />
       </Button>
-    </CopyToClipboard>
+    </Stack>
   )
 }

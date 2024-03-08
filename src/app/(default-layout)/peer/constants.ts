@@ -65,3 +65,5 @@ export const allMessageTypes: MessageIns['type'][] = [
   'video',
   'file',
 ]
+
+export const TARGET_PID_SEARCH_PARAM = 'target-pid'
