@@ -25,6 +25,7 @@ export function PeerClient() {
         mx: 'auto',
       }}
     >
+      <RequestConnectionHandler />
       <DefaultHeaderShim />
       <Stack
         direction='row'
@@ -38,7 +39,6 @@ export function PeerClient() {
       </Stack>
       <MessageViewer />
       <MessageEditor />
-      <RequestConnectionHandler />
     </Stack>
   )
 }

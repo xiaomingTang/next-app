@@ -114,7 +114,7 @@ export function MessageEditor() {
               </Button>
             )}
             {!field.value && (
-              <Button variant='outlined'>
+              <Button variant='outlined' aria-label='选择发送图片、视频或文件'>
                 <AddIcon />
               </Button>
             )}

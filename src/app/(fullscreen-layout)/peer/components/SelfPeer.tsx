@@ -46,7 +46,11 @@ export function SelfPeer() {
       <CopyToClipboard
         text={peerId}
         onCopy={() => {
-          toast.success('复制成功')
+          if (peerId) {
+            toast.success('复制成功')
+          } else {
+            toast.error('未连接到 peer 服务器')
+          }
         }}
       >
         <Button
@@ -72,8 +76,13 @@ export function SelfPeer() {
       </CopyToClipboard>
       <Button
         variant='outlined'
+        color={peerDisconnected ? 'error' : 'primary'}
         aria-label='分享当前页面连接二维码'
         onClick={() => {
+          if (!peerId) {
+            toast.error('未连接到 peer 服务器')
+            return
+          }
           const url = new URL(window.location.href)
           url.searchParams.set(TARGET_PID_SEARCH_PARAM, peerId)
           openSimpleModal({
