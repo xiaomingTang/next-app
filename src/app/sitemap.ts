@@ -93,6 +93,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      url: resolvePath('/peer').href,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.6,
+    },
+    {
       url: resolvePath('/qrcode/generate').href,
       lastModified: new Date(),
       changeFrequency: 'yearly',
