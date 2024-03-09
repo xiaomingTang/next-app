@@ -1,6 +1,6 @@
 import { usePeer } from '../store/usePeer'
 import { useConnectionState } from '../hooks/usePeerState'
-import { TARGET_PID_SEARCH_PARAM } from '../constants'
+import { CONNECTION_STATE_MAP, TARGET_PID_SEARCH_PARAM } from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { useListen } from '@/hooks/useListen'
@@ -18,48 +18,8 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useMemo } from 'react'
 
-import type { ButtonOwnProps } from '@mui/material'
-
-const CONNECTION_STATE_MAP: Record<
-  RTCIceConnectionState,
-  {
-    text: string
-    color: Required<ButtonOwnProps['color']>
-  }
-> = {
-  checking: {
-    text: '连接中...',
-    color: 'info',
-  },
-  closed: {
-    text: '连接已关闭',
-    color: 'error',
-  },
-  completed: {
-    text: '连接已结束',
-    color: 'error',
-  },
-  connected: {
-    text: '已连接',
-    color: 'primary',
-  },
-  disconnected: {
-    text: '连接已断开',
-    color: 'error',
-  },
-  failed: {
-    text: '连接失败',
-    color: 'error',
-  },
-  new: {
-    text: '连接中...',
-    color: 'info',
-  },
-}
-
 export function PeerConnections() {
-  const { activeConnectionInfo } = usePeer()
-  const connection = activeConnectionInfo?.dc.out ?? null
+  const connection = usePeer().activeConnectionInfo?.dc.out ?? null
   const state = useConnectionState(connection)
   const { handleSubmit, control, setValue } = useForm<{
     peerId: string
@@ -119,8 +79,11 @@ export function PeerConnections() {
         control={control}
         render={({ field }) => (
           <FormControl sx={{ flexGrow: 1 }} size='small' variant='outlined'>
-            <InputLabel htmlFor='connection-id'>我的连接</InputLabel>
+            <InputLabel htmlFor='connection-id' sx={{ userSelect: 'none' }}>
+              我的连接
+            </InputLabel>
             <OutlinedInput
+              id='connection-id'
               label='我的连接'
               size='small'
               {...field}

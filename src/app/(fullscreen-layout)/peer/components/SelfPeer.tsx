@@ -1,6 +1,6 @@
 import { usePeerError, usePeerState } from '../hooks/usePeerState'
 import { usePeer } from '../store/usePeer'
-import { PeerErrorMap, TARGET_PID_SEARCH_PARAM } from '../constants'
+import { PEER_ERROR_MAP, TARGET_PID_SEARCH_PARAM } from '../constants'
 
 import { useIsOnline } from '@/hooks/useIsOnline'
 import { useListen } from '@/hooks/useListen'
@@ -56,7 +56,7 @@ export function SelfPeer() {
         <Button
           variant='outlined'
           color={peerDisconnected ? 'error' : 'primary'}
-          title={peerError?.type && PeerErrorMap[peerError.type]}
+          title={peerError?.type && PEER_ERROR_MAP[peerError.type]}
           sx={{
             width: '100%',
           }}

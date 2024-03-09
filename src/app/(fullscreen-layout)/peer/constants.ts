@@ -1,7 +1,8 @@
+import type { ButtonOwnProps } from '@mui/material'
 import type { MessageIns } from './type'
 import type { PeerErrorType } from 'peerjs'
 
-export const PeerErrorMap: Record<PeerErrorType, string> = {
+export const PEER_ERROR_MAP: Record<PeerErrorType, string> = {
   /**
    * The client's browser does not support some or all WebRTC features that you are trying to use.
    */
@@ -58,7 +59,7 @@ export const PeerErrorMap: Record<PeerErrorType, string> = {
   webrtc: 'webrtc 错误',
 }
 
-export const allMessageTypes: MessageIns['type'][] = [
+export const ALL_MESSAGE_TYPES: MessageIns['type'][] = [
   'text',
   'image',
   'audio',
@@ -67,3 +68,40 @@ export const allMessageTypes: MessageIns['type'][] = [
 ]
 
 export const TARGET_PID_SEARCH_PARAM = 'target-pid'
+
+export const CONNECTION_STATE_MAP: Record<
+  RTCIceConnectionState,
+  {
+    text: string
+    color: Required<ButtonOwnProps['color']>
+  }
+> = {
+  checking: {
+    text: '连接中...',
+    color: 'info',
+  },
+  closed: {
+    text: '连接已关闭',
+    color: 'error',
+  },
+  completed: {
+    text: '连接已结束',
+    color: 'error',
+  },
+  connected: {
+    text: '已连接',
+    color: 'primary',
+  },
+  disconnected: {
+    text: '连接已断开',
+    color: 'error',
+  },
+  failed: {
+    text: '连接失败',
+    color: 'error',
+  },
+  new: {
+    text: '连接中...',
+    color: 'info',
+  },
+}

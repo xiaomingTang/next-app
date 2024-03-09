@@ -1,5 +1,5 @@
 import { usePeer } from '../store/usePeer'
-import { allMessageTypes } from '../constants'
+import { ALL_MESSAGE_TYPES } from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { toError } from '@/errors/utils'
@@ -32,7 +32,7 @@ export function MessageEditor() {
         const url = await file2DataURL(f)
         const type = restrictPick(
           f.type.split('/')[0] ?? '',
-          allMessageTypes,
+          ALL_MESSAGE_TYPES,
           'file'
         )
         if (!url) {
