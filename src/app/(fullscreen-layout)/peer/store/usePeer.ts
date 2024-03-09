@@ -12,6 +12,7 @@ import { immer } from 'zustand/middleware/immer'
 import { nanoid } from 'nanoid'
 
 import type {
+  AnswerOption,
   CallOption,
   DataConnection,
   MediaConnection,
@@ -74,17 +75,14 @@ export const usePeer = withStatic(useRawPeer, {
           in: null,
           out: null,
         },
-        mc: {
-          in: null,
-          out: null,
-        },
+        mc: null,
       }
 
       if (isDC(connection)) {
         ;(prevConnectionInfo ?? newConnectionInfo).dc[type] = connection
       }
       if (isMC(connection)) {
-        ;(prevConnectionInfo ?? newConnectionInfo).mc[type] = connection
+        ;(prevConnectionInfo ?? newConnectionInfo).mc = connection
       }
 
       if (!prevConnectionInfo) {
@@ -148,14 +146,14 @@ export const usePeer = withStatic(useRawPeer, {
       (item) => item.targetPeerId === peerId
     )
 
-    if (prevConnectionInfo && prevConnectionInfo.mc.out?.open) {
+    if (prevConnectionInfo && prevConnectionInfo.mc?.open) {
       useRawPeer.setState({
         activeConnectionInfo: prevConnectionInfo,
       })
-      return prevConnectionInfo.mc.out
+      return prevConnectionInfo.mc
     }
 
-    prevConnectionInfo?.mc.out?.close()
+    prevConnectionInfo?.mc?.close()
 
     const connection = peer.call(peerId, stream, options)
     usePeer.addConnection(connection, 'out')
@@ -164,6 +162,37 @@ export const usePeer = withStatic(useRawPeer, {
       activeConnectionInfo:
         prev.connectionInfos.find((item) => item.targetPeerId === peerId) ??
         null,
+    }))
+
+    return connection
+  },
+  answerPeer(
+    connection: MediaConnection,
+    stream: MediaStream,
+    options?: AnswerOption
+  ): MediaConnection {
+    const { connectionInfos } = useRawPeer.getState()
+    const prevConnectionInfo = connectionInfos.find(
+      (item) => item.targetPeerId === connection.peer
+    )
+
+    if (prevConnectionInfo && prevConnectionInfo.mc?.open) {
+      useRawPeer.setState({
+        activeConnectionInfo: prevConnectionInfo,
+      })
+      return prevConnectionInfo.mc
+    }
+
+    prevConnectionInfo?.mc?.close()
+
+    connection.answer(stream, options)
+    usePeer.addConnection(connection, 'out')
+
+    useRawPeer.setState((prev) => ({
+      activeConnectionInfo:
+        prev.connectionInfos.find(
+          (item) => item.targetPeerId === connection.peer
+        ) ?? null,
     }))
 
     return connection
@@ -179,9 +208,7 @@ export const usePeer = withStatic(useRawPeer, {
       )
     }
     if (isMC(connection)) {
-      return connectionInfos.some(
-        (item) => item.mc.out?.peer === connection.peer
-      )
+      return connectionInfos.some((item) => item.mc?.peer === connection.peer)
     }
     return false
   },

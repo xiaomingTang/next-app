@@ -1,47 +1,40 @@
 'use client'
 
-import { QrcodeDisplayItem } from './QrcodeDisplayItem'
-import { useQrcodeHandler } from './QrcodeHandlers'
-
-import { toPlainError } from '@/errors/utils'
-import { getUserVideo } from '@/utils/media/video'
 import { resizeTo } from '@/utils/resizeTo'
 import { useMediaPlaying } from '@/hooks/useMediaPlaying'
 import { useListen } from '@/hooks/useListen'
 
-import useSWR from 'swr'
-import { startTransition, useEffect, useRef, useState } from 'react'
-import jsQR from 'jsqr'
-import { toast } from 'react-hot-toast'
+import { startTransition, useEffect, useRef } from 'react'
 import { Box } from '@mui/material'
-import { throttle } from 'lodash-es'
 import { useWindowSize } from 'react-use'
 
-import type { QRCode } from 'jsqr'
+interface Context {
+  canvas: HTMLCanvasElement
+  ctx: CanvasRenderingContext2D
+}
 
-export function QrcodeScanner({
-  fit = 'cover',
-}: {
+interface Props {
+  mirror?: boolean
+  controls?: boolean
+  muted?: boolean
+  mediaStream?: MediaStream | null
   fit?: 'cover' | 'contain'
-}) {
+  onTick?: (e: Context) => void
+}
+
+export function StreamVideo({
+  mirror,
+  fit = 'cover',
+  mediaStream,
+  onTick,
+  controls = false,
+  muted = true,
+}: Props) {
   let rafFlag = -1
-  let readerTimeoutFlag = -1
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const { data: mediaStream } = useSWR('getUserVideo', () =>
-    getUserVideo().catch((err) => {
-      toast.error(toPlainError(err).message)
-    })
-  )
   const windowSize = useWindowSize()
-  const [QRContent, setQRContent] = useState<QRCode | null>(null)
   const { playing, setMedia } = useMediaPlaying()
-  const [savedCanvasSize, setSavedCanvasSize] = useState({
-    width: 1,
-    height: 1,
-  })
-
-  useQrcodeHandler(QRContent?.data)
 
   useEffect(() => {
     const video = videoRef.current
@@ -84,8 +77,6 @@ export function QrcodeScanner({
     canvas.width = canvasSize.width
     canvas.height = canvasSize.height
 
-    setSavedCanvasSize(canvasSize)
-
     const updateCanvas =
       fit === 'cover'
         ? () => {
@@ -115,34 +106,14 @@ export function QrcodeScanner({
             )
           }
 
-    const readQRCode = throttle(() => {
-      const imageData = ctx.getImageData(
-        0,
-        0,
-        canvasSize.width,
-        canvasSize.height
-      )
-      const content = jsQR(
-        imageData.data,
-        canvasSize.width,
-        canvasSize.height,
-        {
-          inversionAttempts: 'attemptBoth',
-        }
-      )
-      if (content) {
-        setQRContent(content)
-        // 重置 timer
-        window.clearTimeout(readerTimeoutFlag)
-        readerTimeoutFlag = window.setTimeout(() => {
-          setQRContent(null)
-        }, 2500)
-      }
-    }, 500)
-
     const tick = () => {
       startTransition(updateCanvas)
-      startTransition(readQRCode)
+      startTransition(() => {
+        onTick?.({
+          canvas,
+          ctx,
+        })
+      })
       rafFlag = window.requestAnimationFrame(tick)
     }
     rafFlag = window.requestAnimationFrame(tick)
@@ -155,6 +126,7 @@ export function QrcodeScanner({
         width: '100%',
         height: '100%',
         overflow: 'hidden',
+        transform: mirror ? 'rotateY(180deg)' : undefined,
       }}
     >
       <canvas
@@ -166,8 +138,8 @@ export function QrcodeScanner({
       />
       <video
         ref={videoRef}
-        controls={false}
-        muted
+        controls={controls}
+        muted={muted}
         playsInline
         webkit-playsinline='true'
         x-webkit-airplay='true'
@@ -178,9 +150,6 @@ export function QrcodeScanner({
           height: '100%',
         }}
       />
-      {QRContent && (
-        <QrcodeDisplayItem qrcode={QRContent} canvasSize={savedCanvasSize} />
-      )}
     </Box>
   )
 }

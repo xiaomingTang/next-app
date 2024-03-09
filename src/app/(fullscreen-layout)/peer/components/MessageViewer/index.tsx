@@ -4,6 +4,7 @@ import { TextMessageElem } from './TextMessageElem'
 import { ImageMessageElem } from './ImageMessageElem'
 import { MediaMessageElem } from './MediaMessageElem'
 import { FileMessageElem } from './FileMessageElem'
+import { VideoCallElem } from './VideoCallElem'
 
 import { usePeerMessage } from '../../store/useMessage'
 import { usePeer } from '../../store/usePeer'
@@ -47,6 +48,7 @@ export function MessageViewer() {
       ref={containerRef}
       className='scrollbar-thin'
       sx={{
+        position: 'relative',
         width: '100%',
         height: '100%',
         flexShrink: 1,
@@ -59,6 +61,7 @@ export function MessageViewer() {
         },
       }}
     >
+      <VideoCallElem />
       <PhotoProvider
         onVisibleChange={(visible) => {
           setPreviewVisible(visible)

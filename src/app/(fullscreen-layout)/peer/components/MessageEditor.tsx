@@ -6,14 +6,19 @@ import { toError } from '@/errors/utils'
 import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCatcherHandler'
 import { restrictPick } from '@/utils/array'
 import { file2DataURL } from '@/app/(default-layout)/color/utils'
+import { AnchorProvider } from '@/components/AnchorProvider'
+import { getUserVideo } from '@/utils/media/video'
 
-import { Button, Stack, TextField } from '@mui/material'
-import AddIcon from '@mui/icons-material/Add'
+import { Button, Menu, MenuItem, Stack, TextField } from '@mui/material'
+import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
+import MicIcon from '@mui/icons-material/Mic'
+import VideocamIcon from '@mui/icons-material/Videocam'
 
 export function MessageEditor() {
+  const { activeConnectionInfo } = usePeer()
   const { handleSubmit, control, setValue } = useForm<{
     inputText: string
   }>({
@@ -114,9 +119,74 @@ export function MessageEditor() {
               </Button>
             )}
             {!field.value && (
-              <Button variant='outlined' aria-label='选择发送图片、视频或文件'>
-                <AddIcon />
-              </Button>
+              <AnchorProvider>
+                {(anchorEl, setAnchorEl) => (
+                  <>
+                    <Button
+                      variant='outlined'
+                      aria-label='选择发送图片、视频或文件'
+                      onClick={(e) => {
+                        setAnchorEl((prev) => {
+                          if (!prev) {
+                            return e.currentTarget
+                          }
+                          return null
+                        })
+                      }}
+                    >
+                      <MoreVertIcon />
+                    </Button>
+                    <Menu
+                      autoFocus
+                      open={!!anchorEl}
+                      anchorEl={anchorEl}
+                      onClose={() => setAnchorEl(null)}
+                      transformOrigin={{
+                        horizontal: 'right',
+                        vertical: 'bottom',
+                      }}
+                      anchorOrigin={{
+                        horizontal: 'right',
+                        vertical: 'top',
+                      }}
+                    >
+                      <MenuItem
+                        key='语音通话'
+                        disabled
+                        onClick={() => {
+                          // usePeer.callPeer()
+                          setAnchorEl(null)
+                        }}
+                      >
+                        <MicIcon sx={{ mr: 1 }} /> 语音通话 (开发中)
+                      </MenuItem>
+                      <MenuItem
+                        key='视频通话'
+                        onClick={cat(async () => {
+                          setAnchorEl(null)
+                          const targetPeerId =
+                            activeConnectionInfo?.targetPeerId
+                          if (!targetPeerId) {
+                            toast.error('没有可用的连接')
+                            return
+                          }
+                          const stream = await getUserVideo({
+                            video: {
+                              facingMode: 'user',
+                            },
+                            audio: {
+                              echoCancellation: true,
+                            },
+                          })
+                          usePeer.callPeer(targetPeerId, stream)
+                        })}
+                      >
+                        <VideocamIcon sx={{ mr: 1 }} /> 视频通话
+                      </MenuItem>
+                    </Menu>
+                  </>
+                )}
+              </AnchorProvider>
             )}
           </>
         )}

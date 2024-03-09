@@ -103,7 +103,12 @@ export function PeerConnections() {
                             aria-label='下拉展示所有连接'
                             edge='end'
                             onClick={(e) => {
-                              setAnchorEl(e.currentTarget)
+                              setAnchorEl((prev) => {
+                                if (!prev) {
+                                  return e.currentTarget
+                                }
+                                return null
+                              })
                             }}
                           >
                             <ArrowDropDownIcon />

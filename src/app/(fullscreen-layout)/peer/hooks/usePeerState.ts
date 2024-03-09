@@ -94,10 +94,6 @@ export function useDataConnectionState(
     setState('closed')
   })
 
-  if (state === 'connected' && !connection?.open) {
-    return 'closed'
-  }
-
   return state
 }
 
@@ -131,10 +127,6 @@ export function useMediaConnectionState(
   useMediaConnectionListener(connection, 'error', () => {
     setState('closed')
   })
-
-  if (state === 'connected' && !connection?.open) {
-    return 'closed'
-  }
 
   return state
 }

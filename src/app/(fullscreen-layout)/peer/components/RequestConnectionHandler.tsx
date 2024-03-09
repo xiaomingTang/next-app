@@ -57,7 +57,7 @@ export function RequestConnectionHandler() {
     >
       <DialogTitle>
         <Typography fontWeight='bold' fontSize='1.2em'>
-          收到连接请求
+          {requestConnection?.type === 'data' ? '收到连接请求' : '收到视频请求'}
         </Typography>
       </DialogTitle>
       <DialogContent>
@@ -83,10 +83,15 @@ export function RequestConnectionHandler() {
               return
             }
             try {
-              const stream = await getUserVideo()
-              // TODO: 改为 answer
-              // TODO: usePeer 新增 answer
-              usePeer.callPeer(requestConnection.peer, stream)
+              const stream = await getUserVideo({
+                video: {
+                  facingMode: 'user',
+                },
+                audio: {
+                  echoCancellation: true,
+                },
+              })
+              usePeer.answerPeer(requestConnection, stream)
             } catch (err) {
               toast.error(toPlainError(err).message)
             }

@@ -21,10 +21,7 @@ export interface InOutConnection {
   /**
    * MediaConnection
    */
-  mc: {
-    in: MediaConnection | null
-    out: MediaConnection | null
-  }
+  mc: MediaConnection | null
 }
 
 interface BaseMessageIns {
