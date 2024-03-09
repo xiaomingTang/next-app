@@ -94,7 +94,7 @@ export function PeerConnections() {
               // 这种 hash, 自动填充没有意义, 反倒很乱
               autoComplete='off'
               endAdornment={
-                connectionInfos.length > 0 && (
+                connectionInfos.length > 1 && (
                   <AnchorProvider>
                     {(anchorEl, setAnchorEl) => (
                       <>
