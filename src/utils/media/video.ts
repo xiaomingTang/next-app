@@ -20,6 +20,10 @@ export async function getUserVideo({
   preferFacingMode = 'environment',
   timeoutMs = 30000,
 }: UserVideoProps = {}) {
+  // 处于不安全上下文时, navigator.mediaDevices 为空
+  if (!(navigator.mediaDevices?.getUserMedia instanceof Function)) {
+    throw new Error('没找到相机')
+  }
   const stream = await Promise.race([
     navigator.mediaDevices.getUserMedia({
       video: {
