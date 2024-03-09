@@ -63,7 +63,9 @@ export function usePeerError(peer: Peer) {
 
 const CONNECTION_TIMEOUT = 10000
 
-export function useDataConnectionState(connection: DataConnection | null) {
+export function useDataConnectionState(
+  connection: DataConnection | null
+): RTCIceConnectionState {
   const [state, setState] = useState<RTCIceConnectionState>('new')
 
   useEffect(() => {
@@ -92,10 +94,16 @@ export function useDataConnectionState(connection: DataConnection | null) {
     setState('closed')
   })
 
+  if (state === 'connected' && !connection?.open) {
+    return 'closed'
+  }
+
   return state
 }
 
-export function useMediaConnectionState(connection: MediaConnection | null) {
+export function useMediaConnectionState(
+  connection: MediaConnection | null
+): RTCIceConnectionState {
   const [state, setState] = useState<RTCIceConnectionState>('new')
 
   useEffect(() => {
@@ -123,6 +131,10 @@ export function useMediaConnectionState(connection: MediaConnection | null) {
   useMediaConnectionListener(connection, 'error', () => {
     setState('closed')
   })
+
+  if (state === 'connected' && !connection?.open) {
+    return 'closed'
+  }
 
   return state
 }
