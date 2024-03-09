@@ -105,8 +105,6 @@ export const usePeer = withStatic(useRawPeer, {
       return prevConnectionInfo.dc.out
     }
 
-    prevConnectionInfo?.dc.out?.close()
-
     const connection = peer.connect(peerId, options)
 
     usePeer.addConnection(connection, 'out')
