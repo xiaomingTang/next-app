@@ -8,7 +8,7 @@ import { startTransition, useEffect, useRef } from 'react'
 import { Box } from '@mui/material'
 import { useWindowSize } from 'react-use'
 
-interface Context {
+export interface StreamVideoContext {
   canvas: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
 }
@@ -19,7 +19,7 @@ interface Props {
   muted?: boolean
   mediaStream?: MediaStream | null
   fit?: 'cover' | 'contain'
-  onTick?: (e: Context) => void
+  onTick?: (e: StreamVideoContext) => void
 }
 
 export function StreamVideo({
