@@ -4,6 +4,7 @@ import { CONNECTION_STATE_MAP, TARGET_PID_SEARCH_PARAM } from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { useListen } from '@/hooks/useListen'
+import { AnchorProvider } from '@/components/AnchorProvider'
 
 import {
   Button,
@@ -11,6 +12,8 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
+  Menu,
+  MenuItem,
   OutlinedInput,
   Stack,
 } from '@mui/material'
@@ -19,7 +22,8 @@ import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useMemo } from 'react'
 
 export function PeerConnections() {
-  const connection = usePeer().activeConnectionInfo?.dc.out ?? null
+  const { activeConnectionInfo, connectionInfos } = usePeer()
+  const connection = activeConnectionInfo?.dc.out ?? null
   const state = useConnectionState(connection)
   const { handleSubmit, control, setValue } = useForm<{
     peerId: string
@@ -90,11 +94,53 @@ export function PeerConnections() {
               // 这种 hash, 自动填充没有意义, 反倒很乱
               autoComplete='off'
               endAdornment={
-                <InputAdornment position='end'>
-                  <IconButton aria-label='下拉展示所有连接' edge='end'>
-                    <ArrowDropDownIcon />
-                  </IconButton>
-                </InputAdornment>
+                connectionInfos.length > 0 && (
+                  <AnchorProvider>
+                    {(anchorEl, setAnchorEl) => (
+                      <>
+                        <InputAdornment position='end'>
+                          <IconButton
+                            aria-label='下拉展示所有连接'
+                            edge='end'
+                            onClick={(e) => {
+                              setAnchorEl(e.currentTarget)
+                            }}
+                          >
+                            <ArrowDropDownIcon />
+                          </IconButton>
+                        </InputAdornment>
+                        <Menu
+                          autoFocus
+                          open={!!anchorEl}
+                          anchorEl={anchorEl}
+                          onClose={() => setAnchorEl(null)}
+                        >
+                          {connectionInfos.map((item) => (
+                            <MenuItem
+                              key={item.targetPeerId}
+                              selected={
+                                item.targetPeerId ===
+                                activeConnectionInfo?.targetPeerId
+                              }
+                              onClick={() => {
+                                usePeer.setState((prev) => ({
+                                  activeConnectionInfo:
+                                    prev.connectionInfos.find(
+                                      (c) =>
+                                        c.targetPeerId === item.targetPeerId
+                                    ) ?? null,
+                                }))
+                                setAnchorEl(null)
+                              }}
+                            >
+                              {item.targetPeerId}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </>
+                    )}
+                  </AnchorProvider>
+                )
               }
             />
           </FormControl>
