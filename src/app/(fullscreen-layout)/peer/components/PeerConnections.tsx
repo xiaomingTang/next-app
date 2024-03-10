@@ -1,11 +1,16 @@
 import { usePeer } from '../store/usePeer'
 import { useConnectionState } from '../hooks/usePeerState'
-import { CONNECTION_STATE_MAP, TARGET_PID_SEARCH_PARAM } from '../constants'
+import {
+  CONNECTION_STATE_MAP,
+  CONNECTION_STATE_STATUS_MAP,
+  TARGET_PID_SEARCH_PARAM,
+} from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { useListen } from '@/hooks/useListen'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { openSimpleModal } from '@/components/SimpleModal'
+import { stopStream } from '@/utils/media'
 
 import {
   Button,
@@ -22,6 +27,39 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useMemo } from 'react'
 import { noop } from 'lodash-es'
+import toast from 'react-hot-toast'
+
+import type { MediaConnection } from 'peerjs'
+
+function useMediaConnectionHandler(connection?: MediaConnection | null) {
+  const state = useConnectionState(connection ?? null)
+
+  useListen(state, () => {
+    if (CONNECTION_STATE_STATUS_MAP[state] === 'failed') {
+      stopStream(connection?.localStream)
+      connection?.close()
+      toast.error(CONNECTION_STATE_MAP[state].text)
+    }
+  })
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      if (
+        connection &&
+        connection.localStream?.active &&
+        !connection.remoteStream?.active
+      ) {
+        stopStream(connection.localStream)
+        connection.close()
+        toast.error('连接超时')
+      }
+    }, 30 * 1000)
+
+    return () => {
+      window.clearTimeout(timer)
+    }
+  }, [connection])
+}
 
 export function PeerConnections() {
   const { activeConnectionInfo, connectionInfos } = usePeer()
@@ -34,6 +72,8 @@ export function PeerConnections() {
       peerId: '',
     },
   })
+
+  useMediaConnectionHandler(activeConnectionInfo?.mc)
 
   useListen(connection?.peer, (peerId) => {
     setValue('peerId', peerId ?? '')

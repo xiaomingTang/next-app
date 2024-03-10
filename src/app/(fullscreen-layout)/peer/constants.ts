@@ -105,3 +105,16 @@ export const CONNECTION_STATE_MAP: Record<
     color: 'info',
   },
 }
+
+export const CONNECTION_STATE_STATUS_MAP: Record<
+  RTCIceConnectionState,
+  'loading' | 'failed' | 'success'
+> = {
+  checking: 'loading',
+  closed: 'failed',
+  completed: 'failed',
+  connected: 'success',
+  disconnected: 'failed',
+  failed: 'failed',
+  new: 'loading',
+}
