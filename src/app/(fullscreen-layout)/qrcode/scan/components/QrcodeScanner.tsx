@@ -4,7 +4,7 @@ import { QrcodeDisplayItem } from './QrcodeDisplayItem'
 import { useQrcodeHandler } from './QrcodeHandlers'
 
 import { toPlainError } from '@/errors/utils'
-import { getUserMedia, stopStream } from '@/utils/media'
+import { getUserMedia, closeStream } from '@/utils/media'
 import { StreamVideo } from '@/app/(default-layout)/blog/components/StreamVideo'
 
 import useSWR from 'swr'
@@ -31,7 +31,7 @@ export function QrcodeScanner({
 
   useEffect(
     () => () => {
-      stopStream(mediaStream)
+      closeStream(mediaStream)
     },
     [mediaStream]
   )
