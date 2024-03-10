@@ -84,8 +84,9 @@ export function RequestConnectionHandler() {
                 closeDialog()
                 return
               }
-              const isVideo =
-                requestConnection.remoteStream?.getVideoTracks().length > 0
+              // 语音通话判定有误, 待修复
+              // const isVideo = requestConnection.remoteStream?.getVideoTracks().length > 0
+              const isVideo = true
               stream = await getUserMedia({
                 video: isVideo
                   ? {
