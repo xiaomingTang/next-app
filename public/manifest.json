@@ -38,6 +38,20 @@
           "type": "image/png"
         }
       ]
+    },
+    {
+      "name": "peer",
+      "short_name": "peer",
+      "description": "peer",
+      "url": "/peer",
+      "icons": [
+        {
+          "url": "/pwa/shortcuts/peer-96x96.png",
+          "src": "/pwa/shortcuts/peer-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ],
   "icons": [
