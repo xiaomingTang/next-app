@@ -7,9 +7,10 @@ import { withStatic } from '@/utils/withStatic'
 import { numberFormat } from '@/utils/numberFormat'
 
 import { create } from 'zustand'
-import Peer from 'peerjs'
+import Peer, { util as peerUtil } from 'peerjs'
 import { immer } from 'zustand/middleware/immer'
 import { nanoid } from 'nanoid'
+import toast from 'react-hot-toast'
 
 import type {
   AnswerOption,
@@ -46,7 +47,9 @@ export const useRawPeer = create<PeerStore>()(
       })
     })
 
-    console.log('[peer]: created')
+    if (!peerUtil.supports.audioVideo && !peerUtil.supports.data) {
+      toast.error('你的浏览器不支持 WebRTC')
+    }
 
     return {
       peer,
@@ -91,6 +94,9 @@ export const usePeer = withStatic(useRawPeer, {
     })
   },
   connect(peerId: string, options?: PeerConnectOption): DataConnection {
+    if (!peerUtil.supports.audioVideo && !peerUtil.supports.data) {
+      throw new Error('你的浏览器不支持 WebRTC')
+    }
     const { peer, connectionInfos } = useRawPeer.getState()
     const prevConnectionInfo = connectionInfos.find(
       (item) => item.targetPeerId === peerId

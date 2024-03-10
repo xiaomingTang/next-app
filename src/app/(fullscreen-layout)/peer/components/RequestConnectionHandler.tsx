@@ -72,17 +72,17 @@ export function RequestConnectionHandler() {
           autoFocus
           variant='contained'
           onClick={async () => {
-            if (!requestConnection) {
-              toast.error('连接不存在')
-              closeDialog()
-              return
-            }
-            if (isDC(requestConnection)) {
-              usePeer.connect(requestConnection.peer)
-              closeDialog()
-              return
-            }
             try {
+              if (!requestConnection) {
+                toast.error('连接不存在')
+                closeDialog()
+                return
+              }
+              if (isDC(requestConnection)) {
+                usePeer.connect(requestConnection.peer)
+                closeDialog()
+                return
+              }
               const stream = await getUserVideo({
                 video: {
                   facingMode: 'user',
