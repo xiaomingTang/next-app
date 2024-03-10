@@ -101,16 +101,18 @@ export function VideoCallElem() {
           muted={false}
           mediaStream={connection?.remoteStream}
         />
-        {size === 'full' && (
-          <Box sx={geneSx('small')}>
-            <StreamVideo
-              mirror
-              fit='contain'
-              muted
-              mediaStream={connection?.localStream}
-            />
-          </Box>
-        )}
+        <Box
+          sx={geneSx(
+            size === 'full' && state === 'connected' ? 'small' : 'none'
+          )}
+        >
+          <StreamVideo
+            mirror
+            fit='contain'
+            muted
+            mediaStream={connection?.localStream}
+          />
+        </Box>
       </Box>
       {size !== 'full' && state === 'connected' && (
         <Box
