@@ -164,8 +164,6 @@ export const usePeer = withStatic(useRawPeer, {
       return prevConnectionInfo.mc
     }
 
-    prevConnectionInfo?.mc?.close()
-
     const connection = peer.call(peerId, stream, options)
     usePeer.addConnection(connection, 'out')
 
