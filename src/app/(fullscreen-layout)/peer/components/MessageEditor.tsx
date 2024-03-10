@@ -10,11 +10,12 @@ import { getUserMedia } from '@/utils/media'
 
 import { Button, Menu, MenuItem, Stack, TextField } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import MicIcon from '@mui/icons-material/Mic'
 import VideocamIcon from '@mui/icons-material/Videocam'
+import UploadFileIcon from '@mui/icons-material/UploadFile'
 
 import type { BaseMessageIns, FileLikeMessageIns } from '../type'
 
@@ -31,7 +32,7 @@ export function MessageEditor() {
     },
   })
 
-  useGlobalFileCatcherHandler.useUpdateHandler(async (files) => {
+  const uploadFiles = useCallback(async (files: File[]) => {
     if (files.length === 0) {
       return
     }
@@ -62,7 +63,9 @@ export function MessageEditor() {
     )
 
     await Promise.allSettled(promises)
-  })
+  }, [])
+
+  useGlobalFileCatcherHandler.useUpdateHandler(uploadFiles)
 
   const onSubmit = useMemo(
     () =>
@@ -161,26 +164,51 @@ export function MessageEditor() {
                         vertical: 'top',
                       }}
                     >
+                      <MenuItem key='文件上传'>
+                        <UploadFileIcon sx={{ mr: 1 }} />
+                        发送文件
+                        <input
+                          type='file'
+                          style={{
+                            opacity: 0,
+                            position: 'absolute',
+                            left: 0,
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                            overflow: 'hidden',
+                            cursor: 'pointer',
+                          }}
+                          autoFocus
+                          multiple
+                          onInput={(e) => {
+                            setAnchorEl(null)
+                            const target = e.target as HTMLInputElement
+                            uploadFiles(Array.from(target.files ?? []))
+                          }}
+                        />
+                      </MenuItem>
                       <MenuItem
                         key='语音通话'
-                        disabled
-                        onClick={() => {
-                          // usePeer.callPeer()
+                        onClick={cat(async () => {
                           setAnchorEl(null)
-                        }}
+                          const stream = await getUserMedia({
+                            audio: {
+                              echoCancellation: true,
+                            },
+                          })
+                          usePeer.callPeer(
+                            activeConnectionInfo?.targetPeerId ?? '',
+                            stream
+                          )
+                        })}
                       >
-                        <MicIcon sx={{ mr: 1 }} /> 语音通话 (开发中)
+                        <MicIcon sx={{ mr: 1 }} /> 语音通话
                       </MenuItem>
                       <MenuItem
                         key='视频通话'
                         onClick={cat(async () => {
                           setAnchorEl(null)
-                          const targetPeerId =
-                            activeConnectionInfo?.targetPeerId
-                          if (!targetPeerId) {
-                            toast.error('没有可用的连接')
-                            return
-                          }
                           const stream = await getUserMedia({
                             video: {
                               facingMode: 'user',
@@ -189,7 +217,10 @@ export function MessageEditor() {
                               echoCancellation: true,
                             },
                           })
-                          usePeer.callPeer(targetPeerId, stream)
+                          usePeer.callPeer(
+                            activeConnectionInfo?.targetPeerId ?? '',
+                            stream
+                          )
                         })}
                       >
                         <VideocamIcon sx={{ mr: 1 }} /> 视频通话

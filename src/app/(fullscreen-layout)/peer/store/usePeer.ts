@@ -147,6 +147,9 @@ export const usePeer = withStatic(useRawPeer, {
     stream: MediaStream,
     options?: CallOption
   ): MediaConnection {
+    if (!peerId) {
+      throw new Error('没有可用的连接')
+    }
     const { peer, connectionInfos } = useRawPeer.getState()
     const prevConnectionInfo = connectionInfos.find(
       (item) => item.targetPeerId === peerId
