@@ -1,6 +1,15 @@
 import { hsl2Rgb, hsv2Rgb, rgb2Hsl, rgb2Hsv } from './convert'
 
+import { ENV_CONFIG } from '@/config'
+
 export async function file2DataURL(f: Blob) {
+  if (!(f instanceof Blob)) {
+    if (ENV_CONFIG.public.nodeEnv === 'production') {
+      console.error('file2DataURL: 参数错误，不是 Blob: ', f)
+    } else {
+      throw new Error('file2DataURL: 参数错误，不是 Blob')
+    }
+  }
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
 
