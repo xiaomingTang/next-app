@@ -4,7 +4,7 @@ import { QrcodeDisplayItem } from './QrcodeDisplayItem'
 import { useQrcodeHandler } from './QrcodeHandlers'
 
 import { toPlainError } from '@/errors/utils'
-import { getUserVideo } from '@/utils/media/video'
+import { getUserMedia } from '@/utils/media'
 import { StreamVideo } from '@/app/(default-layout)/blog/components/StreamVideo'
 
 import useSWR from 'swr'
@@ -24,7 +24,7 @@ export function QrcodeScanner({
 }) {
   let readerTimeoutFlag = -1
   const { data: mediaStream = null } = useSWR('getUserVideo', () =>
-    getUserVideo().catch((err) => {
+    getUserMedia().catch((err) => {
       toast.error(toPlainError(err).message)
     })
   )

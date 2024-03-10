@@ -4,7 +4,7 @@ import { isDC } from '../utils'
 
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SlideUpTransition } from '@/components/Transitions'
-import { getUserVideo } from '@/utils/media/video'
+import { getUserMedia } from '@/utils/media'
 import { toPlainError } from '@/errors/utils'
 
 import { useState } from 'react'
@@ -83,7 +83,7 @@ export function RequestConnectionHandler() {
                 closeDialog()
                 return
               }
-              const stream = await getUserVideo({
+              const stream = await getUserMedia({
                 video: {
                   facingMode: 'user',
                 },

@@ -8,7 +8,7 @@ const defaultMediaStreamConstraints: MediaStreamConstraints = {
   },
 }
 
-export async function getUserVideo(
+export async function getUserMedia(
   constraints: MediaStreamConstraints = defaultMediaStreamConstraints,
   /**
    * 由于用户可以不选择, 避免 Promise 挂起, 所以需要超时

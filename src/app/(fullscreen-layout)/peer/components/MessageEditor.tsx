@@ -7,7 +7,7 @@ import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCa
 import { restrictPick } from '@/utils/array'
 import { file2DataURL } from '@/app/(default-layout)/color/utils'
 import { AnchorProvider } from '@/components/AnchorProvider'
-import { getUserVideo } from '@/utils/media/video'
+import { getUserMedia } from '@/utils/media'
 
 import { Button, Menu, MenuItem, Stack, TextField } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
@@ -170,7 +170,7 @@ export function MessageEditor() {
                             toast.error('没有可用的连接')
                             return
                           }
-                          const stream = await getUserVideo({
+                          const stream = await getUserMedia({
                             video: {
                               facingMode: 'user',
                             },
