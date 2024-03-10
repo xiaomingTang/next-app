@@ -24,11 +24,24 @@ export interface InOutConnection {
   mc: MediaConnection | null
 }
 
-interface BaseMessageIns {
+export interface BaseMessageIns {
   id: string
   date: Date
   src: string
   dest: string
+}
+
+export interface BaseFileMessageIns extends BaseMessageIns {
+  value: Blob
+  /**
+   * mime type (可能是空字符串)
+   */
+  contentType: string
+  size: number
+  /**
+   * 文件名, 可能是空字符串
+   */
+  name: string
 }
 
 export interface TextMessageIns extends BaseMessageIns {
@@ -36,32 +49,29 @@ export interface TextMessageIns extends BaseMessageIns {
   value: string
 }
 
-export interface ImageMessageIns extends BaseMessageIns {
+export interface ImageMessageIns extends BaseFileMessageIns {
   type: 'image'
-  value: string
 }
 
-export interface AudioMessageIns extends BaseMessageIns {
+export interface AudioMessageIns extends BaseFileMessageIns {
   type: 'audio'
-  value: string
 }
 
-export interface VideoMessageIns extends BaseMessageIns {
+export interface VideoMessageIns extends BaseFileMessageIns {
   type: 'video'
-  value: string
 }
 
-export interface FileMessageIns extends BaseMessageIns {
+export interface FileMessageIns extends BaseFileMessageIns {
   type: 'file'
-  value: string
 }
 
-export type MessageIns =
-  | TextMessageIns
+export type FileLikeMessageIns =
   | ImageMessageIns
   | AudioMessageIns
   | VideoMessageIns
   | FileMessageIns
+
+export type MessageIns = TextMessageIns | FileLikeMessageIns
 
 interface EventsWithError<ErrorType extends string> {
   error: (error: PeerError<`${ErrorType}`>) => void

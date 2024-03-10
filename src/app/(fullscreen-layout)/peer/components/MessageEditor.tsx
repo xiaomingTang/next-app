@@ -5,7 +5,6 @@ import { cat } from '@/errors/catchAndToast'
 import { toError } from '@/errors/utils'
 import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCatcherHandler'
 import { restrictPick } from '@/utils/array'
-import { file2DataURL } from '@/app/(default-layout)/color/utils'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { getUserMedia } from '@/utils/media'
 
@@ -16,6 +15,11 @@ import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
 import MicIcon from '@mui/icons-material/Mic'
 import VideocamIcon from '@mui/icons-material/Videocam'
+
+import type { BaseMessageIns, FileLikeMessageIns } from '../type'
+
+const MAX_PREVIEW_ABLE_SIZE = 100 * 1024 * 1024
+const MAX_FILE_SIZE = 100 * 1024 * 1024
 
 export function MessageEditor() {
   const { activeConnectionInfo } = usePeer()
@@ -34,19 +38,26 @@ export function MessageEditor() {
 
     const promises = files.map(
       cat(async (f) => {
-        const url = await file2DataURL(f)
         const type = restrictPick(
           f.type.split('/')[0] ?? '',
           ALL_MESSAGE_TYPES,
           'file'
         )
-        if (!url) {
-          throw new Error(`文件转 DataURL 失败: ${f.name}`)
+        if (type === 'text') {
+          throw new Error('不支持的文件类型')
         }
-        return usePeer.send({
-          type,
-          value: url,
-        })
+        // TODO: 超大文件支持流式收发下载 (当前是 DataURL, 总是静默失败)
+        if (f.size > MAX_FILE_SIZE) {
+          throw new Error('暂不支持发送大于 100M 的文件')
+        }
+        const fileMessage: Omit<FileLikeMessageIns, keyof BaseMessageIns> = {
+          type: f.size > MAX_PREVIEW_ABLE_SIZE ? 'file' : type,
+          value: f,
+          contentType: f.type,
+          size: f.size,
+          name: f.name,
+        }
+        return usePeer.send(fileMessage)
       })
     )
 

@@ -19,7 +19,7 @@ import type {
   MediaConnection,
   PeerConnectOption,
 } from 'peerjs'
-import type { InOutConnection, MessageIns } from '../type'
+import type { BaseMessageIns, InOutConnection, MessageIns } from '../type'
 
 interface PeerStore {
   peer: Peer
@@ -121,10 +121,7 @@ export const usePeer = withStatic(useRawPeer, {
 
     return connection
   },
-  send(
-    data: Omit<MessageIns, 'src' | 'dest' | 'id' | 'date'>,
-    chunked?: boolean
-  ) {
+  send(data: Omit<MessageIns, keyof BaseMessageIns>, chunked?: boolean) {
     if (!data.value) {
       throw new Error('发送的内容为空')
     }
@@ -132,13 +129,16 @@ export const usePeer = withStatic(useRawPeer, {
     if (!connection?.open) {
       throw new Error('没有可用的连接')
     }
-    const sendData: MessageIns = {
-      ...data,
+    const baseMessage: BaseMessageIns = {
       id: nanoid(12),
       date: new Date(),
       src: useRawPeer.getState().peerId,
       dest: connection.peer,
     }
+    const sendData = {
+      ...data,
+      ...baseMessage,
+    } as MessageIns
     usePeerMessage.addMessage(connection.peer, sendData)
     return connection.send(sendData, chunked)
   },

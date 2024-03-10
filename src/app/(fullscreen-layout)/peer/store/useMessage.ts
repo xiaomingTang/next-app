@@ -34,10 +34,21 @@ export const usePeerMessage = withStatic(useRawPeerMessage, {
       usePeer.addConnection(connection, 'in')
       connection.on('data', (data) => {
         if (isMessageIns(data)) {
-          usePeerMessage.addMessage(connection.peer, {
-            ...data,
-            date: new Date(),
-          })
+          if (data.type === 'text') {
+            usePeerMessage.addMessage(connection.peer, {
+              ...data,
+              date: new Date(),
+            })
+          } else {
+            usePeerMessage.addMessage(connection.peer, {
+              ...data,
+              date: new Date(),
+              // 此时收到的 data.value 是 ArrayBuffer, 需要转成 Blob
+              value: new Blob([data.value], {
+                type: data.contentType,
+              }),
+            })
+          }
         }
       })
     })

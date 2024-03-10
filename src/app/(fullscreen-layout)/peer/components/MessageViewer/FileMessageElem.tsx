@@ -4,21 +4,21 @@ import { TextMessageInnerElem } from './TextMessageElem'
 import { usePeer } from '../../store/usePeer'
 
 import Anchor from '@/components/Anchor'
+import { file2DataURL } from '@/app/(default-layout)/color/utils'
 
-import { extension } from 'mime-types'
 import { Typography } from '@mui/material'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
+import useSWR from 'swr'
 
 import type { FileMessageIns } from '../../type'
 
 export function FileMessageElem(message: FileMessageIns) {
-  const { value: fileSrc, src, id } = message
+  const { value: file, contentType, size, name, src } = message
+  const { data: dataUrl } = useSWR(`${name}-${size}-${contentType}`, () =>
+    file2DataURL(file)
+  )
   const { peerId } = usePeer()
   const role = src === peerId ? 'master' : 'guest'
-  // fileSrc: data:image/jpeg;base64
-  const extRegResult = /^data:(\w+\/\w+)/i.exec(fileSrc)
-  const extDesc = extRegResult?.[1] ?? 'unknown/unknown'
-  const ext = extension(extDesc)
 
   return (
     <MessageWrapperWithRole role={role} message={message}>
@@ -27,9 +27,10 @@ export function FileMessageElem(message: FileMessageIns) {
         type='text'
         value={
           <Anchor
-            download={`${id}.${ext}`}
-            href={fileSrc}
+            download={name}
+            href={dataUrl}
             style={{ color: 'inherit', display: 'block' }}
+            underline={!!dataUrl}
           >
             <Typography
               component='div'
@@ -39,7 +40,7 @@ export function FileMessageElem(message: FileMessageIns) {
                 padding: '0',
               }}
             >
-              点击下载 <FileDownloadIcon />
+              [文件] {name} {dataUrl ? <FileDownloadIcon /> : '...'}
             </Typography>
           </Anchor>
         }
