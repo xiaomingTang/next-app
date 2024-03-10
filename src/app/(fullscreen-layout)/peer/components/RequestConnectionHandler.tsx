@@ -85,7 +85,7 @@ export function RequestConnectionHandler() {
                 return
               }
               const isVideo =
-                requestConnection.remoteStream.getVideoTracks().length > 0
+                requestConnection.remoteStream?.getVideoTracks().length > 0
               stream = await getUserMedia({
                 video: isVideo
                   ? {
