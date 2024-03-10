@@ -35,7 +35,7 @@ function useMediaConnectionHandler(connection?: MediaConnection | null) {
   const state = useConnectionState(connection ?? null)
 
   useListen(state, () => {
-    if (CONNECTION_STATE_STATUS_MAP[state] === 'failed') {
+    if (connection && CONNECTION_STATE_STATUS_MAP[state] === 'failed') {
       stopStream(connection?.localStream)
       connection?.close()
       toast.error(CONNECTION_STATE_MAP[state].text)
