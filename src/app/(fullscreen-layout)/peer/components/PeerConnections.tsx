@@ -5,6 +5,7 @@ import { CONNECTION_STATE_MAP, TARGET_PID_SEARCH_PARAM } from '../constants'
 import { cat } from '@/errors/catchAndToast'
 import { useListen } from '@/hooks/useListen'
 import { AnchorProvider } from '@/components/AnchorProvider'
+import { openSimpleModal } from '@/components/SimpleModal'
 
 import {
   Button,
@@ -20,6 +21,7 @@ import {
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useMemo } from 'react'
+import { noop } from 'lodash-es'
 
 export function PeerConnections() {
   const { activeConnectionInfo, connectionInfos } = usePeer()
@@ -155,6 +157,19 @@ export function PeerConnections() {
         type='submit'
         variant='outlined'
         color={connection ? CONNECTION_STATE_MAP[state].color : 'primary'}
+        onClick={() => {
+          if (state === 'failed') {
+            openSimpleModal({
+              title: '提示',
+              content: (
+                <ol style={{ listStyle: 'disc' }}>
+                  <li>请检查连接 ID 是否正确 以及 确认对方连接是否可用；</li>
+                  <li>如果使用了 VPN, 请关闭 VPN 后重试；</li>
+                </ol>
+              ),
+            }).catch(noop)
+          }
+        }}
       >
         {!connection && '连接'}
         {connection && CONNECTION_STATE_MAP[state].text}
