@@ -5,6 +5,7 @@ import { isDC, isMC } from '../utils'
 
 import { withStatic } from '@/utils/withStatic'
 import { numberFormat } from '@/utils/numberFormat'
+import { closeStream } from '@/utils/media'
 
 import { create } from 'zustand'
 import Peer, { util as peerUtil } from 'peerjs'
@@ -148,6 +149,7 @@ export const usePeer = withStatic(useRawPeer, {
     options?: CallOption
   ): MediaConnection {
     if (!peerId) {
+      closeStream(stream)
       throw new Error('没有可用的连接')
     }
     const { peer, connectionInfos } = useRawPeer.getState()

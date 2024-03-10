@@ -4,7 +4,7 @@ import { isDC } from '../utils'
 
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SlideUpTransition } from '@/components/Transitions'
-import { getUserMedia } from '@/utils/media'
+import { closeStream, getUserMedia } from '@/utils/media'
 import { toPlainError } from '@/errors/utils'
 
 import { useState } from 'react'
@@ -72,6 +72,7 @@ export function RequestConnectionHandler() {
           autoFocus
           variant='contained'
           onClick={async () => {
+            let stream: MediaStream | undefined
             try {
               if (!requestConnection) {
                 toast.error('连接不存在')
@@ -83,10 +84,14 @@ export function RequestConnectionHandler() {
                 closeDialog()
                 return
               }
-              const stream = await getUserMedia({
-                video: {
-                  facingMode: 'user',
-                },
+              const isVideo =
+                requestConnection.remoteStream.getVideoTracks().length > 0
+              stream = await getUserMedia({
+                video: isVideo
+                  ? {
+                      facingMode: 'user',
+                    }
+                  : undefined,
                 audio: {
                   echoCancellation: true,
                 },
@@ -94,6 +99,7 @@ export function RequestConnectionHandler() {
               usePeer.answerPeer(requestConnection, stream)
             } catch (err) {
               toast.error(toPlainError(err).message)
+              closeStream(stream)
             }
             closeDialog()
           }}
