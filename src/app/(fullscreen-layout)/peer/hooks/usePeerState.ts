@@ -4,6 +4,8 @@ import {
   usePeerListener,
 } from './usePeerListener'
 
+import { isDC, isMC } from '../utils'
+
 import { useListen } from '@/hooks/useListen'
 
 import { useEffect, useState } from 'react'
@@ -133,13 +135,21 @@ export function useMediaConnectionState(
 
 export function useConnectionState<T extends DataConnection | MediaConnection>(
   connection: T | null
-) {
+): RTCIceConnectionState {
   const dataState = useDataConnectionState(
-    connection?.type === 'data' ? (connection as DataConnection) : null
+    connection && isDC(connection) ? connection : null
   )
   const mediaState = useMediaConnectionState(
-    connection?.type === 'media' ? (connection as MediaConnection) : null
+    connection && isMC(connection) ? connection : null
   )
 
-  return connection?.type === 'data' ? dataState : mediaState
+  if (!connection) {
+    return 'disconnected'
+  }
+
+  if (isMC(connection)) {
+    return mediaState
+  }
+
+  return dataState
 }
