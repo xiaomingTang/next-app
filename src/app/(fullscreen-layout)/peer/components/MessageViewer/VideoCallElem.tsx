@@ -106,7 +106,7 @@ export function VideoCallElem() {
             <StreamVideo
               mirror
               fit='contain'
-              muted={false}
+              muted
               mediaStream={connection?.localStream}
             />
           </Box>
