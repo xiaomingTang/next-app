@@ -29,3 +29,9 @@ export async function getUserMedia(
   }
   return stream
 }
+
+export function stopStream(stream?: MediaStream | null) {
+  stream?.getTracks().forEach((track) => {
+    track.stop()
+  })
+}
