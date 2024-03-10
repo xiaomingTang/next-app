@@ -5,6 +5,8 @@ import { sleepMs } from '@/utils/time'
 const defaultMediaStreamConstraints: MediaStreamConstraints = {
   video: {
     facingMode: 'environment',
+    echoCancellation: true,
+    noiseSuppression: true,
   },
 }
 
