@@ -56,7 +56,7 @@ export function useFile2URL(f?: Blob) {
   return url
 }
 
-const M_SIZE = 1024 / 1024
+const M_SIZE = 1024 * 1024
 const K_SIZE = 1024
 
 export function friendlySize(size: number) {
