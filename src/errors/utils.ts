@@ -1,4 +1,4 @@
-import { formatTime } from '@/utils/formatTime'
+import { formatTime } from '@/utils/transformer'
 
 import Boom from '@hapi/boom'
 import { revalidateTag, revalidatePath } from 'next/cache'

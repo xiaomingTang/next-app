@@ -2,7 +2,7 @@ import { editMP3 } from './EditMP3'
 
 import { deleteMP3s } from '../server'
 
-import { formatTime } from '@/utils/formatTime'
+import { formatTime } from '@/utils/transformer'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'

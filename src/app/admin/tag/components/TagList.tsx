@@ -2,7 +2,7 @@ import { editTag } from './EditTag'
 
 import { deleteTags } from '../server'
 
-import { formatTime } from '@/utils/formatTime'
+import { formatTime } from '@/utils/transformer'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'

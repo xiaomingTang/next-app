@@ -2,6 +2,15 @@ export const GB_SIZE = 1000 * 1000 * 1000
 export const MB_SIZE = 1000 * 1000
 export const KB_SIZE = 1000
 
+/**
+ * - > 10G: 如 23.356G: 显示 23GB
+ * - 1 ~ 10G: 如 5.356G: 显示 5.4GB
+ * - > 10M: 如 23.356M: 显示 23MB
+ * - 1 ~ 10M: 如 5.356M: 显示 5.4MB
+ * - > 10K: 如 23.356K: 显示 23KB
+ * - > 1K: 如 5.356K: 显示 5.4KB
+ * - <= 1K: 如 543B: 显示 543B
+ */
 export function friendlySize(size: number) {
   // > 10G: 如 23.356G: 显示 23G
   if (size > GB_SIZE * 10) {
@@ -34,5 +43,51 @@ export function friendlySize(size: number) {
     return `${k}KB`
   }
   // <= 1K: 例: 显示 543B
-  return `${size}B`
+  // 为免小数, 直接 Math.round 了
+  return `${Math.round(size)}B`
+}
+
+/**
+ * 格式化时间
+ * 一小时内, 显示 "一小时内"
+ * 一天内, 显示 "xx 小时前"
+ * 一周内, 显示 "xx 天前"
+ * 一周以上, 同一年, 显示 "x月x日" (显示年月日, 而非 xx-xx, 因为 a11y)
+ * 一周以上, 不同年, 显示 "xxxx年x月x日" (显示年月日, 而非 xxxx-xx-xx, 因为 a11y)
+ */
+export function friendlyFormatTime(time: number | string | Date) {
+  const date = time instanceof Date ? time : new Date(time)
+  const nowDate = new Date()
+  const diff = nowDate.getTime() - date.getTime()
+  const hour = 60 * 60 * 1000
+  if (diff < hour) {
+    return '一小时内'
+  }
+  if (diff < 24 * hour) {
+    return `${Math.floor(diff / hour)}小时前`
+  }
+  if (diff < 7 * 24 * hour) {
+    return `${Math.floor(diff / (24 * hour))}天前`
+  }
+  const md = `${date.getMonth() + 1}月${date.getDate()}日`
+  if (nowDate.getFullYear() === date.getFullYear()) {
+    return md
+  }
+  return `${date.getFullYear()}年${md}`
+}
+
+function padTwo(s: string | number) {
+  return (s ?? '').toString().trim().padStart(2, '0')
+}
+
+/**
+ * @returns "xxxx-xx-xx xx:xx:xx"
+ */
+export function formatTime(time: number | string | Date) {
+  const date = time instanceof Date ? time : new Date(time)
+  return `${date.getFullYear()}-${padTwo(date.getMonth() + 1)}-${padTwo(
+    date.getDate()
+  )} ${padTwo(date.getHours())}:${padTwo(date.getMinutes())}:${padTwo(
+    date.getSeconds()
+  )}`
 }

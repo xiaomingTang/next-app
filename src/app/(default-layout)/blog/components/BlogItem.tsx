@@ -1,6 +1,6 @@
 'use client'
 
-import { friendlyFormatTime } from '@/utils/formatTime'
+import { friendlyFormatTime } from '@/utils/transformer'
 import { dark } from '@/utils/theme'
 import { Link } from '@/components/CustomLink'
 import { obj } from '@/utils/tiny'

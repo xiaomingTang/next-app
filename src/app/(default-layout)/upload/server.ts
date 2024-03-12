@@ -3,9 +3,8 @@
 import { SA, pipePromiseAllSettled } from '@/errors/utils'
 import { getSelf } from '@/user/server'
 import { validateRequest } from '@/request/validator'
-import { formatTime } from '@/utils/formatTime'
+import { MB_SIZE, formatTime } from '@/utils/transformer'
 import { prisma } from '@/request/prisma'
-import { MB_SIZE } from '@/utils/transformer'
 
 import Boom from '@hapi/boom'
 import {

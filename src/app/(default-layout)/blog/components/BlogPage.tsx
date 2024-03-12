@@ -2,7 +2,7 @@
 
 import { BlogContent } from './BlogContent'
 
-import { formatTime, friendlyFormatTime } from '@/utils/formatTime'
+import { formatTime, friendlyFormatTime } from '@/utils/transformer'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { TagItem } from '@D/tag/components/TagItem'
 import { shuffledArray7 } from '@/constants'

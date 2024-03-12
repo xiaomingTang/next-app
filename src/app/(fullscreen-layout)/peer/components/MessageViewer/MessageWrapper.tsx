@@ -1,5 +1,5 @@
 import { dark } from '@/utils/theme'
-import { formatTime } from '@/utils/formatTime'
+import { formatTime } from '@/utils/transformer'
 
 import { Box, alpha } from '@mui/material'
 import { common } from '@mui/material/colors'
