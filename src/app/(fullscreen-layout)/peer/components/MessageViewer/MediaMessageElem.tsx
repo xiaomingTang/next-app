@@ -2,17 +2,13 @@ import { MessageWrapperWithRole } from './MessageWrapper'
 
 import { usePeer } from '../../store/usePeer'
 
-import { file2DataURL } from '@/utils/file'
-
-import useSWR from 'swr'
+import { useFile2URL } from '@/utils/file'
 
 import type { AudioMessageIns, VideoMessageIns } from '../../type'
 
 export function MediaMessageElem(message: AudioMessageIns | VideoMessageIns) {
-  const { value: file, contentType, size, name, src } = message
-  const { data: dataUrl } = useSWR(`${name}-${size}-${contentType}`, () =>
-    file2DataURL(file)
-  )
+  const { value: file, src } = message
+  const dataUrl = useFile2URL(file)
   const { peerId } = usePeer()
   const role = src === peerId ? 'master' : 'guest'
   const height = message.type === 'video' ? 120 : 60

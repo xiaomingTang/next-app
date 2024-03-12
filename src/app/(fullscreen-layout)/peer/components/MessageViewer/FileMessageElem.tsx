@@ -4,19 +4,16 @@ import { TextMessageInnerElem } from './TextMessageElem'
 import { usePeer } from '../../store/usePeer'
 
 import Anchor from '@/components/Anchor'
-import { file2DataURL } from '@/utils/file'
+import { friendlySize, useFile2URL } from '@/utils/file'
 
 import { Typography } from '@mui/material'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
-import useSWR from 'swr'
 
 import type { FileMessageIns } from '../../type'
 
 export function FileMessageElem(message: FileMessageIns) {
-  const { value: file, contentType, size, name, src } = message
-  const { data: dataUrl } = useSWR(`${name}-${size}-${contentType}`, () =>
-    file2DataURL(file)
-  )
+  const { value: file, size, name, src } = message
+  const dataUrl = useFile2URL(file)
   const { peerId } = usePeer()
   const role = src === peerId ? 'master' : 'guest'
 
@@ -40,7 +37,8 @@ export function FileMessageElem(message: FileMessageIns) {
                 padding: '0',
               }}
             >
-              [文件] {name} {dataUrl ? <FileDownloadIcon /> : '...'}
+              [文件 {friendlySize(size)}] {name}{' '}
+              {dataUrl ? <FileDownloadIcon /> : '...'}
             </Typography>
           </Anchor>
         }

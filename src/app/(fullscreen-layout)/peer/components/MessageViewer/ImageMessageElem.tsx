@@ -3,17 +3,13 @@ import { MessageWrapperWithRole } from './MessageWrapper'
 import { usePeer } from '../../store/usePeer'
 
 import { ImageWithState } from '@/components/ImageWithState'
-import { file2DataURL } from '@/utils/file'
-
-import useSWR from 'swr'
+import { useFile2URL } from '@/utils/file'
 
 import type { ImageMessageIns } from '../../type'
 
 export function ImageMessageElem(message: ImageMessageIns) {
-  const { value: file, contentType, size, name, src } = message
-  const { data: dataUrl } = useSWR(`${name}-${size}-${contentType}`, () =>
-    file2DataURL(file)
-  )
+  const { value: file, name, src } = message
+  const dataUrl = useFile2URL(file)
   const { peerId } = usePeer()
   const role = src === peerId ? 'master' : 'guest'
 
