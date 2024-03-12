@@ -4,6 +4,7 @@ import { checkIsImage } from '../utils/checkIsImage'
 
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { obj } from '@/utils/tiny'
+import { friendlySize } from '@/utils/file'
 
 import WarningIcon from '@mui/icons-material/Warning'
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
@@ -61,19 +62,6 @@ export const uploadStatusMap: Record<
     title: '上传失败',
     icon: <WarningIcon color='error' />,
   },
-}
-
-function friendlySize(n: number) {
-  if (n < 1024) {
-    return `${n} b`
-  }
-  if (n < 1024 * 1024) {
-    return `${(n / 1024).toFixed(0)} kb`
-  }
-  if (n < 1024 * 1024 * 1024) {
-    return `${(n / 1024 / 1024).toFixed(1)} mb`
-  }
-  return `${(n / 1024 / 1024 / 1024).toFixed(2)} gb`
 }
 
 export function FileInfoDisplay({
