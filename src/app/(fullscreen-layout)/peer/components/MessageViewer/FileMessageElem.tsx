@@ -4,7 +4,8 @@ import { TextMessageInnerElem } from './TextMessageElem'
 import { usePeer } from '../../store/usePeer'
 
 import Anchor from '@/components/Anchor'
-import { friendlySize, useFile2URL } from '@/utils/file'
+import { useFile2URL } from '@/utils/file'
+import { friendlySize } from '@/utils/transformer'
 
 import { Typography } from '@mui/material'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'

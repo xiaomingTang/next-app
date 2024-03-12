@@ -7,6 +7,7 @@ import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCa
 import { restrictPick } from '@/utils/array'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { getUserMedia } from '@/utils/media'
+import { MB_SIZE } from '@/utils/transformer'
 
 import { Button, Menu, MenuItem, Stack, TextField } from '@mui/material'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
@@ -19,8 +20,8 @@ import UploadFileIcon from '@mui/icons-material/UploadFile'
 
 import type { BaseMessageIns, FileLikeMessageIns } from '../type'
 
-const MAX_PREVIEW_ABLE_SIZE = 100 * 1024 * 1024
-const MAX_FILE_SIZE = 100 * 1024 * 1024
+const MAX_PREVIEW_ABLE_SIZE = 100 * MB_SIZE
+const MAX_FILE_SIZE = 10000 * MB_SIZE
 
 export function MessageEditor() {
   const { activeConnectionInfo } = usePeer()

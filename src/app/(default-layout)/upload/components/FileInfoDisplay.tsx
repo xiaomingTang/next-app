@@ -4,7 +4,7 @@ import { checkIsImage } from '../utils/checkIsImage'
 
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { obj } from '@/utils/tiny'
-import { friendlySize } from '@/utils/file'
+import { MB_SIZE, friendlySize } from '@/utils/transformer'
 
 import WarningIcon from '@mui/icons-material/Warning'
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
@@ -74,7 +74,7 @@ export function FileInfoDisplay({
 }) {
   const isImage = checkIsImage(info.file)
   // 10 M 以内才 preview
-  const url = useFileUrl(info.file, info.file.size < 1024 * 1024 * 10)
+  const url = useFileUrl(info.file, info.file.size < 10 * MB_SIZE)
   const copyableTexts = {
     raw: info.url ?? '',
     markdown: fileToCopyableMarkdownStr({

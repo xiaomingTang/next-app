@@ -5,6 +5,7 @@ import { getSelf } from '@/user/server'
 import { validateRequest } from '@/request/validator'
 import { formatTime } from '@/utils/formatTime'
 import { prisma } from '@/request/prisma'
+import { MB_SIZE } from '@/utils/transformer'
 
 import Boom from '@hapi/boom'
 import {
@@ -82,7 +83,7 @@ export const requestUploadFiles = SA.encode(
       if (!config.randomFilenameByServer) {
         throw Boom.forbidden('无权限自定义文件名')
       }
-      if (config.files.some((f) => f.size > 5 * 1024 * 1024)) {
+      if (config.files.some((f) => f.size > 5 * MB_SIZE)) {
         throw Boom.forbidden('最大支持上传尺寸: 5 MB')
       }
       const today = new Date(Date.now())
@@ -120,7 +121,7 @@ export const requestUploadFiles = SA.encode(
           )} 个`
         )
       }
-    } else if (config.files.some((f) => f.size > 50 * 1024 * 1024)) {
+    } else if (config.files.some((f) => f.size > 50 * MB_SIZE)) {
       throw Boom.forbidden('最大支持上传尺寸: 50 MB')
     }
     // 为 dirname 赋初始值
