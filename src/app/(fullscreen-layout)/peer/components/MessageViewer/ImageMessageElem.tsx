@@ -3,7 +3,7 @@ import { MessageWrapperWithRole } from './MessageWrapper'
 import { usePeer } from '../../store/usePeer'
 
 import { ImageWithState } from '@/components/ImageWithState'
-import { file2DataURL } from '@/app/(default-layout)/color/utils'
+import { file2DataURL } from '@/utils/file'
 
 import useSWR from 'swr'
 

@@ -4,7 +4,7 @@ import { TextMessageInnerElem } from './TextMessageElem'
 import { usePeer } from '../../store/usePeer'
 
 import Anchor from '@/components/Anchor'
-import { file2DataURL } from '@/app/(default-layout)/color/utils'
+import { file2DataURL } from '@/utils/file'
 
 import { Typography } from '@mui/material'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'

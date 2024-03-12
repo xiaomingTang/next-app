@@ -1,9 +1,7 @@
 'use client'
 
-import { adjustImageData } from './utils'
-import { imageDataStatistics } from './convert'
-
 import { ImageWithState } from '@/components/ImageWithState'
+import { adjustImageData, imageDataStatistics } from '@/utils/image'
 
 import { Box, ButtonBase, Slider, Stack, Typography } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
