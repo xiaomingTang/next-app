@@ -55,6 +55,10 @@ export function useInjectHistory(
   })
 
   const finalOnPopState = useEventCallback(async (e: PopStateEvent) => {
+    // 未初始化
+    if (IndexRef.current <= 0) {
+      return
+    }
     // 轮到我了吗? 没轮到就返回
     if (IndexRef.current !== stack.latest) {
       return
@@ -94,7 +98,14 @@ export function useInjectHistory(
     stack.drop(IndexRef.current)
     IndexRef.current = 0
     if (stack.locked) {
-      stack.locked = false
+      window.setTimeout(() => {
+        /**
+         * 帮下一个解锁, 不能太快, 否则在一些场景下会出现:
+         * 自己刚刚被 popstate 关闭, 随后触发 open 变化,
+         * 自己把自己的锁给解了
+         */
+        stack.locked = false
+      }, 0)
       return
     }
     if (tempIndex > stack.invalidStackIndex) {
