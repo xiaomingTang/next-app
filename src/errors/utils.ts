@@ -3,7 +3,7 @@ import { formatTime } from '@/utils/transformer'
 import Boom from '@hapi/boom'
 import { revalidateTag, revalidatePath } from 'next/cache'
 
-export type Func<Args extends unknown[], Ret> = (...args: Args) => Ret
+import type { Func } from '@/utils/function'
 
 export interface PlainError {
   code: number

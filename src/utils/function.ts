@@ -2,9 +2,11 @@ import { sleepMs } from './time'
 
 import { ENV_CONFIG } from '@/config'
 
-export type Func<T = unknown> = () => T
+export type Func<Args extends unknown[] = unknown[], T = unknown> = (
+  ...args: Args
+) => T
 
-export function loopCall(callback: Func): Func<void> {
+export function loopCall(callback: Func<[], void>): Func<[], void> {
   let stopLoop = false
 
   async function loop() {
@@ -34,4 +36,10 @@ export function assertNever(val: never) {
     throw new Error(`restrict not satisfied: assert never, got ${typeof val}`)
   }
   console.error(`restrict not satisfied: assert never, got ${typeof val}:`, val)
+}
+
+export function uniqueFunc<Args extends unknown[], Ret>(
+  func: Func<Args, Ret>
+): Func<Args, Ret> {
+  return (...args: Args) => func(...args)
 }

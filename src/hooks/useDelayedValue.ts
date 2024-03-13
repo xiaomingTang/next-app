@@ -2,7 +2,7 @@ import { useEventCallback } from '@mui/material'
 import { noop } from 'lodash-es'
 import { useEffect, useState } from 'react'
 
-import type { Func } from '@/errors/utils'
+import type { Func } from '@/utils/function'
 
 export function useDelayedValue<T>(
   callback: Func<[], Promise<T>>,

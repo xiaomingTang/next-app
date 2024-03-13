@@ -8,7 +8,7 @@ import { useUser } from '@/user'
 import { toast } from 'react-hot-toast'
 import { noop } from 'lodash-es'
 
-import type { Func } from './utils'
+import type { Func } from '@/utils/function'
 
 type AwaitedValue<T> = T extends Promise<infer S> ? S : T
 
