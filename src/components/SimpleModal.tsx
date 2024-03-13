@@ -2,6 +2,7 @@
 
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SilentError } from '@/errors/SilentError'
+import { uniqueFunc } from '@/utils/function'
 
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import {
@@ -81,5 +82,5 @@ const SimpleModal = NiceModal.create(({ title, content }: SimpleModalProps) => {
 })
 
 export function openSimpleModal(props: SimpleModalProps): Promise<void> {
-  return NiceModal.show(SimpleModal, props)
+  return NiceModal.show(uniqueFunc(SimpleModal), props)
 }
