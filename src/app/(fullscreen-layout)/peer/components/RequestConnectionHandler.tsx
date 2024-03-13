@@ -4,7 +4,7 @@ import { isDC } from '../utils'
 
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SlideUpTransition } from '@/components/Transitions'
-import { closeStream, getUserMedia } from '@/utils/media'
+import { getUserMedia } from '@/utils/media'
 import { toPlainError } from '@/errors/utils'
 
 import { useState } from 'react'
@@ -27,6 +27,39 @@ export function RequestConnectionHandler() {
   >(null)
 
   const closeDialog = () => setRequestConnection(null)
+
+  const connect = async () => {
+    let stream: MediaStream | undefined
+    try {
+      if (!requestConnection) {
+        toast.error('连接不存在')
+        closeDialog()
+        return
+      }
+      if (isDC(requestConnection)) {
+        usePeer.connect(requestConnection.peer)
+        closeDialog()
+        return
+      }
+      // 语音通话判定有误, 待修复
+      // const isVideo = requestConnection.remoteStream?.getVideoTracks().length > 0
+      const isVideo = true
+      stream = await getUserMedia({
+        video: isVideo
+          ? {
+              facingMode: 'user',
+            }
+          : undefined,
+        audio: {
+          echoCancellation: true,
+        },
+      })
+      usePeer.answerPeer(requestConnection, stream)
+    } catch (err) {
+      toast.error(toPlainError(err).message)
+    }
+    closeDialog()
+  }
 
   useInjectHistory(!!requestConnection, closeDialog)
 
@@ -68,43 +101,7 @@ export function RequestConnectionHandler() {
       </DialogContent>
       <DialogActions>
         <Button onClick={closeDialog}>取消</Button>
-        <Button
-          autoFocus
-          variant='contained'
-          onClick={async () => {
-            let stream: MediaStream | undefined
-            try {
-              if (!requestConnection) {
-                toast.error('连接不存在')
-                closeDialog()
-                return
-              }
-              if (isDC(requestConnection)) {
-                usePeer.connect(requestConnection.peer)
-                closeDialog()
-                return
-              }
-              // 语音通话判定有误, 待修复
-              // const isVideo = requestConnection.remoteStream?.getVideoTracks().length > 0
-              const isVideo = true
-              stream = await getUserMedia({
-                video: isVideo
-                  ? {
-                      facingMode: 'user',
-                    }
-                  : undefined,
-                audio: {
-                  echoCancellation: true,
-                },
-              })
-              usePeer.answerPeer(requestConnection, stream)
-            } catch (err) {
-              toast.error(toPlainError(err).message)
-              closeStream(stream)
-            }
-            closeDialog()
-          }}
-        >
+        <Button autoFocus variant='contained' onClick={connect}>
           连接
         </Button>
       </DialogActions>

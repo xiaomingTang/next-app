@@ -32,6 +32,11 @@ export async function getUserMedia(
   return stream
 }
 
+/**
+ * @WARNING 谨慎执行 track.stop, 一旦执行, 除非刷新页面,
+ * 否则再次执行 getUserMedia, 摄像头获取到的内容有问题,
+ * 就像超微距, 内容只有纯色 (红米 K30Pro 测试如此)
+ */
 export function closeStream(stream?: MediaStream | null) {
   stream?.getTracks().forEach((track) => {
     track.stop()

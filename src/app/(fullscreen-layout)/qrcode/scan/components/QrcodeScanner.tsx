@@ -4,11 +4,11 @@ import { QrcodeDisplayItem } from './QrcodeDisplayItem'
 import { useQrcodeHandler } from './QrcodeHandlers'
 
 import { toPlainError } from '@/errors/utils'
-import { getUserMedia, closeStream } from '@/utils/media'
+import { getUserMedia } from '@/utils/media'
 import { StreamVideo } from '@/app/(default-layout)/blog/components/StreamVideo'
 
 import useSWR from 'swr'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import jsQR from 'jsqr'
 import { toast } from 'react-hot-toast'
 import { Box } from '@mui/material'
@@ -27,13 +27,6 @@ export function QrcodeScanner({
     getUserMedia().catch((err) => {
       toast.error(toPlainError(err).message)
     })
-  )
-
-  useEffect(
-    () => () => {
-      closeStream(mediaStream)
-    },
-    [mediaStream]
   )
 
   const [QRContent, setQRContent] = useState<QRCode | null>(null)

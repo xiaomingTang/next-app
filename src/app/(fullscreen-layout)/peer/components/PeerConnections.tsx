@@ -10,7 +10,6 @@ import { cat } from '@/errors/catchAndToast'
 import { useListen } from '@/hooks/useListen'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { openSimpleModal } from '@/components/SimpleModal'
-import { closeStream } from '@/utils/media'
 
 import {
   Button,
@@ -36,7 +35,6 @@ function useMediaConnectionHandler(connection?: MediaConnection | null) {
 
   useListen(state, () => {
     if (connection && CONNECTION_STATE_STATUS_MAP[state] === 'failed') {
-      closeStream(connection?.localStream)
       connection?.close()
       toast.error(CONNECTION_STATE_MAP[state].text)
     }
@@ -49,7 +47,6 @@ function useMediaConnectionHandler(connection?: MediaConnection | null) {
         connection.localStream?.active &&
         !connection.remoteStream?.active
       ) {
-        closeStream(connection.localStream)
         connection.close()
         toast.error('连接超时')
       }
