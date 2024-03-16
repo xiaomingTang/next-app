@@ -1,6 +1,10 @@
 import { usePeer } from '../store/usePeer'
 import { useConnectionState } from '../hooks/usePeerState'
-import { CONNECTION_STATE_MAP, TARGET_PID_SEARCH_PARAM } from '../constants'
+import {
+  CONNECTION_STATE_MAP,
+  CONNECTION_STATE_STATUS_MAP,
+  TARGET_PID_SEARCH_PARAM,
+} from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { useListen } from '@/hooks/useListen'
@@ -182,7 +186,7 @@ export function PeerConnections() {
         variant='outlined'
         color={connection ? CONNECTION_STATE_MAP[state].color : 'primary'}
         onClick={() => {
-          if (state === 'failed') {
+          if (CONNECTION_STATE_STATUS_MAP[state] === 'failed') {
             openSimpleModal({
               title: '提示',
               content: (
