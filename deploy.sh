@@ -70,6 +70,10 @@ EOL
 
 cd ..
 
-git add .
-git stash
-git stash drop
+if [[ -v IGNORE_BUILD ]] && [ -d "out" ]; then
+    echo "skip clear"
+else
+    git add .
+    git stash
+    git stash drop
+fi
