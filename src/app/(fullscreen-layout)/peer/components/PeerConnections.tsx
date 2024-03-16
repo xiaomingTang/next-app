@@ -1,10 +1,6 @@
 import { usePeer } from '../store/usePeer'
 import { useConnectionState } from '../hooks/usePeerState'
-import {
-  CONNECTION_STATE_MAP,
-  CONNECTION_STATE_STATUS_MAP,
-  TARGET_PID_SEARCH_PARAM,
-} from '../constants'
+import { CONNECTION_STATE_MAP, TARGET_PID_SEARCH_PARAM } from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { useListen } from '@/hooks/useListen'
@@ -31,15 +27,6 @@ import toast from 'react-hot-toast'
 import type { MediaConnection } from 'peerjs'
 
 function useMediaConnectionHandler(connection?: MediaConnection | null) {
-  const state = useConnectionState(connection ?? null)
-
-  useListen(state, () => {
-    if (connection && CONNECTION_STATE_STATUS_MAP[state] === 'failed') {
-      connection?.close()
-      toast.error(CONNECTION_STATE_MAP[state].text)
-    }
-  })
-
   useEffect(() => {
     const timer = window.setTimeout(() => {
       if (
