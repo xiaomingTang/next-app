@@ -7,7 +7,7 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "postinstall": "npx prisma generate",
-    "prepare": "husky install && bash -c 'chmod ug+x ./deploy.sh' && bash -c 'chmod ug+x .husky/*'",
+    "prepare": "husky",
     "beforeRun": "tsx bin/pre-run.ts",
     "predev": "pnpm run beforeRun",
     "dev": "concurrently -n next.js,peerjs-server \"next dev\" \"peerjs --port 4000 --key peerjs --path /peer-server\"",
@@ -20,22 +20,13 @@
     "deploy": "./deploy.sh",
     "export": "tsx bin/prepare-output.ts",
     "commit": "git-cz",
-    "lint": "next lint && tsc --noEmit",
     "pretest": "pnpm run beforeRun",
     "test": "next lint && tsc --noEmit",
     "lint:commit": "commitlint -e",
     "lint-staged": "lint-staged --quiet",
-    "format": "prettier --write .",
     "svg": "tsx bin/generate-svg-interface.ts",
     "db:push": "dotenv -e .env -c -- prisma db push",
     "db:seed": "dotenv -e .env -c -- prisma db seed"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pnpm run lint-staged",
-      "pre-push": "pnpm run lint",
-      "commit-msg": "pnpm run lint:commit"
-    }
   },
   "lint-staged": {
     "*.{md,json}": [
