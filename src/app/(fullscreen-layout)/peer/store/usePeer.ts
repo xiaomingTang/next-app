@@ -127,7 +127,7 @@ export const usePeer = withStatic(useRawPeer, {
     }
     const connection = useRawPeer.getState().activeConnectionInfo?.dc.out
     if (!connection?.open) {
-      throw new Error('没有可用的连接')
+      throw new Error('当前连接不可用')
     }
     const baseMessage: BaseMessageIns = {
       id: nanoid(12),
@@ -148,7 +148,7 @@ export const usePeer = withStatic(useRawPeer, {
     options?: CallOption
   ): MediaConnection {
     if (!peerId) {
-      throw new Error('没有可用的连接')
+      throw new Error('当前连接不可用')
     }
     const { peer, connectionInfos } = useRawPeer.getState()
     const prevConnectionInfo = connectionInfos.find(
