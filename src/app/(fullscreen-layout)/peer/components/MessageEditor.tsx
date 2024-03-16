@@ -193,6 +193,9 @@ export function MessageEditor() {
                         key='语音通话'
                         disabled
                         onClick={cat(async () => {
+                          if (!activeConnectionInfo?.mc?.open) {
+                            throw new Error('当前连接不可用')
+                          }
                           setAnchorEl(null)
                           const stream = await getUserMedia({
                             audio: {
@@ -210,6 +213,9 @@ export function MessageEditor() {
                       <MenuItem
                         key='视频通话'
                         onClick={cat(async () => {
+                          if (!activeConnectionInfo?.mc?.open) {
+                            throw new Error('当前连接不可用')
+                          }
                           setAnchorEl(null)
                           const stream = await getUserMedia({
                             video: {
