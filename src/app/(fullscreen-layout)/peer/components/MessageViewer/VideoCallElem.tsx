@@ -107,6 +107,8 @@ export function VideoCallElem() {
           )}
         >
           <StreamVideo
+            // localStream react state should be updated when remoteStream state updated
+            key={`remoteStream active state: ${connection?.remoteStream?.active}`}
             mirror
             fit='contain'
             muted
