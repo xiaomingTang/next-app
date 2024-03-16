@@ -8,7 +8,7 @@ import { isDC, isMC } from '../utils'
 
 import { useListen } from '@/hooks/useListen'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import type {
   Peer,
@@ -63,10 +63,26 @@ export function usePeerError(peer: Peer) {
   return error
 }
 
+const CONNECTION_TIMEOUT = 10000
+
 export function useDataConnectionState(
   connection: DataConnection | null
 ): RTCIceConnectionState {
   const [state, setState] = useState<RTCIceConnectionState>('new')
+
+  useEffect(() => {
+    let timer = -1
+    window.clearTimeout(timer)
+    if (state === 'checking') {
+      timer = window.setTimeout(() => {
+        console.log('connection timeout')
+        setState('failed')
+      }, CONNECTION_TIMEOUT)
+    }
+    return () => {
+      window.clearTimeout(timer)
+    }
+  }, [state])
 
   useDataConnectionListener(connection, 'iceStateChanged', (s) => {
     setState(s)
@@ -87,6 +103,20 @@ export function useMediaConnectionState(
   connection: MediaConnection | null
 ): RTCIceConnectionState {
   const [state, setState] = useState<RTCIceConnectionState>('new')
+
+  useEffect(() => {
+    let timer = -1
+    window.clearTimeout(timer)
+    if (state === 'checking') {
+      timer = window.setTimeout(() => {
+        console.log('connection timeout')
+        setState('failed')
+      }, CONNECTION_TIMEOUT)
+    }
+    return () => {
+      window.clearTimeout(timer)
+    }
+  }, [state])
 
   useMediaConnectionListener(connection, 'iceStateChanged', (s) => {
     setState(s)
