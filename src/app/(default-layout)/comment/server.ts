@@ -4,6 +4,7 @@ import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { validateRequest } from '@/request/validator'
 import { sendToDingTalk } from '@/push/dingtalk/utils'
+import { authValidate, getSelf } from '@/user/server'
 
 import { Type } from '@sinclair/typebox'
 import { nanoid } from 'nanoid'
@@ -62,3 +63,8 @@ ${content}`,
     })
   }
 )
+
+export const getComments = SA.encode(async () => {
+  await authValidate(await getSelf(), { roles: ['ADMIN'] })
+  return prisma.comment.findMany()
+})

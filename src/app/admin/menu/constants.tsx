@@ -5,6 +5,7 @@ import FeedIcon from '@mui/icons-material/Feed'
 import SellIcon from '@mui/icons-material/Sell'
 import LinkIcon from '@mui/icons-material/Link'
 import MusicNoteIcon from '@mui/icons-material/MusicNote'
+import MessageIcon from '@mui/icons-material/Message'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
@@ -29,6 +30,12 @@ export const menuList: NestedMenu[] = [
     name: '标签管理',
     path: '/admin/tag',
     icon: <SellIcon />,
+  },
+  {
+    name: '留言管理',
+    roles: ['ADMIN'],
+    path: '/admin/comment',
+    icon: <MessageIcon />,
   },
   {
     name: '短链管理',
