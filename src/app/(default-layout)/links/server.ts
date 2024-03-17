@@ -3,7 +3,7 @@
 import { SA, withRevalidate } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { validateRequest } from '@/request/validator'
-import { getSelf } from '@/user/server'
+import { authValidate, getSelf } from '@/user/server'
 import { geneDingtalkUrl, sendToDingTalk } from '@/push/dingtalk/utils'
 import { resolvePath } from '@/utils/url'
 
@@ -225,3 +225,13 @@ export const saveFriendsLink = SA.encode(
       )
   }
 )
+
+export const getFriendsLinkCounts = SA.encode(async () => {
+  await authValidate(await getSelf(), { roles: ['ADMIN'] })
+  return prisma.friendsLink.groupBy({
+    by: ['status'],
+    _count: {
+      status: true,
+    },
+  })
+})
