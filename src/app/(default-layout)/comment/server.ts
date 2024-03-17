@@ -42,7 +42,7 @@ const saveCommentDto = Type.Object({
 export const saveComment = SA.encode(
   async (props: Static<typeof saveCommentDto>) => {
     const { name, email, content } = validateRequest(saveCommentDto, props)
-    sendToDingTalk({
+    void sendToDingTalk({
       msgtype: 'text',
       at: {},
       text: {

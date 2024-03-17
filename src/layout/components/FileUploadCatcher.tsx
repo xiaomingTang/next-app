@@ -22,7 +22,7 @@ function dragHandler(
     return
   }
   e.preventDefault()
-  cb([...e.dataTransfer.files])
+  void cb([...e.dataTransfer.files])
 }
 
 export function FileUploadCatcher() {

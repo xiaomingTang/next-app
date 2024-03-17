@@ -304,7 +304,7 @@ export function WallpaperRoot() {
                 if (!container) {
                   return
                 }
-                toggleFullScreen(container)
+                void toggleFullScreen(container)
               }}
               sx={weakWhenFullScreenProps}
             >

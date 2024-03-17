@@ -38,7 +38,7 @@ class stack {
 export function useInjectHistory(
   open: boolean,
   /**
-   * 如果需要在用户物理返回时关闭弹窗, 就在该方法中手动调用 modal.hide();
+   * 如果需要在用户物理返回时关闭弹窗, 就在该方法中手动调用 void modal.hide();
    * 如果拒绝关闭弹窗, 就别 hide() 并 throw Error;
    * !!! 如果不 hide(), 就必须 throw Error;
    */

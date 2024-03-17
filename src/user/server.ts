@@ -65,7 +65,7 @@ export const login = SA.encode(
       throw Boom.unauthorized('账号或密码不正确')
     }
 
-    setCookieAsUser(user)
+    await setCookieAsUser(user)
 
     return {
       ...user,

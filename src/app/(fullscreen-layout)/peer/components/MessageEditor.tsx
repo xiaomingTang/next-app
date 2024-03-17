@@ -83,7 +83,7 @@ export function MessageEditor() {
           }
           try {
             // @TODO: 最好能跟踪消息发送状态 (loading / success / error)
-            usePeer.send({
+            await usePeer.send({
               type: 'text',
               value: trimmedText,
             })
@@ -124,7 +124,7 @@ export function MessageEditor() {
               }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
-                  onSubmit()
+                  void onSubmit()
                 }
               }}
             />
@@ -185,7 +185,7 @@ export function MessageEditor() {
                           onInput={(e) => {
                             setAnchorEl(null)
                             const target = e.target as HTMLInputElement
-                            uploadFiles(Array.from(target.files ?? []))
+                            void uploadFiles(Array.from(target.files ?? []))
                           }}
                         />
                       </MenuItem>

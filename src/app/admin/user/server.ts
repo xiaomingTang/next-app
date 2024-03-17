@@ -223,7 +223,7 @@ export const requestQrcodeLogin = SA.encode(async (token: string) => {
   if (!user) {
     throw Boom.badRequest('用户不存在')
   }
-  setCookieAsUser(user)
+  await setCookieAsUser(user)
   return mosaic(user, {
     password: '',
   })

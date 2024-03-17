@@ -85,7 +85,7 @@ export function useUrlEditorSearchBar() {
   )
 
   useEffect(() => {
-    onSubmit()
+    void onSubmit()
   }, [onSubmit])
 
   const elem = (

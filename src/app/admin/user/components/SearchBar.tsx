@@ -74,7 +74,7 @@ export function useUserEditorSearchBar() {
   )
 
   useEffect(() => {
-    onSubmit()
+    void onSubmit()
   }, [onSubmit])
 
   const elem = (

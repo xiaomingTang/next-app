@@ -94,7 +94,7 @@ export function useBlogEditorSearchBar() {
   )
 
   useEffect(() => {
-    onSubmit()
+    void onSubmit()
   }, [onSubmit])
 
   const elem = (

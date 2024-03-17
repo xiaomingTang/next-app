@@ -23,7 +23,7 @@ export const LoginModal = NiceModal.create(
     const modal = useModal()
     useInjectHistory(modal.visible, () => {
       modal.reject(new SilentError('操作已取消'))
-      modal.hide()
+      void modal.hide()
     })
     const [loginType, setLoginType] = useState(defaultLoginType)
 
@@ -38,7 +38,7 @@ export const LoginModal = NiceModal.create(
             return
           }
           modal.reject(new SilentError('操作已取消'))
-          modal.hide()
+          void modal.hide()
         }}
       >
         <AppBar sx={{ paddingRight: '0' }}>
@@ -50,7 +50,7 @@ export const LoginModal = NiceModal.create(
               edge='end'
               onClick={() => {
                 modal.reject(new SilentError('操作已取消'))
-                modal.hide()
+                void modal.hide()
               }}
               aria-label='关闭登录弹窗'
             >

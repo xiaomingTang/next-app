@@ -92,7 +92,7 @@ export function PeerConnections() {
     if (target) {
       setValue('peerId', target)
       timer = window.setTimeout(() => {
-        onSubmit()
+        void onSubmit()
       }, 0)
     }
     return () => {

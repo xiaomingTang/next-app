@@ -20,7 +20,7 @@ export function loopCall(callback: Func<[], void>): Func<[], void> {
   }
 
   // 启动循环
-  loop()
+  void loop()
 
   // 返回的函数用于停止循环
   return () => {

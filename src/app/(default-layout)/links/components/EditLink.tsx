@@ -46,7 +46,7 @@ const EditUrlModal = NiceModal.create(
     const modal = useModal()
     useInjectHistory(modal.visible, () => {
       modal.reject(new SilentError('操作已取消'))
-      modal.hide()
+      void modal.hide()
     })
     const [loading, withLoading] = useLoading()
     const { handleSubmit, control } = useForm<
@@ -73,7 +73,7 @@ const EditUrlModal = NiceModal.create(
               edge='end'
               onClick={() => {
                 modal.reject(new SilentError('操作已取消'))
-                modal.hide()
+                void modal.hide()
               }}
               aria-label='close'
             >
@@ -94,7 +94,7 @@ const EditUrlModal = NiceModal.create(
                     }).catch(noop)
                   }
                   modal.resolve(savedLink)
-                  modal.hide()
+                  void modal.hide()
                 })
               )
             )}

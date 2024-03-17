@@ -64,7 +64,7 @@ function RandomName({ gender }: { gender?: Gender }) {
     <Anchor
       {...triggerMenuItemEvents((e, reason) => {
         if (reason !== 'middleClick') {
-          mutate(name)
+          void mutate(name)
         }
       })}
       bold={false}

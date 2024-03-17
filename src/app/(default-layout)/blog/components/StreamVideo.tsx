@@ -44,7 +44,7 @@ export function StreamVideo({
     setMedia(video)
     video.srcObject = mediaStream
 
-    video.play()
+    void video.play()
   }, [mediaStream, setMedia])
 
   useListen(`${[playing, windowSize.width, windowSize.height]}`, () => {

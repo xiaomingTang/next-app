@@ -160,7 +160,7 @@ export const saveFriendsLink = SA.encode(
     if (!hash) {
       const newHash = nanoid(12)
       if (status === 'PENDING') {
-        sendToDingTalk({
+        void sendToDingTalk({
           msgtype: 'markdown',
           at: {},
           markdown: {

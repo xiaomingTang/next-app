@@ -66,7 +66,7 @@ export function useMP3EditorSearchBar() {
   )
 
   useEffect(() => {
-    onSubmit()
+    void onSubmit()
   }, [onSubmit])
 
   const elem = (

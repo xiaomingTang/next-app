@@ -78,7 +78,7 @@ export function useTagEditorSearchBar() {
   )
 
   useEffect(() => {
-    onSubmit()
+    void onSubmit()
   }, [onSubmit])
 
   const elem = (

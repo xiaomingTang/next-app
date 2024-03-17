@@ -43,7 +43,7 @@ export function MusicListTrigger() {
                 selected={activeMP3?.hash === mp3.hash}
                 onClick={() => {
                   controls.switchTo(mp3)
-                  controls.play()
+                  void controls.play()
                   setAnchorEl(null)
                 }}
               >

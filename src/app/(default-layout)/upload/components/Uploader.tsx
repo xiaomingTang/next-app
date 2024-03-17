@@ -111,7 +111,7 @@ const Uploader = NiceModal.create(
     // 所有的关闭都是 resolve 已成功的文件, 没有 reject
     const onClose = () => {
       modal.resolve(fileInfos.filter((info) => info.status === 'succeed'))
-      modal.hide()
+      void modal.hide()
     }
     useInjectHistory(modal.visible, onClose)
     useEffect(() => {

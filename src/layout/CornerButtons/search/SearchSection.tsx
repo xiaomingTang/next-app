@@ -65,13 +65,13 @@ export const SearchSection = NiceModal.create(() => {
   // pathname 改变的时候关闭弹窗
   useListen(pathname, (_, prev) => {
     if (prev) {
-      modal.hide()
+      void modal.hide()
     }
   })
 
   // 守护 history stack, 避免关闭弹窗触发 history.back
   useInjectHistory(modal.visible, () => {
-    modal.hide()
+    void modal.hide()
   })
 
   const { handleSubmit, control, setError } = useForm<FormProps>({
@@ -185,7 +185,7 @@ export const SearchSection = NiceModal.create(() => {
                     onChange={(e) => {
                       setSearchText(e.target.value ?? '')
                       field.onChange(e)
-                      onSubmit()
+                      void onSubmit()
                     }}
                     sx={{ ml: 1, flex: 1 }}
                     autoFocus

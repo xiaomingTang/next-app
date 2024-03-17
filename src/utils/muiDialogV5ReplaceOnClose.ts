@@ -11,7 +11,7 @@ export function muiDialogV5ReplaceOnClose(
     ...muiDialogV5(modal),
     onClose() {
       modal.reject(new SilentError('操作已取消'))
-      modal.hide()
+      void modal.hide()
     },
   }
 }

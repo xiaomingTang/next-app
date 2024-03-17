@@ -27,7 +27,7 @@ const SimpleModal = NiceModal.create(({ title, content }: SimpleModalProps) => {
   const modal = useModal()
   useInjectHistory(modal.visible, () => {
     modal.reject(new SilentError('操作已取消'))
-    modal.hide()
+    void modal.hide()
   })
 
   return (
@@ -41,7 +41,7 @@ const SimpleModal = NiceModal.create(({ title, content }: SimpleModalProps) => {
             edge='end'
             onClick={() => {
               modal.reject(new SilentError('操作已取消'))
-              modal.hide()
+              void modal.hide()
             }}
             aria-label='close'
           >
@@ -54,7 +54,7 @@ const SimpleModal = NiceModal.create(({ title, content }: SimpleModalProps) => {
         <Button
           onClick={() => {
             modal.reject(new SilentError('操作已取消'))
-            modal.hide()
+            void modal.hide()
           }}
         >
           取消
@@ -64,7 +64,7 @@ const SimpleModal = NiceModal.create(({ title, content }: SimpleModalProps) => {
           variant='contained'
           onClick={() => {
             modal.resolve()
-            modal.hide()
+            void modal.hide()
           }}
         >
           确定

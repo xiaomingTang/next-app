@@ -185,18 +185,18 @@ export function GlobalAudioPlayer() {
         case 'Pause-when-Finished':
           break
         case 'Repeat-Single':
-          audioControls.play()
+          void audioControls.play()
           break
         case 'Repeat-Playlist':
           audioControls.next()
-          audioControls.play()
+          void audioControls.play()
           break
         case 'Play-in-Order': {
           if (!hasNext) {
             break
           }
           audioControls.next()
-          audioControls.play()
+          void audioControls.play()
           break
         }
         default:

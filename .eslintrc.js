@@ -76,5 +76,7 @@ module.exports = {
         leadingUnderscore: 'allowSingleOrDouble',
       },
     ],
+    '@typescript-eslint/no-floating-promises': 'error',
+    'no-void': ['error', { allowAsStatement: true }],
   },
 }

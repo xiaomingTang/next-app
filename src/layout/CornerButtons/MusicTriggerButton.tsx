@@ -20,7 +20,7 @@ export function MusicTriggerButton() {
           controls.switchToIndex(0)
         }
         if (!lyricsViewerVisible) {
-          controls.play()
+          void controls.play()
         }
         useLyricsViewer.toggleVisible()
       }}

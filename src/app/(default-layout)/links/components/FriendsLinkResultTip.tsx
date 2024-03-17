@@ -26,7 +26,7 @@ export const FriendsLinkResultTip = NiceModal.create(
     const modal = useModal()
     useInjectHistory(modal.visible, () => {
       modal.reject(new SilentError('操作已取消'))
-      modal.hide()
+      void modal.hide()
     })
     const texts =
       link.status === 'ACCEPTED'
@@ -64,7 +64,7 @@ export const FriendsLinkResultTip = NiceModal.create(
               edge='end'
               onClick={() => {
                 modal.resolve()
-                modal.hide()
+                void modal.hide()
               }}
               aria-label='close'
             >

@@ -29,7 +29,7 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
 
   useInjectHistory(modal.visible, () => {
     modal.reject(new SilentError('操作已取消'))
-    modal.hide()
+    void modal.hide()
   })
 
   const header = (
@@ -41,7 +41,7 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
           aria-label='关闭弹窗'
           onClick={() => {
             modal.reject(new SilentError('操作已取消'))
-            modal.hide()
+            void modal.hide()
           }}
         >
           <CloseIcon />

@@ -41,7 +41,7 @@ const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
   const modal = useModal()
   useInjectHistory(modal.visible, () => {
     modal.reject(new SilentError('操作已取消'))
-    modal.hide()
+    void modal.hide()
   })
   const [loading, withLoading] = useLoading()
   const { handleSubmit, control, setError } = useForm<
@@ -61,7 +61,7 @@ const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
             edge='end'
             onClick={() => {
               modal.reject(new SilentError('操作已取消'))
-              modal.hide()
+              void modal.hide()
             }}
             aria-label='close'
           >
@@ -78,7 +78,7 @@ const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
                 .then(SA.decode)
                 .then((t) => {
                   modal.resolve(t)
-                  modal.hide()
+                  void modal.hide()
                 })
                 .catch((err) => {
                   setError('name', {

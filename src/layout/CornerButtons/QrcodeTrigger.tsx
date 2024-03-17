@@ -12,7 +12,7 @@ import {
   MenuItem,
 } from '@mui/material'
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import useSWR from 'swr'
 
 const paths = {
   scanner: '/qrcode/scan',
@@ -22,14 +22,12 @@ const paths = {
 export function QrcodeTrigger() {
   const router = useRouter()
   const curPathname = usePathname()
-  const [scannerEnabled, setScannerEnabled] = useState(false)
 
-  useEffect(() => {
-    navigator.mediaDevices?.enumerateDevices().then((res) => {
-      const videoInputs = res.filter((item) => item.kind === 'videoinput')
-      setScannerEnabled(videoInputs.length > 0)
-    })
-  }, [])
+  const { data: scannerEnabled } = useSWR('enumerateDevices', async () => {
+    const devices = await navigator.mediaDevices?.enumerateDevices()
+    const videoInputs = devices.filter((item) => item.kind === 'videoinput')
+    return videoInputs.length > 0
+  })
 
   return (
     <AnchorProvider>

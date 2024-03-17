@@ -56,7 +56,7 @@ export function QrcodeLogin({ loginType, setLoginType }: QrcodeLoginProps) {
         .then(SA.decode)
         .then((user) => {
           modal.resolve(user)
-          modal.hide()
+          void modal.hide()
         })
         .catch(noop),
     {
@@ -75,7 +75,7 @@ export function QrcodeLogin({ loginType, setLoginType }: QrcodeLoginProps) {
     () => () => {
       // 如果离开 qrcode
       if (loginType === 'qrcode' && prevTokenRef.current) {
-        disableQrcodeToken(prevTokenRef.current)
+        void disableQrcodeToken(prevTokenRef.current)
       }
     },
     [loginType]

@@ -97,7 +97,7 @@ function RawMP3Controls(_props: {}, ref: React.ForwardedRef<HTMLDivElement>) {
         <IconButton
           onClick={() => {
             controls.prev()
-            controls.play()
+            void controls.play()
           }}
         >
           <SkipPreviousIcon />
@@ -108,7 +108,7 @@ function RawMP3Controls(_props: {}, ref: React.ForwardedRef<HTMLDivElement>) {
         <IconButton
           onClick={() => {
             controls.next()
-            controls.play()
+            void controls.play()
           }}
         >
           <SkipNextIcon />

@@ -55,7 +55,7 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
   const modal = useModal()
   useInjectHistory(modal.visible, () => {
     modal.reject(new SilentError('操作已取消'))
-    modal.hide()
+    void modal.hide()
   })
   const texts = [
     `网站: ${ENV_CONFIG.public.origin}`,
@@ -77,7 +77,7 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
             edge='end'
             onClick={() => {
               modal.resolve()
-              modal.hide()
+              void modal.hide()
             }}
             aria-label='close'
           >
@@ -122,7 +122,7 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
             edge='end'
             onClick={() => {
               modal.reject(new SilentError('操作已取消'))
-              modal.hide()
+              void modal.hide()
             }}
             aria-label='close'
           >
@@ -148,7 +148,7 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
                     }).catch(noop)
                   }
                   modal.resolve(u)
-                  modal.hide()
+                  void modal.hide()
                 })
                 .catch((err) => {
                   setError('email', {

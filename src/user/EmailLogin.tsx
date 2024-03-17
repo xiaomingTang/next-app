@@ -43,7 +43,7 @@ export function EmailLogin({ loginType, setLoginType }: EmailLoginProps) {
         .then(SA.decode)
         .then((user) => {
           modal.resolve(user)
-          modal.hide()
+          void modal.hide()
         })
         .catch((err) => {
           setError('password', {

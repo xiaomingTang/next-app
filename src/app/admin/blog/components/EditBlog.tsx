@@ -90,7 +90,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
   const modal = useModal()
   useInjectHistory(modal.visible, () => {
     modal.reject(new SilentError('操作已取消'))
-    modal.hide()
+    void modal.hide()
   })
   const {
     data: allTags = [],
@@ -113,7 +113,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
       const res = await saveBlog(e).then(SA.decode)
       router.refresh()
       modal.resolve(res)
-      modal.hide()
+      void modal.hide()
     })
   )
 
@@ -121,7 +121,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
     (e) => e.ctrlKey && e.key.toLowerCase() === 's',
     (e) => {
       e.preventDefault()
-      onSubmit()
+      void onSubmit()
     }
   )
 
@@ -133,7 +133,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
           aria-label='取消编辑'
           onClick={() => {
             modal.reject(new SilentError('操作已取消'))
-            modal.hide()
+            void modal.hide()
           }}
         >
           <CloseIcon />
@@ -371,7 +371,7 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
           return
         }
         modal.reject(new SilentError('操作已取消'))
-        modal.hide()
+        void modal.hide()
       }}
     >
       {header}
