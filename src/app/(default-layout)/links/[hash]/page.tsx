@@ -53,7 +53,7 @@ export default async function Home({ params: { hash } }: Props) {
     <>
       <FriendsLinkDesc />
       <Divider sx={{ my: 2 }} />
-      <FriendsLinkSection>
+      <FriendsLinkSection activeHash={hash}>
         <Suspense fallback={<FriendsLinkListLoading count={8} />}>
           <ServerComponent
             api={unstable_cache(

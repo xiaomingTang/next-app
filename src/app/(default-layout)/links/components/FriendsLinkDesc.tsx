@@ -1,6 +1,7 @@
 'use client'
 
 import { editFriendsLink } from './EditLink'
+import { FriendsLinkManagerTrigger } from './FriendsLinkManagerTrigger'
 
 import { ENV_CONFIG } from '@/config'
 import { cat } from '@/errors/catchAndToast'
@@ -9,6 +10,8 @@ import { resolvePath } from '@/utils/url'
 
 import { Box, Button, Collapse, Typography, styled } from '@mui/material'
 import toast from 'react-hot-toast'
+
+import type { FriendsLinkStatus } from '@prisma/client'
 
 const ThemedLabel = styled('span')({
   display: 'inline-block',
@@ -102,13 +105,15 @@ export function FriendsLinkDesc() {
 
 export function FriendsLinkSection({
   children,
+  activeHash,
 }: {
   children: React.ReactNode | React.ReactNode[]
+  activeHash: FriendsLinkStatus | (string & {})
 }) {
   return (
     <Box>
       <Typography component='h3' sx={{ fontWeight: 'bold', fontSize: '1.2em' }}>
-        我的友链
+        我的友链 <FriendsLinkManagerTrigger activeHash={activeHash} />
       </Typography>
       <Box
         sx={{

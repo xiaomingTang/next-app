@@ -25,7 +25,7 @@ export default async function Home() {
     <>
       <FriendsLinkDesc />
       <Divider sx={{ my: 2 }} />
-      <FriendsLinkSection>
+      <FriendsLinkSection activeHash='ACCEPTED'>
         <Suspense fallback={<FriendsLinkListLoading count={8} />}>
           <ServerComponent
             api={unstable_cache(
