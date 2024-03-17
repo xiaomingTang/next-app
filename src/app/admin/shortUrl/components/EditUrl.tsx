@@ -7,8 +7,9 @@ import { SA } from '@/errors/utils'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { numberFormat } from '@/utils/numberFormat'
 import { SilentError } from '@/errors/SilentError'
+import { muiDialogV5ReplaceOnClose } from '@/utils/muiDialogV5ReplaceOnClose'
 
-import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
+import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   AppBar,
@@ -99,15 +100,7 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
   })
 
   return (
-    <Dialog
-      {...muiDialogV5(modal)}
-      fullWidth
-      maxWidth='xs'
-      onClose={() => {
-        modal.reject(new SilentError('操作已取消'))
-        modal.hide()
-      }}
-    >
+    <Dialog {...muiDialogV5ReplaceOnClose(modal)} fullWidth maxWidth='xs'>
       <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>

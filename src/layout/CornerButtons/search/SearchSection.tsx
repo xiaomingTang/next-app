@@ -12,6 +12,7 @@ import { obj } from '@/utils/tiny'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { useListen } from '@/hooks/useListen'
 import { useRawPlatform } from '@/utils/device'
+import { muiDialogV5ReplaceOnClose } from '@/utils/muiDialogV5ReplaceOnClose'
 
 import {
   Box,
@@ -25,7 +26,7 @@ import {
   InputBase,
   Paper,
 } from '@mui/material'
-import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
+import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import SearchIcon from '@mui/icons-material/Search'
 import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useMemo, useState } from 'react'
@@ -159,13 +160,10 @@ export const SearchSection = NiceModal.create(() => {
 
   return (
     <Dialog
-      {...muiDialogV5(modal)}
+      {...muiDialogV5ReplaceOnClose(modal)}
       TransitionComponent={DefaultDialogTransition}
       fullWidth
       maxWidth='sm'
-      onClose={() => {
-        modal.hide()
-      }}
     >
       {/* zIndex 是 Blog */}
       <DialogTitle sx={{ p: 0, position: 'relative', zIndex: 1 }}>

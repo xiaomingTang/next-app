@@ -2,8 +2,9 @@ import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { resolvePath } from '@/utils/url'
 import { ENV_CONFIG } from '@/config'
 import { SilentError } from '@/errors/SilentError'
+import { muiDialogV5ReplaceOnClose } from '@/utils/muiDialogV5ReplaceOnClose'
 
-import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
+import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import {
   AppBar,
   Box,
@@ -53,7 +54,7 @@ export const FriendsLinkResultTip = NiceModal.create(
             `\u00A0\u00A0\u00A0- `,
           ]
     return (
-      <Dialog {...muiDialogV5(modal)} fullWidth maxWidth='xs'>
+      <Dialog {...muiDialogV5ReplaceOnClose(modal)} fullWidth maxWidth='xs'>
         <AppBar sx={{ paddingRight: '0' }}>
           <Toolbar>
             <Typography sx={{ flex: 1 }} variant='h6' component='div'>
@@ -84,8 +85,8 @@ export const FriendsLinkResultTip = NiceModal.create(
             onCopy={() => toast.success('复制成功')}
           >
             <Box sx={{ cursor: 'copy' }}>
-              {texts.map((t) => (
-                <Typography key={t}>{t}</Typography>
+              {texts.map((t, i) => (
+                <Typography key={`${i}${t}`}>{t}</Typography>
               ))}
             </Box>
           </CopyToClipboard>

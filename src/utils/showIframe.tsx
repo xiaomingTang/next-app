@@ -1,10 +1,12 @@
 'use client'
 
+import { muiDialogV5ReplaceOnClose } from './muiDialogV5ReplaceOnClose'
+
 import { DefaultDialogTransition } from '@/components/Transitions'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SilentError } from '@/errors/SilentError'
 
-import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
+import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import {
   AppBar,
   Box,
@@ -54,11 +56,7 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
       fullScreen={fullScreen}
       maxWidth='md'
       TransitionComponent={DefaultDialogTransition}
-      {...muiDialogV5(modal)}
-      onClose={() => {
-        modal.reject(new SilentError('操作已取消'))
-        modal.hide()
-      }}
+      {...muiDialogV5ReplaceOnClose(modal)}
     >
       {header}
       <iframe src={url.href} className='border-none m-0 p-0 h-[100vh]' />

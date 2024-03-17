@@ -8,8 +8,9 @@ import { RoleNameMap } from '@/constants'
 import { ENV_CONFIG } from '@/config'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SilentError } from '@/errors/SilentError'
+import { muiDialogV5ReplaceOnClose } from '@/utils/muiDialogV5ReplaceOnClose'
 
-import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
+import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   Alert,
@@ -32,6 +33,7 @@ import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { toast } from 'react-hot-toast'
+import { noop } from 'lodash-es'
 
 import type { PickAndPartial } from '@/utils/type'
 import type { User } from '@prisma/client'
@@ -65,7 +67,7 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
     `密码: ${user.password}`,
   ]
   return (
-    <Dialog {...muiDialogV5(modal)} fullWidth maxWidth='xs'>
+    <Dialog {...muiDialogV5ReplaceOnClose(modal)} fullWidth maxWidth='xs'>
       <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
@@ -110,15 +112,7 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
   })
 
   return (
-    <Dialog
-      {...muiDialogV5(modal)}
-      fullWidth
-      maxWidth='xs'
-      onClose={() => {
-        modal.reject(new SilentError('操作已取消'))
-        modal.hide()
-      }}
-    >
+    <Dialog {...muiDialogV5ReplaceOnClose(modal)} fullWidth maxWidth='xs'>
       <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
@@ -143,15 +137,15 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
             withLoading(async (e) => {
               await saveUser(e)
                 .then(SA.decode)
-                .then((u) => {
+                .then(async (u) => {
                   if (!user.id) {
                     // 创建用户时, 提示用户名及密码
-                    NiceModal.show(UserTip, {
+                    await NiceModal.show(UserTip, {
                       user: {
                         ...u,
                         ...e,
                       },
-                    })
+                    }).catch(noop)
                   }
                   modal.resolve(u)
                   modal.hide()

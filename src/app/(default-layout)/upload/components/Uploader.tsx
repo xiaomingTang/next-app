@@ -108,11 +108,12 @@ const Uploader = NiceModal.create(
           file: info.file,
         }),
       }))
-
-    useInjectHistory(modal.visible, () => {
+    // 所有的关闭都是 resolve 已成功的文件, 没有 reject
+    const onClose = () => {
       modal.resolve(fileInfos.filter((info) => info.status === 'succeed'))
       modal.hide()
-    })
+    }
+    useInjectHistory(modal.visible, onClose)
     useEffect(() => {
       updateFileInfos(defaultFiles.map(initFileToInfo), false)
     }, [defaultFiles, updateFileInfos])
@@ -316,16 +317,7 @@ const Uploader = NiceModal.create(
               {settingTriggerElem}
               {copyTriggerElem}
             </Box>
-            <IconButton
-              edge='end'
-              aria-label='完成'
-              onClick={() => {
-                modal.resolve(
-                  fileInfos.filter((info) => info.status === 'succeed')
-                )
-                modal.hide()
-              }}
-            >
+            <IconButton edge='end' aria-label='完成' onClick={onClose}>
               <CheckCircleIcon />
             </IconButton>
           </Toolbar>
@@ -389,10 +381,7 @@ const Uploader = NiceModal.create(
         fullScreen={fullScreen}
         TransitionComponent={SlideUpTransition}
         {...muiDialogV5(modal)}
-        onClose={() => {
-          modal.resolve(fileInfos.filter((info) => info.status === 'succeed'))
-          modal.hide()
-        }}
+        onClose={onClose}
       >
         {header}
         <DialogContent sx={{ height: '100vh' }}>

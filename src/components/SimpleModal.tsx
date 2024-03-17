@@ -3,8 +3,9 @@
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SilentError } from '@/errors/SilentError'
 import { uniqueFunc } from '@/utils/function'
+import { muiDialogV5ReplaceOnClose } from '@/utils/muiDialogV5ReplaceOnClose'
 
-import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
+import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import {
   AppBar,
   Button,
@@ -30,15 +31,7 @@ const SimpleModal = NiceModal.create(({ title, content }: SimpleModalProps) => {
   })
 
   return (
-    <Dialog
-      {...muiDialogV5(modal)}
-      fullWidth
-      maxWidth='xs'
-      onClose={() => {
-        modal.reject(new SilentError('操作已取消'))
-        modal.hide()
-      }}
-    >
+    <Dialog {...muiDialogV5ReplaceOnClose(modal)} fullWidth maxWidth='xs'>
       <AppBar sx={{ paddingRight: '0' }}>
         <Toolbar>
           <Typography sx={{ flex: 1 }} variant='h6' component='div'>
