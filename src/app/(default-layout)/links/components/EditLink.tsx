@@ -6,11 +6,12 @@ import { FriendsLinkResultTip } from './FriendsLinkResultTip'
 import { saveFriendsLink } from '../server'
 
 import { useLoading } from '@/hooks/useLoading'
-import { SA, toPlainError } from '@/errors/utils'
+import { SA } from '@/errors/utils'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { useUser } from '@/user'
 import { SilentError } from '@/errors/SilentError'
 import { muiDialogV5ReplaceOnClose } from '@/utils/muiDialogV5ReplaceOnClose'
+import { cat } from '@/errors/catchAndToast'
 
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
@@ -31,7 +32,6 @@ import {
 } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
-import toast from 'react-hot-toast'
 import { noop } from 'lodash-es'
 
 import type { SimpleFriendsLink } from '../server'
@@ -85,22 +85,18 @@ const EditUrlModal = NiceModal.create(
           <form
             className='flex flex-col gap-2 pt-2'
             onSubmit={handleSubmit(
-              withLoading(async (rest) => {
-                await saveFriendsLink(rest)
-                  .then(SA.decode)
-                  .then(async (u) => {
-                    if (u.status !== 'PENDING' && u.email) {
-                      await NiceModal.show(FriendsLinkResultTip, {
-                        link: u,
-                      }).catch(noop)
-                    }
-                    modal.resolve(u)
-                    modal.hide()
-                  })
-                  .catch((err) => {
-                    toast.error(toPlainError(err).message)
-                  })
-              })
+              withLoading(
+                cat(async (rest) => {
+                  const savedLink = await saveFriendsLink(rest).then(SA.decode)
+                  if (savedLink.status !== 'PENDING' && savedLink.email) {
+                    await NiceModal.show(FriendsLinkResultTip, {
+                      link: savedLink,
+                    }).catch(noop)
+                  }
+                  modal.resolve(savedLink)
+                  modal.hide()
+                })
+              )
             )}
           >
             <Controller
