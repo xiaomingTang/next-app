@@ -16,6 +16,7 @@ import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { getImageSize } from '@/utils/getImageSize'
 import { useUser } from '@/user'
 
+import { extension } from 'mime-types'
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import SettingsIcon from '@mui/icons-material/Settings'
 import CopyAllIcon from '@mui/icons-material/CopyAll'
@@ -45,6 +46,7 @@ import { omit } from 'lodash-es'
 import { toast } from 'react-hot-toast'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
+import { nanoid } from 'nanoid'
 
 import type { FileInfo } from './FileInfoDisplay'
 
@@ -58,6 +60,33 @@ function initFileToInfo(f: File): FileInfo {
     file: f,
     status: 'before-upload',
   }
+}
+
+async function getAllImagesFromClipboard() {
+  if (!navigator.clipboard) {
+    throw new Error('没找到剪贴板')
+  }
+  const allImages: File[] = []
+  const itemList = await navigator.clipboard.read().catch(() => {
+    throw new Error('访问剪贴板失败')
+  })
+  for (let i = 0; i < itemList.length; i += 1) {
+    const item = itemList[i]
+    for (let t = 0; t < item.types.length; t += 1) {
+      const type = item.types[t]
+      if (type.startsWith('image/')) {
+        const ext = extension(type)
+        const name = `${nanoid(12)}.${ext}`
+        // eslint-disable-next-line no-await-in-loop
+        const blob = await item.getType(type)
+        const f = new File([blob], name, {
+          type,
+        })
+        allImages.push(f)
+      }
+    }
+  }
+  return allImages
 }
 
 // TODO: 做成弹窗形式 & 简易上传弹窗 & 全屏/轻量/单个文件上传 等
@@ -345,6 +374,19 @@ const Uploader = NiceModal.create(
 
     const actionsElem = (
       <>
+        <Button
+          variant='outlined'
+          tabIndex={-1}
+          onClick={cat(async () => {
+            const allImages = await getAllImagesFromClipboard()
+            if (allImages.length === 0) {
+              throw new Error('剪贴板内没有图片')
+            }
+            updateFileInfos(allImages.map(initFileToInfo))
+          })}
+        >
+          图片粘贴
+        </Button>
         <Button variant='outlined' tabIndex={-1}>
           添加文件
           <input
