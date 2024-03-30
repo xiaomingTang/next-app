@@ -22,8 +22,8 @@
     "commit": "git-cz",
     "pretest": "pnpm run beforeRun",
     "test": "next lint && tsc --noEmit",
-    "lint:commit": "commitlint -e",
-    "lint-staged": "lint-staged --quiet",
+    "lint:commit-message": "commitlint -e",
+    "lint:commit-content": "lint-staged --quiet",
     "svg": "tsx bin/generate-svg-interface.ts",
     "db:push": "dotenv -e .env -c -- prisma db push",
     "db:seed": "dotenv -e .env -c -- prisma db seed"

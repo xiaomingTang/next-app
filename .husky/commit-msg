@@ -1,1 +1,1 @@
-pnpm run lint:commit
+pnpm run lint:commit-message
