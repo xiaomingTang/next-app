@@ -5,6 +5,7 @@ import { dark } from '@/utils/theme'
 import { resolvePath } from '@/utils/url'
 import Anchor from '@/components/Anchor'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { useSimulateClick } from '@/hooks/useSimulateClick'
 
 import CloseIcon from '@mui/icons-material/Close'
 import {
@@ -39,48 +40,55 @@ export function HoverableClock({
   const text = `<iframe src="${clockHref}" style="border: 0; width: 300px; height: 300px;" />`
   const [hover, setElem] = useHover()
   const [dialogOpen, setDialogOpen] = useState(false)
+  const setClickElem = useSimulateClick({
+    onClick: () => {
+      setDialogOpen(true)
+    },
+  })
 
   useInjectHistory(dialogOpen, () => {
     setDialogOpen(false)
   })
 
   return (
-    <Box
-      ref={setElem}
-      sx={{
-        position: 'relative',
-        ...sx,
-      }}
-      {...props}
-    >
-      {children}
-      <Backdrop
-        open={hover}
+    <>
+      <Box
+        ref={(ref?: HTMLDivElement | null) => {
+          setElem(ref)
+          setClickElem(ref)
+        }}
         sx={{
-          position: 'absolute',
+          position: 'relative',
           cursor: 'pointer',
-          borderRadius: 1,
-          userSelect: 'none',
+          ...sx,
         }}
-        onClick={() => {
-          setDialogOpen(true)
-        }}
+        {...props}
       >
-        <Box
+        {children}
+        <Backdrop
+          open={hover}
           sx={{
             position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
+            borderRadius: 1,
+            userSelect: 'none',
           }}
         >
-          <Button variant='contained'>获取同款时钟</Button>
-        </Box>
-      </Backdrop>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <Button variant='contained'>获取同款时钟</Button>
+          </Box>
+        </Backdrop>
+      </Box>
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <AppBar sx={{ paddingRight: '0' }}>
           <Toolbar>
@@ -140,6 +148,6 @@ export function HoverableClock({
           </CopyToClipboard>
         </DialogContent>
       </Dialog>
-    </Box>
+    </>
   )
 }
