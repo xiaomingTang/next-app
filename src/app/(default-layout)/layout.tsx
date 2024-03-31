@@ -1,11 +1,13 @@
 import { HoverableClock } from './clock/HoverableClock'
 
+import { Hands } from '../(iframe-layout)/clock/components/Hands'
+import { DEFAULT_CLOCK_CONFIG } from '../(iframe-layout)/clock/theme/[theme]/constants'
+
 import { GA } from '@/analytics/GA'
 import { DefaultAside } from '@/layout/DefaultAside'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import DefaultLayout from '@/layout/DefaultLayout'
 import { Clock } from '@I/clock/components/Clock'
-import { Dial, Hands } from '@I/clock/theme/13/exports'
 
 export default function DefaultLayoutTsx({
   children,
@@ -19,8 +21,8 @@ export default function DefaultLayoutTsx({
         <DefaultAside placement='left'>
           <HoverableClock clockIframePath='/clock/theme/13'>
             <Clock>
-              <Dial width='100%' height='100%' />
-              <Hands />
+              <DEFAULT_CLOCK_CONFIG.Dial width='100%' height='100%' />
+              <Hands config={DEFAULT_CLOCK_CONFIG} />
             </Clock>
           </HoverableClock>
         </DefaultAside>

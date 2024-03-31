@@ -1,4 +1,6 @@
 import { HoverableClock } from './(default-layout)/clock/HoverableClock'
+import { Hands } from './(iframe-layout)/clock/components/Hands'
+import { DEFAULT_CLOCK_CONFIG } from './(iframe-layout)/clock/theme/[theme]/constants'
 
 import { Clock } from '@I/clock/components/Clock'
 import { BlogList, BlogListLoading } from '@D/blog/components/BlogList'
@@ -14,7 +16,6 @@ import { GA } from '@/analytics/GA'
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { DefaultAside } from '@/layout/DefaultAside'
-import { Dial, Hands } from '@I/clock/theme/13/exports'
 
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
@@ -31,8 +32,8 @@ export default async function Home() {
         <DefaultAside placement='left'>
           <HoverableClock clockIframePath='/clock/theme/13'>
             <Clock>
-              <Dial width='100%' height='100%' />
-              <Hands />
+              <DEFAULT_CLOCK_CONFIG.Dial width='100%' height='100%' />
+              <Hands config={DEFAULT_CLOCK_CONFIG} />
             </Clock>
           </HoverableClock>
         </DefaultAside>

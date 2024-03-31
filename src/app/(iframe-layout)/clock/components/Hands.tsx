@@ -1,17 +1,20 @@
 'use client'
 
-import { Hand } from '../../components/Hand'
-import { HandsWrapper } from '../../components/HandsWrapper'
+import { Hand } from './Hand'
+import { HandsWrapper } from './HandsWrapper'
 
 import { useNowDate } from '@/hooks/useNow'
-import { SvgDial04 } from '@/svg'
 
-import { NoSsr } from '@mui/material'
 import { blue, green, pink } from '@mui/material/colors'
+import { NoSsr } from '@mui/material'
 
-export const Dial = SvgDial04
+import type { ClockConfig } from '../theme/[theme]/constants'
 
-function RawHands() {
+interface HandsProps {
+  config: Pick<ClockConfig, 'center' | 'h' | 'm' | 's'>
+}
+
+function RawHands({ config }: HandsProps) {
   const now = useNowDate()
   const h = now.getHours()
   const m = now.getMinutes()
@@ -20,25 +23,22 @@ function RawHands() {
     <HandsWrapper>
       {/* h */}
       <Hand
-        center={[100, 100]}
-        width={20}
-        height={6}
+        {...config.h}
+        center={config.center}
         color={blue[500]}
         degree={((h % 12) + m / 60) * 30 - 90}
       />
       {/* m */}
       <Hand
-        center={[100, 100]}
-        width={25}
-        height={4}
+        {...config.m}
+        center={config.center}
         color={green[500]}
         degree={(m + s / 60) * 6 - 90}
       />
       {/* s */}
       <Hand
-        center={[100, 100]}
-        width={30}
-        height={2}
+        {...config.s}
+        center={config.center}
         color={pink[500]}
         degree={s * 6 - 90}
       />
@@ -46,10 +46,10 @@ function RawHands() {
   )
 }
 
-export function Hands() {
+export function Hands({ config }: HandsProps) {
   return (
     <NoSsr>
-      <RawHands />
+      <RawHands config={config} />
     </NoSsr>
   )
 }

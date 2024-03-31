@@ -1,8 +1,9 @@
 import { HoverableClock } from './HoverableClock'
 
 import { seo } from '@/utils/seo'
-import { clocks } from '@I/clock/constants'
 import { Clock } from '@I/clock/components/Clock'
+import { CLOCK_CONFIGS } from '@/app/(iframe-layout)/clock/theme/[theme]/constants'
+import { Hands } from '@/app/(iframe-layout)/clock/components/Hands'
 
 import Grid from '@mui/material/Grid'
 
@@ -15,9 +16,9 @@ export const metadata = seo.defaults({
 export default function Index() {
   return (
     <Grid container sx={{ width: '100%' }} spacing={2}>
-      {clocks.map(({ dial, hands, title }, i) => (
+      {CLOCK_CONFIGS.map((config) => (
         <Grid
-          key={title}
+          key={config.id}
           item
           xs={6}
           sm={4}
@@ -27,9 +28,7 @@ export default function Index() {
           }}
         >
           <HoverableClock
-            clockIframePath={`/clock/theme/${(i + 1)
-              .toString()
-              .padStart(2, '0')}`}
+            clockIframePath={`/clock/theme/${config.id}`}
             sx={{
               position: 'relative',
               pb: '100%',
@@ -40,8 +39,8 @@ export default function Index() {
                 position: 'absolute',
               }}
             >
-              {dial}
-              {hands}
+              <config.Dial width='100%' height='100%' />
+              <Hands config={config} />
             </Clock>
           </HoverableClock>
         </Grid>
