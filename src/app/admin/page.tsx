@@ -3,9 +3,13 @@
 import Anchor from '@/components/Anchor'
 
 import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function Home() {
-  useRouter().replace('/admin/blog')
+  const router = useRouter()
+  useEffect(() => {
+    router.replace('/admin/blog')
+  }, [router])
 
   return (
     <>
