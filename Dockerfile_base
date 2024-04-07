@@ -1,0 +1,19 @@
+# docker build -f Dockerfile_base -t ubuntu_with_node_20 --progress plain .
+
+FROM ubuntu:22.04 AS base
+WORKDIR /app
+
+RUN echo deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy main restricted universe multiverse > /etc/apt/sources.list
+RUN echo deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy main restricted universe multiverse >> /etc/apt/sources.list
+RUN echo deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy-updates main restricted universe multiverse >> /etc/apt/sources.list
+RUN echo deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy-updates main restricted universe multiverse >> /etc/apt/sources.list
+RUN echo deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy-backports main restricted universe multiverse >> /etc/apt/sources.list
+RUN echo deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy-backports main restricted universe multiverse >> /etc/apt/sources.list
+RUN echo deb http://ports.ubuntu.com/ubuntu-ports/ jammy-security main restricted universe multiverse >> /etc/apt/sources.list
+RUN echo deb-src http://ports.ubuntu.com/ubuntu-ports/ jammy-security main restricted universe multiverse >> /etc/apt/sources.list
+
+RUN apt-get update && apt-get install -y curl sudo
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
+RUN sudo apt-get install -y nodejs
+
+CMD [ "node" ]

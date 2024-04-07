@@ -7,26 +7,21 @@
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "postinstall": "npx prisma generate",
-    "prepare": "husky",
-    "beforeRun": "tsx bin/pre-run.ts",
-    "predev": "pnpm run beforeRun",
+    "prepare": "husky || true",
     "dev": "concurrently -n next.js,peerjs-server \"next dev\" \"peerjs --port 4000 --key peerjs --path /peer-server\"",
     "dev:ssl": "concurrently -n next.js,peerjs-server,ssl-client,ssl-server \"next dev\" \"peerjs --port 4000 --key peerjs --path /peer-server\" \"local-ssl-proxy --source 3001 --target 3000\" \"local-ssl-proxy --source 4001 --target 4000\"",
-    "prebuild": "rimraf .next out && pnpm run beforeRun",
     "build": "next build",
-    "preserver": "pnpm run beforeRun",
     "server": "concurrently -n next.js,peerjs-server \"node server.js\" \"peerjs --port 4000 --key peerjs --path /peer-server\"",
-    "predeploy": "bash -c 'chmod ug+x ./deploy.sh'",
-    "deploy": "./deploy.sh",
-    "export": "tsx bin/prepare-output.ts",
     "commit": "git-cz",
-    "pretest": "pnpm run beforeRun",
     "test": "next lint && tsc --noEmit",
     "lint:commit-message": "commitlint -e",
     "lint:commit-content": "lint-staged --quiet",
     "svg": "tsx bin/generate-svg-interface.ts",
     "db:push": "dotenv -e .env -c -- prisma db push",
-    "db:seed": "dotenv -e .env -c -- prisma db seed"
+    "db:seed": "dotenv -e .env -c -- prisma db seed",
+    "docker:rm-none-image": "docker rmi $(docker images --filter \"dangling=true\" -q --no-trunc) 2>/dev/null",
+    "docker:build": "docker build -t next-app --build-arg ZIP_PATH=/app/app.zip --build-arg NEXT_PUBLIC_LAST_COMMIT_MESSAGE=\"$(git log -1 --pretty=format:'%B' HEAD | tr '\n' ' ')\" --progress plain .",
+    "docker:deploy": "dotenv -e .env.deploy.local -v DOCKER_IMAGE_NAME=next-app -v ZIP_PATH=/app/app.zip -c -- /bin/bash deploy.sh"
   },
   "lint-staged": {
     "*.{md,json}": [
@@ -50,7 +45,7 @@
     }
   },
   "prisma": {
-    "seed": "tsx bin/seed.ts"
+    "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.540.0",
