@@ -15,11 +15,11 @@ for (let i = 0; i < 360; i += 3) {
 const IMG_LIST = [
   {
     title: '前排-座椅',
-    src: 'https://next-app-storage-04a4aa9a124907-staging.s3.ap-northeast-2.amazonaws.com/public/2023-12-04/d7DNSYgo2sg2.png?r=1000x500',
+    src: 'https://cdn.16px.cc/public/2023-12-04/d7DNSYgo2sg2.png?r=1000x500',
   },
   {
     title: '后排-座椅',
-    src: 'https://next-app-storage-04a4aa9a124907-staging.s3.ap-northeast-2.amazonaws.com/public/2023-12-04/4UVU33kWo09u.png?r=1000x500',
+    src: 'https://cdn.16px.cc/public/2023-12-04/4UVU33kWo09u.png?r=1000x500',
   },
 ]
 

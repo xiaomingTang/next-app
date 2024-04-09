@@ -8,8 +8,8 @@
    - `$P1_SSH_USER`
    - `$P1_SSH_HOST`: 如 `175.178.99.99`
    - `$P1_REMOTE_PORT`: 如 `3000`
-   - `$P1_REMOTE_DIR_WITHOUT_TAIL_SLASH`: 如 `/home/user/next-app`
-   - `$P1_APP_NAME`: 如 `next-app`
+   - `$P1_REMOTE_DIR_WITHOUT_TAIL_SLASH`: 如 `/var/www/16px_cc`
+   - `$P1_APP_NAME`: 如 `16px_cc`
 
 1. 创建 `.env.local` 文件, 并根据 `.env` 文件, 补充里面需要的值
 2. `pnpm i`

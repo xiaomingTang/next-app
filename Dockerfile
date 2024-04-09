@@ -1,6 +1,6 @@
-# docker build -t next-app .
-# docker build -t next-app --progress plain .
-# docker run -itdp 3000:3000 next-app
+# docker build -t 16px_cc .
+# docker build -t 16px_cc --progress plain .
+# docker run -itdp 3000:3000 16px_cc
 
 FROM ubuntu_with_node_20 AS base
 ENV PNPM_HOME="/pnpm"
