@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package",
   "name": "next-app",
   "version": "0.1.0",
-  "packageManager": "pnpm@8.14.0",
+  "packageManager": "pnpm@9.0.4",
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
@@ -20,8 +20,8 @@
     "db:push": "dotenv -e .env -c -- prisma db push",
     "db:seed": "dotenv -e .env -c -- prisma db seed",
     "docker:rm-none-image": "docker rmi $(docker images --filter \"dangling=true\" -q --no-trunc) 2>/dev/null",
-    "docker:build": "docker build -t 16px_cc --build-arg ZIP_PATH=/app/app.zip --build-arg NEXT_PUBLIC_LAST_COMMIT_MESSAGE=\"$(git log -1 --pretty=format:'%B' HEAD | tr '\n' ' ')\" --progress plain .",
-    "docker:deploy": "dotenv -e .env.deploy.local -v DOCKER_IMAGE_NAME=16px_cc -v ZIP_PATH=/app/app.zip -c -- /bin/bash deploy.sh"
+    "docker:build": "docker build -t 16px_cc --build-arg ZIP_PATH=/app/app.zip --build-arg PORT=$PORT --build-arg NEXT_PUBLIC_LAST_COMMIT_MESSAGE=\"$(git log -1 --pretty=format:'%B' HEAD | tr '\n' ' ')\" --progress plain --platform=linux/amd64 .",
+    "docker:deploy": "dotenv -e .env.deploy.local -c -v DOCKER_IMAGE_NAME=16px_cc -v ZIP_PATH=/app/app.zip -- /bin/bash deploy.sh"
   },
   "lint-staged": {
     "*.{md,json}": [

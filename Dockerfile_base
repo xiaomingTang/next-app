@@ -1,19 +1,29 @@
+# 使用 uname -u 查看系统架构 (需要保证 docker 架构和云服务器架构一致)
 # docker build -f Dockerfile_base -t ubuntu_with_node_20 --progress plain .
 
-FROM ubuntu:22.04 AS base
+FROM --platform=linux/amd64 ubuntu:22.04 AS base
 WORKDIR /app
 
-RUN echo deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy main restricted universe multiverse > /etc/apt/sources.list
-RUN echo deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy main restricted universe multiverse >> /etc/apt/sources.list
-RUN echo deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy-updates main restricted universe multiverse >> /etc/apt/sources.list
-RUN echo deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy-updates main restricted universe multiverse >> /etc/apt/sources.list
-RUN echo deb http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy-backports main restricted universe multiverse >> /etc/apt/sources.list
-RUN echo deb-src http://mirrors.tuna.tsinghua.edu.cn/ubuntu-ports/ jammy-backports main restricted universe multiverse >> /etc/apt/sources.list
-RUN echo deb http://ports.ubuntu.com/ubuntu-ports/ jammy-security main restricted universe multiverse >> /etc/apt/sources.list
-RUN echo deb-src http://ports.ubuntu.com/ubuntu-ports/ jammy-security main restricted universe multiverse >> /etc/apt/sources.list
+RUN echo deb http://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse > /etc/apt/sources.list
+RUN echo deb-src http://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse >> /etc/apt/sources.list
 
-RUN apt-get update && apt-get install -y curl sudo
+RUN echo deb http://mirrors.aliyun.com/ubuntu/ jammy-security main restricted universe multiverse >> /etc/apt/sources.list
+RUN echo deb-src http://mirrors.aliyun.com/ubuntu/ jammy-security main restricted universe multiverse >> /etc/apt/sources.list
+
+RUN echo deb http://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse >> /etc/apt/sources.list
+RUN echo deb-src http://mirrors.aliyun.com/ubuntu/ jammy-updates main restricted universe multiverse >> /etc/apt/sources.list
+
+RUN echo deb http://mirrors.aliyun.com/ubuntu/ jammy-proposed main restricted universe multiverse >> /etc/apt/sources.list
+RUN echo deb-src http://mirrors.aliyun.com/ubuntu/ jammy-proposed main restricted universe multiverse >> /etc/apt/sources.list
+
+RUN echo deb http://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse >> /etc/apt/sources.list
+RUN echo deb-src http://mirrors.aliyun.com/ubuntu/ jammy-backports main restricted universe multiverse >> /etc/apt/sources.list
+
+
+RUN apt-get update && apt-get install -y curl sudo zip
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | sudo bash -
 RUN sudo apt-get install -y nodejs
+
+ENV HUSKY 0
 
 CMD [ "node" ]
