@@ -1,43 +1,23 @@
 'use server'
 
+import { getCdnUrl } from './utils/getCdnUrl'
+
 import { SA, pipePromiseAllSettled } from '@/errors/utils'
 import { getSelf } from '@/user/server'
 import { validateRequest } from '@/request/validator'
 import { MB_SIZE, formatTime } from '@/utils/transformer'
 import { prisma } from '@/request/prisma'
+import { getLocalStartsOfToday } from '@/utils/time'
 
 import Boom from '@hapi/boom'
-import {
-  S3Client,
-  PutObjectCommand,
-  ObjectCannedACL,
-  DeleteObjectCommand,
-} from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { nanoid } from 'nanoid'
 import { extension } from 'mime-types'
 import { Type } from '@sinclair/typebox'
 import { Role } from '@prisma/client'
+import STS from 'qcloud-cos-sts'
+import COS from 'cos-nodejs-sdk-v5'
 
 import type { Static } from '@sinclair/typebox'
-import type {
-  DeleteObjectCommandInput,
-  PutObjectCommandInput,
-} from '@aws-sdk/client-s3'
-
-// upload from server: https://www.sammeechward.com/storing-images-in-s3-from-node-server
-// acl: https://stackoverflow.com/a/73551886
-const s3Client = new S3Client({
-  region: process.env.C_AWS_REGION,
-  credentials: {
-    accessKeyId: process.env.C_AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.C_AWS_SECRET_ACCESS_KEY,
-  },
-})
-
-const S3_ROOT = new URL(
-  `https://${process.env.C_AWS_BUCKET}.s3.${process.env.C_AWS_REGION}.amazonaws.com`
-)
 
 const uploadConfigDto = Type.Object({
   /**
@@ -71,58 +51,80 @@ function strictPathname(p: string) {
   return pathname
 }
 
+const BUCKET = process.env.NEXT_PUBLIC_TC_COS_BUCKET
+const REGION = process.env.NEXT_PUBLIC_TC_COS_REGION
+const SECRET_ID = process.env.TC_COS_SECRET_ID
+const SECRET_KEY = process.env.TC_COS_SECRET_KEY
+
+/**
+ * 普通用户允许上传的最大数量
+ */
+const MAX_UPLOAD_TOTAL = 500
+/**
+ * 普通用户单日允许上传的最大数量
+ */
+const MAX_UPLOAD_PER_DAY = 20
+/**
+ * 普通用户允许上传的最大尺寸（单位 MB）
+ */
+const MAX_SIZE_MB = 5
+
+async function validateUploadConfig(config: Static<typeof uploadConfigDto>) {
+  const user = await getSelf()
+  if (user.role === Role.ADMIN) {
+    return
+  }
+  if (config.dirname) {
+    throw Boom.forbidden('无权限自定义目录')
+  }
+  if (!config.randomFilenameByServer) {
+    throw Boom.forbidden('无权限自定义文件名')
+  }
+  if (config.files.some((f) => f.size > MAX_SIZE_MB * MB_SIZE)) {
+    throw Boom.forbidden(`最大支持上传尺寸: ${MAX_SIZE_MB} MB`)
+  }
+  const today = getLocalStartsOfToday()
+  const nextDay = new Date(today)
+  nextDay.setDate(today.getDate() + 1)
+  const [todayUploaded, totalUploaded] = await prisma.$transaction([
+    prisma.upload.count({
+      where: {
+        creatorId: user.id,
+        updatedAt: {
+          gt: today,
+          lt: nextDay,
+        },
+      },
+    }),
+    prisma.upload.count({
+      where: {
+        creatorId: user.id,
+      },
+    }),
+  ])
+  if (todayUploaded + config.files.length > MAX_UPLOAD_PER_DAY) {
+    throw Boom.badRequest(
+      `普通用户一天最多上传 ${MAX_UPLOAD_PER_DAY} 个文件, 你还能上传 ${Math.max(
+        0,
+        MAX_UPLOAD_PER_DAY - todayUploaded
+      )} 个`
+    )
+  }
+  if (totalUploaded + config.files.length > MAX_UPLOAD_TOTAL) {
+    throw Boom.badRequest(
+      `普通用户总计最多上传 ${MAX_UPLOAD_TOTAL} 个文件, 你还能上传 ${Math.max(
+        0,
+        MAX_UPLOAD_TOTAL - totalUploaded
+      )} 个`
+    )
+  }
+}
+
 export const requestUploadFiles = SA.encode(
   async (inputConfig: Static<typeof uploadConfigDto>) => {
     const user = await getSelf()
     const config = validateRequest(uploadConfigDto, inputConfig)
-    if (user.role !== Role.ADMIN) {
-      if (config.dirname) {
-        throw Boom.forbidden('无权限自定义目录')
-      }
-      if (!config.randomFilenameByServer) {
-        throw Boom.forbidden('无权限自定义文件名')
-      }
-      if (config.files.some((f) => f.size > 5 * MB_SIZE)) {
-        throw Boom.forbidden('最大支持上传尺寸: 5 MB')
-      }
-      const today = new Date(Date.now())
-      const nextDay = new Date(today)
-      nextDay.setDate(today.getDate() + 1)
-      const [todayUploaded, totalUploaded] = await prisma.$transaction([
-        prisma.upload.count({
-          where: {
-            creatorId: user.id,
-            updatedAt: {
-              gt: today,
-              lt: nextDay,
-            },
-          },
-        }),
-        prisma.upload.count({
-          where: {
-            creatorId: user.id,
-          },
-        }),
-      ])
-      if (todayUploaded + config.files.length > 10) {
-        throw Boom.badRequest(
-          `普通用户一天最多上传 10 个文件, 你还能上传 ${Math.max(
-            0,
-            10 - todayUploaded
-          )} 个`
-        )
-      }
-      if (totalUploaded + config.files.length > 50) {
-        throw Boom.badRequest(
-          `普通用户总计最多上传 50 个文件, 你还能上传 ${Math.max(
-            0,
-            50 - totalUploaded
-          )} 个`
-        )
-      }
-    } else if (config.files.some((f) => f.size > 50 * MB_SIZE)) {
-      throw Boom.forbidden('最大支持上传尺寸: 50 MB')
-    }
+    await validateUploadConfig(config)
     // 为 dirname 赋初始值
     config.dirname = config.dirname || formatTime(new Date()).slice(0, 10)
     const res = await Promise.allSettled(
@@ -137,19 +139,53 @@ export const requestUploadFiles = SA.encode(
         const uploadKey = strictPathname(
           `${rootPath}/${config.dirname}/${filename}`
         )
-        const uploadParams: PutObjectCommandInput = {
-          Bucket: process.env.C_AWS_BUCKET,
-          Key: uploadKey,
-          ContentType: f.type,
-          ContentLength: f.size,
-          ACL: ObjectCannedACL.public_read,
+
+        const uploadPolicy = STS.getPolicy([
+          {
+            bucket: BUCKET,
+            region: REGION,
+            action: [
+              // 简单上传
+              'name/cos:PutObject',
+              'name/cos:PostObject',
+              // 分片上传
+              'name/cos:sliceUploadFile',
+              'name/cos:InitiateMultipartUpload',
+              'name/cos:ListMultipartUploads',
+              'name/cos:ListParts',
+              'name/cos:UploadPart',
+              'name/cos:CompleteMultipartUpload',
+            ],
+            prefix: uploadKey,
+          },
+        ])
+        const strictPolicy = {
+          ...uploadPolicy,
+          statement: uploadPolicy.statement.map((item) => ({
+            ...item,
+            condition: {
+              numeric_equal: {
+                'cos:content-length': f.size,
+              },
+              string_equal: {
+                'cos:content-type': f.type,
+              },
+            },
+          })),
         }
 
-        const command = new PutObjectCommand(uploadParams)
+        const credential = await STS.getCredential({
+          policy: strictPolicy,
+          secretId: SECRET_ID,
+          secretKey: SECRET_KEY,
+        })
 
         return {
-          url: await getSignedUrl(s3Client, command, { expiresIn: 3600 }),
+          /**
+           * upload key (in general, pathname)
+           */
           key: uploadKey,
+          credential: credential.credentials,
         }
       })
     ).then(pipePromiseAllSettled)
@@ -157,11 +193,19 @@ export const requestUploadFiles = SA.encode(
     await prisma.upload.createMany({
       data: res
         .filter((item) => item.status === 'fulfilled')
-        .map((item) => ({
-          creatorId: user.id,
-          key: item.status === 'fulfilled' ? item.value.key : '',
-          url: item.status === 'fulfilled' ? item.value.url : '',
-        })),
+        .map((item) => {
+          if (item.status !== 'fulfilled') {
+            // MD 不知道为什么 ts 类型抽风了
+            throw new Error('Impossible Promise rejected')
+          }
+          const { key } = item.value
+          const url = getCdnUrl({ key })
+          return {
+            creatorId: user.id,
+            key: item.status === 'fulfilled' ? key : '',
+            url: item.status === 'fulfilled' ? url.href : '',
+          }
+        }),
     })
 
     return res
@@ -171,10 +215,10 @@ export const requestUploadFiles = SA.encode(
 export const deleteFile = SA.encode(async (href: string) => {
   const user = await getSelf()
   const url = new URL(href)
-  if (url.origin !== S3_ROOT.origin) {
+  if (url.origin !== getCdnUrl().origin) {
     throw Boom.badRequest(`不支持的源: ${url.origin}`)
   }
-  // s3 删除 key 是不要前缀 '/' 的
+  // tencent cos 删除 key 是不要前缀 '/' 的
   const deletedKey = url.pathname.slice(1)
 
   if (user.role !== Role.ADMIN) {
@@ -188,10 +232,13 @@ export const deleteFile = SA.encode(async (href: string) => {
       throw Boom.notFound('文件不存在或者无删除权限')
     }
   }
-
-  const deleteParams: DeleteObjectCommandInput = {
-    Bucket: process.env.C_AWS_BUCKET,
+  const cos = new COS({
+    SecretId: SECRET_ID,
+    SecretKey: SECRET_KEY,
+  })
+  await cos.deleteObject({
+    Bucket: BUCKET,
+    Region: REGION,
     Key: deletedKey,
-  }
-  await s3Client.send(new DeleteObjectCommand(deleteParams))
+  })
 })

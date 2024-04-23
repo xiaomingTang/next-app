@@ -5,6 +5,7 @@ import { FileInfoDisplay } from './FileInfoDisplay'
 import { deleteFile, requestUploadFiles } from '../server'
 import { fileToCopyableMarkdownStr, geneFileKey } from '../utils/geneFileKey'
 import { checkIsImage } from '../utils/checkIsImage'
+import { getCdnUrl } from '../utils/getCdnUrl'
 
 import { setImageSizeForUrl } from '@/utils/urlImageSize'
 import { SA, toPlainError } from '@/errors/utils'
@@ -45,6 +46,7 @@ import { omit } from 'lodash-es'
 import { toast } from 'react-hot-toast'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
+import COS from 'cos-js-sdk-v5'
 
 import type { FileInfo } from './FileInfoDisplay'
 
@@ -164,16 +166,26 @@ const Uploader = NiceModal.create(
                   if (item.status === 'rejected') {
                     throw new Error(item.reason)
                   }
-                  const url = new URL(item.value.url)
-                  await fetch(url, {
-                    method: 'PUT',
-                    body: f,
-                  }).then((r) => {
-                    if (!r.ok) {
-                      throw new Error(`上传失败: ${r.statusText}`)
-                    }
+                  const { key, credential } = item.value
+                  await new COS({
+                    SecretId: credential.tmpSecretId,
+                    SecretKey: credential.tmpSecretKey,
+                    SecurityToken: credential.sessionToken,
+                    Protocol: 'https:',
                   })
-                  url.search = ''
+                    .putObject({
+                      Bucket: process.env.NEXT_PUBLIC_TC_COS_BUCKET,
+                      Region: process.env.NEXT_PUBLIC_TC_COS_REGION,
+                      Key: key,
+                      Body: f,
+                    })
+                    .then((r) => {
+                      const code = r.statusCode
+                      if (!(code && code >= 200 && code < 300)) {
+                        throw new Error(`${code}`)
+                      }
+                    })
+                  const url = getCdnUrl({ key })
                   if (checkIsImage(f)) {
                     setImageSizeForUrl(url, await getImageSize(f))
                   }
@@ -332,12 +344,12 @@ const Uploader = NiceModal.create(
             {...info}
             key={geneFileKey(info.file)}
             index={index}
-            onDelete={async () => {
+            onDelete={cat(async () => {
               if (info.url) {
-                await deleteFile(info.url)
+                await deleteFile(info.url).then(SA.decode)
               }
               setFileInfoMap((prev) => omit(prev, [geneFileKey(info.file)]))
-            }}
+            })}
           />
         ))}
       </List>

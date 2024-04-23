@@ -28,5 +28,11 @@ declare namespace NodeJS {
 
     DINGTALK_WEB_HOOK: string
     DINGTALK_SECRET: string
+
+    NEXT_PUBLIC_CDN_ROOT: string
+    TC_COS_SECRET_ID: string
+    TC_COS_SECRET_KEY: string
+    NEXT_PUBLIC_TC_COS_BUCKET: string
+    NEXT_PUBLIC_TC_COS_REGION: string
   }
 }
