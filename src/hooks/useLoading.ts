@@ -35,16 +35,19 @@ export function useLoading() {
    */
   const withLoading = useCallback(
     <Arg extends unknown[], Res>(
-        fn: (...args: Arg) => Res | Promise<Res>,
-        delayMs = 300
-      ) =>
+      fn: (...args: Arg) => Res | Promise<Res>,
+      delayMs = 300
+    ) =>
       async (...args: Arg) => {
         let timer = -1
         if (delayMs > 0) {
-          timer = +setTimeout(() => {
-            timer = -1
-            setFlag((prev) => prev + 1)
-          }, clamp(delayMs, 0, InfiniteTimeout))
+          timer = +setTimeout(
+            () => {
+              timer = -1
+              setFlag((prev) => prev + 1)
+            },
+            clamp(delayMs, 0, InfiniteTimeout)
+          )
         } else {
           setFlag((prev) => prev + 1)
         }

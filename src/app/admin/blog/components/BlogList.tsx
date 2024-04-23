@@ -101,9 +101,11 @@ export function BlogEditorBlogList({
                       color='error'
                       variant='contained'
                       onClick={cat(async () => {
-                        if (await customConfirm(
-                          `你确定删除博文【${blog.title}】吗？`
-                        )) {
+                        if (
+                          await customConfirm(
+                            `你确定删除博文【${blog.title}】吗？`
+                          )
+                        ) {
                           await deleteBlogs([blog.hash]).then(SA.decode)
                           onChange()
                         }
