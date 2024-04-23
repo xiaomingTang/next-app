@@ -29,10 +29,10 @@ COPY --from=builder /app/public ./public
 # https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
-COPY --from=builder ./launch.sh ./
-COPY --from=builder ./.ssl ./.ssl
-COPY --from=builder ./.bak ./.bak
-COPY --from=builder ./ci ./ci
+COPY --from=builder /app/launch.sh ./
+COPY --from=builder /app/.ssl ./.ssl
+COPY --from=builder /app/.bak ./.bak
+COPY --from=builder /app/ci ./ci
 
 # 为提取至宿主机做准备，如果不需要提取到宿主机，可以注释掉这一部分
 ARG ZIP_PATH=/app/app.zip
