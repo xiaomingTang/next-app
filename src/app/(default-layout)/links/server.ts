@@ -4,8 +4,6 @@ import { SA, withRevalidate } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { validateRequest } from '@/request/validator'
 import { authValidate, getSelf } from '@/user/server'
-import { geneDingtalkUrl, sendToDingTalk } from '@/push/dingtalk/utils'
-import { resolvePath } from '@/utils/url'
 
 import Boom from '@hapi/boom'
 import {
@@ -159,30 +157,6 @@ export const saveFriendsLink = SA.encode(
     }
     if (!hash) {
       const newHash = nanoid(12)
-      if (status === 'PENDING') {
-        void sendToDingTalk({
-          msgtype: 'markdown',
-          at: {},
-          markdown: {
-            title: '你有新的友链申请',
-            text: `
-# 友链申请   
-
-站点名称:  ${name}   
-
-站点描述:  ${description || '无'}   
-
-站点 url:  [${url}](${url})   
-
-站点 logo: ${!image ? '无' : `![${image}](${image})`}   
-
-[查看详情](${
-              geneDingtalkUrl(resolvePath(`/links/${newHash}`).href, true).href
-            })   
-            `,
-          },
-        })
-      }
       // 所有人都能新建
       return prisma.friendsLink
         .create({
