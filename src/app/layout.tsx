@@ -22,22 +22,6 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-function serverErrorHandler() {
-  if (typeof process === 'undefined') {
-    return
-  }
-  process.on('uncaughtException', (e, origin) => {
-    // pass
-    console.log(e, origin)
-  })
-  process.on('unhandledRejection', (reason, promise) => {
-    // pass
-    console.log(reason, promise)
-  })
-}
-
-serverErrorHandler()
-
 export default function RootLayout({
   children,
 }: {
