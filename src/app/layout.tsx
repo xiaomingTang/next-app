@@ -29,6 +29,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang='zh-cn' suppressHydrationWarning>
+      <head>
+        <link rel='dns-prefetch' href={process.env.NEXT_PUBLIC_CDN_ROOT} />
+      </head>
       <body>
         <AppRouterCacheProvider options={{ key: 'emo' }}>
           <VConsole />
