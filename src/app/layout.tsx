@@ -9,17 +9,9 @@ import Providers from '@/globals/providers'
 
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v14-appRouter'
 
-import type { Metadata, Viewport } from 'next'
+import type { Viewport } from 'next'
 
-export const metadata: Metadata = {
-  ...seo.defaults({}),
-  alternates: {
-    types: {
-      // https://taoshu.in/webfeed/lets-webfeed.html
-      'application/rss+xml': [{ url: 'rss.xml', title: 'RSS' }],
-    },
-  },
-}
+export const metadata = seo.defaults({})
 
 export const viewport: Viewport = {
   themeColor: [

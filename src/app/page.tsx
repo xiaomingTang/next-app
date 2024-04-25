@@ -20,9 +20,19 @@ import { DefaultAside } from '@/layout/DefaultAside'
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
 
-export const metadata = seo.defaults({
-  title: '博客列表页',
-})
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  ...seo.defaults({
+    title: '博客列表页',
+  }),
+  alternates: {
+    types: {
+      // https://taoshu.in/webfeed/lets-webfeed.html
+      'application/rss+xml': [{ url: 'rss.xml', title: 'RSS' }],
+    },
+  },
+}
 
 export default async function Home() {
   return (
