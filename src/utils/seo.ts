@@ -46,37 +46,38 @@ export const seo = {
     }
     return `${inputKeywords}, ${manifest.keywords}`
   },
-  defaults: (props?: SeoProps): Metadata => ({
-    metadataBase: resolvePath('/'),
-    title: seo.title(props?.title),
-    description: seo.description(props?.description),
-    keywords: seo.keywords(props?.keywords),
-    generator: 'Next.js',
-    icons: manifest.icons,
-    manifest: `/manifest.json`,
-    formatDetection: {
-      address: false,
-      telephone: false,
-      email: false,
-    },
-    appleWebApp: {
-      capable: true,
-      title: manifest.short_name,
-    },
-    openGraph: {
-      type: 'website',
+  defaults: (props?: SeoProps) =>
+    ({
+      metadataBase: resolvePath('/'),
       title: seo.title(props?.title),
       description: seo.description(props?.description),
-      siteName: manifest.name,
-      url: ENV_CONFIG.public.origin,
-      images: `${ENV_CONFIG.public.origin}/pwa/apple-touch-icon.png`,
-    },
-    twitter: {
-      card: 'summary',
-      title: seo.title(props?.title),
-      description: seo.description(props?.description),
-      creator: '@xiaomin58135718',
-      images: `${ENV_CONFIG.public.origin}/pwa/android-chrome-192x192.png`,
-    },
-  }),
+      keywords: seo.keywords(props?.keywords),
+      generator: 'Next.js',
+      icons: manifest.icons,
+      manifest: `/manifest.json`,
+      formatDetection: {
+        address: false,
+        telephone: false,
+        email: false,
+      },
+      appleWebApp: {
+        capable: true,
+        title: manifest.short_name,
+      },
+      openGraph: {
+        type: 'website',
+        title: seo.title(props?.title),
+        description: seo.description(props?.description),
+        siteName: manifest.name,
+        url: ENV_CONFIG.public.origin,
+        images: `${ENV_CONFIG.public.origin}/pwa/apple-touch-icon.png`,
+      },
+      twitter: {
+        card: 'summary',
+        title: seo.title(props?.title),
+        description: seo.description(props?.description),
+        creator: '@xiaomin58135718',
+        images: `${ENV_CONFIG.public.origin}/pwa/android-chrome-192x192.png`,
+      },
+    }) satisfies Metadata,
 }
