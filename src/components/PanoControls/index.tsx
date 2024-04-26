@@ -1,5 +1,3 @@
-'use client'
-
 import { EPS, PI_2, getRotationFrom, updateCamera } from './utils'
 
 import { useThree } from '@react-three/fiber'
