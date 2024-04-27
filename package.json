@@ -163,5 +163,11 @@
     "prisma": "^5.12.1",
     "raw-loader": "^4.0.2",
     "tsx": "^4.7.2"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@react-three/drei@9.105.3": "patches/@react-three__drei@9.105.3.patch",
+      "@react-three/fiber@8.16.2": "patches/@react-three__fiber@8.16.2.patch"
+    }
   }
 }
