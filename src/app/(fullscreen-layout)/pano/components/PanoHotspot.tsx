@@ -3,16 +3,24 @@ import { screen2View } from './PanoEditor'
 
 import { ImageWithState } from '@/components/ImageWithState'
 import { cat } from '@/errors/catchAndToast'
+import { useLoading } from '@/hooks/useLoading'
 
-import { ButtonBase, Stack, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  ButtonBase,
+  CircularProgress,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import { Html } from '@react-three/drei'
 import { useGesture } from '@use-gesture/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ExactClickChecker } from '@zimi/utils'
 import { useThree } from '@react-three/fiber'
+import { TextureLoader, type PerspectiveCamera } from 'three'
 
 import type { Pano } from './type'
-import type { PerspectiveCamera } from 'three'
 
 const iconMap: Record<Pano.Hotspot['type'], string> = {
   POSITION: '/static/pano/preset/hotspot-position.png',
@@ -37,6 +45,7 @@ export function PanoHotspot({
   const [isDragging, setIsDragging] = useState(false)
   const timerRef = useRef(-1)
   const clickChecker = useMemo(() => new ExactClickChecker(), [])
+  const [loading, withLoading] = useLoading()
 
   useEffect(() => clickChecker.bindEvents(), [clickChecker])
 
@@ -70,7 +79,7 @@ export function PanoHotspot({
         tar.h = Math.round(h * 10) / 10
         tar.v = Math.round(v * 10) / 10
       })
-      usePanoStore.setCurPos(curPos.name)
+      void usePanoStore.setCurPos(curPos.name)
     },
     onDragEnd() {
       window.clearTimeout(timerRef.current)
@@ -101,23 +110,29 @@ export function PanoHotspot({
         direction='column'
         alignItems='center'
         {...(editable ? bind() : {})}
-        onPointerUp={cat(() => {
-          if (!clickChecker.checkIsClick()) {
-            return
-          }
-          if (hotspot.type === 'POSITION') {
-            usePanoStore.setCurPos(hotspot.target)
-            return
-          }
-          if (hotspot.type === 'DECORATION') {
-            if (curDec?.name === hotspot.target) {
-              usePanoStore.setCurDec(null)
-            } else {
-              usePanoStore.setCurDec(hotspot.target)
+        onPointerUp={cat(
+          withLoading(async () => {
+            if (!clickChecker.checkIsClick()) {
+              return
             }
-          }
-        })}
+            if (loading) {
+              return
+            }
+            if (hotspot.type === 'POSITION') {
+              await usePanoStore.setCurPos(hotspot.target)
+              return
+            }
+            if (hotspot.type === 'DECORATION') {
+              if (curDec?.name === hotspot.target) {
+                usePanoStore.setCurDec(null)
+              } else {
+                usePanoStore.setCurDec(hotspot.target)
+              }
+            }
+          })
+        )}
         sx={{
+          position: 'relative',
           borderRadius: '4px',
           color: 'white',
           cursor: 'pointer',
@@ -139,10 +154,25 @@ export function PanoHotspot({
       >
         <ImageWithState
           src={iconMap[hotspot.type]}
-          width={65}
-          height={65}
-          style={{ width: '65px', height: '65px', pointerEvents: 'none' }}
+          width={64}
+          height={64}
+          style={{ width: '64px', height: '64px', pointerEvents: 'none' }}
         />
+        {loading && (
+          <Box
+            sx={{
+              position: 'absolute',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              top: '32px',
+              left: '32px',
+              transform: 'translate(-50%,-50%)',
+            }}
+          >
+            <CircularProgress size='24px' />
+          </Box>
+        )}
         <Typography
           sx={{
             width: '100%',
@@ -189,16 +219,24 @@ export function PanoHotspot({
                   outline: isActive ? `1px solid ${fg}` : undefined,
                   pointerEvents: 'auto',
                 }}
-                onClick={() => {
-                  usePanoStore.setState((state) => {
-                    const decName = curDec.name
-                    if (state.enabledDecs[decName] === pat.name) {
-                      delete state.enabledDecs[decName]
-                    } else {
-                      state.enabledDecs[decName] = pat.name
+                onClick={cat(
+                  withLoading(async () => {
+                    if (loading) {
+                      return
                     }
+                    const decName = curDec.name
+                    const nextEnabledDecs = { ...enabledDecs }
+                    if (nextEnabledDecs[decName] === pat.name) {
+                      delete nextEnabledDecs[decName]
+                    } else {
+                      await new TextureLoader().loadAsync(pat.standard)
+                      nextEnabledDecs[decName] = pat.name
+                    }
+                    usePanoStore.setState({
+                      enabledDecs: nextEnabledDecs,
+                    })
                   })
-                }}
+                )}
               >
                 <Typography
                   sx={{

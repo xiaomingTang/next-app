@@ -4,6 +4,7 @@ import { withStatic } from '@/utils/withStatic'
 
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
+import { TextureLoader } from 'three'
 
 import type { Pano } from './type'
 
@@ -17,13 +18,14 @@ const useRawPanoStore = create(
 )
 
 export const usePanoStore = withStatic(useRawPanoStore, {
-  setCurPos(name: string) {
+  async setCurPos(name: string) {
     const nextPos = useRawPanoStore
       .getState()
       .pano.positions.find((item) => item.name === name)
     if (!nextPos) {
       throw new Error(`目标位置不存在: ${name}`)
     }
+    await new TextureLoader().loadAsync(nextPos.base.standard)
     useRawPanoStore.setState((state) => {
       state.curPos = nextPos
       const prevDecName = state.curDec?.name
