@@ -64,6 +64,9 @@ importers:
       '@types/three':
         specifier: ^0.163.0
         version: 0.163.0
+      '@use-gesture/react':
+        specifier: ^10.3.1
+        version: 10.3.1(react@18.2.0)
       '@zimi/interact':
         specifier: ^0.17.1
         version: 0.17.1
@@ -172,6 +175,12 @@ importers:
       react-copy-to-clipboard:
         specifier: ^5.1.0
         version: 5.1.0(react@18.2.0)
+      react-dnd:
+        specifier: ^16.0.1
+        version: 16.0.1(@types/node@20.12.7)(@types/react@18.2.79)(react@18.2.0)
+      react-dnd-html5-backend:
+        specifier: ^16.0.1
+        version: 16.0.1
       react-dom:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
@@ -1946,6 +1955,15 @@ packages:
   '@province-city-china/types@8.5.7':
     resolution: {integrity: sha512-RZ1TX52jLevxx+00yLMzunHR2H6XIc7FY8C7qF0YUzXhYrRS4krqWSDY8kpq/76nonbp01ibif35wvmP3R+s4Q==}
 
+  '@react-dnd/asap@5.0.2':
+    resolution: {integrity: sha512-WLyfoHvxhs0V9U+GTsGilGgf2QsPl6ZZ44fnv0/b8T3nQyvzxidxsg/ZltbWssbsRDlYW8UKSQMTGotuTotZ6A==}
+
+  '@react-dnd/invariant@4.0.2':
+    resolution: {integrity: sha512-xKCTqAK/FFauOM9Ta2pswIyT3D8AQlfrYdOi/toTPEhqCuAs1v5tcJ3Y08Izh1cJ5Jchwy9SeAXmMg6zrKs2iw==}
+
+  '@react-dnd/shallowequal@4.0.2':
+    resolution: {integrity: sha512-/RVXdLvJxLg4QKvMoM5WlwNR9ViO9z8B/qPcc+C0Sa/teJY7QG7kJ441DwzOjMYEY7GmU4dj5EcGHIkKZiQZCA==}
+
   '@react-native-community/cli-clean@13.6.4':
     resolution: {integrity: sha512-nS1BJ+2Z+aLmqePxB4AYgJ+C/bgQt02xAgSYtCUv+lneRBGhL2tHRrK8/Iolp0y+yQoUtHHf4txYi90zGXLVfw==}
 
@@ -3580,6 +3598,9 @@ packages:
 
   dlv@1.1.3:
     resolution: {integrity: sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==}
+
+  dnd-core@16.0.1:
+    resolution: {integrity: sha512-HK294sl7tbw6F6IeuK16YSBUoorvHpY8RHO+9yFfaJyCDVb6n7PRcezrOEOa2SBCqiYpemh5Jx20ZcjKdFAVng==}
 
   doctrine@2.1.0:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
@@ -6103,6 +6124,24 @@ packages:
   react-devtools-core@5.1.0:
     resolution: {integrity: sha512-NRtLBqYVLrIY+lOa2oTpFiAhI7Hru0AUXI0tP9neCyaPPAzlZyeH0i+VZ0shIyRTJbpvyqbD/uCsewA2hpfZHw==}
 
+  react-dnd-html5-backend@16.0.1:
+    resolution: {integrity: sha512-Wu3dw5aDJmOGw8WjH1I1/yTH+vlXEL4vmjk5p+MHxP8HuHJS1lAGeIdG/hze1AvNeXWo/JgULV87LyQOr+r5jw==}
+
+  react-dnd@16.0.1:
+    resolution: {integrity: sha512-QeoM/i73HHu2XF9aKksIUuamHPDvRglEwdHL4jsp784BgUuWcg6mzfxT0QDdQz8Wj0qyRKx2eMg8iZtWvU4E2Q==}
+    peerDependencies:
+      '@types/hoist-non-react-statics': '>= 3.3.1'
+      '@types/node': '>= 12'
+      '@types/react': '>= 16'
+      react: '>= 16.14'
+    peerDependenciesMeta:
+      '@types/hoist-non-react-statics':
+        optional: true
+      '@types/node':
+        optional: true
+      '@types/react':
+        optional: true
+
   react-dom@18.2.0:
     resolution: {integrity: sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==}
     peerDependencies:
@@ -6210,6 +6249,9 @@ packages:
   recast@0.21.5:
     resolution: {integrity: sha512-hjMmLaUXAm1hIuTqOdeYObMslq/q+Xff6QE3Y2P+uoHAg2nmVlLBps2hzh1UJDdMtDTMXOFewK6ky51JQIeECg==}
     engines: {node: '>= 4'}
+
+  redux@4.2.1:
+    resolution: {integrity: sha512-LAUYz4lc+Do8/g7aeRa8JkyDErK6ekstQaqWQrNRW//MY1TvCEpMtpTWvlQ+FPbWCx+Xixu/6SHt5N0HR+SB4w==}
 
   reflect.getprototypeof@1.0.6:
     resolution: {integrity: sha512-fmfw4XgoDke3kdI6h4xcUz1dG8uaiv5q9gcEwLS4Pnth2kxT+GZ7YehS1JTMGBQmtV7Y4GFGbs2re2NqhdozUg==}
@@ -9161,6 +9203,12 @@ snapshots:
 
   '@province-city-china/types@8.5.7': {}
 
+  '@react-dnd/asap@5.0.2': {}
+
+  '@react-dnd/invariant@4.0.2': {}
+
+  '@react-dnd/shallowequal@4.0.2': {}
+
   '@react-native-community/cli-clean@13.6.4':
     dependencies:
       '@react-native-community/cli-tools': 13.6.4
@@ -11251,6 +11299,12 @@ snapshots:
       path-type: 4.0.0
 
   dlv@1.1.3: {}
+
+  dnd-core@16.0.1:
+    dependencies:
+      '@react-dnd/asap': 5.0.2
+      '@react-dnd/invariant': 4.0.2
+      redux: 4.2.1
 
   doctrine@2.1.0:
     dependencies:
@@ -14505,6 +14559,22 @@ snapshots:
       - utf-8-validate
     optional: true
 
+  react-dnd-html5-backend@16.0.1:
+    dependencies:
+      dnd-core: 16.0.1
+
+  react-dnd@16.0.1(@types/node@20.12.7)(@types/react@18.2.79)(react@18.2.0):
+    dependencies:
+      '@react-dnd/invariant': 4.0.2
+      '@react-dnd/shallowequal': 4.0.2
+      dnd-core: 16.0.1
+      fast-deep-equal: 3.1.3
+      hoist-non-react-statics: 3.3.2
+      react: 18.2.0
+    optionalDependencies:
+      '@types/node': 20.12.7
+      '@types/react': 18.2.79
+
   react-dom@18.2.0(react@18.2.0):
     dependencies:
       loose-envify: 1.4.0
@@ -14680,6 +14750,10 @@ snapshots:
       source-map: 0.6.1
       tslib: 2.6.2
     optional: true
+
+  redux@4.2.1:
+    dependencies:
+      '@babel/runtime': 7.24.4
 
   reflect.getprototypeof@1.0.6:
     dependencies:

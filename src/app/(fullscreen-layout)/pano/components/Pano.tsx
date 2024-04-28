@@ -8,7 +8,7 @@ import { Canvas } from '@react-three/fiber'
 
 const EDIT_MODE = true
 
-export function Pano() {
+export function PanoIndex() {
   return (
     <Canvas
       linear
@@ -16,7 +16,7 @@ export function Pano() {
         position: [0, 0, 0],
       }}
     >
-      <PanoScene />
+      <PanoScene editable={EDIT_MODE} />
       {EDIT_MODE && (
         <>
           <PanoCameraStatus />

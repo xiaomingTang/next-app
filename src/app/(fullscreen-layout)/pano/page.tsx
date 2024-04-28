@@ -1,4 +1,4 @@
-import { Pano } from './components/Pano'
+import { PanoIndex } from './components/Pano'
 
 import { seo } from '@/utils/seo'
 
@@ -7,5 +7,5 @@ export const metadata = seo.defaults({
 })
 
 export default function Index() {
-  return <Pano />
+  return <PanoIndex />
 }

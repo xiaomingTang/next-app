@@ -1,12 +1,18 @@
 import { usePanoStore } from './store'
+import { screen2View } from './PanoEditor'
 
 import { ImageWithState } from '@/components/ImageWithState'
 import { cat } from '@/errors/catchAndToast'
 
 import { ButtonBase, Stack, Typography, useTheme } from '@mui/material'
 import { Html } from '@react-three/drei'
+import { useGesture } from '@use-gesture/react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { ExactClickChecker } from '@zimi/utils'
+import { useThree } from '@react-three/fiber'
 
 import type { Pano } from './pano-config'
+import type { PerspectiveCamera } from 'three'
 
 const iconMap: Record<Pano.Hotspot['type'], string> = {
   POSITION: '/static/pano/preset/hotspot-position.png',
@@ -15,15 +21,70 @@ const iconMap: Record<Pano.Hotspot['type'], string> = {
 
 export function Hotspot({
   hotspot,
+  editable,
 }: {
   hotspot: Pano.Hotspot
   editable?: boolean
 }) {
+  const [camera, canvas] = useThree(
+    (state) => [state.camera as PerspectiveCamera, state.gl.domElement] as const
+  )
   const theme = useTheme()
-  const { curDec, enabledDecs } = usePanoStore()
+  const { curPos, curDec, enabledDecs } = usePanoStore()
   const y = Math.cos((hotspot.v / 180) * Math.PI)
   const x = Math.sin((hotspot.h / 180) * Math.PI)
   const z = Math.cos((hotspot.h / 180) * Math.PI)
+  const [isDragging, setIsDragging] = useState(false)
+  const timerRef = useRef(-1)
+  const clickChecker = useMemo(() => new ExactClickChecker(), [])
+
+  useEffect(() => clickChecker.bindEvents(), [clickChecker])
+
+  const bind = useGesture({
+    onDragStart() {
+      timerRef.current = window.setTimeout(() => {
+        setIsDragging(true)
+      }, 300)
+    },
+    onDrag(state) {
+      if (!isDragging) {
+        return
+      }
+      const { h, v } = screen2View({
+        x: state.xy[0],
+        y: state.xy[1],
+        camera,
+        canvas,
+      })
+      usePanoStore.setState((pano) => {
+        const newPos = pano.pano.positions.find(
+          (item) => item.name === curPos.name
+        )
+        if (!newPos) {
+          return
+        }
+        const tar = newPos.hotspots.find((item) => item.name === hotspot.name)
+        if (!tar) {
+          return
+        }
+        tar.h = Math.round(h * 10) / 10
+        tar.v = Math.round(v * 10) / 10
+      })
+      usePanoStore.setCurPos(curPos.name)
+    },
+    onDragEnd() {
+      window.clearTimeout(timerRef.current)
+      setIsDragging(false)
+    },
+  })
+
+  useEffect(
+    () => () => {
+      window.clearTimeout(timerRef.current)
+    },
+    []
+  )
+
   return (
     <Html
       transform
@@ -39,7 +100,11 @@ export function Hotspot({
       <Stack
         direction='column'
         alignItems='center'
-        onClick={cat(() => {
+        {...(editable ? bind() : {})}
+        onPointerUp={cat(() => {
+          if (!clickChecker.checkIsClick()) {
+            return
+          }
           if (hotspot.type === 'POSITION') {
             usePanoStore.setCurPos(hotspot.target)
             return
@@ -57,6 +122,7 @@ export function Hotspot({
           color: 'white',
           cursor: 'pointer',
           pointerEvents: 'auto',
+          opacity: isDragging ? 0.75 : 1,
           [`&:hover`]: {
             backgroundColor: 'rgba(0,0,0,0.15)',
             [`& p`]: {

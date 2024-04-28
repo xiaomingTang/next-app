@@ -1,3 +1,5 @@
+import { usePanoStore } from './store'
+
 import { formatView } from '@/components/PanoControls/utils'
 
 import { Menu, MenuItem } from '@mui/material'
@@ -10,7 +12,7 @@ import { Spherical, Vector3 } from 'three'
 
 import type { PerspectiveCamera } from 'three'
 
-function screen2View({
+export function screen2View({
   x: rx,
   y: ry,
   canvas,
@@ -27,9 +29,9 @@ function screen2View({
   const worldV3 = new Vector3(x, y, -1).unproject(camera)
   const spherical = new Spherical().setFromVector3(worldV3)
   return formatView({
-    h: Math.round((spherical.theta / Math.PI) * 180),
-    v: Math.round((spherical.phi / Math.PI) * 180),
-    fov: Math.round(camera.fov),
+    h: (spherical.theta / Math.PI) * 180,
+    v: (spherical.phi / Math.PI) * 180,
+    fov: camera.fov,
   })
 }
 
@@ -40,30 +42,41 @@ export function PanoEditor() {
   } | null>(null)
   const camera = useThree((state) => state.camera as PerspectiveCamera)
   const domElement = useThree((state) => state.gl.domElement)
+  const pano = usePanoStore((state) => state.pano)
 
   const curView = useMemo(() => {
     // 此处只是为了将 contextMenu 设为依赖
     if (contextMenu && !contextMenu) {
       throw new Error('never')
     }
-    return screen2View({
+    const view = screen2View({
       x: window.innerWidth / 2,
       y: window.innerHeight / 2,
       camera,
       canvas: domElement,
     })
+    return {
+      h: Math.round(view.h),
+      v: Math.round(view.v),
+      fov: Math.round(view.fov),
+    }
   }, [camera, domElement, contextMenu])
 
   const mouseView = useMemo(() => {
     if (!contextMenu) {
       return null
     }
-    return screen2View({
+    const view = screen2View({
       x: contextMenu.mouseX,
       y: contextMenu.mouseY,
       camera,
       canvas: domElement,
     })
+    return {
+      h: Math.round(view.h),
+      v: Math.round(view.v),
+      fov: Math.round(view.fov),
+    }
   }, [camera, contextMenu, domElement])
 
   const handleClose = () => setContextMenu(null)
@@ -99,6 +112,13 @@ export function PanoEditor() {
         }}
       >
         <CopyToClipboard
+          text={JSON.stringify(pano, null, 2)}
+          onCopy={() => toast.success('复制成功')}
+        >
+          <MenuItem onClick={handleClose}>复制【场景】信息</MenuItem>
+        </CopyToClipboard>
+
+        <CopyToClipboard
           text={`"h": ${curView.h},\n"v": ${curView.v},\n"fov": ${curView.fov}`}
           onCopy={() => toast.success('复制成功')}
         >
@@ -106,7 +126,7 @@ export function PanoEditor() {
         </CopyToClipboard>
 
         <CopyToClipboard
-          text={`"h": ${mouseView?.h},\n"v": ${mouseView?.v},\n"fov": ${mouseView?.fov}`}
+          text={`"h": ${mouseView?.h},\n"v": ${mouseView?.v}`}
           onCopy={() => toast.success('复制成功')}
         >
           <MenuItem onClick={handleClose}>复制【鼠标】信息</MenuItem>
