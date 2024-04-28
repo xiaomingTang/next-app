@@ -1,4 +1,4 @@
-import { EPS, PI_2, getRotationFrom, updateCamera } from './utils'
+import { EPS, formatView, getRotationFrom, updateCamera } from './utils'
 
 import { useThree } from '@react-three/fiber'
 import { useEffect, useMemo } from 'react'
@@ -56,9 +56,9 @@ function useFormatter({
 
     const onScale = (e: InteractEvents['scale'][0]) => {
       const newState = onZoom(
-        {
-          fov: clamp(camera.fov / e.ratio, EPS, 180 - EPS),
-        },
+        formatView({
+          fov: camera.fov / e.ratio,
+        }),
         {
           fov: camera.fov,
         }
@@ -68,12 +68,13 @@ function useFormatter({
 
     const onMove = (e: InteractEvents['move'][0]) => {
       const prevState = getRotationFrom(camera)
-      const ratio = ((camera.fov / 180) * Math.PI) / canvasSize.height
+      const ratio = camera.fov / canvasSize.height
+
       const newState = onRotate(
-        {
-          h: (((prevState.h + e.x * ratio) % PI_2) + PI_2) % PI_2,
-          v: clamp(prevState.v - e.y * ratio, EPS, Math.PI - EPS),
-        },
+        formatView({
+          h: prevState.h + e.x * ratio,
+          v: clamp(prevState.v - e.y * ratio, EPS, 180 - EPS),
+        }),
         prevState
       )
       updateCamera(camera, newState)
@@ -158,7 +159,7 @@ export function PanoControls({
   useEffect(() => {
     updateCamera(camera, {
       h: initialState?.h ?? 0,
-      v: initialState?.v ?? Math.PI / 2,
+      v: initialState?.v ?? 90,
       fov: initialState?.fov ?? 60,
     })
   }, [camera, initialState?.h, initialState?.v, initialState?.fov])

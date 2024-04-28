@@ -1,5 +1,5 @@
 diff --git a/dist/declarations/src/three-types.d.ts b/dist/declarations/src/three-types.d.ts
-index 7668a42e27ac2c51ebaaac88db8bfd8fe823ae75..168bdc9bd145fe7a65c2e7f3e6cc8b3d737cf0cd 100644
+index 7668a42e27ac2c51ebaaac88db8bfd8fe823ae75..454b496ddf130ff99c462e3998553ce11a4d654e 100644
 --- a/dist/declarations/src/three-types.d.ts
 +++ b/dist/declarations/src/three-types.d.ts
 @@ -386,8 +386,10 @@ export interface ThreeElements {
@@ -7,7 +7,7 @@ index 7668a42e27ac2c51ebaaac88db8bfd8fe823ae75..168bdc9bd145fe7a65c2e7f3e6cc8b3d
  declare global {
      namespace JSX {
 -        interface IntrinsicElements extends ThreeElements {
-+        interface IntrinsicElements extends Pick<ThreeElements, 'meshBasicMaterial'> {
++        interface IntrinsicElements extends Pick<ThreeElements, 'mesh' | 'meshBasicMaterial' | 'sprite' | 'spriteMaterial'> {
          }
      }
 +    interface JSX_IntrinsicElements extends ThreeElements {
