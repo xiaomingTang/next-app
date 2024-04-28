@@ -1,11 +1,11 @@
-import { panoConfig } from './pano-config'
+import { panoConfig } from './constants'
 
 import { withStatic } from '@/utils/withStatic'
 
 import { create } from 'zustand'
 import { immer } from 'zustand/middleware/immer'
 
-import type { Pano } from './pano-config'
+import type { Pano } from './type'
 
 const useRawPanoStore = create(
   immer(() => ({

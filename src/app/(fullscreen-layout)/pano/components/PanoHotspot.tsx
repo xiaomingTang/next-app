@@ -11,7 +11,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { ExactClickChecker } from '@zimi/utils'
 import { useThree } from '@react-three/fiber'
 
-import type { Pano } from './pano-config'
+import type { Pano } from './type'
 import type { PerspectiveCamera } from 'three'
 
 const iconMap: Record<Pano.Hotspot['type'], string> = {
