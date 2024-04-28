@@ -1,70 +1,58 @@
-import { useList } from './useList'
-import { panoConfig } from './pano-config'
 import { PanoBox } from './PanoBox'
 import { Hotspot } from './Hotspot'
+import { usePanoStore } from './store'
 
 import { PanoControls } from '@/components/PanoControls'
 import { EPS } from '@/components/PanoControls/utils'
 
 import { clamp } from 'lodash-es'
-import toast from 'react-hot-toast'
+import { Suspense } from 'react'
+import { Html } from '@react-three/drei'
+import { CircularProgress } from '@mui/material'
+
+const canvasLoading = (
+  <Html>
+    <CircularProgress
+      color='primary'
+      size='24px'
+      sx={{
+        zIndex: (t) => t.zIndex.drawer + 1,
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%,-50%)',
+      }}
+    />
+  </Html>
+)
 
 export function PanoScene() {
-  const [_activePosIdx, activePos, setActivePosIdx] = useList(
-    panoConfig.positions
-  )
-  const [_activeDecIdx, activeDec, setActiveDecIdx] = useList(
-    activePos.decorations
-  )
-  const [_activePattIdx, activePatt, setActivePattIdx] = useList(
-    activeDec.patterns
-  )
+  const { curPos } = usePanoStore()
 
   return (
     <>
-      <PanoBox
-        key={activePos.base.standard}
-        src={activePos.base.standard}
-        isActive
-        radius={2}
-      />
-      <PanoBox
-        key={activePatt.standard}
-        src={activePatt.standard}
-        isActive
-        radius={1.9}
-      />
-      {activePos.hotspots.length > 0 &&
-        activePos.hotspots.map((hotspot) => (
+      <Suspense fallback={canvasLoading}>
+        <PanoBox
+          key={curPos.base.standard}
+          src={curPos.base.standard}
+          isActive
+          radius={2}
+        />
+      </Suspense>
+      {usePanoStore.getCurDecPatterns().map((item) => (
+        <Suspense fallback={canvasLoading} key={item.pattern.standard}>
+          <PanoBox src={item.pattern.standard} isActive radius={1.9} />
+        </Suspense>
+      ))}
+      {curPos.hotspots.length > 0 &&
+        curPos.hotspots.map((hotspot) => (
           <Hotspot
-            key={`${activePos.id}-${hotspot.name}-${hotspot.type}-${hotspot.target}`}
+            key={`${curPos.name}-${hotspot.name}-${hotspot.type}-${hotspot.target}`}
             hotspot={hotspot}
-            onClick={() => {
-              if (hotspot.type === 'POSITION') {
-                const nextIdx = panoConfig.positions.findIndex(
-                  (item) => item.id === hotspot.target
-                )
-                if (nextIdx < 0) {
-                  toast.error(`${hotspot.name} 不存在`)
-                  return
-                }
-                setActivePosIdx(nextIdx)
-              }
-              if (hotspot.type === 'DECORATION') {
-                const nextIdx = activePos.decorations.findIndex(
-                  (item) => item.id === hotspot.target
-                )
-                if (nextIdx < 0) {
-                  toast.error(`${hotspot.name} 不存在`)
-                  return
-                }
-                setActiveDecIdx(nextIdx)
-              }
-            }}
           />
         ))}
       <PanoControls
-        initialState={activePos.view}
+        initialState={curPos.view}
         onRotate={(nextState, prevState) => {
           const deltaH = nextState.h - prevState.h
           const deltaV = nextState.v - prevState.v
