@@ -7,7 +7,7 @@ import { useState } from 'react'
 
 import type { PerspectiveCamera } from 'three'
 
-export function PanoPanel() {
+export function PanoCameraStatus() {
   const camera = useThree((state) => state.camera as PerspectiveCamera)
   const [cameraState, setCameraState] = useState({ h: 0, v: 0, fov: 90 })
 

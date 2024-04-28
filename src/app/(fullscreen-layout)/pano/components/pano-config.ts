@@ -87,11 +87,7 @@ export const panoConfig: Pano.Config = {
     {
       id: '后排',
       name: '后排',
-      view: {
-        h: 90,
-        v: 116,
-        fov: 75,
-      },
+      view: { h: 92, v: 109, fov: 75 },
       hotspots: [
         {
           name: '前排',
