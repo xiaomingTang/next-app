@@ -1,9 +1,9 @@
 import { PanoBox } from './PanoBox'
-import { Hotspot } from './Hotspot'
+import { PanoHotspot } from './PanoHotspot'
 import { usePanoStore } from './store'
 
-import { PanoControls } from '@/components/PanoControls'
-import { EPS } from '@/components/PanoControls/utils'
+import { PanoControls } from '@/app/(fullscreen-layout)/pano/components/PanoControls'
+import { EPS } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
 
 import { clamp } from 'lodash-es'
 import { Suspense } from 'react'
@@ -46,7 +46,7 @@ export function PanoScene({ editable }: { editable?: boolean }) {
       ))}
       {curPos.hotspots.length > 0 &&
         curPos.hotspots.map((hotspot) => (
-          <Hotspot
+          <PanoHotspot
             key={`${curPos.name}-${hotspot.name}-${hotspot.type}-${hotspot.target}`}
             hotspot={hotspot}
             editable={editable}

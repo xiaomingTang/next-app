@@ -1,4 +1,4 @@
-import { getRotationFrom } from '@/components/PanoControls/utils'
+import { getRotationFrom } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 
 import { Html } from '@react-three/drei'

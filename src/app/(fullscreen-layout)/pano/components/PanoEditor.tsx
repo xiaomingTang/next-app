@@ -1,6 +1,6 @@
 import { usePanoStore } from './store'
 
-import { formatView } from '@/components/PanoControls/utils'
+import { formatView } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
 
 import { Menu, MenuItem } from '@mui/material'
 import { Html } from '@react-three/drei'

@@ -19,7 +19,7 @@ const iconMap: Record<Pano.Hotspot['type'], string> = {
   DECORATION: '/static/pano/preset/hotspot-decoration.png',
 }
 
-export function Hotspot({
+export function PanoHotspot({
   hotspot,
   editable,
 }: {
