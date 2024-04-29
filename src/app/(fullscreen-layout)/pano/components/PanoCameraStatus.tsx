@@ -1,4 +1,5 @@
 import { getRotationFrom } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
+import { STYLE } from '@/config'
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 
 import { Html } from '@react-three/drei'
@@ -23,6 +24,7 @@ export function PanoCameraStatus() {
 
   return (
     <Html
+      zIndexRange={[STYLE.zIndex.canvasHtml, 0]}
       style={{
         width: '150px',
         position: 'absolute',

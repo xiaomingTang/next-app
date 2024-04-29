@@ -39,9 +39,11 @@ export function PanoHotspot({
   )
   const theme = useTheme()
   const { curPos, curDec, enabledDecs } = usePanoStore()
-  const y = Math.cos((hotspot.v / 180) * Math.PI)
-  const x = Math.sin((hotspot.h / 180) * Math.PI)
-  const z = Math.cos((hotspot.h / 180) * Math.PI)
+  const r = 12
+  const y = r * Math.cos((hotspot.v / 180) * Math.PI)
+  const mr = r * Math.sin((hotspot.v / 180) * Math.PI)
+  const x = mr * Math.sin((hotspot.h / 180) * Math.PI)
+  const z = mr * Math.cos((hotspot.h / 180) * Math.PI)
   const [isDragging, setIsDragging] = useState(false)
   const timerRef = useRef(-1)
   const clickChecker = useMemo(() => new ExactClickChecker(), [])
@@ -98,7 +100,7 @@ export function PanoHotspot({
     <Html
       transform
       sprite
-      distanceFactor={1}
+      zIndexRange={[899, 0]}
       position={[x, y, z]}
       style={{
         userSelect: 'none',

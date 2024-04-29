@@ -4,6 +4,7 @@ import { usePanoStore } from './store'
 
 import { PanoControls } from '@/app/(fullscreen-layout)/pano/components/PanoControls'
 import { EPS } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
+import { STYLE } from '@/config'
 
 import { clamp } from 'lodash-es'
 import { Suspense } from 'react'
@@ -11,7 +12,7 @@ import { Html } from '@react-three/drei'
 import { CircularProgress } from '@mui/material'
 
 const canvasLoading = (
-  <Html>
+  <Html zIndexRange={[STYLE.zIndex.canvasHtml, 0]}>
     <CircularProgress
       color='primary'
       size='24px'
@@ -36,12 +37,16 @@ export function PanoScene({ editable }: { editable?: boolean }) {
           key={curPos.base.standard}
           src={curPos.base.standard}
           isActive
-          radius={2}
+          radius={100}
         />
       </Suspense>
-      {usePanoStore.getCurDecPatterns().map((item) => (
+      {usePanoStore.getCurDecPatterns().map((item, i) => (
         <Suspense fallback={canvasLoading} key={item.pattern.standard}>
-          <PanoBox src={item.pattern.standard} isActive radius={1.9} />
+          <PanoBox
+            src={item.pattern.standard}
+            isActive
+            radius={100 - (i + 1) * 0.1}
+          />
         </Suspense>
       ))}
       {curPos.hotspots.length > 0 &&

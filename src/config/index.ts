@@ -12,6 +12,9 @@ export const STYLE = {
   width: {
     desktop: 1024,
   },
+  zIndex: {
+    canvasHtml: 899,
+  },
 }
 
 // 颜色见 https://en.wikipedia.org/wiki/ANSI_escape_code#Colors

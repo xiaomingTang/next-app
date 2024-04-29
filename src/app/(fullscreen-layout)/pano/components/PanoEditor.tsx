@@ -1,6 +1,7 @@
 import { usePanoStore } from './store'
 
 import { formatView } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
+import { STYLE } from '@/config'
 
 import { Menu, MenuItem } from '@mui/material'
 import { Html } from '@react-three/drei'
@@ -97,7 +98,7 @@ export function PanoEditor() {
   }, [camera, domElement])
 
   return (
-    <Html>
+    <Html zIndexRange={[STYLE.zIndex.canvasHtml, 0]}>
       <Menu
         open={!!contextMenu}
         onClose={handleClose}
