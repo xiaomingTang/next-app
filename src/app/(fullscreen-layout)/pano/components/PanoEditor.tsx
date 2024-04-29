@@ -57,9 +57,9 @@ export function PanoEditor() {
       canvas: domElement,
     })
     return {
-      h: Math.round(view.h),
-      v: Math.round(view.v),
-      fov: Math.round(view.fov),
+      h: Math.round(view.h * 10) / 10,
+      v: Math.round(view.v * 10) / 10,
+      fov: Math.round(view.fov * 10) / 10,
     }
   }, [camera, domElement, contextMenu])
 
@@ -108,22 +108,22 @@ export function PanoEditor() {
           vertical: 'center',
         }}
         anchorPosition={{
-          top: (contextMenu?.mouseY ?? 0) - 18,
+          top: contextMenu?.mouseY ?? 0,
           left: contextMenu?.mouseX ?? 0,
         }}
       >
-        <CopyToClipboard
-          text={JSON.stringify(pano, null, 2)}
-          onCopy={() => toast.success('复制成功')}
-        >
-          <MenuItem onClick={handleClose}>复制【场景】信息</MenuItem>
-        </CopyToClipboard>
-
         <CopyToClipboard
           text={`"h": ${curView.h},\n"v": ${curView.v},\n"fov": ${curView.fov}`}
           onCopy={() => toast.success('复制成功')}
         >
           <MenuItem onClick={handleClose}>复制【相机】信息</MenuItem>
+        </CopyToClipboard>
+
+        <CopyToClipboard
+          text={JSON.stringify(pano, null, 2)}
+          onCopy={() => toast.success('复制成功')}
+        >
+          <MenuItem onClick={handleClose}>复制【全场景】信息</MenuItem>
         </CopyToClipboard>
 
         <CopyToClipboard
