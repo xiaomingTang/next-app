@@ -7,31 +7,31 @@ export const panoConfig: Pano.Config = {
     {
       name: '前排',
       view: {
-        h: 272,
-        v: 104,
-        fov: 75,
+        h: 271,
+        v: 107,
+        fov: 91,
       },
       hotspots: [
         {
           name: '后排',
           type: 'POSITION',
           target: '后排',
-          h: 131,
-          v: 109,
+          h: 136.4,
+          v: 110.3,
         },
         {
           name: '内饰',
           type: 'DECORATION',
           target: '内饰',
-          h: 88.6,
-          v: 92.7,
+          h: 87.6,
+          v: 91.3,
         },
         {
           name: '脚垫',
           type: 'DECORATION',
           target: '脚垫',
-          h: 248.9,
-          v: 161.3,
+          h: 251.8,
+          v: 140.4,
         },
       ],
       base: {
@@ -78,32 +78,28 @@ export const panoConfig: Pano.Config = {
     },
     {
       name: '后排',
-      view: {
-        h: 92,
-        v: 109,
-        fov: 75,
-      },
+      view: { h: 91, v: 111, fov: 83 },
       hotspots: [
         {
           name: '前排',
           type: 'POSITION',
           target: '前排',
-          h: 296,
-          v: 106,
+          h: 292.1,
+          v: 101,
         },
         {
           name: '内饰',
           type: 'DECORATION',
           target: '内饰',
-          h: 88.3,
-          v: 120.4,
+          h: 87.7,
+          v: 115.9,
         },
         {
           name: '脚垫',
           type: 'DECORATION',
           target: '脚垫',
-          h: 251.4,
-          v: 126.3,
+          h: 177.2,
+          v: 158,
         },
       ],
       base: {
