@@ -3,18 +3,44 @@ import { panoConfig } from './constants'
 import { withStatic } from '@/utils/withStatic'
 
 import { create } from 'zustand'
+import { subscribeWithSelector } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import { TextureLoader } from 'three'
 
 import type { Pano } from './type'
 
 const useRawPanoStore = create(
-  immer(() => ({
-    pano: panoConfig,
-    curPos: panoConfig.positions[0],
-    curDec: null as Pano.Decoration | null | undefined,
-    enabledDecs: {} as Record<string, string>,
-  }))
+  subscribeWithSelector(
+    immer(() => ({
+      pano: panoConfig,
+      curPos: panoConfig.positions[0],
+      curDec: null as Pano.Decoration | null | undefined,
+      enabledDecs: {} as Record<string, string>,
+    }))
+  )
+)
+
+useRawPanoStore.subscribe(
+  (state) => state.pano,
+  () => {
+    useRawPanoStore.setState((state) => {
+      const nextPos =
+        state.pano.positions.find((item) => item.name === state.curPos.name) ??
+        state.pano.positions[0]
+      state.curPos = nextPos
+    })
+  }
+)
+
+useRawPanoStore.subscribe(
+  (state) => state.curPos,
+  (nextPos) => {
+    useRawPanoStore.setState((state) => {
+      const prevDecName = state.curDec?.name
+      state.curDec =
+        nextPos.decorations.find((item) => item.name === prevDecName) ?? null
+    })
+  }
 )
 
 export const usePanoStore = withStatic(useRawPanoStore, {
@@ -28,9 +54,6 @@ export const usePanoStore = withStatic(useRawPanoStore, {
     await new TextureLoader().loadAsync(nextPos.base.standard)
     useRawPanoStore.setState((state) => {
       state.curPos = nextPos
-      const prevDecName = state.curDec?.name
-      state.curDec =
-        nextPos.decorations.find((item) => item.name === prevDecName) ?? null
     })
   },
   setCurDec(name: string | null) {

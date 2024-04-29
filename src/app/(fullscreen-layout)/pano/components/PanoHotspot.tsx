@@ -81,7 +81,6 @@ export function PanoHotspot({
         tar.h = Math.round(h * 10) / 10
         tar.v = Math.round(v * 10) / 10
       })
-      void usePanoStore.setCurPos(curPos.name)
     },
     onDragEnd() {
       window.clearTimeout(timerRef.current)
