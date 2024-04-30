@@ -1,10 +1,11 @@
 import { usePanoStore } from './store'
 
 import { getRotationFrom } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
+import Anchor from '@/components/Anchor'
 import { STYLE } from '@/config'
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 
-import { Button } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 import { Html } from '@react-three/drei'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useState } from 'react'
@@ -68,6 +69,26 @@ export function PanoCameraStatus() {
         >
           设为初始视角
         </Button>
+        <Typography
+          sx={{
+            mt: 1,
+            textAlign: 'center',
+            fontSize: '14px',
+          }}
+        >
+          图源：
+          <Anchor
+            href='https://www.funmodifiedcar.cn/'
+            underline
+            title='深圳灵墨视界科技有限公司'
+            bold={false}
+            style={{
+              color: 'inherit',
+            }}
+          >
+            灵墨视界
+          </Anchor>
+        </Typography>
       </div>
     </Html>
   )
