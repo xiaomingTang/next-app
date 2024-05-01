@@ -21,7 +21,10 @@ interface MultiSelectProps<T extends string | number>
   onNoMatch?: (s: string) => void
 }
 
-function RawMultiSelect<T extends string | number>(
+// eslint-disable-next-line prefer-arrow-callback
+export const MultiSelect = forwardRef(function MultiSelect<
+  T extends string | number,
+>(
   {
     selectList,
     selectedList,
@@ -86,6 +89,4 @@ function RawMultiSelect<T extends string | number>(
       }}
     />
   )
-}
-
-export const MultiSelect = forwardRef(RawMultiSelect)
+})

@@ -4,26 +4,24 @@ import { Fade } from '@mui/material'
 
 import type { TransitionProps } from '@mui/material/transitions'
 
-function RawSlideUpTransition(
+// eslint-disable-next-line prefer-arrow-callback
+export const SlideUpTransition = forwardRef(function SlideUpTransition(
   props: TransitionProps & {
     children: React.ReactElement
   },
   ref: React.Ref<unknown>
 ) {
   return <Slide direction='up' ref={ref} {...props} />
-}
+})
 
-export const SlideUpTransition = forwardRef(RawSlideUpTransition)
-
-function RawFadeTransition(
+// eslint-disable-next-line prefer-arrow-callback
+export const FadeTransition = forwardRef(function FadeTransition(
   props: TransitionProps & {
     children: React.ReactElement
   },
   ref: React.Ref<unknown>
 ) {
   return <Fade ref={ref} {...props} />
-}
-
-export const FadeTransition = forwardRef(RawFadeTransition)
+})
 
 export const DefaultDialogTransition = FadeTransition

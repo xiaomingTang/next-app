@@ -32,7 +32,11 @@ function timeFormat(sec: number) {
 /**
  * _props: {} 必须要: MUI Fade 等组件要传东西下来
  */
-function RawMP3Controls(_props: {}, ref: React.ForwardedRef<HTMLDivElement>) {
+// eslint-disable-next-line prefer-arrow-callback
+export const MP3Controls = forwardRef(function MP3Controls(
+  _props: {},
+  ref: React.ForwardedRef<HTMLDivElement>
+) {
   const { controls, state } = useAudio()
   const [slideValue, setSlideValue] = useState(state.time)
   const [isSlideSetting, setIsSlideSetting] = useState(false)
@@ -118,6 +122,4 @@ function RawMP3Controls(_props: {}, ref: React.ForwardedRef<HTMLDivElement>) {
       </>
     </Box>
   )
-}
-
-export const MP3Controls = forwardRef(RawMP3Controls)
+})

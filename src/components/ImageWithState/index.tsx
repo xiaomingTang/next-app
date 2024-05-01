@@ -38,7 +38,8 @@ type Props = Omit<ImageProps, 'src' | 'alt'> & {
   preview?: boolean
 }
 
-function RawImageWithState(
+// eslint-disable-next-line prefer-arrow-callback
+export const ImageWithState = forwardRef(function ImageWithState(
   { preview = false, ...props }: Props,
   ref: React.Ref<HTMLImageElement>
 ) {
@@ -81,6 +82,4 @@ function RawImageWithState(
   }
 
   return <PhotoView src={src}>{elem}</PhotoView>
-}
-
-export const ImageWithState = forwardRef(RawImageWithState)
+})

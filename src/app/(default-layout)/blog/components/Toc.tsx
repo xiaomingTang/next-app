@@ -123,7 +123,8 @@ export function useTocList() {
   return tocList
 }
 
-function RawToc(
+// eslint-disable-next-line prefer-arrow-callback
+export const Toc = forwardRef(function Toc(
   { className, sx, children, ...props }: BoxProps,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
@@ -156,6 +157,4 @@ function RawToc(
       {children}
     </Box>
   )
-}
-
-export const Toc = forwardRef(RawToc)
+})

@@ -36,7 +36,8 @@ type DraftProps = LoadingAble<
   mode?: 'preview' | 'production'
 }
 
-function RawBlogContent(
+// eslint-disable-next-line prefer-arrow-callback
+export const BlogContent = forwardRef(function BlogContent(
   { mode = 'production', ...blog }: DraftProps,
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
@@ -209,6 +210,4 @@ function RawBlogContent(
       </Typography>
     </>
   )
-}
-
-export const BlogContent = forwardRef(RawBlogContent)
+})
