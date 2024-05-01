@@ -8,7 +8,7 @@ export const metadata = seo.defaults({
   title: '页面不存在或已删除',
 })
 
-export default async function Home() {
+export default async function Index() {
   return (
     <DefaultLayout>
       <DefaultBodyContainer>

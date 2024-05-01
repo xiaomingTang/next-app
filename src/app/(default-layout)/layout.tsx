@@ -9,11 +9,7 @@ import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import DefaultLayout from '@/layout/DefaultLayout'
 import { Clock } from '@I/clock/components/Clock'
 
-export default function DefaultLayoutTsx({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function Index({ children }: { children: React.ReactNode }) {
   return (
     <DefaultLayout>
       <DefaultBodyContainer>

@@ -10,7 +10,7 @@ export const metadata = seo.defaults({
   keywords: '壁纸,渐变,自定义',
 })
 
-export default async function Home() {
+export default async function Index() {
   return (
     <Suspense fallback={<></>}>
       <WallpaperRoot />

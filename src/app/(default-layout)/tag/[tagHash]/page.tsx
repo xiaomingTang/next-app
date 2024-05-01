@@ -46,7 +46,7 @@ export async function generateMetadata({
   })
 }
 
-export default async function Home({ params: { tagHash } }: Props) {
+export default async function Index({ params: { tagHash } }: Props) {
   return (
     <ScrollToTop>
       {/* tag list */}

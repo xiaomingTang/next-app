@@ -7,6 +7,6 @@ export const metadata = seo.defaults({
   description: '演示图片从一个主色调转变为另一个主色调',
 })
 
-export default async function Home() {
+export default async function Index() {
   return <ColorIndex />
 }

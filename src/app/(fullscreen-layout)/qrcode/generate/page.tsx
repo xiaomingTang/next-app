@@ -6,6 +6,6 @@ export const metadata = seo.defaults({
   title: '生成二维码',
 })
 
-export default async function Home() {
+export default async function Index() {
   redirect('https://cli.im/')
 }

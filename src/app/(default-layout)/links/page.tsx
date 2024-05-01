@@ -20,7 +20,7 @@ export const metadata = seo.defaults({
   title: '友链',
 })
 
-export default async function Home() {
+export default async function Index() {
   return (
     <>
       <FriendsLinkDesc />

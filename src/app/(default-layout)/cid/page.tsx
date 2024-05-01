@@ -10,7 +10,7 @@ export const metadata = seo.defaults({
   description: '信息都是随机生成的，仅用于学习与分享，严禁用于非法用途。',
 })
 
-export default function Home() {
+export default function Index() {
   return (
     <Stack spacing={2}>
       <Alert severity='warning'>

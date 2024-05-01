@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function Home() {
+export default async function Index() {
   return (
     <DefaultLayout>
       <DefaultBodyContainer>

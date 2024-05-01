@@ -9,7 +9,7 @@ export const metadata = seo.defaults({
   keywords: '在线,水平仪,水准仪,陀螺仪,检测水平度',
 })
 
-export default async function Home() {
+export default async function Index() {
   return (
     <LevelWrapper>
       <LevelBall />

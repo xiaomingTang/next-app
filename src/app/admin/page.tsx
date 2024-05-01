@@ -5,7 +5,7 @@ import Anchor from '@/components/Anchor'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
-export default function Home() {
+export default function Index() {
   const router = useRouter()
   useEffect(() => {
     router.replace('/admin/blog')

@@ -6,6 +6,6 @@ export const metadata = seo.defaults({
   title: '向站长留言',
 })
 
-export default async function Home() {
+export default async function Index() {
   return <CommentArea />
 }

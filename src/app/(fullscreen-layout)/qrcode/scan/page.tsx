@@ -6,6 +6,6 @@ export const metadata = seo.defaults({
   title: '扫描二维码',
 })
 
-export default async function Home() {
+export default async function Index() {
   return <QrcodeScanner fit='cover' />
 }

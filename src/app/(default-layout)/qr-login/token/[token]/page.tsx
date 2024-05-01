@@ -13,7 +13,7 @@ interface Props {
   params: { token: string }
 }
 
-export default function Home({ params: { token } }: Props) {
+export default function Index({ params: { token } }: Props) {
   return (
     <AuthRequired fallback={<Forbidden />}>
       <QRLoginConfirm token={token} />
