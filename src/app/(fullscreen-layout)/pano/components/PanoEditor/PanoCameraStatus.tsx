@@ -1,4 +1,4 @@
-import { usePanoStore } from './store'
+import { usePanoStore } from '../store'
 
 import { getRotationFrom } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
 import Anchor from '@/components/Anchor'

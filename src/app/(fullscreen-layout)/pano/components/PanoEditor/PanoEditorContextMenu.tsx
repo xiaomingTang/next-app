@@ -1,4 +1,4 @@
-import { usePanoStore } from './store'
+import { usePanoStore } from '../store'
 
 import { formatView } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
 import { STYLE } from '@/config'
@@ -36,7 +36,7 @@ export function screen2View({
   })
 }
 
-export function PanoEditor() {
+export function PanoEditorContextMenu() {
   const [contextMenu, setContextMenu] = useState<{
     mouseX: number
     mouseY: number

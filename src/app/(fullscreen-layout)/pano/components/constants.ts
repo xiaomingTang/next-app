@@ -1,5 +1,7 @@
 import type { Pano } from './type'
 
+export const PANO_EDIT_MODE = true
+
 export const HOTSPOT_DEPTH = 0.5
 
 export const panoConfig: Pano.Config = {

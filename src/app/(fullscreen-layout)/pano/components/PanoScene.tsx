@@ -27,7 +27,7 @@ const canvasLoading = (
   </Html>
 )
 
-export function PanoScene({ editable }: { editable?: boolean }) {
+export function PanoScene() {
   const { curPos } = usePanoStore()
 
   return (
@@ -54,7 +54,6 @@ export function PanoScene({ editable }: { editable?: boolean }) {
           <PanoHotspot
             key={`${curPos.name}-${hotspot.name}-${hotspot.type}-${hotspot.target}`}
             hotspot={hotspot}
-            editable={editable}
           />
         ))}
       <PanoControls

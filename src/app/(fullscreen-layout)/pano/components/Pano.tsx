@@ -1,12 +1,9 @@
 'use client'
 
-import { PanoCameraStatus } from './PanoCameraStatus'
 import { PanoEditor } from './PanoEditor'
 import { PanoScene } from './PanoScene'
 
 import { Canvas } from '@react-three/fiber'
-
-const EDIT_MODE = true
 
 export function PanoIndex() {
   return (
@@ -16,13 +13,8 @@ export function PanoIndex() {
         position: [0, 0, 0],
       }}
     >
-      <PanoScene editable={EDIT_MODE} />
-      {EDIT_MODE && (
-        <>
-          <PanoCameraStatus />
-          <PanoEditor />
-        </>
-      )}
+      <PanoScene />
+      <PanoEditor />
     </Canvas>
   )
 }

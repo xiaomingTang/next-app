@@ -1,5 +1,6 @@
 import { usePanoStore } from './store'
-import { screen2View } from './PanoEditor'
+import { screen2View } from './PanoEditor/PanoEditorContextMenu'
+import { PANO_EDIT_MODE } from './constants'
 
 import { ImageWithState } from '@/components/ImageWithState'
 import { cat } from '@/errors/catchAndToast'
@@ -27,13 +28,7 @@ const iconMap: Record<Pano.Hotspot['type'], string> = {
   DECORATION: '/static/pano/preset/hotspot-decoration.png',
 }
 
-export function PanoHotspot({
-  hotspot,
-  editable,
-}: {
-  hotspot: Pano.Hotspot
-  editable?: boolean
-}) {
+export function PanoHotspot({ hotspot }: { hotspot: Pano.Hotspot }) {
   const [camera, canvas] = useThree(
     (state) => [state.camera as PerspectiveCamera, state.gl.domElement] as const
   )
@@ -110,7 +105,7 @@ export function PanoHotspot({
       <Stack
         direction='column'
         alignItems='center'
-        {...(editable ? bind() : {})}
+        {...(PANO_EDIT_MODE ? bind() : {})}
         onPointerUp={cat(
           withLoading(async () => {
             if (!clickChecker.checkIsClick()) {
