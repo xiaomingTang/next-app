@@ -1,7 +1,8 @@
 import { Sphere, useTexture } from '@react-three/drei'
 import { BackSide, MeshBasicMaterial } from 'three'
-import { useSpringValue } from '@react-spring/three'
 import { useEffect, useMemo } from 'react'
+import { useEventCallback } from '@mui/material'
+import { noop } from 'lodash-es'
 
 import type { SphereGeometry } from 'three'
 import type { ShapeProps } from '@react-three/drei'
@@ -12,11 +13,16 @@ interface PanoBoxProps
     'args' | 'scale' | 'material'
   > {
   src: string
-  isActive: boolean
   radius?: number
+  onLoad?: () => void
 }
 
-export function PanoBox({ src, isActive, radius = 1, ...props }: PanoBoxProps) {
+export function PanoBox({
+  src,
+  radius = 1,
+  onLoad = noop,
+  ...props
+}: PanoBoxProps) {
   const tex = useTexture(src)
   const mat = useMemo(
     () =>
@@ -24,28 +30,19 @@ export function PanoBox({ src, isActive, radius = 1, ...props }: PanoBoxProps) {
         map: tex,
         side: BackSide,
         transparent: true,
-        opacity: 0,
         depthWrite: false,
       }),
     [tex]
   )
-  const opacity = useSpringValue(0, {
-    config: {
-      duration: 300,
-    },
-  })
+  const memoedOnLoad = useEventCallback(onLoad)
 
   useEffect(() => {
-    void opacity.start(isActive ? 1 : 0, {
-      onChange: () => {
-        mat.opacity = opacity.get()
-        mat.needsUpdate = true
-      },
-    })
-  }, [isActive, mat, opacity])
+    memoedOnLoad()
+  }, [memoedOnLoad])
 
   return (
     <Sphere
+      key={`${radius}-${src}`}
       args={[1, 128, 128]}
       scale={[-radius, radius, radius]}
       material={mat}

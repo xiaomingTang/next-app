@@ -40,3 +40,24 @@ export function restrictPick<S, T extends S>(
   }
   return defaultValue
 }
+
+type IdGenerator<T> = (v: T) => string
+
+function defaultGenerateId(v: unknown): string {
+  return Object.prototype.toString.call(v)
+}
+
+export function dedup<T>(
+  list: T[],
+  generateId: IdGenerator<T> = defaultGenerateId
+) {
+  const map: Record<string, true> = {}
+  return list.filter((item) => {
+    const id = generateId(item)
+    if (id in map) {
+      return false
+    }
+    map[id] = true
+    return true
+  })
+}

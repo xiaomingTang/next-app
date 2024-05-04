@@ -6,6 +6,7 @@ import { create } from 'zustand'
 import { subscribeWithSelector } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import { TextureLoader } from 'three'
+import { useMemo } from 'react'
 
 import type { Pano } from './type'
 
@@ -76,25 +77,32 @@ export const usePanoStore = withStatic(useRawPanoStore, {
       curDec: nextDec,
     })
   },
-  getCurDecPatterns() {
-    const { curPos, enabledDecs } = useRawPanoStore.getState()
-    return curPos.decorations
-      .map((dec) => {
-        const patternName = enabledDecs[dec.name]
-        if (!patternName) {
-          // 后面有 filter Boolean, 此处 as never 是为了类型
-          return null as never
-        }
-        const pat = dec.patterns.find((item) => item.name === patternName)
-        if (!pat) {
-          // 后面有 filter Boolean, 此处 as never 是为了类型
-          return null as never
-        }
-        return {
-          decoration: dec,
-          pattern: pat,
-        }
-      })
-      .filter(Boolean)
+  useCurDecPatterns() {
+    const { curPos, enabledDecs } = useRawPanoStore((state) => ({
+      curPos: state.curPos,
+      enabledDecs: state.enabledDecs,
+    }))
+    return useMemo(
+      () =>
+        curPos.decorations
+          .map((dec) => {
+            const patternName = enabledDecs[dec.name]
+            if (!patternName) {
+              // 后面有 filter Boolean, 此处 as never 是为了类型
+              return null as never
+            }
+            const pat = dec.patterns.find((item) => item.name === patternName)
+            if (!pat) {
+              // 后面有 filter Boolean, 此处 as never 是为了类型
+              return null as never
+            }
+            return {
+              decoration: dec,
+              pattern: pat,
+            }
+          })
+          .filter(Boolean),
+      [curPos.decorations, enabledDecs]
+    )
   },
 })

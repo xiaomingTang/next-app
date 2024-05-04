@@ -5,9 +5,11 @@ import { usePanoStore } from './store'
 import { PanoControls } from '@/app/(fullscreen-layout)/pano/components/PanoControls'
 import { EPS } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
 import { STYLE } from '@/config'
+import { dedup } from '@/utils/array'
+import { usePreviousState } from '@/hooks/usePreviousState'
 
 import { clamp } from 'lodash-es'
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 import { Html } from '@react-three/drei'
 import { CircularProgress } from '@mui/material'
 
@@ -29,33 +31,40 @@ const canvasLoading = (
 
 export function PanoScene() {
   const { curPos } = usePanoStore()
+  const curDecPatterns = usePanoStore.useCurDecPatterns()
+  const images = useMemo(
+    () => [curPos.base, ...curDecPatterns.map((item) => item.pattern)],
+    [curDecPatterns, curPos.base]
+  )
+  const [prevImages, setPrevImages] = usePreviousState(images)
+  const mergedImages = useMemo(
+    () => dedup([...(prevImages ?? []), ...images], (item) => item.standard),
+    [images, prevImages]
+  )
 
   return (
     <>
-      <Suspense fallback={canvasLoading}>
-        <PanoBox
-          key={curPos.base.standard}
-          src={curPos.base.standard}
-          isActive
-          radius={100}
-        />
-      </Suspense>
-      {usePanoStore.getCurDecPatterns().map((item, i) => (
-        <Suspense fallback={canvasLoading} key={item.pattern.standard}>
+      {mergedImages.map((item, i) => (
+        <Suspense key={item.standard} fallback={canvasLoading}>
           <PanoBox
-            src={item.pattern.standard}
-            isActive
-            radius={100 - (i + 1) * 0.1}
+            src={item.standard}
+            radius={100 - i * 0.1}
+            onLoad={() => {
+              setPrevImages((prev) =>
+                (prev ?? []).filter(
+                  (prevItem) => prevItem.standard === item.standard
+                )
+              )
+            }}
           />
         </Suspense>
       ))}
-      {curPos.hotspots.length > 0 &&
-        curPos.hotspots.map((hotspot) => (
-          <PanoHotspot
-            key={`${curPos.name}-${hotspot.name}-${hotspot.type}-${hotspot.target}`}
-            hotspot={hotspot}
-          />
-        ))}
+      {curPos.hotspots.map((hotspot) => (
+        <PanoHotspot
+          key={`${curPos.name}-${hotspot.name}-${hotspot.type}-${hotspot.target}`}
+          hotspot={hotspot}
+        />
+      ))}
       <PanoControls
         initialState={curPos.view}
         onRotate={(nextState, prevState) => {
