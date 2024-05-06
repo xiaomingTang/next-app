@@ -50,11 +50,10 @@ export default forwardRef(function Anchor(
   }: AnchorProps,
   ref: ForwardedRef<HTMLAnchorElement>
 ) {
-  const isExternal = !resolvePath(href || '').hostname.endsWith(
-    APP_URL.hostname
-  )
-  const finalTarget = target ?? (isExternal ? '_blank' : '_self')
-  const finalRel = rel ?? (isExternal ? 'noopener nofollow' : undefined)
+  // 站内链接
+  const isInternal = resolvePath(href || '').hostname.endsWith(APP_URL.hostname)
+  const finalTarget = target ?? (isInternal ? '_self' : '_blank')
+  const finalRel = rel ?? (isInternal ? undefined : 'noopener nofollow')
 
   const anchor = (
     <a
@@ -77,7 +76,7 @@ export default forwardRef(function Anchor(
     </a>
   )
 
-  if (!href || isExternal) {
+  if (!href || !isInternal) {
     return anchor
   }
 
