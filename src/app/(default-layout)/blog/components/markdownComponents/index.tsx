@@ -11,6 +11,7 @@ import { ENV_CONFIG } from '@/config'
 import { resolvePath } from '@/utils/url'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { useDefaultAsideDetail } from '@/layout/utils'
+import { onAnchorClick } from '@/components/Anchor/utils'
 
 import {
   Button,
@@ -79,15 +80,7 @@ function geneHeading(tag: `h${number}`) {
           href={elementHash}
           aria-label='超链接, 指向页面内 heading'
           className='user-anchor'
-          onClick={(e) => {
-            e.preventDefault()
-            const url = new URL(window.location.href)
-            url.hash = elementHash
-            window.history.replaceState(null, '', url)
-            document
-              .querySelector(elementHash)
-              ?.scrollIntoView({ behavior: 'smooth' })
-          }}
+          onClick={onAnchorClick}
         >
           <LinkIcon className='align-baseline' />
         </Anchor>
@@ -231,7 +224,8 @@ function Iframe({ src = '' }: { src?: string }) {
 
 export const markdownComponents: MDXComponents = {
   Button,
-  a: (props) => <Anchor {...props} ref={null} />,
+  // 目前暂不支持 props 传入 onClick（我自己暂无该需求）
+  a: (props) => <Anchor {...props} onClick={onAnchorClick} ref={null} />,
   img: ({ src, alt }) => <ImageWithState src={src} alt={alt} preview />,
   h1: geneHeading('h1'),
   h2: geneHeading('h2'),
