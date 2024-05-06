@@ -25,7 +25,7 @@ function getHeadings() {
   ) as HTMLElement[]
   const headingInfos = headings.map<HeadingTree>((h) => {
     const textElem = h.querySelector<HTMLSpanElement>('.user-heading-text')
-    const idElem = h.querySelector<HTMLSpanElement>('.user-heading-scroll-flag')
+    const idElem = h.querySelector<HTMLSpanElement>('.user-anchor')
     return {
       text: textElem?.innerText || '出错了',
       id: idElem?.getAttribute('id') ?? '',

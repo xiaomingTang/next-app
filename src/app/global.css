@@ -22,3 +22,21 @@ input[type='file']::-webkit-file-upload-button {
     background-color: #ccc;
   }
 }
+
+* {
+  scroll-margin-top: calc(40px + 8px);
+}
+
+[data-prevent-scroll-margin-header] {
+  scroll-margin-top: unset;
+}
+
+@media screen and (min-width: 600px) {
+  * {
+    scroll-margin-top: calc(56px + 8px);
+  }
+
+  [data-prevent-scroll-margin-header] {
+    scroll-margin-top: unset;
+  }
+}

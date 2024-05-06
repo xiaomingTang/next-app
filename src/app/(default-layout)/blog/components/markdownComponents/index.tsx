@@ -5,7 +5,6 @@ import { encodeToId } from './utils'
 import { Toc, useTocList } from '../Toc'
 
 import Anchor from '@/components/Anchor'
-import { DefaultLayoutScrollFlag } from '@/layout/components/ScrollFlag'
 import { ImageWithState } from '@/components/ImageWithState'
 import { ENV_CONFIG } from '@/config'
 import { resolvePath } from '@/utils/url'
@@ -71,12 +70,8 @@ function geneHeading(tag: `h${number}`) {
       tag,
       propsWithDefault,
       <>
-        <DefaultLayoutScrollFlag
-          id={id}
-          inline
-          className='user-heading-scroll-flag'
-        />
         <Anchor
+          id={id}
           href={elementHash}
           aria-label='超链接, 指向页面内 heading'
           className='user-anchor'
