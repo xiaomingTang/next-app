@@ -1,7 +1,7 @@
 #!/usr/bin/zsh
 
 # Cron 总是在几乎空的环境中运行，需要先获取所需的环境变量
-source ~/.zshrc
+DISABLE_AUTO_UPDATE=true source ~/.zshrc
 
 # 备份文件名
 ROOT=$(cd $(dirname $(dirname $0)); pwd)
