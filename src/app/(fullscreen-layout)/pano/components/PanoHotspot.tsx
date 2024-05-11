@@ -5,6 +5,7 @@ import { PANO_EDIT_MODE } from './constants'
 import { ImageWithState } from '@/components/ImageWithState'
 import { cat } from '@/errors/catchAndToast'
 import { useLoading } from '@/hooks/useLoading'
+import { resolveCDN } from '@/utils/url'
 
 import {
   Box,
@@ -24,8 +25,11 @@ import { TextureLoader, type PerspectiveCamera } from 'three'
 import type { Pano } from './type'
 
 const iconMap: Record<Pano.Hotspot['type'], string> = {
-  POSITION: '/static/pano/preset/hotspot-position.png',
-  DECORATION: '/static/pano/preset/hotspot-decoration.png',
+  POSITION: resolveCDN('/public/2024-05-11/pano/preset/hotspot-position.png')
+    .href,
+  DECORATION: resolveCDN(
+    '/public/2024-05-11/pano/preset/hotspot-decoration.png'
+  ).href,
 }
 
 export function PanoHotspot({ hotspot }: { hotspot: Pano.Hotspot }) {

@@ -5,6 +5,11 @@ export function resolvePath(pathname: string) {
   return url
 }
 
+export function resolveCDN(pathname: string) {
+  const url = new URL(pathname, process.env.NEXT_PUBLIC_CDN_ROOT)
+  return url
+}
+
 export function isValidUrl(s: string) {
   try {
     // 尝试创建 URL 对象
