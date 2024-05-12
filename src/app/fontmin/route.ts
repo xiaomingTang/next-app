@@ -39,7 +39,7 @@ export async function GET(request: Request) {
   return new Response(fontBuffers, {
     headers: {
       'Content-Type': 'application/octet-stream',
-      'Cache-Control': 'public, max-age=31536000',
+      'Cache-Control': 'max-age=31536000',
     },
   })
 }

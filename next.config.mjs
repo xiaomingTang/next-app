@@ -42,8 +42,7 @@ const nextConfig = {
   webpack: webpackConfig,
   async headers() {
     /**
-     * scripts & static 里面的内容不应该变化 (实在要变就改名),
-     * 所以使用 must-revalidate (过期后才重新验证);
+     * scripts & static 里面的内容不应该变化 (实在要变就改名)
      *
      * pwa & __ENV_CONFIG__ & manifest & favicon 可能会变,
      * 所以使用 no-cache (每次使用都需要验证);
@@ -54,7 +53,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, must-revalidate',
+            value: 'max-age=31536000',
           },
         ],
       },
@@ -63,7 +62,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, no-cache',
+            value: 'max-age=31536000, no-cache',
           },
         ],
       },
@@ -72,7 +71,7 @@ const nextConfig = {
         headers: [
           {
             key: 'Cache-Control',
-            value: 'public, max-age=31536000, no-cache',
+            value: 'max-age=31536000, no-cache',
           },
         ],
       },
