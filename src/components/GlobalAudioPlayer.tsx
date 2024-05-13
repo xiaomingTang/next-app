@@ -13,7 +13,7 @@ import { numberFormat } from '@/utils/numberFormat'
 
 import { useAudio as useReactUseAudio } from 'react-use'
 import { useEffect, useMemo } from 'react'
-import { noop } from 'lodash-es'
+import { clamp, noop } from 'lodash-es'
 import useSWR from 'swr'
 
 import type { CustomMP3 } from '@prisma/client'
@@ -262,25 +262,25 @@ export function GlobalAudioPlayer() {
       [
         'seekbackward',
         (detail) => {
-          const curTime = useAudio.getState().state.time
-          const nextTime = curTime - numberFormat(detail.seekOffset, 5)
-          useAudio.getState().controls.seek(nextTime)
+          const { time: curTime, duration } = useAudio.getState().state
+          const nextTime = curTime - numberFormat(detail.seekOffset, 10)
+          useAudio.getState().controls.seek(clamp(nextTime, 0, duration))
         },
       ],
       [
         'seekforward',
         (detail) => {
-          const curTime = useAudio.getState().state.time
-          const nextTime = curTime + numberFormat(detail.seekOffset, 5)
-          useAudio.getState().controls.seek(nextTime)
+          const { time: curTime, duration } = useAudio.getState().state
+          const nextTime = curTime + numberFormat(detail.seekOffset, 10)
+          useAudio.getState().controls.seek(clamp(nextTime, 0, duration))
         },
       ],
       [
         'seekto',
         (detail) => {
-          const curTime = useAudio.getState().state.time
-          const nextTime = numberFormat(detail.seekOffset, curTime)
-          useAudio.getState().controls.seek(nextTime)
+          const { time: curTime, duration } = useAudio.getState().state
+          const nextTime = numberFormat(detail.seekTime, curTime + 10)
+          useAudio.getState().controls.seek(clamp(nextTime, 0, duration))
         },
       ],
       [
@@ -295,7 +295,7 @@ export function GlobalAudioPlayer() {
       try {
         navigator.mediaSession.setActionHandler(action, handler)
       } catch (error) {
-        console.log(
+        console.warn(
           `The media session action "${action}" is not supported yet.`
         )
       }
@@ -305,7 +305,7 @@ export function GlobalAudioPlayer() {
         try {
           navigator.mediaSession.setActionHandler(action, null)
         } catch (error) {
-          console.log(
+          console.warn(
             `The media session action "${action}" is not supported yet.`
           )
         }
@@ -321,7 +321,22 @@ export function GlobalAudioPlayer() {
     return () => {
       navigator.mediaSession.playbackState = 'none'
     }
-  }, [activeMP3, state.playing])
+  }, [activeMP3, state.playing, state.time])
+
+  useEffect(() => {
+    if (!('mediaSession' in navigator) || !activeMP3) {
+      return
+    }
+    try {
+      navigator.mediaSession.setPositionState({
+        // bug: https://issues.chromium.org/issues/40287871
+        // bug 描述: 'position' 设置无效, 干脆隐藏进度条算了
+        duration: 0,
+      })
+    } catch (error) {
+      console.warn(`not supported: "setPositionState"`)
+    }
+  }, [activeMP3, state.duration])
 
   return <>{audio}</>
 }
