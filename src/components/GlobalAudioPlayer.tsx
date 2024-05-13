@@ -9,6 +9,7 @@ import { remainder } from '@/utils/math'
 import { sleepMs } from '@/utils/time'
 import { getMP3s } from '@/app/admin/customMP3/server'
 import { SA } from '@/errors/utils'
+import { numberFormat } from '@/utils/numberFormat'
 
 import { useAudio as useReactUseAudio } from 'react-use'
 import { useEffect, useMemo } from 'react'
@@ -221,6 +222,104 @@ export function GlobalAudioPlayer() {
     document.title = `🎵 ${activeMP3.name} | ${prevTitle}`
     return () => {
       document.title = prevTitle
+    }
+  }, [activeMP3, state.playing])
+
+  useEffect(() => {
+    if (!('mediaSession' in navigator) || !activeMP3) {
+      return noop
+    }
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: activeMP3.name,
+    })
+    const actions: [MediaSessionAction, MediaSessionActionHandler][] = [
+      [
+        'play',
+        () => {
+          void useAudio.getState().controls.play()
+        },
+      ],
+      [
+        'pause',
+        () => {
+          useAudio.getState().controls.pause()
+        },
+      ],
+      [
+        'nexttrack',
+        () => {
+          useAudio.getState().controls.next()
+          void useAudio.getState().controls.play()
+        },
+      ],
+      [
+        'previoustrack',
+        () => {
+          useAudio.getState().controls.prev()
+          void useAudio.getState().controls.play()
+        },
+      ],
+      [
+        'seekbackward',
+        (detail) => {
+          const curTime = useAudio.getState().state.time
+          const nextTime = curTime - numberFormat(detail.seekOffset, 5)
+          useAudio.getState().controls.seek(nextTime)
+        },
+      ],
+      [
+        'seekforward',
+        (detail) => {
+          const curTime = useAudio.getState().state.time
+          const nextTime = curTime + numberFormat(detail.seekOffset, 5)
+          useAudio.getState().controls.seek(nextTime)
+        },
+      ],
+      [
+        'seekto',
+        (detail) => {
+          const curTime = useAudio.getState().state.time
+          const nextTime = numberFormat(detail.seekOffset, curTime)
+          useAudio.getState().controls.seek(nextTime)
+        },
+      ],
+      [
+        'stop',
+        () => {
+          useAudio.getState().controls.seek(0)
+          useAudio.getState().controls.pause()
+        },
+      ],
+    ]
+    actions.forEach(([action, handler]) => {
+      try {
+        navigator.mediaSession.setActionHandler(action, handler)
+      } catch (error) {
+        console.log(
+          `The media session action "${action}" is not supported yet.`
+        )
+      }
+    })
+    return () => {
+      actions.forEach(([action]) => {
+        try {
+          navigator.mediaSession.setActionHandler(action, null)
+        } catch (error) {
+          console.log(
+            `The media session action "${action}" is not supported yet.`
+          )
+        }
+      })
+    }
+  }, [activeMP3, mp3s])
+
+  useEffect(() => {
+    if (!('mediaSession' in navigator) || !activeMP3) {
+      return noop
+    }
+    navigator.mediaSession.playbackState = state.playing ? 'playing' : 'paused'
+    return () => {
+      navigator.mediaSession.playbackState = 'none'
     }
   }, [activeMP3, state.playing])
 
