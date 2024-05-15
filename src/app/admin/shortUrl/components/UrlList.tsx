@@ -8,8 +8,8 @@ import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'
 import { SA } from '@/errors/utils'
 import { AuthRequired } from '@/components/AuthRequired'
-import { ENV_CONFIG } from '@/config'
 import { RoleNameMap } from '@/constants'
+import { resolvePath } from '@/utils/url'
 
 import { CopyToClipboard } from 'react-copy-to-clipboard'
 import {
@@ -58,7 +58,7 @@ export function UrlEditUrlList({
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <CopyToClipboard
-                  text={`${ENV_CONFIG.public.origin}/u/${url.hash}`}
+                  text={resolvePath(`/u/${url.hash}`).href}
                   onCopy={() => {
                     toast.success('复制成功')
                   }}
@@ -79,7 +79,7 @@ export function UrlEditUrlList({
                         [已加密]
                       </Typography>
                     )}{' '}
-                    {`${ENV_CONFIG.public.origin}/u/${url.hash}`}
+                    {resolvePath(`/u/${url.hash}`).href}
                   </TableCell>
                 </CopyToClipboard>
                 <TableCell>{url.description}</TableCell>

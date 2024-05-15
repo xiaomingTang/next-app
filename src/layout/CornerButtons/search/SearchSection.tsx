@@ -7,12 +7,12 @@ import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
 import { SvgGoogle, SvgLoading } from '@/svg'
 import { BlogList } from '@D/blog/components/BlogList'
-import { ENV_CONFIG } from '@/config'
 import { obj } from '@/utils/tiny'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { useListen } from '@/hooks/useListen'
 import { useRawPlatform } from '@/utils/device'
 import { muiDialogV5ReplaceOnClose } from '@/utils/muiDialogV5ReplaceOnClose'
+import { resolvePath } from '@/utils/url'
 
 import {
   Box,
@@ -57,7 +57,7 @@ export const SearchSection = NiceModal.create(() => {
       return undefined
     }
     const url = new URL('https://www.google.com/search')
-    const { hostname } = new URL(ENV_CONFIG.public.origin)
+    const { hostname } = resolvePath('/')
     url.searchParams.set('q', `${searchText} site:${hostname}`)
     return url.href
   }, [searchText])

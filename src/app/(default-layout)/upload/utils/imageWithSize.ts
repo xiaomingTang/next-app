@@ -1,5 +1,5 @@
 import { getImageSizeFromUrl, setImageSizeForUrl } from '@/utils/urlImageSize'
-import { ENV_CONFIG } from '@/config'
+import { resolvePath } from '@/utils/url'
 
 import sizeOf from 'image-size'
 
@@ -12,7 +12,7 @@ interface WithSizeProps {
  * 调用方需要自行保证待处理的是图片
  */
 export async function imageWithSize({ url: originUrl, buffer }: WithSizeProps) {
-  const url = new URL(originUrl, ENV_CONFIG.public.origin)
+  const url = resolvePath(originUrl)
   if (getImageSizeFromUrl(url)) {
     return url
   }

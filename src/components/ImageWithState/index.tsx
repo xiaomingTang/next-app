@@ -1,8 +1,8 @@
 import styles from './index.module.scss'
 
 import { getImageSizeFromUrl } from '@/utils/urlImageSize'
-import { ENV_CONFIG } from '@/config'
 import imageConfig from '@ROOT/next-image.config'
+import { resolvePath } from '@/utils/url'
 
 import { matchRemotePattern } from 'next/dist/shared/lib/match-remote-pattern'
 import Image from 'next/image'
@@ -24,7 +24,7 @@ function isOptimizedUrl(url = '') {
     return false
   }
   return imageConfig.remotePatterns.some((pattern) =>
-    matchRemotePattern(pattern, new URL(url, ENV_CONFIG.public.origin))
+    matchRemotePattern(pattern, resolvePath(url))
   )
 }
 
@@ -44,7 +44,7 @@ export const ImageWithState = forwardRef(function ImageWithState(
   ref: React.Ref<HTMLImageElement>
 ) {
   const src = props.src || '/static/images/empty.png'
-  const size = getImageSizeFromUrl(new URL(src, ENV_CONFIG.public.origin))
+  const size = getImageSizeFromUrl(resolvePath(src))
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const previewEnabled = preview && !!props.src && !loading && !error

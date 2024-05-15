@@ -6,7 +6,6 @@ import { Toc, useTocList } from '../Toc'
 
 import Anchor from '@/components/Anchor'
 import { ImageWithState } from '@/components/ImageWithState'
-import { ENV_CONFIG } from '@/config'
 import { resolvePath } from '@/utils/url'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { useDefaultAsideDetail } from '@/layout/utils'
@@ -152,7 +151,7 @@ function formatIframeSrc(src?: string) {
   if (!src) {
     return null
   }
-  const srcUrl = new URL(src, ENV_CONFIG.public.origin)
+  const srcUrl = resolvePath(src)
   if (srcUrl.host === 'bilibili.com' || srcUrl.host.endsWith('.bilibili.com')) {
     srcUrl.searchParams.set('autoplay', '0')
     return srcUrl
