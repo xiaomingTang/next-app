@@ -16,6 +16,3 @@ export const STYLE = {
     canvasHtml: 899,
   },
 }
-
-// 颜色见 https://en.wikipedia.org/wiki/ANSI_escape_code#Colors
-console.log(`[origin: ${ENV_CONFIG.public.origin}]`)
