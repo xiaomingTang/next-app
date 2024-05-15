@@ -1,13 +1,11 @@
 import { ENV_CONFIG } from '@/config'
 
-export function resolvePath(pathname: string) {
-  const url = new URL(pathname, ENV_CONFIG.public.origin)
-  return url
+export function resolvePath(pathname: string | URL) {
+  return new URL(pathname, ENV_CONFIG.public.origin)
 }
 
-export function resolveCDN(pathname: string) {
-  const url = new URL(pathname, process.env.NEXT_PUBLIC_CDN_ROOT)
-  return url
+export function resolveCDN(pathname: string | URL) {
+  return new URL(pathname, process.env.NEXT_PUBLIC_CDN_ROOT)
 }
 
 export function isValidUrl(s: string) {
