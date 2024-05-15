@@ -107,6 +107,7 @@
     "react-hook-form": "^7.51.3",
     "react-hot-toast": "^2.4.1",
     "react-photo-view": "^1.2.4",
+    "react-schemaorg": "^2.0.0",
     "react-use": "^17.5.0",
     "rehype-prism-plus": "^2.0.0",
     "remark-gfm": "^3.0.1",
@@ -165,6 +166,7 @@
     "prettier": "^3.2.5",
     "prisma": "^5.12.1",
     "raw-loader": "^4.0.2",
+    "schema-dts": "^1.1.2",
     "tsx": "^4.7.2"
   },
   "pnpm": {

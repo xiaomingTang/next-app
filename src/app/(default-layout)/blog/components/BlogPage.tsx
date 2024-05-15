@@ -9,7 +9,9 @@ import { shuffledArray7 } from '@/constants'
 
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
 import { useState } from 'react'
+import { JsonLd } from 'react-schemaorg'
 
+import type { Article } from 'schema-dts'
 import type { LoadingAble } from '@/components/ServerComponent'
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import type { BlogWithTags } from '@ADMIN/blog/server'
@@ -47,6 +49,26 @@ export function BlogPage(blog: BlogContentProps) {
 
   return (
     <ScrollToTop>
+      {!blog.loading && (
+        <JsonLd<Article>
+          item={{
+            '@context': 'https://schema.org',
+            '@type': 'Article',
+            name: blog.title,
+            headline: blog.title,
+            datePublished: blog.createdAt.toISOString(),
+            dateModified: blog.updatedAt.toISOString(),
+            author: [
+              {
+                '@type': 'Person',
+                name: 'xiaoming',
+                url: 'https://github.com/xiaomingTang',
+              },
+            ],
+          }}
+        />
+      )}
+
       {/* meta: time & tags */}
       <Stack
         spacing={1}
