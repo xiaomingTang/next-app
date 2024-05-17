@@ -142,7 +142,7 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <FormControl>
+              <FormControl error={!!error}>
                 <InputLabel>mp3</InputLabel>
                 <OutlinedInput
                   {...field}
@@ -182,7 +182,7 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
               },
             }}
             render={({ field, fieldState: { error } }) => (
-              <FormControl>
+              <FormControl error={!!error}>
                 <InputLabel>lrc</InputLabel>
                 <OutlinedInput
                   {...field}
