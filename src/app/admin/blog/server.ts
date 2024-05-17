@@ -3,17 +3,16 @@
 import { SA, withRevalidate } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { getSelf } from '@/user/server'
-import { validateRequest } from '@/request/validator'
+import { zf } from '@/request/validator'
 import blogFullTextSearchSql from '@/sql/blog-full-text-search.sql'
 
 import { nanoid } from 'nanoid'
 import { noop, omit } from 'lodash-es'
 import Boom from '@hapi/boom'
-import { Type } from '@sinclair/typebox'
 import { BlogType, Role } from '@prisma/client'
+import { z } from 'zod'
 
 import type { Prisma, User } from '@prisma/client'
-import type { Static } from '@sinclair/typebox'
 
 const blogSelect = {
   hash: true,
@@ -137,101 +136,93 @@ export const privateGetBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
   })
 )
 
-const saveBlogDto = Type.Object({
+const saveBlogDto = z.object({
   /**
    * hash 为空则是新建
    */
-  hash: Type.Optional(Type.String()),
-  title: Type.String({
-    minLength: 2,
-    maxLength: 100,
-  }),
-  type: Type.Enum(BlogType),
+  hash: z.string().optional(),
+  title: z.string().min(2).max(100),
+  type: z.nativeEnum(BlogType),
   /**
    * Array<tag hash>
    */
-  tags: Type.Array(Type.String()),
-  description: Type.String({
-    minLength: 2,
-    maxLength: 200,
-  }),
-  content: Type.String({
-    minLength: 2,
-    maxLength: 20000,
-  }),
+  tags: z.array(z.string()),
+  description: z.string().min(2).max(200),
+  content: z.string().min(2).max(20000),
 })
 
-export const saveBlog = SA.encode(async (props: Static<typeof saveBlogDto>) => {
-  validateRequest(saveBlogDto, props)
-  // 注册用户才能访问
-  const self = await getSelf()
-  const { hash, type, tags } = props
-  // 移除标题的前后空格
-  const title = props.title.trim()
-  const description = props.description.trim()
-  const content = props.content.trim()
-  if (!hash) {
-    // 所有人都能新建
+export const saveBlog = SA.encode(
+  zf(saveBlogDto, async (props) => {
+    // 注册用户才能访问
+    const self = await getSelf()
+    const { hash, type, tags } = props
+    // 移除标题的前后空格
+    const title = props.title.trim()
+    const description = props.description.trim()
+    const content = props.content.trim()
+    if (!hash) {
+      // 所有人都能新建
+      return prisma.blog
+        .create({
+          data: {
+            hash: nanoid(12),
+            content,
+            description,
+            title,
+            type,
+            tags: {
+              connect: tags.map((tagHash) => ({
+                hash: tagHash,
+              })),
+            },
+            creatorId: self.id,
+          },
+          select: blogSelect,
+        })
+        .then(
+          withRevalidate({
+            tags: ['getBlogs'],
+          })
+        )
+    }
+    // 以下是保存
+    if (self.role !== Role.ADMIN) {
+      // 非 admin 则需要请求者是作者
+      await prisma.blog
+        .findUnique({
+          where: {
+            hash,
+          },
+          select: blogSelect,
+        })
+        .then(filterBlogWithAuth)
+    }
     return prisma.blog
-      .create({
+      .update({
+        where: {
+          hash,
+        },
         data: {
-          hash: nanoid(12),
           content,
           description,
           title,
           type,
           tags: {
-            connect: tags.map((tagHash) => ({
+            set: tags.map((tagHash) => ({
               hash: tagHash,
             })),
           },
-          creatorId: self.id,
-        },
-        select: blogSelect,
-      })
-      .then(
-        withRevalidate({
-          tags: ['getBlogs'],
-        })
-      )
-  }
-  // 以下是保存
-  if (self.role !== Role.ADMIN) {
-    // 非 admin 则需要请求者是作者
-    await prisma.blog
-      .findUnique({
-        where: {
-          hash,
         },
         select: blogSelect,
       })
       .then(filterBlogWithAuth)
-  }
-  return prisma.blog
-    .update({
-      where: {
-        hash,
-      },
-      data: {
-        content,
-        description,
-        title,
-        type,
-        tags: {
-          set: tags.map((tagHash) => ({
-            hash: tagHash,
-          })),
-        },
-      },
-      select: blogSelect,
-    })
-    .then(filterBlogWithAuth)
-    .then(
-      withRevalidate({
-        tags: [`getBlog:${props.hash}`, 'getBlogs'],
-      })
-    )
-})
+      .then(
+        withRevalidate({
+          tags: [`getBlog:${props.hash}`, 'getBlogs'],
+        })
+      )
+  })
+)
 
 export const deleteBlogs = SA.encode(async (blogHashes: string[]) => {
   const self = await getSelf()
@@ -383,19 +374,15 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
   )
 })
 
-const searchBlogDto = Type.Object({
-  s: Type.String({
-    minLength: 2,
-    maxLength: 50,
-  }),
+const searchBlogDto = z.object({
+  s: z.string().min(2).max(50),
 })
 
 export const searchBlog = SA.encode(
-  async (props: Static<typeof searchBlogDto>) => {
-    validateRequest(searchBlogDto, props)
+  zf(searchBlogDto, async (props) => {
     const { s } = props
     return prisma
       .$queryRawUnsafe<BlogWithTags[]>(blogFullTextSearchSql, s)
       .then(filterBlogsWithAuth)
-  }
+  })
 )

@@ -4,7 +4,7 @@ import { getCdnUrl } from './utils/getCdnUrl'
 
 import { SA, pipePromiseAllSettled } from '@/errors/utils'
 import { getSelf } from '@/user/server'
-import { validateRequest } from '@/request/validator'
+import { zf } from '@/request/validator'
 import { MB_SIZE, formatTime } from '@/utils/transformer'
 import { prisma } from '@/request/prisma'
 import { getLocalStartsOfToday } from '@/utils/time'
@@ -12,30 +12,28 @@ import { getLocalStartsOfToday } from '@/utils/time'
 import Boom from '@hapi/boom'
 import { nanoid } from 'nanoid'
 import { extension } from 'mime-types'
-import { Type } from '@sinclair/typebox'
 import { Role } from '@prisma/client'
 import STS from 'qcloud-cos-sts'
 import COS from 'cos-nodejs-sdk-v5'
+import { z } from 'zod'
 
-import type { Static } from '@sinclair/typebox'
-
-const uploadConfigDto = Type.Object({
+const uploadConfigDto = z.object({
   /**
    * @default true
    * if false (admin only), will use File name,
    * if no File name, will use random name.
    */
-  randomFilenameByServer: Type.Boolean(),
+  randomFilenameByServer: z.boolean(),
   /**
    * @default curDate (xxxx-xx-xx)
    * @warning admin only
    */
-  dirname: Type.String(),
-  files: Type.Array(
-    Type.Object({
-      name: Type.String(),
-      type: Type.String(),
-      size: Type.Number(),
+  dirname: z.string(),
+  files: z.array(
+    z.object({
+      name: z.string(),
+      type: z.string(),
+      size: z.number(),
     })
   ),
 })
@@ -69,7 +67,7 @@ const MAX_UPLOAD_PER_DAY = 20
  */
 const MAX_SIZE_MB = 5
 
-async function validateUploadConfig(config: Static<typeof uploadConfigDto>) {
+async function validateUploadConfig(config: z.infer<typeof uploadConfigDto>) {
   const user = await getSelf()
   if (user.role === Role.ADMIN) {
     return
@@ -121,9 +119,8 @@ async function validateUploadConfig(config: Static<typeof uploadConfigDto>) {
 }
 
 export const requestUploadFiles = SA.encode(
-  async (inputConfig: Static<typeof uploadConfigDto>) => {
+  zf(uploadConfigDto, async (config) => {
     const user = await getSelf()
-    const config = validateRequest(uploadConfigDto, inputConfig)
     await validateUploadConfig(config)
     // 为 dirname 赋初始值
     config.dirname = config.dirname || formatTime(new Date()).slice(0, 10)
@@ -209,7 +206,7 @@ export const requestUploadFiles = SA.encode(
     })
 
     return res
-  }
+  })
 )
 
 export const deleteFile = SA.encode(async (href: string) => {

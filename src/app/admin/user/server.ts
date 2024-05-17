@@ -3,16 +3,16 @@
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { authValidate, getSelf, setCookieAsUser } from '@/user/server'
-import { validateRequest } from '@/request/validator'
+import { zf } from '@/request/validator'
 import { generatePassword } from '@/utils/password'
+import { emptyToUndefined, optionalString } from '@/request/utils'
 
 import Boom from '@hapi/boom'
 import { Role } from '@prisma/client'
-import { Type } from '@sinclair/typebox'
 import { noop } from 'lodash-es'
 import { nanoid } from 'nanoid'
+import { z } from 'zod'
 
-import type { Static } from '@sinclair/typebox'
 import type { Prisma } from '@prisma/client'
 
 function mosaic<T extends Record<string, unknown>>(
@@ -62,45 +62,46 @@ export const getUsers = SA.encode(async (props: Prisma.UserWhereInput) => {
   return users.map(mosaicPassword)
 })
 
-const saveDto = Type.Object({
+const saveDto = z.object({
   /**
    * id 为空即为创建
    */
-  id: Type.Optional(Type.Number()),
-  email: Type.String({
-    format: 'email',
-  }),
-  password: Type.Optional(
-    Type.Union([
-      Type.String({
-        minLength: 6,
-        maxLength: 16,
-      }),
-      Type.String({
-        maxLength: 0,
-      }),
-    ])
-  ),
-  name: Type.String({
-    minLength: 3,
-    maxLength: 24,
-  }),
-  role: Type.Enum(Role),
+  id: z.number().optional(),
+  email: z.string().email(),
+  password: optionalString(z.string().min(6).max(16)),
+  name: z.string().min(3).max(24),
+  role: z.nativeEnum(Role),
 })
 
-export const saveUser = SA.encode(async (props: Static<typeof saveDto>) => {
-  validateRequest(saveDto, props)
-  await authValidate(await getSelf(), {
-    roles: [Role.ADMIN],
-  })
-  const { id, email, name, role, password } = props
-  const encodedPassword = !password ? undefined : generatePassword(password)
-  if (!id) {
-    if (!encodedPassword) {
-      throw Boom.badRequest('创建用户时，密码为必填项')
+export const saveUser = SA.encode(
+  zf(saveDto, async (props) => {
+    await authValidate(await getSelf(), {
+      roles: [Role.ADMIN],
+    })
+    const { id, email, name, role, password } = emptyToUndefined(props, [
+      'password',
+    ])
+    const encodedPassword = !password ? undefined : generatePassword(password)
+    if (!id) {
+      if (!encodedPassword) {
+        throw Boom.badRequest('创建用户时，密码为必填项')
+      }
+      return prisma.user
+        .create({
+          data: {
+            email,
+            name,
+            role,
+            password: encodedPassword,
+          },
+        })
+        .then(mosaicPassword)
     }
     return prisma.user
-      .create({
+      .update({
+        where: {
+          id,
+        },
         data: {
           email,
           name,
@@ -109,21 +110,8 @@ export const saveUser = SA.encode(async (props: Static<typeof saveDto>) => {
         },
       })
       .then(mosaicPassword)
-  }
-  return prisma.user
-    .update({
-      where: {
-        id,
-      },
-      data: {
-        email,
-        name,
-        role,
-        password: encodedPassword,
-      },
-    })
-    .then(mosaicPassword)
-})
+  })
+)
 
 export const deleteUsers = SA.encode(async (ids: number[]) => {
   await authValidate(await getSelf(), {

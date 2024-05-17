@@ -3,15 +3,15 @@
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { getSelf } from '@/user/server'
-import { validateRequest } from '@/request/validator'
+import { zf } from '@/request/validator'
+import { emptyToUndefined, optionalString } from '@/request/utils'
 
 import { nanoid } from 'nanoid'
-import { Type } from '@sinclair/typebox'
 import { BlogType, Role } from '@prisma/client'
 import Boom from '@hapi/boom'
+import { z } from 'zod'
 
 import type { Prisma } from '@prisma/client'
-import type { Static } from '@sinclair/typebox'
 
 const tagSelector = {
   hash: true,
@@ -61,80 +61,59 @@ export type TagWithCreator = NonNullable<
   Awaited<ReturnType<typeof getTags>>['data']
 >[number]
 
-const saveTagDto = Type.Object({
-  hash: Type.Optional(
-    Type.Union([
-      Type.String({
-        minLength: 6,
-        maxLength: 16,
-      }),
-      Type.String({
-        maxLength: 0,
-      }),
-    ])
-  ),
-  name: Type.String({
-    minLength: 2,
-  }),
-  description: Type.Optional(
-    Type.Union([
-      Type.String({
-        minLength: 2,
-        maxLength: 66,
-      }),
-      Type.String({
-        maxLength: 0,
-      }),
-    ])
-  ),
+const saveTagDto = z.object({
+  hash: optionalString(z.string().min(6).max(16)),
+  name: z.string().min(2),
+  description: optionalString(z.string().min(2).max(66)),
 })
 
-export const saveTag = SA.encode(async (props: Static<typeof saveTagDto>) => {
-  validateRequest(saveTagDto, props)
-  const { hash = '', name } = props
-  const description = props.description || name
-  const self = await getSelf()
-  if (!hash) {
-    return prisma.tag.create({
-      data: {
-        hash: nanoid(12),
-        name,
-        description,
-        creatorId: self.id,
-      },
-      select: tagSelector,
-    })
-  }
-  if (self.role !== Role.ADMIN) {
-    // 非 admin 则需要请求者是作者
-    await prisma.tag
-      .findUnique({
-        where: {
-          hash,
+export const saveTag = SA.encode(
+  zf(saveTagDto, async (props) => {
+    const { hash, name } = emptyToUndefined(props, ['hash', 'description'])
+    const description = props.description || name
+    const self = await getSelf()
+    if (!hash) {
+      return prisma.tag.create({
+        data: {
+          hash: nanoid(12),
+          name,
+          description,
+          creatorId: self.id,
         },
         select: tagSelector,
       })
-      .then((res) => {
-        if (!res) {
-          throw Boom.notFound('标签不存在')
-        }
-        if (res.creatorId !== self.id) {
-          throw Boom.forbidden('无权限')
-        }
-        return res
-      })
-  }
-  return prisma.tag.update({
-    where: {
-      hash,
-    },
-    data: {
-      name,
-      description,
-    },
-    select: tagSelector,
+    }
+    if (self.role !== Role.ADMIN) {
+      // 非 admin 则需要请求者是作者
+      await prisma.tag
+        .findUnique({
+          where: {
+            hash,
+          },
+          select: tagSelector,
+        })
+        .then((res) => {
+          if (!res) {
+            throw Boom.notFound('标签不存在')
+          }
+          if (res.creatorId !== self.id) {
+            throw Boom.forbidden('无权限')
+          }
+          return res
+        })
+    }
+    return prisma.tag.update({
+      where: {
+        hash,
+      },
+      data: {
+        name,
+        description,
+      },
+      select: tagSelector,
+    })
   })
-})
+)
 
 export const deleteTags = SA.encode(async (hashes: string[]) => {
   const self = await getSelf()

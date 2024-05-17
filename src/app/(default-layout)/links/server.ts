@@ -2,7 +2,8 @@
 
 import { SA, withRevalidate } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
-import { validateRequest } from '@/request/validator'
+import { emptyToUndefined, optionalString } from '@/request/utils'
+import { zf } from '@/request/validator'
 import { authValidate, getSelf } from '@/user/server'
 
 import Boom from '@hapi/boom'
@@ -12,11 +13,9 @@ import {
   type Prisma,
   type FriendsLink,
 } from '@prisma/client'
-import { Type } from '@sinclair/typebox'
 import { noop } from 'lodash-es'
 import { nanoid } from 'nanoid'
-
-import type { Static } from '@sinclair/typebox'
+import { z } from 'zod'
 
 const linkSelect = {
   hash: true,
@@ -94,52 +93,21 @@ export const getFriendsLinks = SA.encode(
       .then(filterFriendsLinksWithAuth)
 )
 
-const saveFriendsLinkDto = Type.Object({
+const saveFriendsLinkDto = z.object({
   /**
    * hash 为空则是新建
    */
-  hash: Type.Optional(Type.String()),
-  status: Type.Optional(Type.Enum(FriendsLinkStatus)),
-  name: Type.String({
-    minLength: 2,
-    maxLength: 100,
-  }),
-  email: Type.Optional(
-    Type.Union([
-      Type.String({
-        maxLength: 0,
-      }),
-      Type.String({
-        maxLength: 200,
-        format: 'email',
-      }),
-    ])
-  ),
-  url: Type.String({
-    minLength: 1,
-    maxLength: 200,
-    pattern: `https?:\\/\\/`,
-  }),
-  description: Type.Optional(
-    Type.String({
-      maxLength: 200,
-    })
-  ),
-  image: Type.Optional(
-    Type.Union([
-      Type.String({
-        maxLength: 0,
-      }),
-      Type.String({
-        maxLength: 400,
-        pattern: `https?:\\/\\/`,
-      }),
-    ])
-  ),
+  hash: optionalString(z.string()),
+  status: z.nativeEnum(FriendsLinkStatus).optional(),
+  name: z.string().min(2).max(100),
+  email: optionalString(z.string().email().max(200)),
+  url: z.string().max(200).url(),
+  description: optionalString(z.string().max(200)),
+  image: optionalString(z.string().max(400).url()),
 })
 
 export const saveFriendsLink = SA.encode(
-  async (props: Static<typeof saveFriendsLinkDto>) => {
+  zf(saveFriendsLinkDto, async (props) => {
     const {
       hash,
       status = 'PENDING',
@@ -148,7 +116,7 @@ export const saveFriendsLink = SA.encode(
       url,
       description,
       image,
-    } = validateRequest(saveFriendsLinkDto, props)
+    } = emptyToUndefined(props, ['hash', 'description', 'email', 'image'])
 
     const user = await getSelf().catch(noop)
 
@@ -197,7 +165,7 @@ export const saveFriendsLink = SA.encode(
           tags: ['getFriendsLinks'],
         })
       )
-  }
+  })
 )
 
 export const getFriendsLinkCounts = SA.encode(async () => {

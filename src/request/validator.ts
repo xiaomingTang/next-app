@@ -1,31 +1,24 @@
-import { validate } from 'jsonschema'
 import Boom from '@hapi/boom'
+import { fromZodError } from 'zod-validation-error'
 
-import type { Options, Schema, ValidationError } from 'jsonschema'
-import type { Static, TSchema } from '@sinclair/typebox'
+import type { ZodType, z } from 'zod'
+import type { ZodError } from 'zod-validation-error'
 
-interface ValidatorResultError extends Error {
-  name: 'Validation Error'
-  instance: Record<string, unknown>
-  schema: Schema
-  options: Options
-  errors: ValidationError[]
-}
-
-function formatValidationError(error: ValidatorResultError) {
-  return error.errors.map((err) => err.toString()).join('; ')
-}
-
-export function validateRequest<T extends TSchema>(
-  dto: T,
-  data: unknown
-): Static<T> {
-  try {
-    validate(data, dto, {
-      throwAll: true,
-    })
-    return data as Static<T>
-  } catch (error) {
-    throw Boom.badRequest(formatValidationError(error as ValidatorResultError))
+/**
+ * generate function with pre validation of zod type
+ */
+export function zf<T extends ZodType, Ret>(
+  zodType: T,
+  callback: (props: z.infer<T>) => Promise<Ret>
+): typeof callback {
+  return (props) => {
+    let parsedProps: T
+    try {
+      parsedProps = zodType.parse(props)
+    } catch (error) {
+      const validationError = fromZodError(error as ZodError)
+      throw Boom.badRequest(validationError.toString())
+    }
+    return callback(parsedProps)
   }
 }

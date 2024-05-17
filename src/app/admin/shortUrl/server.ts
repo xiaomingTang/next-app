@@ -3,15 +3,14 @@
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { getSelf } from '@/user/server'
-import { validateRequest } from '@/request/validator'
+import { zf } from '@/request/validator'
 import { comparePassword, generatePassword } from '@/utils/password'
 
 import Boom from '@hapi/boom'
 import { Role } from '@prisma/client'
 import { nanoid } from 'nanoid'
-import { Type } from '@sinclair/typebox'
+import { z } from 'zod'
 
-import type { Static } from '@sinclair/typebox'
 import type { Prisma } from '@prisma/client'
 
 function mosaic<T extends Record<string, unknown>>(
@@ -110,73 +109,72 @@ export type ShortUrlWithCreator = NonNullable<
   Awaited<ReturnType<typeof getShortUrls>>['data']
 >[number]
 
-const saveDto = Type.Object({
-  hash: Type.Optional(Type.String()),
-  description: Type.String(),
-  password: Type.String(),
-  limit: Type.Number(),
+const saveDto = z.object({
+  hash: z.string().optional(),
+  description: z.string(),
+  password: z.string(),
+  limit: z.number(),
   // jsonschema 包不支持 Date 类型的校验
-  timeout: Type.Number(),
-  url: Type.String({
-    format: 'uri',
-  }),
+  timeout: z.number(),
+  url: z.string().url(),
 })
 
-export const saveShortUrl = SA.encode(async (props: Static<typeof saveDto>) => {
-  validateRequest(saveDto, props)
-  const { hash, limit, url, description } = props
-  const password = generatePassword(props.password)
-  const timeout = new Date(props.timeout)
-  const encodedUrl = encodeURI(url)
-  const self = await getSelf()
-  if (!hash) {
-    // 所有用户都能新建
-    return prisma.shortUrl.create({
+export const saveShortUrl = SA.encode(
+  zf(saveDto, async (props) => {
+    const { hash, limit, url, description } = props
+    const password = generatePassword(props.password)
+    const timeout = new Date(props.timeout)
+    const encodedUrl = encodeURI(url)
+    const self = await getSelf()
+    if (!hash) {
+      // 所有用户都能新建
+      return prisma.shortUrl.create({
+        data: {
+          hash: nanoid(12),
+          url: encodedUrl,
+          description,
+          creatorId: self.id,
+          password,
+          limit,
+          timeout,
+        },
+        select: urlSelect,
+      })
+    }
+    if (self.role !== Role.ADMIN) {
+      // 非 admin 则需要请求者是作者
+      await prisma.shortUrl
+        .findUnique({
+          where: {
+            hash,
+          },
+          select: urlSelect,
+        })
+        .then((res) => {
+          if (!res) {
+            throw Boom.notFound('短链不存在')
+          }
+          if (res.creatorId !== self.id) {
+            throw Boom.forbidden('无权限')
+          }
+          return res
+        })
+    }
+    return prisma.shortUrl.update({
+      where: {
+        hash,
+      },
       data: {
-        hash: nanoid(12),
         url: encodedUrl,
         description,
-        creatorId: self.id,
         password,
         limit,
         timeout,
       },
       select: urlSelect,
     })
-  }
-  if (self.role !== Role.ADMIN) {
-    // 非 admin 则需要请求者是作者
-    await prisma.shortUrl
-      .findUnique({
-        where: {
-          hash,
-        },
-        select: urlSelect,
-      })
-      .then((res) => {
-        if (!res) {
-          throw Boom.notFound('短链不存在')
-        }
-        if (res.creatorId !== self.id) {
-          throw Boom.forbidden('无权限')
-        }
-        return res
-      })
-  }
-  return prisma.shortUrl.update({
-    where: {
-      hash,
-    },
-    data: {
-      url: encodedUrl,
-      description,
-      password,
-      limit,
-      timeout,
-    },
-    select: urlSelect,
   })
-})
+)
 
 export const deleteShortUrls = SA.encode(async (hashes: string[]) => {
   const self = await getSelf()
