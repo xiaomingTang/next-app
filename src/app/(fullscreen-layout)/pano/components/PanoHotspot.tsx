@@ -104,6 +104,7 @@ export function PanoHotspot({ hotspot }: { hotspot: Pano.Hotspot }) {
         userSelect: 'none',
         textAlign: 'center',
         pointerEvents: 'none',
+        touchAction: 'none',
       }}
     >
       <Stack
