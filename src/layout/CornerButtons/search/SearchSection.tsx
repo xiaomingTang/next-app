@@ -13,6 +13,7 @@ import { useListen } from '@/hooks/useListen'
 import { useRawPlatform } from '@/utils/device'
 import { muiDialogV5ReplaceOnClose } from '@/utils/muiDialogV5ReplaceOnClose'
 import { resolvePath } from '@/utils/url'
+import { useKeyDown } from '@/hooks/useKey'
 
 import {
   Box,
@@ -30,7 +31,6 @@ import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import SearchIcon from '@mui/icons-material/Search'
 import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useMemo, useState } from 'react'
-import { useKeyPressEvent } from 'react-use'
 import { usePathname, useRouter } from 'next/navigation'
 import { debounce } from 'lodash-es'
 
@@ -84,46 +84,32 @@ export const SearchSection = NiceModal.create(() => {
     setSelectedIndex(platform === 'desktop' ? 0 : -1)
   }, [platform, searchText])
 
-  useKeyPressEvent('ArrowUp', (e) => {
-    if (!isFocusOnInput) {
+  useKeyDown((e: KeyboardEvent) => {
+    if (!isFocusOnInput || blogs.length === 0 || e.isComposing) {
       return
     }
-    if (blogs.length === 0) {
-      return
-    }
-    // 有任何辅助键, 都不 preventDefault
-    if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) {
-      return
-    }
-    // e.preventDefault 配合 autoComplete off, 避免按方向键时触发输入框的下拉推荐
-    e.preventDefault()
-    setSelectedIndex((selectedIndex - 1 + blogs.length) % blogs.length)
-  })
-
-  useKeyPressEvent('ArrowDown', (e) => {
-    if (!isFocusOnInput) {
-      return
-    }
-    if (blogs.length === 0) {
+    if (e.key === 'Enter') {
+      const curBlog = blogs[selectedIndex]
+      if (curBlog) {
+        e.preventDefault()
+        router.push(`/blog/${curBlog.hash}`)
+      }
       return
     }
     // 有任何辅助键, 都不 preventDefault
     if (e.ctrlKey || e.shiftKey || e.altKey || e.metaKey) {
       return
     }
-    // e.preventDefault 配合 autoComplete off, 避免按方向键时触发输入框的下拉推荐
-    e.preventDefault()
-    setSelectedIndex((selectedIndex + 1) % blogs.length)
-  })
-
-  useKeyPressEvent('Enter', (e) => {
-    if (!isFocusOnInput) {
-      return
-    }
-    const curBlog = blogs[selectedIndex]
-    if (curBlog) {
+    if (e.key === 'ArrowUp') {
+      // e.preventDefault 配合 autoComplete off, 避免按方向键时触发输入框的下拉推荐
       e.preventDefault()
-      router.push(`/blog/${curBlog.hash}`)
+      setSelectedIndex((selectedIndex - 1 + blogs.length) % blogs.length)
+      return
+    }
+    if (e.key === 'ArrowDown') {
+      // e.preventDefault 配合 autoComplete off, 避免按方向键时触发输入框的下拉推荐
+      e.preventDefault()
+      setSelectedIndex((selectedIndex + 1) % blogs.length)
     }
   })
 

@@ -17,6 +17,7 @@ import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SvgLoading } from '@/svg'
 import { getTags, saveTag } from '@ADMIN/tag/server'
 import { SilentError } from '@/errors/SilentError'
+import { isCtrlAnd, useKeyDown } from '@/hooks/useKey'
 
 import { useRouter } from 'next/navigation'
 import PreviewIcon from '@mui/icons-material/Preview'
@@ -43,7 +44,6 @@ import {
 import { isEqual, noop, pick } from 'lodash-es'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
-import { useKeyPressEvent } from 'react-use'
 
 import type { BlogWithTags } from '../server'
 import type { PickAndPartial } from '@/utils/type'
@@ -117,13 +117,12 @@ const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
     })
   )
 
-  useKeyPressEvent(
-    (e) => e.ctrlKey && e.key.toLowerCase() === 's',
-    (e) => {
+  useKeyDown((e) => {
+    if (isCtrlAnd('s', e)) {
       e.preventDefault()
       void onSubmit()
     }
-  )
+  })
 
   const header = (
     <AppBar>

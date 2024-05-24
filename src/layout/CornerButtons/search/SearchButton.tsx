@@ -1,19 +1,19 @@
 import { SearchSection } from './SearchSection'
 
+import { isCtrlAnd, isInputting, useKeyDown } from '@/hooks/useKey'
+
 import { IconButton } from '@mui/material'
 import NiceModal from '@ebay/nice-modal-react'
 import SearchIcon from '@mui/icons-material/Search'
-import { useKeyPressEvent } from 'react-use'
 import { noop } from 'lodash-es'
 
 export function SearchButton() {
-  useKeyPressEvent(
-    (e) => e.ctrlKey && e.key.toLowerCase() === 'k',
-    (e) => {
+  useKeyDown((e) => {
+    if (isCtrlAnd('k', e) && !isInputting(e)) {
       e.preventDefault()
       NiceModal.show(SearchSection).catch(noop)
     }
-  )
+  })
   return (
     <>
       <IconButton
