@@ -40,6 +40,7 @@ const nextConfig = {
   pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   images: imageConfig,
   webpack: webpackConfig,
+  transpilePackages: ['next-mdx-remote'],
   async headers() {
     /**
      * scripts & static 里面的内容不应该变化 (实在要变就改名)
