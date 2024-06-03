@@ -76,7 +76,7 @@
     {
       "url": "/pwa/maskable_icon.png",
       "src": "/pwa/maskable_icon.png",
-      "sizes": "1024x1024",
+      "sizes": "640x640",
       "type": "image/png",
       "purpose": "maskable"
     }
