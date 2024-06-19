@@ -16,16 +16,18 @@ import { GA } from '@/analytics/GA'
 import DefaultLayout from '@/layout/DefaultLayout'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import { DefaultAside } from '@/layout/DefaultAside'
+import { resolvePath } from '@/utils/url'
 
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
 
 import type { Metadata } from 'next'
 
+const { hostname } = resolvePath('/')
+
 export const metadata: Metadata = {
-  ...seo.defaults({
-    title: '博客列表页',
-  }),
+  ...seo.defaults(),
+  title: `${seo.title('博客列表页')} | ${hostname}`,
   alternates: {
     types: {
       // https://taoshu.in/webfeed/lets-webfeed.html
