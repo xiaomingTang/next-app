@@ -27,7 +27,7 @@ const { hostname } = resolvePath('/')
 
 export const metadata: Metadata = {
   ...seo.defaults(),
-  title: `${seo.title('博客列表页')} | ${hostname}`,
+  title: `${seo.title('博客列表页')} | ${hostname} | web技术心得分享`,
   alternates: {
     types: {
       // https://taoshu.in/webfeed/lets-webfeed.html
