@@ -1,187 +1,3 @@
-diff --git a/README.md b/README.md
-index cc4ae65a1d79e998c2971bd64f444b54895e5819..254f5d5ac0e346a77087305e0e30920704400284 100644
---- a/README.md
-+++ b/README.md
-@@ -245,7 +245,7 @@ The `native` route of the library **does not** export `Html` or `Loader`. The de
- [![](https://img.shields.io/badge/-storybook-%23ff69b4)](https://drei.vercel.app/?path=/story/camera-perspectivecamera--perspective-camera-scene-st)
- 
- ```tsx
--type Props = Omit<JSX.IntrinsicElements['perspectiveCamera'], 'children'> & {
-+type Props = Omit<JSX_IntrinsicElements['perspectiveCamera'], 'children'> & {
-   /** Registers the camera as the system default, fiber will start rendering with it */
-   makeDefault?: boolean
-   /** Making it manual will stop responsiveness and you have to calculate aspect ratio yourself. */
-@@ -325,7 +325,7 @@ You can use the OrthographicCamera to film contents into a RenderTarget, it has
- A [THREE.CubeCamera](https://threejs.org/docs/#api/en/cameras/CubeCamera) that returns its texture as a render-prop. It makes children invisible while rendering to the internal buffer so that they are not included in the reflection.
- 
- ```tsx
--type Props = JSX.IntrinsicElements['group'] & {
-+type Props = JSX_IntrinsicElements['group'] & {
-   /** Number of frames to render, Infinity */
-   frames?: number
-   /** Resolution of the FBO, 256 */
-@@ -768,7 +768,7 @@ useFrame((_, delta) => {
- Motion path controls, it takes a path of bezier curves or catmull-rom curves as input and animates the passed `object` along that path. It can be configured to look upon an external object for staging or presentation purposes by adding a `focusObject` property (ref).
- 
- ```tsx
--type MotionPathProps = JSX.IntrinsicElements['group'] & {
-+type MotionPathProps = JSX_IntrinsicElements['group'] & {
-   /** An optional array of THREE curves */
-   curves?: THREE.Curve<THREE.Vector3>[]
-   /** Show debug helpers */
-@@ -1393,7 +1393,7 @@ api.eyeRightRef.current.irisDirRef.current.localToWorld(new THREE.Vector3(0, 0,
- A shader-based image component with auto-cover (similar to css/background: cover).
- 
- ```tsx
--export type ImageProps = Omit<JSX.IntrinsicElements['mesh'], 'scale'> & {
-+export type ImageProps = Omit<JSX_IntrinsicElements['mesh'], 'scale'> & {
-   segments?: number
-   scale?: number | [number, number]
-   color?: Color
-@@ -1652,7 +1652,7 @@ Abstracts [THREE.EdgesGeometry](https://threejs.org/docs/#api/en/geometries/Edge
- An ornamental component that extracts the geometry from its parent and displays an [inverted-hull outline](https://bnpr.gitbook.io/bnpr/outline/inverse-hull-method). Supported parents are `<mesh>`, `<skinnedMesh>` and `<instancedMesh>`.
- 
- ```tsx
--type OutlinesProps = JSX.IntrinsicElements['group'] & {
-+type OutlinesProps = JSX_IntrinsicElements['group'] & {
-   /** Outline color, default: black */
-   color: ReactThreeFiber.Color
-   /** Line thickness is independent of zoom, default: false */
-@@ -2000,7 +2000,7 @@ type SplatProps = {
-   alphaHash?: boolean
-   /** Chunk size for lazy loading, prevents chokings the worker, default: 25000 (25kb) */
-   chunkSize?: number
--} & JSX.IntrinsicElements['mesh']
-+} & JSX_IntrinsicElements['mesh']
- ```
- 
- ```jsx
-@@ -2100,7 +2100,7 @@ This material makes your geometry distort following simplex noise.
- A convincing Glass/Diamond refraction material.
- 
- ```tsx
--type MeshRefractionMaterialProps = JSX.IntrinsicElements['shaderMaterial'] & {
-+type MeshRefractionMaterialProps = JSX_IntrinsicElements['shaderMaterial'] & {
-   /** Environment map */
-   envMap: THREE.CubeTexture | THREE.Texture
-   /** Number of ray-cast bounces, it can be expensive to have too many, 2 */
-@@ -2152,7 +2152,7 @@ Although it should be faster than MPM keep in mind that it can still be expensiv
- For performance and visual reasons the host mesh gets removed from the render-stack temporarily. If you have other objects that you don't want to see reflected in the material just add them to the parent mesh as children.
- 
- ```tsx
--type MeshTransmissionMaterialProps = JSX.IntrinsicElements['meshPhysicalMaterial'] & {
-+type MeshTransmissionMaterialProps = JSX_IntrinsicElements['meshPhysicalMaterial'] & {
-   /* Transmission, default: 1 */
-   transmission?: number
-   /* Thickness (refraction), default: 0 */
-@@ -3650,7 +3650,7 @@ export interface BVHOptions {
- }
- 
- export type BvhProps = BVHOptions &
--  JSX.IntrinsicElements['group'] & {
-+  JSX_IntrinsicElements['group'] & {
-     /**Enabled, default: true */
-     enabled?: boolean
-     /** Use .raycastFirst to retrieve hits which is generally faster, default: false */
-@@ -3877,7 +3877,7 @@ return (
- This component allows you to render a live scene into a texture which you can then apply to a material. The contents of it run inside a portal and are separate from the rest of the canvas, therefore you can have events in there, environment maps, etc.
- 
- ```tsx
--type Props = JSX.IntrinsicElements['texture'] & {
-+type Props = JSX_IntrinsicElements['texture'] & {
-   /** Optional width of the texture, defaults to viewport bounds */
-   width?: number
-   /** Optional height of the texture, defaults to viewport bounds */
-@@ -3916,7 +3916,7 @@ type Props = JSX.IntrinsicElements['texture'] & {
- This component allows you to render a live scene into a cubetexture which you can then apply to a material, for instance as an environment map (via the envMap property). The contents of it run inside a portal and are separate from the rest of the canvas, therefore you can have events in there, environment maps, etc.
- 
- ```tsx
--export type RenderCubeTextureProps = Omit<JSX.IntrinsicElements['texture'], 'rotation'> & {
-+export type RenderCubeTextureProps = Omit<JSX_IntrinsicElements['texture'], 'rotation'> & {
-   /** Optional stencil buffer, defaults to false */
-   stencilBuffer?: boolean
-   /** Optional depth buffer, defaults to true */
-@@ -3971,7 +3971,7 @@ const api = useRef<RenderCubeTextureApi>(null!)
- </p>
- 
- ```tsx
--export type FisheyeProps = JSX.IntrinsicElements['mesh'] & {
-+export type FisheyeProps = JSX_IntrinsicElements['mesh'] & {
-   /** Zoom factor, 0..1, 0 */
-   zoom?: number
-   /** Number of segments, 64 */
-@@ -4063,7 +4063,7 @@ const stencil = useMask(1, true)
- </p>
- 
- ```tsx
--export type PortalProps = JSX.IntrinsicElements['shaderMaterial'] & {
-+export type PortalProps = JSX_IntrinsicElements['shaderMaterial'] & {
-   /** Mix the portals own scene with the world scene, 0 = world scene render,
-    *  0.5 = both scenes render, 1 = portal scene renders, defaults to 0 */
-   blend?: number
-@@ -4121,7 +4121,7 @@ It is also possible to _enter_ the portal. If blend is 0 your scene will render
- Calculates a boundary box and centers its children accordingly.
- 
- ```tsx
--export type Props = JSX.IntrinsicElements['group'] & {
-+export type Props = JSX_IntrinsicElements['group'] & {
-   top?: boolean
-   right?: boolean
-   bottom?: boolean
-@@ -4189,7 +4189,7 @@ function ScaledModel() {
- Calculates a boundary box and scales its children so the highest dimension is constrained by 1. NB: proportions are preserved.
- 
- ```tsx
--export type ResizeProps = JSX.IntrinsicElements['group'] & {
-+export type ResizeProps = JSX_IntrinsicElements['group'] & {
-   /** constrained by width dimension (x axis), undefined */
-   width?: boolean
-   /** constrained by height dimension (y axis), undefined */
-@@ -4455,7 +4455,7 @@ A cheap canvas-texture-based circular gradient.
- Caustics are swirls of light that appear when light passes through transmissive surfaces. This component uses a raymarching technique to project caustics onto a catcher plane. It is based on [github/N8python/caustics](https://github.com/N8python/caustics).
- 
- ```tsx
--type CausticsProps = JSX.IntrinsicElements['group'] & {
-+type CausticsProps = JSX_IntrinsicElements['group'] & {
-   /** How many frames it will render, set it to Infinity for runtime, default: 1 */
-   frames?: number
-   /** Enables visual cues to help you stage your scene, default: false */
-@@ -4539,7 +4539,7 @@ Since this is a rather expensive effect you can limit the amount of frames it re
- A randomized light that internally runs multiple lights and jiggles them. See below, you would normally pair it with `AccumulativeShadows`. This component is context aware, paired with AccumulativeShadows it will take the number of frames from its parent.
- 
- ```tsx
--type RandomizedLightProps = JSX.IntrinsicElements['group'] & {
-+type RandomizedLightProps = JSX_IntrinsicElements['group'] & {
-   /** How many frames it will jiggle the lights, 1.
-    *  Frames is context aware, if a provider like AccumulativeShadows exists, frames will be taken from there!  */
-   frames?: number
-@@ -4592,7 +4592,7 @@ A planar, Y-up oriented shadow-catcher that can accumulate into soft shadows and
- You must pair it with lightsources (and scene objects!) that cast shadows, which go into the children slot. Best use it with the `RandomizedLight` component, which jiggles a set of lights around, creating realistic raycast-like shadows and ambient occlusion.
- 
- ```tsx
--type AccumulativeShadowsProps = JSX.IntrinsicElements['group'] & {
-+type AccumulativeShadowsProps = JSX_IntrinsicElements['group'] & {
-   /** How many frames it can render, more yields cleaner results but takes more time, 40 */
-   frames?: number
-   /** If frames === Infinity blend controls the refresh ratio, 100 */
-@@ -4923,7 +4923,7 @@ attribute vec3 color;
- Particle based cloud.
- 
- ```tsx
--type CloudsProps = JSX.IntrinsicElements['group'] & {
-+type CloudsProps = JSX_IntrinsicElements['group'] & {
-   /** Optional cloud texture, points to a default hosted on rawcdn.githack */
-   texture?: string
-   /** Maximum number of segments, default: 200 (make this tight to save memory!) */
-@@ -4936,7 +4936,7 @@ type CloudsProps = JSX.IntrinsicElements['group'] & {
-   frustumCulled?: boolean
- }
- 
--type CloudProps = JSX.IntrinsicElements['group'] & {
-+type CloudProps = JSX_IntrinsicElements['group'] & {
-   /** A seeded random will show the same cloud consistently, default: Math.random() */
-   seed?: number
-   /** How many segments or particles the cloud will have, default: 20 */
 diff --git a/core/AccumulativeShadows.d.ts b/core/AccumulativeShadows.d.ts
 index dc6e0a491229f328fb6176843e8ad5ac633aab03..8dc906bc8408af3bc4919674436faef84bdc3db2 100644
 --- a/core/AccumulativeShadows.d.ts
@@ -245,6 +61,19 @@ index ec12162b0341942187b8dd142ef12523f70cb448..8188b9649ddd66b1430a41797a4e7c5d
      maxDuration?: number;
      margin?: number;
      observe?: boolean;
+diff --git a/core/Bvh.d.ts b/core/Bvh.d.ts
+index 0c526be7ab1fcf750864d5ed36271c5baeb4569c..db23b1a6976683cf357c562578c4920a45e9c46e 100644
+--- a/core/Bvh.d.ts
++++ b/core/Bvh.d.ts
+@@ -10,7 +10,7 @@ export interface BVHOptions {
+     maxLeafTris?: number;
+     indirect?: boolean;
+ }
+-export type BvhProps = BVHOptions & JSX.IntrinsicElements['group'] & {
++export type BvhProps = BVHOptions & JSX_IntrinsicElements['group'] & {
+     enabled?: boolean;
+     firstHitOnly?: boolean;
+ };
 diff --git a/core/Caustics.d.ts b/core/Caustics.d.ts
 index 1ca24e0e7c04b7f0b8f6081f6ee8e5586775e8dd..f2bb18a94529cdf5f3ec97c3d01ee5973a804a36 100644
 --- a/core/Caustics.d.ts
@@ -328,16 +157,16 @@ index 7574dafa6b25adeabfc1f49e49c5ef3dce3a85f3..864530d54d4b5eedb1419694027597c8
 -export declare const ContactShadows: ForwardRefComponent<Omit<JSX.IntrinsicElements['group'], 'scale'> & ContactShadowsProps, THREE.Group>;
 +export declare const ContactShadows: ForwardRefComponent<Omit<JSX_IntrinsicElements['group'], 'scale'> & ContactShadowsProps, THREE.Group>;
 diff --git a/core/CubeCamera.d.ts b/core/CubeCamera.d.ts
-index bfd23850d564767b9b0742340340069911eda9eb..86521c9b0a9c6a726a82f9ece63439593dd4947e 100644
+index b202d7cd8639931c77d8b6101be1eb1bbf74b497..49154c0fc008fd3511340e911ffacb73e2604c84 100644
 --- a/core/CubeCamera.d.ts
 +++ b/core/CubeCamera.d.ts
-@@ -1,7 +1,7 @@
- import { Texture } from 'three';
- import * as React from 'react';
- import { CubeCameraOptions } from './useCubeCamera';
+@@ -13,7 +13,7 @@ export declare function useCubeCamera({ resolution, near, far, envMap, fog }?: C
+     camera: THREE.CubeCamera;
+     update: () => void;
+ };
 -type Props = Omit<JSX.IntrinsicElements['group'], 'children'> & {
 +type Props = Omit<JSX_IntrinsicElements['group'], 'children'> & {
-     children: (tex: Texture) => React.ReactNode;
+     children?: (tex: Texture) => React.ReactNode;
      frames?: number;
  } & CubeCameraOptions;
 diff --git a/core/CurveModifier.d.ts b/core/CurveModifier.d.ts
@@ -405,19 +234,6 @@ index e590f1cbb3ed5fb029636b42160807b337753162..e24aa901a0ee25820be57eb7541cd697
              groundProjectedEnvImpl: Object3DNode<GroundProjectedEnvImpl, typeof GroundProjectedEnvImpl>;
          }
      }
-diff --git a/core/Example.d.ts b/core/Example.d.ts
-index c76c7566f32a2b3de1c249e54c8b2f6111aab596..ed898bd9c2eb846d142222c55d6493b0f99db454 100644
---- a/core/Example.d.ts
-+++ b/core/Example.d.ts
-@@ -5,7 +5,7 @@ export type ExampleProps = {
-     color?: Color;
-     debug?: boolean;
-     bevelSize?: number;
--} & JSX.IntrinsicElements['group'];
-+} & JSX_IntrinsicElements['group'];
- export type ExampleApi = {
-     incr: (x?: number) => void;
-     decr: (x?: number) => void;
 diff --git a/core/Fisheye.d.ts b/core/Fisheye.d.ts
 index 9f491ede8d59f0465a21d658f57d661aa0ffb21f..7fcf1d0a835ee773da9313f1f496ec5a1067f368 100644
 --- a/core/Fisheye.d.ts
@@ -467,24 +283,11 @@ index b2822a491074914ca99d921d1d261410d4adce7b..454d202246aeeefd33ec0f5f6e7dd540
      axisColors?: [string, string, string];
      axisScale?: [number, number, number];
      labels?: [string, string, string];
-diff --git a/core/Gltf.d.ts b/core/Gltf.d.ts
-index 5155166faee506933b7bdb7d17eababb034b3b90..f31bc35c3f33f94f6910f3aee6661b1c724f549d 100644
---- a/core/Gltf.d.ts
-+++ b/core/Gltf.d.ts
-@@ -1,7 +1,7 @@
- import * as THREE from 'three';
- import { CloneProps } from './Clone';
- import { ForwardRefComponent } from '../helpers/ts-utils';
--type GltfProps = Omit<JSX.IntrinsicElements['group'], 'children'> & Omit<CloneProps, 'object'> & {
-+type GltfProps = Omit<JSX_IntrinsicElements['group'], 'children'> & Omit<CloneProps, 'object'> & {
-     src: string;
- };
- export declare const Gltf: ForwardRefComponent<GltfProps, THREE.Object3D>;
 diff --git a/core/GradientTexture.d.ts b/core/GradientTexture.d.ts
-index 470a56d95ef0b753af0aa095d86256f218eec115..f6bd46672e639297dd2caa664cde8cc638aeda3d 100644
+index 6054899f6ef6b9b75c56ba5f663b10a48d4d7eb2..833f0d96b984c6bc96277b6945ed8d454bcc1bfc 100644
 --- a/core/GradientTexture.d.ts
 +++ b/core/GradientTexture.d.ts
-@@ -12,6 +12,6 @@ type Props = {
+@@ -13,6 +13,6 @@ type Props = {
      type?: GradientType;
      innerCircleRadius?: number;
      outerCircleRadius?: string | number;
@@ -1175,19 +978,6 @@ index 6f390c7558f2029930b83082222d803cf71bd906..5800ab0370b563e6086f580f41936f16
      args?: Args<T>;
  };
  export declare const Box: ForwardRefComponent<ShapeProps<typeof THREE.BoxGeometry>, THREE.Mesh<THREE.BufferGeometry, THREE.Material | THREE.Material[]>>;
-diff --git a/core/useBVH.d.ts b/core/useBVH.d.ts
-index 768bea7138e75fde653ad5dc485e4641e80116f5..7e640c0934ad09c62d65e83af0f81e85ff4d7342 100644
---- a/core/useBVH.d.ts
-+++ b/core/useBVH.d.ts
-@@ -10,7 +10,7 @@ export interface BVHOptions {
-     maxLeafTris?: number;
-     indirect?: boolean;
- }
--export type BvhProps = BVHOptions & JSX.IntrinsicElements['group'] & {
-+export type BvhProps = BVHOptions & JSX_IntrinsicElements['group'] & {
-     enabled?: boolean;
-     firstHitOnly?: boolean;
- };
 diff --git a/materials/MeshReflectorMaterial.d.ts b/materials/MeshReflectorMaterial.d.ts
 index e906d4c68681708d640d4927990b2a599e7c2aca..8669bb476b19bb3cafb3c3a88f3d2fc6a0885a7b 100644
 --- a/materials/MeshReflectorMaterial.d.ts
