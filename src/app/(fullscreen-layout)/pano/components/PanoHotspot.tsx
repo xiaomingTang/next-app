@@ -138,6 +138,7 @@ export function PanoHotspot({ hotspot }: { hotspot: Pano.Hotspot }) {
           color: 'white',
           cursor: 'pointer',
           pointerEvents: 'auto',
+          touchAction: 'none',
           opacity: isDragging ? 0.75 : 1,
           [`&:hover`]: {
             backgroundColor: 'rgba(0,0,0,0.15)',
