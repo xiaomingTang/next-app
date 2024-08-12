@@ -17,6 +17,8 @@ import { SvgLoading } from '@/svg'
 import { getTags, saveTag } from '@ADMIN/tag/server'
 import { SilentError } from '@/errors/SilentError'
 import { isCtrlAnd, useKeyDown } from '@/hooks/useKey'
+import { useRawPlatform } from '@/utils/device'
+import { dark } from '@/utils/theme'
 
 import { useRouter } from 'next/navigation'
 import PreviewIcon from '@mui/icons-material/Preview'
@@ -27,6 +29,7 @@ import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
 import useSWR from 'swr'
 import {
+  alpha,
   Box,
   DialogContent,
   FormControl,
@@ -43,6 +46,8 @@ import {
 import { isEqual, noop, pick } from 'lodash-es'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
+import Editor from '@monaco-editor/react'
+import { common } from '@mui/material/colors'
 
 import type { PartialBlog } from './constants'
 import type { BlogWithTags } from '../../server'
@@ -71,6 +76,7 @@ function hasChanged(blog: PartialBlog, formValues: FormProps) {
 }
 
 export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
+  const isMobile = useRawPlatform() === 'mobile'
   const router = useRouter()
   const modal = useModal()
   useInjectHistory(modal.visible, () => {
@@ -310,22 +316,69 @@ export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
     <Controller
       name='content'
       control={control}
-      render={({ field, fieldState: { error } }) => (
-        <TextField
-          {...field}
-          label='内容 (markdown 语法)'
-          multiline
-          minRows={8}
-          maxRows={30}
-          helperText={error?.message ?? ' '}
-          error={!!error}
-          inputProps={{
-            style: {
-              overflow: 'auto',
-            },
-          }}
-        />
-      )}
+      render={({ field, fieldState: { error } }) => {
+        if (isMobile) {
+          return (
+            <TextField
+              {...field}
+              label='内容 (markdown 语法)'
+              multiline
+              minRows={8}
+              maxRows={30}
+              helperText={error?.message ?? ' '}
+              error={!!error}
+              inputProps={{
+                style: {
+                  overflow: 'auto',
+                },
+              }}
+            />
+          )
+        }
+        return (
+          <Box
+            component='fieldset'
+            sx={{
+              px: 1,
+              pb: '8px',
+              border: '1px solid',
+              borderColor: alpha(common.black, 0.23),
+              [dark()]: {
+                borderColor: alpha(common.white, 0.23),
+              },
+            }}
+          >
+            <Box component='legend' sx={{ fontSize: '0.75rem' }}>
+              <Typography
+                variant='body2'
+                color='text.secondary'
+                sx={{ px: '5px' }}
+              >
+                内容 (markdown 语法)
+              </Typography>
+            </Box>
+            <FormHelperText error={!!error} sx={{ px: '5px' }}>
+              {error?.message ?? ' '}
+            </FormHelperText>
+            <Editor
+              {...field}
+              height='70vh'
+              defaultLanguage='markdown'
+              defaultValue={field.value}
+              onChange={(value) => {
+                field.onChange(value)
+              }}
+              options={{
+                scrollBeyondLastLine: false,
+                automaticLayout: true,
+                scrollbar: {
+                  alwaysConsumeMouseWheel: false,
+                },
+              }}
+            />
+          </Box>
+        )
+      }}
       rules={{
         required: {
           value: true,
