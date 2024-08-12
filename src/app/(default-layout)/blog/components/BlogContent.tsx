@@ -12,6 +12,8 @@ import { useInjectHistory } from '@/hooks/useInjectHistory'
 import Anchor from '@/components/Anchor'
 import { BlogTypeMap } from '@ADMIN/blog/components/constants'
 import { editBlog } from '@ADMIN/blog/components/EditBlog'
+import { useLoading } from '@/hooks/useLoading'
+import { SvgLoading } from '@/svg'
 
 import { MDXRemote } from 'next-mdx-remote'
 import { Typography, NoSsr, IconButton, Skeleton, alpha } from '@mui/material'
@@ -44,6 +46,7 @@ export const BlogContent = forwardRef(function BlogContent(
   const user = useUser()
   const [previewVisible, setPreviewVisible] = useState(false)
   const closeRef = useRef<() => void>()
+  const [loading, withLoading] = useLoading()
 
   useInjectHistory(previewVisible, () => {
     closeRef.current?.()
@@ -81,9 +84,12 @@ export const BlogContent = forwardRef(function BlogContent(
               top: 0,
             }}
             aria-label='编辑该博客'
-            onClick={cat(() => editBlog(blog))}
+            onClick={cat(withLoading(() => editBlog(blog)))}
           >
-            <BorderColorIcon />
+            {loading && (
+              <SvgLoading className='animate-spin text-[length:24px] leading-none' />
+            )}
+            {!loading && <BorderColorIcon />}
           </IconButton>
         )}
       </NoSsr>
