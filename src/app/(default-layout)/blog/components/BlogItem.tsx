@@ -73,6 +73,10 @@ function BlogDesc(blog: BlogItemProps) {
         p: 1,
         borderRadius: 1,
         fontSize: '0.8em',
+        whiteSpace: 'pre-line',
+        overflowWrap: 'break-word',
+        wordBreak: 'break-word',
+        lineBreak: 'anywhere',
       }}
     >
       {blog.loading ? (
