@@ -1,4 +1,5 @@
-import { defaultEmptyBlog, editBlog } from './EditBlog'
+import { editBlog } from './EditBlog'
+import { defaultEmptyBlog } from './BlogEditor/constants'
 
 import { getBlogs } from '../server'
 
