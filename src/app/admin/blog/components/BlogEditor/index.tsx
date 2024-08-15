@@ -42,6 +42,7 @@ import {
   TextField,
   Tooltip,
   Typography,
+  useColorScheme,
 } from '@mui/material'
 import { isEqual, noop, pick } from 'lodash-es'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
@@ -76,6 +77,7 @@ function hasChanged(blog: PartialBlog, formValues: FormProps) {
 }
 
 export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
+  const { mode } = useColorScheme()
   const isMobile = useRawPlatform() === 'mobile'
   const router = useRouter()
   const modal = useModal()
@@ -363,6 +365,7 @@ export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
             <Editor
               {...field}
               height='70vh'
+              theme={mode === 'dark' ? 'vs-dark' : 'light'}
               defaultLanguage='markdown'
               defaultValue={field.value}
               onChange={(value) => {
