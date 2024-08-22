@@ -372,8 +372,7 @@ export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
                 field.onChange(value)
               }}
               options={{
-                scrollBeyondLastLine: false,
-                automaticLayout: true,
+                scrollBeyondLastLine: true,
                 scrollbar: {
                   alwaysConsumeMouseWheel: false,
                 },
