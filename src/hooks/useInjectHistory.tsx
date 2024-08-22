@@ -109,7 +109,9 @@ export function useInjectHistory(
       return
     }
     if (tempIndex > stack.invalidStackIndex) {
-      stack.locked = true
+      if (stack.invalidStackIndex > 0) {
+        stack.locked = true
+      }
       window.history.back()
     }
   })
