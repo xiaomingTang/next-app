@@ -83,7 +83,7 @@ export const logout = SA.encode(async () => {
  * 如有必要, 需要手动 catch
  * @param strict 为 true 时会去查验数据库
  */
-export const getSelf = async (strict = false) => {
+export async function getSelf(strict = false) {
   const token =
     cookies().get(authorizationKey)?.value ||
     headers().get(authorizationKey) ||
