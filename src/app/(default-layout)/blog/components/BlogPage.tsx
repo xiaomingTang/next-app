@@ -1,6 +1,7 @@
 'use client'
 
 import { BlogContent } from './BlogContent'
+import { CommentArea } from './CommentArea'
 
 import { formatTime, friendlyFormatTime } from '@/utils/transformer'
 import { ScrollToTop } from '@/components/ScrollToTop'
@@ -122,6 +123,8 @@ export function BlogPage(blog: BlogContentProps) {
           setWordCount(Math.ceil(simpleStr.length / 3 + cnStr.length))
         }}
       />
+      <Box sx={{ mt: 2, pointerEvents: 'none' }} aria-hidden />
+      {!blog.loading && <CommentArea blog={blog} />}
     </ScrollToTop>
   )
 }
