@@ -14,7 +14,6 @@ import { ServerComponent } from '@/components/ServerComponent'
 import { AlertError } from '@/components/Error'
 
 import { Suspense } from 'react'
-import { unstable_cache } from 'next/cache'
 import Divider from '@mui/material/Divider'
 
 import type { FriendsLinkStatus } from '@prisma/client'
@@ -32,11 +31,11 @@ interface Props {
   }
 }
 
-function toFriendsLinkStatus(s: string): FriendsLinkStatus | null {
+function toFriendsLinkStatus(s: string): FriendsLinkStatus | undefined {
   if (sortedFriendsLinkStatus.includes(s.toUpperCase() as FriendsLinkStatus)) {
     return s.toUpperCase() as FriendsLinkStatus
   }
-  return null
+  return undefined
 }
 
 /**
@@ -56,21 +55,7 @@ export default async function Index({ params: { hash } }: Props) {
       <FriendsLinkSection activeHash={hash}>
         <Suspense fallback={<FriendsLinkListLoading count={8} />}>
           <ServerComponent
-            api={unstable_cache(
-              () =>
-                status
-                  ? getFriendsLinks({
-                      status,
-                    })
-                  : getFriendsLinks({
-                      hash,
-                    }),
-              ['getFriendsLinks', hash],
-              {
-                revalidate: 10,
-                tags: ['getFriendsLinks'],
-              }
-            )}
+            api={() => getFriendsLinks(status ? { status } : { hash })}
             render={(cards) => <FriendsLinkList friendsLinks={cards} />}
             errorBoundary={(err) => <AlertError {...err} />}
           />
