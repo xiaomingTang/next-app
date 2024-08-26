@@ -33,14 +33,9 @@ function ContentController({
           placeholder='仅站长可见'
           multiline
           sx={{ width: '100%' }}
+          rows={6}
           helperText={error?.message ?? ' '}
           error={!!error}
-          inputProps={{
-            style: {
-              overflow: 'auto',
-              height: '14em',
-            },
-          }}
         />
       )}
       rules={{
