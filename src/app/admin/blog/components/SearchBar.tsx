@@ -71,6 +71,9 @@ export function useBlogEditorSearchBar() {
             // 再如：新增博客执行完毕后的 getBlogs 也不执行。
             // （客户端已经执行了，但是服务端没有收到请求，且 Promise 永远不 resolve/reject。）
             // 加了一个 sleep 之后就好了，暂未找到原因。
+            // **猜测**是路由变化之后立即执行 server actions，
+            // 客户端生成的函数索引 id 基于的是前一个路由，与服务端对不上；
+            // maybe 路由变化是异步的，sleep 之后，路由变化已完成，函数索引 id 就对上了。
             await getBlogs({
               title: {
                 contains: e.title,
