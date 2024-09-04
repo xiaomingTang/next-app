@@ -29,6 +29,7 @@ import { toast } from 'react-hot-toast'
 import { useEffect, useMemo, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
+import { sleepMs } from '@zimi/utils'
 
 interface SearchProps {
   /**
@@ -64,6 +65,12 @@ export function useBlogEditorSearchBar() {
       handleSubmit(
         withSearchLoading(
           cat(async (e) => {
+            await sleepMs(50)
+            // 不知道为什么，这儿 getBlogs 在一些场景下总是不执行，
+            // 如：在后台博客列表页 -> 退出登录 -> 刷新页面 -> 重新登录，此时 getBlogs 不执行。
+            // 再如：新增博客执行完毕后的 getBlogs 也不执行。
+            // （客户端已经执行了，但是服务端没有收到请求，且 Promise 永远不 resolve/reject。）
+            // 加了一个 sleep 之后就好了，暂未找到原因。
             await getBlogs({
               title: {
                 contains: e.title,
