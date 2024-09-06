@@ -18,7 +18,7 @@ export function GlobalStyles() {
   --custom-fg: #1a2027;
 }
 
-:root[data-mui-color-scheme='dark'] {
+:root[data-dark] {
   --custom-fg: #bdbdbd;
   --custom-bg: #1a2027;
 }

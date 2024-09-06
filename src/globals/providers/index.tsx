@@ -1,13 +1,17 @@
 'use client'
 
-import {
-  Experimental_CssVarsProvider as ThemeProvider,
-  experimental_extendTheme as createTheme,
-} from '@mui/material'
+// import {
+//   Experimental_CssVarsProvider as ThemeProvider,
+//   experimental_extendTheme as createTheme,
+// } from '@mui/material'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 import NiceModal from '@ebay/nice-modal-react'
 import { SWRConfig } from 'swr'
 
 const muiTheme = createTheme({
+  cssVariables: {
+    colorSchemeSelector: 'data',
+  },
   colorSchemes: {
     light: {
       palette: {

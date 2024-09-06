@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 
 import type { BoxProps } from '@mui/material'
 
-export function HandsWrapper({ sx, ...props }: BoxProps) {
+export function HandsWrapper({ sx, ...props }: BoxProps<'svg'>) {
   return (
     <Box
       component='svg'

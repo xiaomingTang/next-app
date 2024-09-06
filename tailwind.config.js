@@ -28,7 +28,7 @@ const semanticColors = Object.fromEntries(
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: ['class', '[data-mui-color-scheme="dark"]'],
+  darkMode: 'class',
   content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
   theme: {
     extend: {

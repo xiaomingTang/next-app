@@ -1,4 +1,4 @@
-import { DiffMode } from '@/components/Diff'
+import { dark } from '@/utils/theme'
 
 import { IconButton, useColorScheme } from '@mui/material'
 import DarkModeIcon from '@mui/icons-material/DarkMode'
@@ -13,7 +13,12 @@ export function ThemeToggleButton() {
         setMode(mode === 'dark' ? 'light' : 'dark')
       }}
     >
-      <DiffMode dark={<LightModeIcon />} light={<DarkModeIcon />} />
+      <LightModeIcon
+        sx={{ display: 'inline-block', [dark()]: { display: 'none' } }}
+      />
+      <DarkModeIcon
+        sx={{ display: 'none', [dark()]: { display: 'inline-block' } }}
+      />
     </IconButton>
   )
 }

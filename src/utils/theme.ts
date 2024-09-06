@@ -22,7 +22,7 @@
  * ```
  */
 export function light(cssSelector = '&') {
-  return `[data-mui-color-scheme="light"] ${cssSelector}`
+  return `[data-light] ${cssSelector}`
 }
 
 /**
@@ -45,5 +45,5 @@ export function light(cssSelector = '&') {
  * ```
  */
 export function dark(cssSelector = '&') {
-  return `[data-mui-color-scheme="dark"] ${cssSelector}`
+  return `[data-dark] ${cssSelector}`
 }

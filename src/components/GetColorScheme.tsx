@@ -1,9 +1,7 @@
 'use client'
 
-import { getInitColorSchemeScript } from '@mui/material/styles'
+import InitColorSchemeScript from '@mui/material/InitColorSchemeScript'
 
 export function GetInitColorSchemeScript() {
-  return getInitColorSchemeScript({
-    defaultMode: 'light',
-  })
+  return <InitColorSchemeScript attribute='data' />
 }
