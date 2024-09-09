@@ -1,7 +1,7 @@
 import { RepeatTrigger } from './RepeatTrigger'
 import { MusicListTrigger } from './MusicListTrigger'
 
-import { useAudio } from '../GlobalAudioPlayer'
+import { useAudio } from '../useAudio'
 
 import { useListen } from '@/hooks/useListen'
 import { dark } from '@/utils/theme'

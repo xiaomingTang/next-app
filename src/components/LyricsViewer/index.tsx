@@ -4,7 +4,7 @@ import { useLyricsViewer } from './context'
 import { useHasShown, useLyrics } from './utils'
 import { MP3Controls } from './MP3Controls'
 
-import { useAudio } from '../GlobalAudioPlayer'
+import { useAudio } from '../useAudio'
 import { SlideUpTransition } from '../Transitions'
 
 import { dark } from '@/utils/theme'

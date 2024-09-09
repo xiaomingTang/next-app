@@ -1,6 +1,6 @@
 import styles from './MusicTriggerButton.module.scss'
 
-import { useAudio } from '@/components/GlobalAudioPlayer'
+import { useAudio } from '@/components/useAudio'
 import { useLyricsViewer } from '@/components/LyricsViewer/context'
 
 import { IconButton } from '@mui/material'

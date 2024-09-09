@@ -1,5 +1,5 @@
 import { AnchorProvider } from '../AnchorProvider'
-import { useAudio } from '../GlobalAudioPlayer'
+import { useAudio } from '../useAudio'
 
 import MenuIcon from '@mui/icons-material/Menu'
 import { IconButton, ListItemText, Menu, MenuItem } from '@mui/material'

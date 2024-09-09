@@ -1,5 +1,5 @@
 import { AnchorProvider } from '../AnchorProvider'
-import { useAudio } from '../GlobalAudioPlayer'
+import { useAudio } from '../useAudio'
 
 import RepeatOneIcon from '@mui/icons-material/RepeatOne'
 import RepeatIcon from '@mui/icons-material/Repeat'
@@ -13,7 +13,7 @@ import {
   MenuItem,
 } from '@mui/material'
 
-import type { RepeatMode } from '../GlobalAudioPlayer'
+import type { RepeatMode } from '../useAudio'
 
 const RepeatModeList: RepeatMode[] = [
   'Repeat-Playlist',
