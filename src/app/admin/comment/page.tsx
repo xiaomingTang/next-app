@@ -6,7 +6,7 @@ import { formatTime } from '@/utils/transformer'
 import { cat } from '@/errors/catchAndToast'
 import { obj } from '@/utils/tiny'
 import Anchor from '@/components/Anchor'
-import { SvgLoading } from '@/svg'
+import SvgLoading from '@/svg/assets/loading.svg?icon'
 
 import useSWR from 'swr'
 import { CopyToClipboard } from 'react-copy-to-clipboard'

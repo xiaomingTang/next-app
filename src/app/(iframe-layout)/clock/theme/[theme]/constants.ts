@@ -12,7 +12,7 @@ import {
   SvgDial11,
   SvgDial12,
   SvgDial13,
-} from '@/svg'
+} from '@/svg/dial'
 
 export interface ClockConfig {
   id: string

@@ -1,5 +1,5 @@
 import Anchor from '@/components/Anchor'
-import { SvgGithub } from '@/svg'
+import SvgGithub from '@/svg/assets/github.svg?icon'
 import { dark } from '@/utils/theme'
 
 import Stack from '@mui/material/Stack'

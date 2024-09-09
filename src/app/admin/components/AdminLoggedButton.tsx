@@ -1,6 +1,6 @@
 import { RoleNameMap } from '@/constants'
 import { useLoading } from '@/hooks/useLoading'
-import { SvgLoading } from '@/svg'
+import SvgLoading from '@/svg/assets/loading.svg?icon'
 import { useUser } from '@/user'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 

@@ -13,7 +13,7 @@ import Anchor from '@/components/Anchor'
 import { BlogTypeMap } from '@ADMIN/blog/components/constants'
 import { editBlog } from '@ADMIN/blog/components/EditBlog'
 import { useLoading } from '@/hooks/useLoading'
-import { SvgLoading } from '@/svg'
+import SvgLoading from '@/svg/assets/loading.svg?icon'
 
 import { MDXRemote } from 'next-mdx-remote'
 import { Typography, NoSsr, IconButton, Skeleton, alpha } from '@mui/material'

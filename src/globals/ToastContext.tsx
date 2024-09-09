@@ -1,4 +1,6 @@
-import { SvgError, SvgLoading, SvgSuccess } from '@/svg'
+import SvgError from '@/svg/assets/error.svg?icon'
+import SvgLoading from '@/svg/assets/loading.svg?icon'
+import SvgSuccess from '@/svg/assets/success.svg?icon'
 
 import { Toaster } from 'react-hot-toast'
 
