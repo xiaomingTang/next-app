@@ -31,7 +31,6 @@ export function GlobalAudioPlayer() {
     useAudio.setState({ state })
   })
   useListen(controls, () => {
-    console.log(controls.play)
     useAudio.setState({
       controls: {
         ...controls,
