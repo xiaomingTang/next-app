@@ -1,15 +1,31 @@
 import { toolList } from './constants'
 
+import { getEnabledHomepageLinks } from '@/app/admin/homepageLinks/server'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
+import { SA } from '@/errors/utils'
 
 import ListIcon from '@mui/icons-material/ArrowDropDown'
-import { Button, Menu, MenuItem } from '@mui/material'
+import { Button, Divider, Menu, MenuItem } from '@mui/material'
 import { usePathname, useRouter } from 'next/navigation'
+import useSWR from 'swr'
 
 export function ToolsTrigger() {
   const router = useRouter()
   const curPathname = usePathname()
+  const { data: dynamicHomepageLinks = [] } = useSWR(
+    'getEnabledHomepageLinks',
+    () =>
+      getEnabledHomepageLinks()
+        .then(SA.decode)
+        .then((res) =>
+          res.map((item) => ({
+            pathname: item.url,
+            title: item.name,
+          }))
+        )
+  )
+
   return (
     <AnchorProvider>
       {(anchorEl, setAnchorEl) => (
@@ -43,6 +59,23 @@ export function ToolsTrigger() {
             {toolList.map(({ pathname, title }) => (
               <MenuItem
                 key={pathname}
+                selected={pathname === curPathname}
+                {...triggerMenuItemEvents((e, reason) => {
+                  setAnchorEl(null)
+                  if (reason === 'middleClick') {
+                    window.open(pathname, '_blank')
+                  } else {
+                    router.push(pathname)
+                  }
+                })}
+              >
+                {title}
+              </MenuItem>
+            ))}
+            {dynamicHomepageLinks.length > 0 && <Divider />}
+            {dynamicHomepageLinks.map(({ pathname, title }) => (
+              <MenuItem
+                key={title}
                 selected={pathname === curPathname}
                 {...triggerMenuItemEvents((e, reason) => {
                   setAnchorEl(null)

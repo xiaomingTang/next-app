@@ -4,6 +4,7 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import FeedIcon from '@mui/icons-material/Feed'
 import SellIcon from '@mui/icons-material/Sell'
 import LinkIcon from '@mui/icons-material/Link'
+import HomeWorkIcon from '@mui/icons-material/HomeWork'
 import MusicNoteIcon from '@mui/icons-material/MusicNote'
 import MessageIcon from '@mui/icons-material/Message'
 import { usePathname } from 'next/navigation'
@@ -41,6 +42,12 @@ export const menuList: NestedMenu[] = [
     name: '短链管理',
     path: '/admin/shortUrl',
     icon: <LinkIcon />,
+  },
+  {
+    name: '首页链接管理',
+    roles: ['ADMIN'],
+    path: '/admin/homepageLinks',
+    icon: <HomeWorkIcon />,
   },
   {
     name: '歌曲管理',
