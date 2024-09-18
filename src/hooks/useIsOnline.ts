@@ -13,6 +13,10 @@ function subscribe(callback: (e: Event) => void) {
   }
 }
 
+function getServerSnapshot() {
+  return true
+}
+
 export function useIsOnline() {
-  return useSyncExternalStore(subscribe, getSnapshot)
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 }
