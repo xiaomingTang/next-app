@@ -3,6 +3,7 @@ import { panoConfig } from './constants'
 import { withStatic } from '@/utils/withStatic'
 
 import { create } from 'zustand'
+import { useShallow } from 'zustand/shallow'
 import { subscribeWithSelector } from 'zustand/middleware'
 import { immer } from 'zustand/middleware/immer'
 import { TextureLoader } from 'three'
@@ -78,10 +79,12 @@ export const usePanoStore = withStatic(useRawPanoStore, {
     })
   },
   useCurDecPatterns() {
-    const { curPos, enabledDecs } = useRawPanoStore((state) => ({
-      curPos: state.curPos,
-      enabledDecs: state.enabledDecs,
-    }))
+    const { curPos, enabledDecs } = useRawPanoStore(
+      useShallow((state) => ({
+        curPos: state.curPos,
+        enabledDecs: state.enabledDecs,
+      }))
+    )
     return useMemo(
       () =>
         curPos.decorations

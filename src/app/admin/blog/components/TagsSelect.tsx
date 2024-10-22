@@ -69,10 +69,13 @@ export const MultiSelect = forwardRef(function MultiSelect<
         <TextField
           {...params}
           {...restProps}
-          inputProps={{
-            ...params.inputProps,
-            enterKeyHint: 'enter',
-            ...restProps.inputProps,
+          slotProps={{
+            htmlInput: {
+              ...params.inputProps,
+              enterKeyHint: 'enter',
+              // 出于兼容性的考虑, 暂时需要保留这个 deprecated
+              ...restProps.inputProps,
+            },
           }}
         />
       )}

@@ -44,7 +44,7 @@ import {
   Typography,
   useColorScheme,
 } from '@mui/material'
-import { isEqual, noop, pick } from 'lodash-es'
+import { isEqual, noop, omit, pick } from 'lodash-es'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
 import Editor from '@monaco-editor/react'
@@ -290,9 +290,11 @@ export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
           multiline
           minRows={4}
           maxRows={30}
-          inputProps={{
-            style: {
-              overflow: 'auto',
+          slotProps={{
+            htmlInput: {
+              sx: {
+                overflow: 'auto',
+              },
             },
           }}
         />
@@ -329,9 +331,11 @@ export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
               maxRows={30}
               helperText={error?.message ?? ' '}
               error={!!error}
-              inputProps={{
-                style: {
-                  overflow: 'auto',
+              slotProps={{
+                htmlInput: {
+                  sx: {
+                    overflow: 'auto',
+                  },
                 },
               }}
             />
@@ -363,7 +367,7 @@ export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
               {error?.message ?? ' '}
             </FormHelperText>
             <Editor
-              {...field}
+              {...omit(field, 'ref')}
               height='70vh'
               theme={mode === 'dark' ? 'vs-dark' : 'light'}
               defaultLanguage='markdown'

@@ -70,7 +70,6 @@ export const SearchSection = NiceModal.create(() => {
     }
   })
 
-  // 守护 history stack, 避免关闭弹窗触发 history.back
   useInjectHistory(modal.visible, () => {
     void modal.hide()
   })
@@ -178,8 +177,10 @@ export const SearchSection = NiceModal.create(() => {
                     autoFocus
                     autoComplete='off'
                     placeholder='搜索 [ctrl + K]'
-                    inputProps={{
-                      'aria-label': '搜索博客标题和内容 (快捷键 ctrl + K)',
+                    slotProps={{
+                      input: {
+                        'aria-label': '搜索博客标题和内容 (快捷键 ctrl + K)',
+                      },
                     }}
                     onFocus={() => setIsFocusOnInput(true)}
                     onBlur={() => setIsFocusOnInput(false)}

@@ -3,7 +3,7 @@
 import { sleepMs } from '@/utils/time'
 import { withStatic } from '@/utils/withStatic'
 
-import React from 'react'
+import React, { useMemo } from 'react'
 import { create } from 'zustand'
 
 interface DynamicImport {
@@ -44,11 +44,15 @@ export const useDynamicImport = withStatic(useRawDynamicImport, {
 })
 
 export function DynamicImportSeeds() {
-  return useDynamicImport((state) =>
-    state.list.map(({ id, element }) => (
-      <React.Fragment key={`GlobalDynamicImport-${id}`}>
-        {element}
-      </React.Fragment>
-    ))
+  const list = useDynamicImport((state) => state.list)
+
+  return useMemo(
+    () =>
+      list.map(({ id, element }) => (
+        <React.Fragment key={`GlobalDynamicImport-${id}`}>
+          {element}
+        </React.Fragment>
+      )),
+    [list]
   )
 }

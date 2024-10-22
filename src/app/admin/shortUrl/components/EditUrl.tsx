@@ -236,8 +236,11 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
                 type='number'
                 helperText={error?.message ?? ' '}
                 error={!!error}
-                inputProps={{
-                  inputMode: 'numeric',
+                slotProps={{
+                  htmlInput: {
+                    inputMode: 'numeric',
+                    pattern: '[0-9]*',
+                  },
                 }}
               />
             )}

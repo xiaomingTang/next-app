@@ -1,6 +1,7 @@
 import { useListen } from './useListen'
 
 import { useEventCallback } from '@mui/material'
+import { usePathname } from 'next/navigation'
 import { useRef } from 'react'
 import { useEvent } from 'react-use'
 
@@ -23,6 +24,8 @@ class stack {
   }
 
   static locked = false
+
+  static invalidStackIndex = 0
 }
 
 /**
@@ -43,6 +46,13 @@ export function useInjectHistory(
 ) {
   // 弹窗维护各自的 index
   const IndexRef = useRef(0)
+  const pathname = usePathname()
+
+  useListen(pathname, (_, prev) => {
+    if (prev) {
+      stack.invalidStackIndex = stack.latest
+    }
+  })
 
   const finalOnPopState = useEventCallback(async (e: PopStateEvent) => {
     // 未初始化
@@ -98,8 +108,9 @@ export function useInjectHistory(
       }, 0)
       return
     }
-    if (tempIndex > stack.latest) {
-      if (stack.latest > 0) {
+
+    if (tempIndex > stack.invalidStackIndex) {
+      if (stack.invalidStackIndex > 0) {
         stack.locked = true
       }
       window.history.back()
