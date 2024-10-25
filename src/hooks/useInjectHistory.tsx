@@ -55,6 +55,10 @@ export function useInjectHistory(
   })
 
   const finalOnPopState = useEventCallback(async (e: PopStateEvent) => {
+    if (stack.latest <= 0 && stack.locked) {
+      stack.locked = false
+      return
+    }
     // 未初始化
     if (IndexRef.current <= 0) {
       return
@@ -110,9 +114,7 @@ export function useInjectHistory(
     }
 
     if (tempIndex > stack.invalidStackIndex) {
-      if (stack.invalidStackIndex > 0) {
-        stack.locked = true
-      }
+      stack.locked = true
       window.history.back()
     }
   })
