@@ -55,7 +55,6 @@ export const webpackConfig = (config, { dev }) => {
   })
 
   config.resolve.alias['@'] = resolveRoot('src')
-  config.resolve.alias['@APP'] = resolveRoot('src/app')
   config.resolve.alias['@ADMIN'] = resolveRoot('src/app/admin')
   config.resolve.alias['@D'] = resolveRoot('src/app/(default-layout)')
   config.resolve.alias['@F'] = resolveRoot('src/app/(fullscreen-layout)')
