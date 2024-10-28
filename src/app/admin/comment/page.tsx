@@ -1,6 +1,6 @@
 'use client'
 
-import { getComments } from '@/app/(default-layout)/comment/server'
+import { getComments } from '@D/comment/server'
 import { SA } from '@/errors/utils'
 import { formatTime } from '@/utils/transformer'
 import { cat } from '@/errors/catchAndToast'

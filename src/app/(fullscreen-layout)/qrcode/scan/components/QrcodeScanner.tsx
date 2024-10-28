@@ -5,7 +5,7 @@ import { useQrcodeHandler } from './QrcodeHandlers'
 
 import { toPlainError } from '@/errors/utils'
 import { getUserMedia } from '@/utils/media'
-import { StreamVideo } from '@/app/(default-layout)/blog/components/StreamVideo'
+import { StreamVideo } from '@D/blog/components/StreamVideo'
 
 import useSWR from 'swr'
 import { useMemo, useRef, useState } from 'react'
@@ -13,7 +13,7 @@ import { toast } from 'react-hot-toast'
 import { Box, CircularProgress } from '@mui/material'
 import { throttle } from 'lodash-es'
 
-import type { StreamVideoContext } from '@/app/(default-layout)/blog/components/StreamVideo'
+import type { StreamVideoContext } from '@D/blog/components/StreamVideo'
 import type { QRCode } from 'jsqr'
 
 export function QrcodeScanner({

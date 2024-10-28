@@ -1,13 +1,13 @@
-import { HoverableClock } from './clock/HoverableClock'
-
-import { Hands } from '../(iframe-layout)/clock/components/Hands'
-import { DEFAULT_CLOCK_CONFIG } from '../(iframe-layout)/clock/theme/[theme]/constants'
-
 import { GA } from '@/analytics/GA'
 import { DefaultAside } from '@/layout/DefaultAside'
 import { DefaultBodyContainer } from '@/layout/DefaultBodyContainer'
 import DefaultLayout from '@/layout/DefaultLayout'
-import { Clock } from '@I/clock/components/Clock'
+
+import dynamic from 'next/dynamic'
+
+const DefaultClock = dynamic(() =>
+  import('@D/clock/components/DefaultClock').then((res) => res.DefaultClock)
+)
 
 export default function Index({ children }: { children: React.ReactNode }) {
   return (
@@ -15,12 +15,7 @@ export default function Index({ children }: { children: React.ReactNode }) {
       <DefaultBodyContainer>
         <GA />
         <DefaultAside placement='left'>
-          <HoverableClock clockIframePath='/clock/theme/13'>
-            <Clock>
-              <DEFAULT_CLOCK_CONFIG.Dial width='100%' height='100%' />
-              <Hands config={DEFAULT_CLOCK_CONFIG} />
-            </Clock>
-          </HoverableClock>
+          <DefaultClock />
         </DefaultAside>
         {children}
       </DefaultBodyContainer>

@@ -1,6 +1,6 @@
 import { usePanoStore } from '../store'
 
-import { getRotationFrom } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
+import { getRotationFrom } from '@F/pano/components/PanoControls/utils'
 import Anchor from '@/components/Anchor'
 import { STYLE } from '@/config'
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'

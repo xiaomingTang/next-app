@@ -1,7 +1,7 @@
 import { usePeer } from '../../store/usePeer'
 import { useMediaConnectionState } from '../../hooks/usePeerState'
 
-import { StreamVideo } from '@/app/(default-layout)/blog/components/StreamVideo'
+import { StreamVideo } from '@D/blog/components/StreamVideo'
 import { assertNever } from '@/utils/function'
 
 import { Box } from '@mui/material'

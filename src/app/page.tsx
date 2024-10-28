@@ -1,8 +1,3 @@
-import { HoverableClock } from './(default-layout)/clock/HoverableClock'
-import { Hands } from './(iframe-layout)/clock/components/Hands'
-import { DEFAULT_CLOCK_CONFIG } from './(iframe-layout)/clock/theme/[theme]/constants'
-
-import { Clock } from '@I/clock/components/Clock'
 import { BlogList, BlogListLoading } from '@D/blog/components/BlogList'
 import { TagItem } from '@D/tag/components/TagItem'
 import { seo } from '@/utils/seo'
@@ -20,6 +15,7 @@ import { resolvePath } from '@/utils/url'
 
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
+import dynamic from 'next/dynamic'
 
 import type { Metadata } from 'next'
 
@@ -36,18 +32,17 @@ export const metadata: Metadata = {
   },
 }
 
+const DefaultClock = dynamic(() =>
+  import('@D/clock/components/DefaultClock').then((res) => res.DefaultClock)
+)
+
 export default async function Index() {
   return (
     <DefaultLayout>
       <DefaultBodyContainer>
         <GA />
         <DefaultAside placement='left'>
-          <HoverableClock clockIframePath='/clock/theme/13'>
-            <Clock>
-              <DEFAULT_CLOCK_CONFIG.Dial width='100%' height='100%' />
-              <Hands config={DEFAULT_CLOCK_CONFIG} />
-            </Clock>
-          </HoverableClock>
+          <DefaultClock />
         </DefaultAside>
         <ScrollToTop>
           {/* tag list */}

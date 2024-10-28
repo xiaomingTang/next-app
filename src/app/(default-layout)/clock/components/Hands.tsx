@@ -8,7 +8,7 @@ import { useNowDate } from '@/hooks/useNow'
 import { blue, green, pink } from '@mui/material/colors'
 import { NoSsr } from '@mui/material'
 
-import type { ClockConfig } from '../theme/[theme]/constants'
+import type { ClockConfig } from '../constants'
 
 interface HandsProps {
   config: Pick<ClockConfig, 'center' | 'h' | 'm' | 's'>

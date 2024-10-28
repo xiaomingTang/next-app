@@ -1,9 +1,9 @@
-import { HoverableClock } from './HoverableClock'
+import { HoverableClock } from './components/HoverableClock'
 
 import { seo } from '@/utils/seo'
-import { Clock } from '@I/clock/components/Clock'
-import { CLOCK_CONFIGS } from '@/app/(iframe-layout)/clock/theme/[theme]/constants'
-import { Hands } from '@/app/(iframe-layout)/clock/components/Hands'
+import { Clock } from '@D/clock/components/Clock'
+import { CLOCK_CONFIGS } from '@D/clock/constants'
+import { Hands } from '@D/clock/components/Hands'
 
 import Grid2 from '@mui/material/Grid2'
 

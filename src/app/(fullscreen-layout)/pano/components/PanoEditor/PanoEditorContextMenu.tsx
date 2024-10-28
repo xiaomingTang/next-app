@@ -1,6 +1,6 @@
 import { usePanoStore } from '../store'
 
-import { formatView } from '@/app/(fullscreen-layout)/pano/components/PanoControls/utils'
+import { formatView } from '@F/pano/components/PanoControls/utils'
 import { STYLE } from '@/config'
 
 import { Menu, MenuItem } from '@mui/material'

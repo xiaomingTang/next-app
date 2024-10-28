@@ -1,7 +1,6 @@
-import { CLOCK_CONFIGS, CLOCK_CONFIG_MAP } from './constants'
-
-import { Hands } from '../../components/Hands'
-import { Clock } from '../../components/Clock'
+import { CLOCK_CONFIGS, CLOCK_CONFIG_MAP } from '@D/clock/constants'
+import { Hands } from '@D/clock/components/Hands'
+import { Clock } from '@D/clock/components/Clock'
 
 import { notFound } from 'next/navigation'
 
