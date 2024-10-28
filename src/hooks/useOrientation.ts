@@ -28,8 +28,10 @@ export function useOrientation(initialState = defaultState) {
         })
         return
       }
+      // eslint-disable-next-line deprecation/deprecation
       if (typeof window.orientation === 'number') {
         setState({
+          // eslint-disable-next-line deprecation/deprecation
           angle: window.orientation,
           type: '',
         })

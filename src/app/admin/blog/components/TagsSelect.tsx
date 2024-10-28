@@ -74,6 +74,7 @@ export const MultiSelect = forwardRef(function MultiSelect<
               ...params.inputProps,
               enterKeyHint: 'enter',
               // 出于兼容性的考虑, 暂时需要保留这个 deprecated
+              // eslint-disable-next-line deprecation/deprecation
               ...restProps.inputProps,
             },
           }}

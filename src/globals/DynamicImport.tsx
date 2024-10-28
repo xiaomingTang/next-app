@@ -8,7 +8,7 @@ import { create } from 'zustand'
 
 interface DynamicImport {
   id: string
-  element?: JSX.Element
+  element?: React.JSX.Element
 }
 
 const useRawDynamicImport = create<{
@@ -16,7 +16,7 @@ const useRawDynamicImport = create<{
 }>(() => ({ list: [] }))
 
 export const useDynamicImport = withStatic(useRawDynamicImport, {
-  async add(id: string, importer: () => Promise<JSX.Element>) {
+  async add(id: string, importer: () => Promise<React.JSX.Element>) {
     useRawDynamicImport.setState(({ list }) => {
       if (list.find((item) => item?.id === id)) {
         return {

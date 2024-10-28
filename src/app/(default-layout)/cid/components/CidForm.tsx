@@ -20,7 +20,7 @@ import {
   Box,
   FormControl,
   FormHelperText,
-  Grid,
+  Grid2,
   InputLabel,
   MenuItem,
   OutlinedInput,
@@ -162,17 +162,29 @@ export function CidForm() {
   return (
     <Box component={'form'} onSubmit={onSubmit}>
       <AddressSelector form={form} />
-      <Grid container spacing={1}>
+      <Grid2 container spacing={1}>
         <BirthdaySelector form={form} />
-        <Grid item xs={12} sm={6} md={4}>
+        <Grid2
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4,
+          }}
+        >
           {genderElem}
-        </Grid>
-      </Grid>
-      <Grid container spacing={1}>
-        <Grid item xs={12} sm={6} md={4}>
+        </Grid2>
+      </Grid2>
+      <Grid2 container spacing={1}>
+        <Grid2
+          size={{
+            xs: 12,
+            sm: 6,
+            md: 4,
+          }}
+        >
           {submitElem}
-        </Grid>
-      </Grid>
+        </Grid2>
+      </Grid2>
       <Stack spacing={2} mt={2}>
         {fakeUserList.map((item) => (
           <Box key={item.id}>

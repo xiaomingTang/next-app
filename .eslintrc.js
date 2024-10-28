@@ -4,6 +4,7 @@ module.exports = {
     'airbnb-base',
     'plugin:@typescript-eslint/recommended',
     'airbnb-typescript/base',
+    'plugin:deprecation/recommended',
     'next/core-web-vitals',
     'prettier',
   ],
@@ -25,6 +26,7 @@ module.exports = {
     },
   },
   rules: {
+    'deprecation/deprecation': 'warn',
     'no-console': 'off',
     'react-hooks/exhaustive-deps': 'warn',
     // tsc 会检查, 无需 lint

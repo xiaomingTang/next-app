@@ -1,7 +1,7 @@
 import {
   FormControl,
   FormHelperText,
-  Grid,
+  Grid2,
   InputLabel,
   MenuItem,
   OutlinedInput,
@@ -24,7 +24,13 @@ export function BirthdaySelector({ form }: { form: UseFormReturn<FormProps> }) {
   const { control } = form
   return (
     <>
-      <Grid item xs={12} sm={6} md={4}>
+      <Grid2
+        size={{
+          xs: 12,
+          sm: 6,
+          md: 4,
+        }}
+      >
         <Controller
           name='year'
           control={control}
@@ -42,8 +48,14 @@ export function BirthdaySelector({ form }: { form: UseFormReturn<FormProps> }) {
             </FormControl>
           )}
         />
-      </Grid>
-      <Grid item xs={12} sm={6} md={4}>
+      </Grid2>
+      <Grid2
+        size={{
+          xs: 12,
+          sm: 6,
+          md: 4,
+        }}
+      >
         <Controller
           name='month'
           control={control}
@@ -61,8 +73,14 @@ export function BirthdaySelector({ form }: { form: UseFormReturn<FormProps> }) {
             </FormControl>
           )}
         />
-      </Grid>
-      <Grid item xs={12} sm={6} md={4}>
+      </Grid2>
+      <Grid2
+        size={{
+          xs: 12,
+          sm: 6,
+          md: 4,
+        }}
+      >
         <Controller
           name='date'
           control={control}
@@ -80,7 +98,7 @@ export function BirthdaySelector({ form }: { form: UseFormReturn<FormProps> }) {
             </FormControl>
           )}
         />
-      </Grid>
+      </Grid2>
     </>
   )
 }
