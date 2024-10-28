@@ -8,14 +8,12 @@ import { useEffect } from 'react'
 
 type FileCatcherHandler = (files: File[]) => Promise<void> | void
 
-export const defaultFileCatcherHandler: FileCatcherHandler = async (
-  files: File[]
-) => {
+const defaultFileCatcherHandler: FileCatcherHandler = async (files: File[]) => {
   await useUser.login()
   await upload(files)
 }
 
-export const noneFileCatcherHandler: FileCatcherHandler = (_: File[]) => {
+const noneFileCatcherHandler: FileCatcherHandler = (_: File[]) => {
   // pass
 }
 

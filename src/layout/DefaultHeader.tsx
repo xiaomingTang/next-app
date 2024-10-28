@@ -4,7 +4,6 @@ import { UserButton } from './CornerButtons/UserButton'
 import { ThemeToggleButton } from './CornerButtons/ThemeToggleButton'
 import { Entry } from './CornerButtons/Entries'
 import { MusicTriggerButton } from './CornerButtons/MusicTriggerButton'
-import { UploadTrigger } from './CornerButtons/UploadTrigger'
 import { SearchButton } from './CornerButtons/search/SearchButton'
 import { QrcodeTrigger } from './CornerButtons/QrcodeTrigger'
 import { MenuTrigger } from './CornerButtons/MenuTrigger'
@@ -24,6 +23,11 @@ import {
   useTheme,
 } from '@mui/material'
 import { grey } from '@mui/material/colors'
+import dynamic from 'next/dynamic'
+
+const UploadTrigger = dynamic(() =>
+  import('./CornerButtons/UploadTrigger').then((res) => res.UploadTrigger)
+)
 
 export function DefaultRawHeader() {
   const trigger = useScrollTrigger()
