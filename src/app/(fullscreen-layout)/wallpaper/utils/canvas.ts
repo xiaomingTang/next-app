@@ -30,12 +30,10 @@ export function drawWallpaper(
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
       const n = (x + y * width) * 4
-      /* eslint-disable no-param-reassign */
       imageData.data[n] = calcColor(r1, r2, r3, r4, x, y, width, height)
       imageData.data[n + 1] = calcColor(g1, g2, g3, g4, x, y, width, height)
       imageData.data[n + 2] = calcColor(b1, b2, b3, b4, x, y, width, height)
       imageData.data[n + 3] = calcColor(a1, a2, a3, a4, x, y, width, height)
-      /* eslint-enable no-param-reassign */
     }
   }
   return imageData

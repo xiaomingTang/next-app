@@ -44,7 +44,7 @@ export const useUser = withStatic(useRawUser, {
         ...defaultUser,
         ...JSON.parse(localStorage.getItem(USER_STORAGE_KEY) ?? ''),
       } as Required<User>
-    } catch (error) {
+    } catch (_) {
       return defaultUser
     }
   },

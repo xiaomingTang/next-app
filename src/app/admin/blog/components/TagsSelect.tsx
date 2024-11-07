@@ -21,7 +21,6 @@ interface MultiSelectProps<T extends string | number>
   onNoMatch?: (s: string) => void
 }
 
-// eslint-disable-next-line prefer-arrow-callback
 export const MultiSelect = forwardRef(function MultiSelect<
   T extends string | number,
 >(
@@ -73,8 +72,6 @@ export const MultiSelect = forwardRef(function MultiSelect<
             htmlInput: {
               ...params.inputProps,
               enterKeyHint: 'enter',
-              // 出于兼容性的考虑, 暂时需要保留这个 deprecated
-              // eslint-disable-next-line deprecation/deprecation
               ...restProps.inputProps,
             },
           }}

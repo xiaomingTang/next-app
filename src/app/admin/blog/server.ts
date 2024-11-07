@@ -369,8 +369,7 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
 
   return filterBlogsWithAuth(
     // 这里可以忽略 non-null check, 因为后面 filter Boolean 了
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    [nextBlog!, prevBlog!, ...similarBlogs].filter(Boolean)
+    [nextBlog, prevBlog, ...similarBlogs].filter(Boolean)
   )
 })
 

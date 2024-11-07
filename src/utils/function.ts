@@ -6,15 +6,13 @@ export type Func<Args extends unknown[] = unknown[], T = unknown> = (
   ...args: Args
 ) => T
 
-export function loopCall(callback: Func<[], void>): Func<[], void> {
+export function loopCall(callback: Func<[], unknown>): Func<[], void> {
   let stopLoop = false
 
   async function loop() {
     while (!stopLoop) {
-      // eslint-disable-next-line no-await-in-loop
       await callback()
       // 必须 sleep 0, 防止 callback 是同步函数, 导致卡死事件循环
-      // eslint-disable-next-line no-await-in-loop
       await sleepMs(0)
     }
   }

@@ -1,8 +1,0 @@
-**/*.js
-**/*.mjs
-**/*.stories.tsx
-**/*.md
-**/*.mdx
-.next/
-out/
-public/

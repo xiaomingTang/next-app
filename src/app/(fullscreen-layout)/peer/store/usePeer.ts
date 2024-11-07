@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-cycle
 import { usePeerMessage } from './useMessage'
 
 import { isDC, isMC } from '../utils'

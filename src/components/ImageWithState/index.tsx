@@ -38,7 +38,6 @@ type Props = Omit<ImageProps, 'src' | 'alt'> & {
   preview?: boolean
 }
 
-// eslint-disable-next-line prefer-arrow-callback
 export const ImageWithState = forwardRef(function ImageWithState(
   { preview = false, ...props }: Props,
   ref: React.Ref<HTMLImageElement>

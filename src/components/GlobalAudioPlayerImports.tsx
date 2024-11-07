@@ -17,7 +17,7 @@ export function GlobalAudioPlayer() {
   const mp3s = useAudio((state) => state.mp3s)
   const props: Parameters<typeof useReactUseAudio>[0] = useMemo(
     () => ({
-      src: activeMP3?.mp3 ?? '',
+      src: activeMP3?.mp3 || '/static/medias/empty.mp3',
     }),
     [activeMP3]
   )
@@ -168,7 +168,7 @@ export function GlobalAudioPlayer() {
         // bug 描述: 'position' 设置无效, 干脆隐藏进度条算了
         duration: 0,
       })
-    } catch (error) {
+    } catch (_) {
       console.warn(`not supported: "setPositionState"`)
     }
   }, [activeMP3, state.duration])

@@ -38,7 +38,6 @@ type DraftProps = LoadingAble<
   mode?: 'preview' | 'production'
 }
 
-// eslint-disable-next-line prefer-arrow-callback
 export const BlogContent = forwardRef(function BlogContent(
   { mode = 'production', ...blog }: DraftProps,
   ref: React.ForwardedRef<HTMLDivElement>

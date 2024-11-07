@@ -159,7 +159,7 @@ export function useInitAudio() {
     actions.forEach(([action, handler]) => {
       try {
         navigator.mediaSession.setActionHandler(action, handler)
-      } catch (error) {
+      } catch (_) {
         console.warn(
           `The media session action "${action}" is not supported yet.`
         )
@@ -169,7 +169,7 @@ export function useInitAudio() {
       actions.forEach(([action]) => {
         try {
           navigator.mediaSession.setActionHandler(action, null)
-        } catch (error) {
+        } catch (_) {
           console.warn(
             `The media session action "${action}" is not supported yet.`
           )

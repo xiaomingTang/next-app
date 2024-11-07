@@ -22,7 +22,7 @@ export function isValidUrl(s: string) {
 
     // URL 符合规范，认为是合法的
     return true
-  } catch (error) {
+  } catch (_) {
     // 捕获异常表示 URL 不合法
     return false
   }

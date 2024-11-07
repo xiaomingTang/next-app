@@ -33,7 +33,6 @@ const APP_URL = resolvePath('/')
  * <Anchor href='/inner'>inner link</Anchor>
  * ```
  */
-// eslint-disable-next-line prefer-arrow-callback
 export default forwardRef(function Anchor(
   {
     underline = false,

@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-cycle
 import { usePeer } from './usePeer'
 
 import { usePeerListener } from '../hooks/usePeerListener'

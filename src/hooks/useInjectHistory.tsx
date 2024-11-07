@@ -79,7 +79,7 @@ export function useInjectHistory(
     stack.locked = true
     try {
       await onPopState(e)
-    } catch (error) {
+    } catch (_) {
       // 不让关闭, 还原所有状态
       stack.locked = false
       IndexRef.current = stack.push()

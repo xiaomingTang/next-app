@@ -137,7 +137,7 @@ export function withRevalidate<T>({
       paths.forEach((p) => {
         revalidatePath(p)
       })
-    } catch (error) {
+    } catch (_) {
       // pass
     }
     return res
