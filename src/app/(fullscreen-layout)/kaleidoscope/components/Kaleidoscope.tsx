@@ -2,6 +2,7 @@
 
 import { Grids } from './Grids'
 import { useSlide } from './useSlide'
+import { KaleidoscopeCanvas } from './KaleidoscopeCanvas'
 
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { useElementSize } from '@/hooks/useElementSize'
@@ -26,7 +27,7 @@ export function Kaleidoscope() {
   })
   const [color, setColor] = useState('#ffffff')
 
-  const [size, _canvas, setCanvas] = useElementSize<HTMLCanvasElement>()
+  const [size, _elem, setElement] = useElementSize<HTMLElement>()
 
   return (
     <>
@@ -40,20 +41,24 @@ export function Kaleidoscope() {
       >
         <DefaultHeaderShim />
         <Box
+          ref={setElement}
           sx={{
             flex: '1 1 0%',
             position: 'relative',
           }}
         >
-          <canvas
-            ref={setCanvas}
-            style={{
+          <KaleidoscopeCanvas
+            gridSize={gridSize}
+            strokeWidth={1}
+            strokeColor={color}
+            sx={{
               position: 'absolute',
               top: 0,
               left: 0,
               width: '100%',
               height: '100%',
               backgroundColor: '#2E2E2D',
+              touchAction: 'none',
             }}
           />
           {size.width > 0 && (

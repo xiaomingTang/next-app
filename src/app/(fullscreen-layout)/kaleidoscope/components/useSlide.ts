@@ -1,5 +1,9 @@
+import { getSingleEvent } from '@/utils/pointerLike'
+
 import { clamp, noop } from 'lodash-es'
 import { useCallback, useEffect, useRef, useState } from 'react'
+
+import type { PointerLikeEvent } from '@/utils/pointerLike'
 
 interface UseSlideProps {
   direction: 'x' | 'y'
@@ -8,33 +12,21 @@ interface UseSlideProps {
   max: number
 }
 
-type PointerLikeEvent =
-  | MouseEvent
-  | TouchEvent
-  | React.MouseEvent<HTMLButtonElement, MouseEvent>
-  | React.TouchEvent<HTMLButtonElement>
-
-function getClient(direction: 'x' | 'y', e: PointerLikeEvent) {
-  if (direction === 'x') {
-    return 'clientX' in e ? e.clientX : e.touches[0].clientX
-  }
-  return 'clientY' in e ? e.clientY : e.touches[0].clientY
-}
-
 export function useSlide({ direction, defaultValue, min, max }: UseSlideProps) {
   const [value, setValue] = useState(defaultValue)
   const [isSetting, setIsSetting] = useState(false)
-  const pxRef = useRef(0)
+  const prevValueRef = useRef(0)
 
   useEffect(() => {
     if (isSetting) {
-      const onMove = (e: MouseEvent | TouchEvent) => {
-        const clientX = getClient(direction, e)
-        const dx = clientX - pxRef.current
+      const onMove = (e: PointerLikeEvent) => {
+        const se = getSingleEvent(e)
+        const clientSize = direction === 'x' ? se.clientX : se.clientY
+        const dx = clientSize - prevValueRef.current
         setValue((prev) => clamp(prev + dx, min, max))
-        pxRef.current = clientX
+        prevValueRef.current = clientSize
       }
-      const onEnd = (_: MouseEvent | TouchEvent) => {
+      const onEnd = () => {
         setIsSetting(false)
       }
 
@@ -59,7 +51,8 @@ export function useSlide({ direction, defaultValue, min, max }: UseSlideProps) {
     (e: PointerLikeEvent) => {
       e.preventDefault()
       setIsSetting(true)
-      pxRef.current = getClient(direction, e)
+      const se = getSingleEvent(e)
+      prevValueRef.current = direction === 'x' ? se.clientX : se.clientY
     },
     [direction]
   )
