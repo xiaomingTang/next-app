@@ -7,6 +7,7 @@ import { KaleidoscopeCanvas } from './KaleidoscopeCanvas'
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { useElementSize } from '@/hooks/useElementSize'
 
+import CancelIcon from '@mui/icons-material/Cancel'
 import PaletteIcon from '@mui/icons-material/Palette'
 import LensBlurIcon from '@mui/icons-material/LensBlur'
 import { Box, ButtonGroup, IconButton } from '@mui/material'
@@ -24,6 +25,9 @@ export function Kaleidoscope() {
     max: 200,
   })
   const [color, setColor] = useState('#ffffff')
+  const CLEAR_COLOR = '#2E2E2D'
+  const [canvasKey, setCanvasKey] = useState(0)
+  const clearCanvas = () => setCanvasKey((key) => key + 1)
 
   const [size, _elem, setElement] = useElementSize<HTMLElement>()
 
@@ -46,6 +50,7 @@ export function Kaleidoscope() {
           }}
         >
           <KaleidoscopeCanvas
+            key={canvasKey}
             gridSize={gridSize}
             strokeWidth={1}
             strokeColor={color}
@@ -55,7 +60,7 @@ export function Kaleidoscope() {
               left: 0,
               width: '100%',
               height: '100%',
-              backgroundColor: '#2E2E2D',
+              backgroundColor: CLEAR_COLOR,
               touchAction: 'none',
             }}
           />
@@ -84,13 +89,16 @@ export function Kaleidoscope() {
           bottom: '24px',
           left: '50%',
           transform: 'translateX(-50%)',
-          color: 'white',
+          color,
           '& :disabled': {
             color: 'rgba(255, 255, 255, 0.2)',
           },
+          '& button': {
+            backgroundColor: CLEAR_COLOR,
+          },
         }}
       >
-        <IconButton tabIndex={-1} style={{ color }}>
+        <IconButton tabIndex={-1}>
           <PaletteIcon />
           <input
             type='color'
@@ -109,6 +117,9 @@ export function Kaleidoscope() {
         </IconButton>
         <IconButton onMouseDown={onStart} onTouchStart={onStart}>
           <LensBlurIcon />
+        </IconButton>
+        <IconButton onClick={clearCanvas}>
+          <CancelIcon />
         </IconButton>
       </ButtonGroup>
     </>
