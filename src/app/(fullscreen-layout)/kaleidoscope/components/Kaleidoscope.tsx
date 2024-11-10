@@ -7,8 +7,6 @@ import { KaleidoscopeCanvas } from './KaleidoscopeCanvas'
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { useElementSize } from '@/hooks/useElementSize'
 
-import RedoIcon from '@mui/icons-material/Redo'
-import UndoIcon from '@mui/icons-material/Undo'
 import PaletteIcon from '@mui/icons-material/Palette'
 import LensBlurIcon from '@mui/icons-material/LensBlur'
 import { Box, ButtonGroup, IconButton } from '@mui/material'
@@ -92,9 +90,6 @@ export function Kaleidoscope() {
           },
         }}
       >
-        <IconButton disabled>
-          <UndoIcon />
-        </IconButton>
         <IconButton tabIndex={-1} style={{ color }}>
           <PaletteIcon />
           <input
@@ -114,9 +109,6 @@ export function Kaleidoscope() {
         </IconButton>
         <IconButton onMouseDown={onStart} onTouchStart={onStart}>
           <LensBlurIcon />
-        </IconButton>
-        <IconButton disabled>
-          <RedoIcon />
         </IconButton>
       </ButtonGroup>
     </>
