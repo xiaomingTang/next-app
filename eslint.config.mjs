@@ -21,8 +21,10 @@ export default [
       '**/*.md',
       '**/*.mdx',
       '**/.next/',
+      '**/.local/',
       '**/out/',
       '**/public/',
+      '**/node_modules/',
     ],
   },
   ...compat.extends(
