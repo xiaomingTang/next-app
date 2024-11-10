@@ -6,11 +6,21 @@ import { KaleidoscopeCanvas } from './KaleidoscopeCanvas'
 
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { useElementSize } from '@/hooks/useElementSize'
+import { AnchorProvider } from '@/components/AnchorProvider'
 
 import CancelIcon from '@mui/icons-material/Cancel'
 import PaletteIcon from '@mui/icons-material/Palette'
 import LensBlurIcon from '@mui/icons-material/LensBlur'
-import { Box, ButtonGroup, IconButton } from '@mui/material'
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  ClickAwayListener,
+  IconButton,
+  Stack,
+  Tooltip,
+  Typography,
+} from '@mui/material'
 import { useState } from 'react'
 
 export function Kaleidoscope() {
@@ -27,9 +37,56 @@ export function Kaleidoscope() {
   const [color, setColor] = useState('#ffffff')
   const CLEAR_COLOR = '#2E2E2D'
   const [canvasKey, setCanvasKey] = useState(0)
-  const clearCanvas = () => setCanvasKey((key) => key + 1)
 
   const [size, _elem, setElement] = useElementSize<HTMLElement>()
+
+  const clearCanvasButton = (
+    <AnchorProvider>
+      {(anchorEl, setAnchorEl) => (
+        <ClickAwayListener onClickAway={() => setAnchorEl(null)}>
+          <span
+            style={{
+              display: 'inline-flex',
+            }}
+          >
+            <Tooltip
+              open={!!anchorEl}
+              title={
+                <Stack direction='row' alignItems='center'>
+                  <Typography>确认清空画布吗？</Typography>
+                  <Button
+                    color='error'
+                    variant='contained'
+                    size='small'
+                    onClick={() => {
+                      setCanvasKey((key) => key + 1)
+                      setAnchorEl(null)
+                    }}
+                  >
+                    清空
+                  </Button>
+                </Stack>
+              }
+            >
+              <IconButton
+                aria-label='清空画布'
+                onClick={(e) => {
+                  setAnchorEl((prev) => {
+                    if (!prev) {
+                      return e.currentTarget
+                    }
+                    return null
+                  })
+                }}
+              >
+                <CancelIcon />
+              </IconButton>
+            </Tooltip>
+          </span>
+        </ClickAwayListener>
+      )}
+    </AnchorProvider>
+  )
 
   return (
     <>
@@ -75,7 +132,7 @@ export function Kaleidoscope() {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                stroke: `rgba(255, 255, 255, 0.1)`,
+                stroke: `rgba(255, 255, 255, ${isSettingGridSize ? 0.1 : 0})`,
                 transition: `stroke ${isSettingGridSize ? 0.1 : 3}s`,
                 pointerEvents: 'none',
               }}
@@ -98,7 +155,7 @@ export function Kaleidoscope() {
           },
         }}
       >
-        <IconButton tabIndex={-1}>
+        <IconButton tabIndex={-1} aria-label='选择画笔颜色'>
           <PaletteIcon />
           <input
             type='color'
@@ -115,12 +172,14 @@ export function Kaleidoscope() {
             }}
           />
         </IconButton>
-        <IconButton onMouseDown={onStart} onTouchStart={onStart}>
+        <IconButton
+          onMouseDown={onStart}
+          onTouchStart={onStart}
+          aria-label='调整格栅间隔'
+        >
           <LensBlurIcon />
         </IconButton>
-        <IconButton onClick={clearCanvas}>
-          <CancelIcon />
-        </IconButton>
+        {clearCanvasButton}
       </ButtonGroup>
     </>
   )
