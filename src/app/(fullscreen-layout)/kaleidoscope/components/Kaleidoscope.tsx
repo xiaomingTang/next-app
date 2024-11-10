@@ -70,7 +70,7 @@ export function Kaleidoscope() {
                 left: 0,
                 width: '100%',
                 height: '100%',
-                stroke: `rgba(255, 255, 255, ${isSettingGridSize ? 0.1 : 0})`,
+                stroke: `rgba(255, 255, 255, 0.1)`,
                 transition: `stroke ${isSettingGridSize ? 0.1 : 3}s`,
                 pointerEvents: 'none',
               }}
