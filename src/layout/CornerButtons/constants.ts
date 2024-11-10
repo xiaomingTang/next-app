@@ -11,6 +11,7 @@ export const toolList: PathItem[] = [
   { pathname: '/peer', title: 'peer' },
   { pathname: '/wallpaper', title: '壁纸' },
   { pathname: '/color', title: '色一色' },
+  { pathname: '/kaleidoscope', title: '万花筒' },
 ]
 
 export const menuList: (PathItem | 'divider')[] = [
