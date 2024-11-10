@@ -33,6 +33,12 @@ function initCanvasSize(canvas: HTMLCanvasElement) {
   }
 }
 
+type Pos = [number, number]
+
+function sameParity(a: number, b: number) {
+  return Math.abs(a % 2) === Math.abs(b % 2)
+}
+
 export function KaleidoscopeCanvas({
   strokeWidth,
   strokeColor,
@@ -44,10 +50,62 @@ export function KaleidoscopeCanvas({
   const { onStart, onMove, onEnd } = useMemo(() => {
     let isDrawing = false
     let rect = defaultRect
-    let lastPos: [number, number] | null = null
-    const getPos = (e: PointerLikeEvent) => {
+    // local position in the grid
+    let lastPos: Pos = [0, 0]
+    let lastArea: Pos = [0, 0]
+    const getPos = (e: PointerLikeEvent): Pos => {
       const { clientX, clientY } = getSingleEvent(e)
       return [clientX - rect.left, clientY - rect.top]
+    }
+    const globalToLocal = (
+      x: number,
+      y: number
+    ): {
+      pos: Pos
+      area: Pos
+    } => {
+      const { width, height } = rect
+      const halfWidth = width / 2
+      const halfHeight = height / 2
+      const localX =
+        x >= halfWidth
+          ? (x - halfWidth) % gridSize
+          : gridSize - ((halfWidth - x) % gridSize)
+      const localY =
+        y >= halfHeight
+          ? (y - halfHeight) % gridSize
+          : gridSize - ((halfHeight - y) % gridSize)
+      // fix: 应当始终进位
+      const DET = 0.00001
+      const areaX =
+        x >= halfWidth
+          ? Math.floor((x - halfWidth) / gridSize)
+          : -Math.ceil((halfWidth + DET - x) / gridSize)
+      const areaY =
+        y >= halfHeight
+          ? Math.floor((y - halfHeight) / gridSize)
+          : -Math.ceil((halfHeight + DET - y) / gridSize)
+      return {
+        pos: [localX, localY],
+        area: [areaX, areaY],
+      }
+    }
+    const localToGlobal = (
+      x: number,
+      y: number,
+      xn: number,
+      yn: number
+    ): Pos => {
+      const { width, height } = rect
+      const halfWidth = width / 2
+      const halfHeight = height / 2
+      const globalX =
+        xn >= 0 ? halfWidth + x + xn * gridSize : halfWidth + x + xn * gridSize
+      const globalY =
+        yn >= 0
+          ? halfHeight + y + yn * gridSize
+          : halfHeight + y + yn * gridSize
+      return [globalX, globalY]
     }
 
     const onStart = (e: PointerLikeEvent) => {
@@ -58,16 +116,13 @@ export function KaleidoscopeCanvas({
       if (!canvas || !ctx) {
         return
       }
-      isDrawing = true
-      lastPos = null
       initCanvasSize(canvas)
+      isDrawing = true
       rect = canvas.getBoundingClientRect()
+      ;({ pos: lastPos, area: lastArea } = globalToLocal(...getPos(e)))
       ctx.strokeStyle = strokeColor
       ctx.lineWidth = strokeWidth
       ctx.lineCap = 'round'
-      ctx.beginPath()
-      const [x, y] = getPos(e)
-      ctx.moveTo(x, y)
     }
 
     const onMove = (e: PointerLikeEvent) => {
@@ -75,16 +130,45 @@ export function KaleidoscopeCanvas({
       if (!isDrawing || !ctx) {
         return
       }
-      const [x, y] = getPos(e)
-
-      if (lastPos) {
-        ctx.quadraticCurveTo(lastPos[0], lastPos[1], x, y)
-      } else {
-        ctx.lineTo(x, y)
+      const { pos: curPos, area: curArea } = globalToLocal(...getPos(e))
+      // console.log(curArea[0], curPos[0])
+      if (curArea[0] !== lastArea[0]) {
+        lastPos[0] = gridSize - lastPos[0]
+        lastArea[0] = curArea[0]
+      }
+      if (curArea[1] !== lastArea[1]) {
+        lastArea[1] = curArea[1]
+        lastPos[1] = gridSize - lastPos[1]
       }
 
-      ctx.stroke()
-      lastPos = [x, y]
+      const xnMax = Math.ceil(rect.width / 2 / gridSize)
+      const ynMax = Math.ceil(rect.height / 2 / gridSize)
+      // TODO fix: xn 小于 0 时，跨界划线会贯穿整个画布
+      for (let xn = -xnMax; xn < xnMax; xn += 1) {
+        const lastX = sameParity(xn, curArea[0])
+          ? lastPos[0]
+          : gridSize - lastPos[0]
+        const curX = sameParity(xn, curArea[0])
+          ? curPos[0]
+          : gridSize - curPos[0]
+        for (let yn = -ynMax; yn < ynMax; yn += 1) {
+          const lastY = sameParity(yn, curArea[1])
+            ? lastPos[1]
+            : gridSize - lastPos[1]
+          const curY = sameParity(yn, curArea[1])
+            ? curPos[1]
+            : gridSize - curPos[1]
+          const prevGlobalPos = localToGlobal(lastX, lastY, xn, yn)
+          const curGlobalPos = localToGlobal(curX, curY, xn, yn)
+          ctx.beginPath()
+          ctx.moveTo(...prevGlobalPos)
+          ctx.quadraticCurveTo(...prevGlobalPos, ...curGlobalPos)
+          ctx.stroke()
+        }
+      }
+
+      lastPos = curPos
+      lastArea = curArea
     }
 
     const onEnd = () => {
@@ -95,7 +179,7 @@ export function KaleidoscopeCanvas({
       isDrawing = false
     }
     return { onStart, onMove, onEnd }
-  }, [strokeColor, strokeWidth])
+  }, [gridSize, strokeColor, strokeWidth])
 
   return (
     <Box
