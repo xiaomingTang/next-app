@@ -76,7 +76,7 @@ export function KaleidoscopeCanvas({
           ? (y - halfHeight) % gridSize
           : gridSize - ((halfHeight - y) % gridSize)
       // fix: 应当始终进位
-      const DET = 0.00001
+      const DET = 0.000000001
       const areaX =
         x >= halfWidth
           ? Math.floor((x - halfWidth) / gridSize)
@@ -99,12 +99,8 @@ export function KaleidoscopeCanvas({
       const { width, height } = rect
       const halfWidth = width / 2
       const halfHeight = height / 2
-      const globalX =
-        xn >= 0 ? halfWidth + x + xn * gridSize : halfWidth + x + xn * gridSize
-      const globalY =
-        yn >= 0
-          ? halfHeight + y + yn * gridSize
-          : halfHeight + y + yn * gridSize
+      const globalX = halfWidth + x + xn * gridSize
+      const globalY = halfHeight + y + yn * gridSize
       return [globalX, globalY]
     }
 
@@ -125,39 +121,36 @@ export function KaleidoscopeCanvas({
       ctx.lineCap = 'round'
     }
 
-    const onMove = (e: PointerLikeEvent) => {
+    const onEnd = () => {
       const ctx = canvasRef.current?.getContext('2d')
       if (!isDrawing || !ctx) {
         return
       }
-      const { pos: curPos, area: curArea } = globalToLocal(...getPos(e))
-      // console.log(curArea[0], curPos[0])
-      if (curArea[0] !== lastArea[0]) {
-        lastPos[0] = gridSize - lastPos[0]
-        lastArea[0] = curArea[0]
-      }
-      if (curArea[1] !== lastArea[1]) {
-        lastArea[1] = curArea[1]
-        lastPos[1] = gridSize - lastPos[1]
-      }
+      isDrawing = false
+    }
 
+    // startPos 和 endPos 都是 local position
+    const draw = (startPos: Pos, endPos: Pos, startArea: Pos) => {
+      const ctx = canvasRef.current?.getContext('2d')
+      if (!ctx) {
+        return
+      }
       const xnMax = Math.ceil(rect.width / 2 / gridSize)
       const ynMax = Math.ceil(rect.height / 2 / gridSize)
-      // TODO fix: xn 小于 0 时，跨界划线会贯穿整个画布
       for (let xn = -xnMax; xn < xnMax; xn += 1) {
-        const lastX = sameParity(xn, curArea[0])
-          ? lastPos[0]
-          : gridSize - lastPos[0]
-        const curX = sameParity(xn, curArea[0])
-          ? curPos[0]
-          : gridSize - curPos[0]
+        const lastX = sameParity(xn, startArea[0])
+          ? startPos[0]
+          : gridSize - startPos[0]
+        const curX = sameParity(xn, startArea[0])
+          ? endPos[0]
+          : gridSize - endPos[0]
         for (let yn = -ynMax; yn < ynMax; yn += 1) {
-          const lastY = sameParity(yn, curArea[1])
-            ? lastPos[1]
-            : gridSize - lastPos[1]
-          const curY = sameParity(yn, curArea[1])
-            ? curPos[1]
-            : gridSize - curPos[1]
+          const lastY = sameParity(yn, startArea[1])
+            ? startPos[1]
+            : gridSize - startPos[1]
+          const curY = sameParity(yn, startArea[1])
+            ? endPos[1]
+            : gridSize - endPos[1]
           const prevGlobalPos = localToGlobal(lastX, lastY, xn, yn)
           const curGlobalPos = localToGlobal(curX, curY, xn, yn)
           ctx.beginPath()
@@ -166,18 +159,37 @@ export function KaleidoscopeCanvas({
           ctx.stroke()
         }
       }
+    }
+
+    const onMove = (e: PointerLikeEvent) => {
+      if (!isDrawing) {
+        return
+      }
+      const { pos: curPos, area: curArea } = globalToLocal(...getPos(e))
+      if (curArea[0] === lastArea[0] && curArea[1] === lastArea[1]) {
+        draw(lastPos, curPos, curArea)
+        lastPos = curPos
+        lastArea = curArea
+        return
+      }
+      const startArea: Pos = [
+        Math.min(lastArea[0], curArea[0]),
+        Math.min(lastArea[1], curArea[1]),
+      ]
+      const startPos: Pos = [
+        lastPos[0] + (lastArea[0] - startArea[0]) * gridSize,
+        lastPos[1] + (lastArea[1] - startArea[1]) * gridSize,
+      ]
+      const endPos: Pos = [
+        curPos[0] + (curArea[0] - startArea[0]) * gridSize,
+        curPos[1] + (curArea[1] - startArea[1]) * gridSize,
+      ]
+      draw(startPos, endPos, startArea)
 
       lastPos = curPos
       lastArea = curArea
     }
 
-    const onEnd = () => {
-      const ctx = canvasRef.current?.getContext('2d')
-      if (!isDrawing || !ctx) {
-        return
-      }
-      isDrawing = false
-    }
     return { onStart, onMove, onEnd }
   }, [gridSize, strokeColor, strokeWidth])
 
