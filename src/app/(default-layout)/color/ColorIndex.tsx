@@ -7,10 +7,7 @@ import { Box, ButtonBase, Slider, Stack, Typography } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { blue } from '@mui/material/colors'
 
-const colors: number[] = []
-for (let i = 0; i < 360; i += 3) {
-  colors.push(i)
-}
+const colors = Array.from({ length: 360 }, (_, i) => i)
 
 const IMG_LIST = [
   {
@@ -49,15 +46,15 @@ export function ColorIndex() {
       const sourceCanvas = sourceCanvasRef.current
       const targetCanvas = targetCanvasRef.current
       const sourceCtx = sourceCanvas?.getContext('2d')
-      if (!sourceCanvas || !sourceCtx || !targetCanvas) {
+      if (!targetCanvas || !sourceCanvas || !sourceCtx) {
         return
       }
-
       const { clientWidth: w, clientHeight: h } = sourceCanvas
       sourceCanvas.width = w
       sourceCanvas.height = h
       targetCanvas.width = w
       targetCanvas.height = h
+
       sourceCtx.drawImage(activeImg, 0, 0, w, h)
       const imgData = sourceCtx.getImageData(0, 0, w, h)
       setInputImageData(imgData)
@@ -152,6 +149,8 @@ export function ColorIndex() {
             sx={{
               width: `${100 / colors.length}%`,
               height: '100%',
+            }}
+            style={{
               backgroundColor: `hsl(${n},${(averageHsl?.[1] ?? 1) * 100}%,${
                 (averageHsl?.[2] ?? 1) * 100
               }%)`,
