@@ -236,6 +236,9 @@ const ClipboardActionDto = z.object({
  */
 export const projectClipboardAction = SA.encode(
   zf(ClipboardActionDto, async ({ hash, parentHash, action }) => {
+    if (hash === parentHash) {
+      throw Boom.badRequest('目标目录与原目录相同')
+    }
     const user = await getSelf()
     const project = await prisma.project.findUnique({
       where: { hash, deleted: false, creatorId: user.id },
