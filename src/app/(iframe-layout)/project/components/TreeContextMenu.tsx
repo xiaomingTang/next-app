@@ -118,10 +118,12 @@ export function TreeContextMenu({
     })
   )
   // TODO: 弹窗重命名 & 新建文件（夹）
-  const rename = withClose(async () => {
-    const res = await renameProject(item)
-    await onRename(res.hash, res.name)
-  })
+  const rename = withClose(
+    cat(async () => {
+      const res = await renameProject(item)
+      await onRename(res.hash, res.name)
+    })
+  )
   const createDir = withClose(
     cat(async () => {
       await createProject({
@@ -160,15 +162,17 @@ export function TreeContextMenu({
       </MenuItem>
       {!!clipboardData && isDir && (
         <MenuItem
-          onClick={withClose(async () => {
-            await projectClipboardAction({
-              action: clipboardAction,
-              hash: clipboardData.hash,
-              parentHash: item.hash,
-            }).then(SA.decode)
-            useProjectClipboardAction.clear()
-            router.refresh()
-          })}
+          onClick={withClose(
+            cat(async () => {
+              await projectClipboardAction({
+                action: clipboardAction,
+                hash: clipboardData.hash,
+                parentHash: item.hash,
+              }).then(SA.decode)
+              useProjectClipboardAction.clear()
+              router.refresh()
+            })
+          )}
         >
           <ListItemIcon>
             <ContentPaste fontSize='small' />
