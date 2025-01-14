@@ -19,10 +19,13 @@ export function getRelPath(item: ProjectTree, root: ProjectTree) {
         }
       }
     }
-    throw new Error('paths not found')
+    return []
   }
   const paths = findPaths(item.parentHash, root)
   // 移除 root
   paths.shift()
+  if (paths.length === 0) {
+    return `/${item.name}`
+  }
   return `/${paths.join('/')}/${item.name}`
 }
