@@ -1,17 +1,28 @@
 import { renameProject } from './RenameModal'
 
 import { getRelPath } from '../utils/getRelPath'
-import { createProject, deleteProject } from '../server'
+import { createProject, deleteProject, projectClipboardAction } from '../server'
+import { useProjectClipboardAction } from '../utils/useProjectClipboardAction'
 
 import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'
 import { SA } from '@/errors/utils'
 import { resolvePath } from '@/utils/url'
 
-import { Divider, Menu, MenuItem, useTheme } from '@mui/material'
+import {
+  Divider,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  useTheme,
+} from '@mui/material'
 import { useRouter } from 'next/navigation'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import toast from 'react-hot-toast'
+import ContentCut from '@mui/icons-material/ContentCut'
+import ContentCopy from '@mui/icons-material/ContentCopy'
+import ContentPaste from '@mui/icons-material/ContentPaste'
 
 import type {
   TreeViewPublicAPI,
@@ -55,6 +66,8 @@ export function TreeContextMenu({
   apiRef: ApiRef
   onRename: (id: string, newLabel: string) => void | Promise<void>
 }) {
+  const { action: clipboardAction, data: clipboardData } =
+    useProjectClipboardAction()
   const router = useRouter()
   const theme = useTheme()
   if (!target || !item) {
@@ -75,6 +88,7 @@ export function TreeContextMenu({
   const absPath = resolvePath(`/project/${root.hash}${relPath}`).href
   const childrenLen = item.children?.length ?? 0
   const isRoot = item.hash === root.hash
+  const isDir = item.type === 'DIR'
   const deleteItem = withClose(
     cat(async () => {
       if (isRoot) {
@@ -84,7 +98,7 @@ export function TreeContextMenu({
         }
         return
       }
-      if (item.type === 'DIR') {
+      if (isDir) {
         console.log(item.hash)
         if (childrenLen === 0) {
           await deleteProject({ hash: item.hash }).then(SA.decode)
@@ -118,43 +132,62 @@ export function TreeContextMenu({
       router.refresh()
     })
   )
-  if (item.type === 'DIR') {
-    return (
-      <Menu open anchorEl={target} onClose={withClose()}>
-        <MenuItem>新建文件</MenuItem>
-        <MenuItem onClick={createDir}>新建文件夹</MenuItem>
-        <Divider />
-        <MenuItem onClick={rename}>重命名</MenuItem>
-        <MenuItem sx={{ color: theme.palette.error.main }} onClick={deleteItem}>
-          删除
+  const clipboardMenuItems = (
+    <>
+      <MenuItem
+        onClick={withClose(() => {
+          useProjectClipboardAction.cut({ type: item.type, hash: item.hash })
+        })}
+        disabled={isRoot || clipboardData?.hash === item.hash}
+      >
+        <ListItemIcon>
+          <ContentCut fontSize='small' />
+        </ListItemIcon>
+        <ListItemText>剪切</ListItemText>
+      </MenuItem>
+      <MenuItem
+        onClick={withClose(() => {
+          useProjectClipboardAction.copy({ type: item.type, hash: item.hash })
+        })}
+        disabled={
+          isRoot || clipboardData?.hash === item.hash || item.type !== 'TEXT'
+        }
+      >
+        <ListItemIcon>
+          <ContentCopy fontSize='small' />
+        </ListItemIcon>
+        <ListItemText>复制</ListItemText>
+      </MenuItem>
+      {!!clipboardData && isDir && (
+        <MenuItem
+          onClick={withClose(async () => {
+            await projectClipboardAction({
+              action: clipboardAction,
+              hash: clipboardData.hash,
+              parentHash: item.hash,
+            }).then(SA.decode)
+            useProjectClipboardAction.clear()
+            router.refresh()
+          })}
+        >
+          <ListItemIcon>
+            <ContentPaste fontSize='small' />
+          </ListItemIcon>
+          <ListItemText>粘贴</ListItemText>
         </MenuItem>
-        <Divider />
-        <CopyToClipboard
-          text={relPath}
-          onCopy={() => {
-            toast.success('已复制')
-          }}
-        >
-          <MenuItem onClick={withClose()}>复制相对路径</MenuItem>
-        </CopyToClipboard>
-        <CopyToClipboard
-          text={absPath}
-          onCopy={() => {
-            toast.success('已复制')
-          }}
-        >
-          <MenuItem onClick={withClose()}>复制完整 URL</MenuItem>
-        </CopyToClipboard>
-      </Menu>
-    )
-  }
-  return (
-    <Menu open anchorEl={target} onClose={withClose()}>
+      )}
+    </>
+  )
+  const editMenuItems = (
+    <>
       <MenuItem onClick={rename}>重命名</MenuItem>
       <MenuItem sx={{ color: theme.palette.error.main }} onClick={deleteItem}>
         删除
       </MenuItem>
-      <Divider />
+    </>
+  )
+  const copyPathMenuItems = (
+    <>
       <CopyToClipboard
         text={relPath}
         onCopy={() => {
@@ -171,6 +204,23 @@ export function TreeContextMenu({
       >
         <MenuItem onClick={withClose()}>复制完整 URL</MenuItem>
       </CopyToClipboard>
+    </>
+  )
+
+  return (
+    <Menu open anchorEl={target} onClose={withClose()}>
+      {isDir && (
+        <>
+          <MenuItem>新建文件</MenuItem>
+          <MenuItem onClick={createDir}>新建文件夹</MenuItem>
+          <Divider />
+        </>
+      )}
+      {clipboardMenuItems}
+      <Divider />
+      {editMenuItems}
+      <Divider />
+      {copyPathMenuItems}
     </Menu>
   )
 }

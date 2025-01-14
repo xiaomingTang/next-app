@@ -224,3 +224,91 @@ export const updateProject = SA.encode(
     return file
   })
 )
+
+const ClipboardActionDto = z.object({
+  hash: z.string().min(1).max(100),
+  parentHash: z.string().min(1).max(100),
+  action: z.enum(['COPY', 'CUT']),
+})
+
+/**
+ * 纯文本文件才能复制，其他都只能剪切
+ */
+export const projectClipboardAction = SA.encode(
+  zf(ClipboardActionDto, async ({ hash, parentHash, action }) => {
+    const user = await getSelf()
+    const project = await prisma.project.findUnique({
+      where: { hash, deleted: false, creatorId: user.id },
+      select: {
+        ...select,
+        content: true,
+        rootHash: true,
+      },
+    })
+    if (!project) {
+      throw Boom.notFound(`项目不存在: ${hash}`)
+    }
+    if (action === 'COPY' && project.type !== ProjectType.TEXT) {
+      throw Boom.badRequest('只能复制纯文本文件')
+    }
+    const parent = await prisma.project.findUnique({
+      where: {
+        hash: parentHash,
+        rootHash: project.rootHash,
+        type: 'DIR',
+        deleted: false,
+        creatorId: user.id,
+      },
+      select,
+    })
+    if (!parent) {
+      throw Boom.notFound(`目标目录不存在该项目中: ${parentHash}`)
+    }
+    if (project.parentHash === parentHash) {
+      throw Boom.badRequest('目标目录与原目录相同')
+    }
+
+    // 检查目标目录是否是自己的后代目录
+    const isDescendants = await prisma.$queryRaw<{ isDescendant: boolean }[]>`
+      WITH RECURSIVE descendants AS (
+        SELECT hash
+        FROM Project
+        WHERE parentHash = ${hash}
+        UNION ALL
+        SELECT p.hash
+        FROM Project p
+        INNER JOIN descendants d ON p.parentHash = d.hash
+      )
+      SELECT EXISTS (
+        SELECT 1
+        FROM descendants
+        WHERE hash = ${parentHash}
+      ) AS isDescendant;
+    `
+    const isDescendant = !!isDescendants[0]?.isDescendant
+    if (isDescendant) {
+      throw Boom.badRequest('目标目录不能是自己的后代目录')
+    }
+
+    if (action === 'COPY') {
+      const newProject = await prisma.project.create({
+        data: {
+          ...project,
+          hash: nanoid(12),
+          creatorId: user.id,
+          parentHash,
+        },
+        select,
+      })
+      return newProject
+    }
+    await prisma.project.update({
+      where: { hash },
+      data: { parentHash },
+    })
+    return {
+      ...project,
+      parentHash,
+    }
+  })
+)
