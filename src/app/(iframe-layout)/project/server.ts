@@ -181,8 +181,9 @@ export const deleteProject = SA.encode(
       await prisma.project.updateMany({
         where: {
           OR: [
-            { parentHash: hash, deleted: false },
             { hash, deleted: false },
+            { parentHash: hash, deleted: false },
+            { rootHash: hash, deleted: false },
           ],
         },
         data: { deleted: true },
@@ -191,8 +192,9 @@ export const deleteProject = SA.encode(
     await prisma.project.updateMany({
       where: {
         OR: [
-          { parentHash: hash, deleted: false, creatorId: user.id },
           { hash, deleted: false, creatorId: user.id },
+          { parentHash: hash, deleted: false, creatorId: user.id },
+          { rootHash: hash, deleted: false, creatorId: user.id },
         ],
       },
       data: { deleted: true },
