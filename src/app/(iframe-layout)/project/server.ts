@@ -43,7 +43,7 @@ export const getRootProjectMeta = SA.encode(
       select: { name: true },
     })
     if (!project) {
-      throw Boom.notFound(`项目不存在: ${hash}`)
+      throw Boom.notFound(`项目不存在或已删除: ${hash}`)
     }
     return project
   })
@@ -66,7 +66,7 @@ export const getRootProjectMenu = SA.encode(
       },
     })
     if (projects.length === 0) {
-      throw Boom.notFound(`项目不存在: ${hash}`)
+      throw Boom.notFound(`项目不存在或已删除: ${hash}`)
     }
     return projects
   })
@@ -142,7 +142,7 @@ export const createProject = SA.encode(
         select: { rootHash: true },
       })
       if (!parent) {
-        throw Boom.notFound(`父项目不存在: ${parentHash}`)
+        throw Boom.notFound(`父项目不存在或已删除: ${parentHash}`)
       }
       const contentType =
         inputContentType ||
@@ -251,7 +251,7 @@ export const projectClipboardAction = SA.encode(
       },
     })
     if (!project) {
-      throw Boom.notFound(`项目不存在: ${hash}`)
+      throw Boom.notFound(`项目不存在或已删除: ${hash}`)
     }
     if (action === 'COPY' && project.type !== ProjectType.TEXT) {
       throw Boom.badRequest('只能复制纯文本文件')
@@ -267,7 +267,7 @@ export const projectClipboardAction = SA.encode(
       select,
     })
     if (!parent) {
-      throw Boom.notFound(`目标目录不存在该项目中: ${parentHash}`)
+      throw Boom.notFound(`目标目录不存在或已删除: ${parentHash}`)
     }
     if (project.parentHash === parentHash) {
       throw Boom.badRequest('目标目录与原目录相同')
