@@ -295,6 +295,14 @@ export const projectClipboardAction = SA.encode(
       throw Boom.badRequest('目标目录不能是自己的后代目录')
     }
 
+    // 目标目录中是否已存在同名文件
+    const projectOfTheName = await prisma.project.findFirst({
+      where: { name: project.name, parentHash, deleted: false },
+    })
+    if (projectOfTheName) {
+      throw Boom.conflict(`同名文件（夹）已存在: ${project.name}`)
+    }
+
     if (action === 'COPY') {
       const newProject = await prisma.project.create({
         data: {
