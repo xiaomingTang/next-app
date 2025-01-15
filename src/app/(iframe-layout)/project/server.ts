@@ -1,7 +1,5 @@
 'use server'
 
-import { guessContentType } from './utils/guessContentType'
-
 import { SA, toError } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { zf } from '@/request/validator'
@@ -10,7 +8,7 @@ import { validateFileName as rawValidateFileName } from '@/utils/string'
 import { optionalString } from '@/request/utils'
 
 import Boom from '@hapi/boom'
-import { ContentType, ProjectType } from '@prisma/client'
+import { ProjectType } from '@prisma/client'
 import { z } from 'zod'
 import { nanoid } from 'nanoid'
 
@@ -20,7 +18,6 @@ const select = {
   updatedAt: true,
   name: true,
   type: true,
-  contentType: true,
   parentHash: true,
 }
 
@@ -121,53 +118,49 @@ const createProjectDto = z.object({
   name: z.string().min(1).max(200),
   parentHash: z.string().min(1).max(100),
   type: z.nativeEnum(ProjectType),
-  contentType: z.nativeEnum(ContentType).optional(),
+  content: optionalString(z.string().min(1).max(20000)),
 })
+
+export type CreateProjectProps = z.infer<typeof createProjectDto>
 
 /**
  * create dir or file
  */
 export const createProject = SA.encode(
-  zf(
-    createProjectDto,
-    async ({ name, parentHash, type, contentType: inputContentType }) => {
-      const user = await getSelf()
-      const parent = await prisma.project.findUnique({
-        where: {
-          hash: parentHash,
-          deleted: false,
-          creatorId: user.id,
-          type: ProjectType.DIR,
-        },
-        select: { rootHash: true },
-      })
-      if (!parent) {
-        throw Boom.notFound(`父项目不存在或已删除: ${parentHash}`)
-      }
-      const contentType =
-        inputContentType ||
-        (type === ProjectType.DIR ? undefined : guessContentType(name))
-      const formattedName = validateFileName(name)
-      const projectOfTheName = await prisma.project.findFirst({
-        where: { name: formattedName, parentHash, deleted: false },
-      })
-      if (projectOfTheName) {
-        throw Boom.conflict(`同名文件（夹）已存在: ${formattedName}`)
-      }
-      const project = await prisma.project.create({
-        data: {
-          hash: nanoid(12),
-          name: formattedName,
-          type,
-          creatorId: user.id,
-          rootHash: parent.rootHash,
-          parentHash,
-          contentType,
-        },
-      })
-      return project
+  zf(createProjectDto, async ({ name, parentHash, type, content }) => {
+    const user = await getSelf()
+    const parent = await prisma.project.findUnique({
+      where: {
+        hash: parentHash,
+        deleted: false,
+        creatorId: user.id,
+        type: ProjectType.DIR,
+      },
+      select: { rootHash: true },
+    })
+    if (!parent) {
+      throw Boom.notFound(`父项目不存在或已删除: ${parentHash}`)
     }
-  )
+    const formattedName = validateFileName(name)
+    const projectOfTheName = await prisma.project.findFirst({
+      where: { name: formattedName, parentHash, deleted: false },
+    })
+    if (projectOfTheName) {
+      throw Boom.conflict(`同名文件（夹）已存在: ${formattedName}`)
+    }
+    const project = await prisma.project.create({
+      data: {
+        hash: nanoid(12),
+        name: formattedName,
+        type,
+        creatorId: user.id,
+        rootHash: parent.rootHash,
+        parentHash,
+        content,
+      },
+    })
+    return project
+  })
 )
 
 const deleteProjectDto = z.object({
@@ -206,12 +199,13 @@ const updateProjectDto = z.object({
   hash: z.string().min(1).max(100),
   name: optionalString(z.string().min(1).max(200)),
   content: optionalString(z.string()),
+  type: z.nativeEnum(ProjectType).optional(),
 })
 
 export type UpdateProjectProps = z.infer<typeof updateProjectDto>
 
 export const updateProject = SA.encode(
-  zf(updateProjectDto, async ({ hash, name, content }) => {
+  zf(updateProjectDto, async ({ hash, name, content, type }) => {
     const newName = name ? validateFileName(name) : undefined
     const user = await getSelf()
     const file = await prisma.project.update({
@@ -220,14 +214,14 @@ export const updateProject = SA.encode(
         deleted: false,
         creatorId: user.id,
       },
-      data: { name: newName, content },
+      data: { name: newName, content, type },
       select,
     })
     return file
   })
 )
 
-const ClipboardActionDto = z.object({
+const clipboardActionDto = z.object({
   hash: z.string().min(1).max(100),
   parentHash: z.string().min(1).max(100),
   action: z.enum(['COPY', 'CUT']),
@@ -237,7 +231,7 @@ const ClipboardActionDto = z.object({
  * 纯文本文件才能复制，其他都只能剪切
  */
 export const projectClipboardAction = SA.encode(
-  zf(ClipboardActionDto, async ({ hash, parentHash, action }) => {
+  zf(clipboardActionDto, async ({ hash, parentHash, action }) => {
     if (hash === parentHash) {
       throw Boom.badRequest('目标目录与原目录相同')
     }
@@ -323,5 +317,22 @@ export const projectClipboardAction = SA.encode(
       ...project,
       parentHash,
     }
+  })
+)
+
+const getProjectContentDto = z.object({
+  hash: z.string().min(1).max(100),
+})
+
+export const getProjectContent = SA.encode(
+  zf(getProjectContentDto, async ({ hash }) => {
+    const project = await prisma.project.findUnique({
+      where: { hash, deleted: false },
+      select: { content: true },
+    })
+    if (!project) {
+      throw Boom.notFound(`项目不存在或已删除: ${hash}`)
+    }
+    return project.content
   })
 )

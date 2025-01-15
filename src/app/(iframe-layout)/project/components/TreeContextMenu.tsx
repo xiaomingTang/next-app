@@ -1,7 +1,13 @@
 import { renameProject } from './RenameModal'
+import { editNetworkFile } from './EditNetworkFileModal'
 
 import { getRelPath } from '../utils/getRelPath'
-import { createProject, deleteProject, projectClipboardAction } from '../server'
+import {
+  createProject,
+  deleteProject,
+  getProjectContent,
+  projectClipboardAction,
+} from '../server'
 import { useProjectClipboardAction } from '../utils/useProjectClipboardAction'
 
 import { cat } from '@/errors/catchAndToast'
@@ -23,6 +29,9 @@ import toast from 'react-hot-toast'
 import ContentCut from '@mui/icons-material/ContentCut'
 import ContentCopy from '@mui/icons-material/ContentCopy'
 import ContentPaste from '@mui/icons-material/ContentPaste'
+import TextSnippetIcon from '@mui/icons-material/TextSnippet'
+import FolderIcon from '@mui/icons-material/Folder'
+import InsertLinkIcon from '@mui/icons-material/InsertLink'
 
 import type {
   TreeViewPublicAPI,
@@ -117,11 +126,20 @@ export function TreeContextMenu({
       }
     })
   )
-  // TODO: 弹窗重命名 & 新建文件（夹）
   const rename = withClose(
     cat(async () => {
       const res = await renameProject(item)
       await onRename(res.hash, res.name)
+    })
+  )
+  const createTextFile = withClose(
+    cat(async () => {
+      await createProject({
+        name: '未命名.txt',
+        parentHash: item.hash,
+        type: 'TEXT',
+      }).then(SA.decode)
+      router.refresh()
     })
   )
   const createDir = withClose(
@@ -215,8 +233,57 @@ export function TreeContextMenu({
     <Menu open anchorEl={target} onClose={withClose()}>
       {isDir && (
         <>
-          <MenuItem>新建文件</MenuItem>
-          <MenuItem onClick={createDir}>新建文件夹</MenuItem>
+          <MenuItem onClick={createTextFile}>
+            <ListItemIcon>
+              <TextSnippetIcon fontSize='small' />
+            </ListItemIcon>
+            <ListItemText>新建文本文件</ListItemText>
+          </MenuItem>
+          <MenuItem
+            onClick={withClose(
+              cat(async () => {
+                await editNetworkFile({ parentHash: item.hash })
+              })
+            )}
+          >
+            <ListItemIcon>
+              <InsertLinkIcon fontSize='small' />
+            </ListItemIcon>
+            <ListItemText>网络文件</ListItemText>
+          </MenuItem>
+          <Divider />
+          <MenuItem onClick={createDir}>
+            <ListItemIcon>
+              <FolderIcon fontSize='small' />
+            </ListItemIcon>
+            <ListItemText>新建文件夹</ListItemText>
+          </MenuItem>
+          <Divider />
+        </>
+      )}
+      {!isDir && item.type !== 'TEXT' && (
+        <>
+          <MenuItem
+            onClick={withClose(
+              cat(async () => {
+                const content = await getProjectContent({
+                  hash: item.hash,
+                }).then(SA.decode)
+                await editNetworkFile({
+                  project: {
+                    ...item,
+                    content: content || '',
+                  },
+                })
+                router.refresh()
+              })
+            )}
+          >
+            <ListItemIcon>
+              <InsertLinkIcon fontSize='small' />
+            </ListItemIcon>
+            <ListItemText>编辑该网络文件</ListItemText>
+          </MenuItem>
           <Divider />
         </>
       )}

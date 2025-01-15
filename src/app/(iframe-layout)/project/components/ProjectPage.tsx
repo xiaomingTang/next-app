@@ -41,7 +41,6 @@ const loadingTreeData: [ProjectTree] = [
     updatedAt: now,
     name: '加载中...',
     parentHash: 'LOADING',
-    contentType: 'OTHER',
     children: [],
   },
 ]
@@ -54,7 +53,6 @@ const errorTreeData: [ProjectTree] = [
     updatedAt: now,
     name: '加载出错',
     parentHash: 'ERROR',
-    contentType: 'OTHER',
     children: [],
   },
 ]

@@ -149,104 +149,21 @@ enum ProjectType {
   IMAGE
   VIDEO
   AUDIO
-  BINARY
-}
-
-enum ContentType {
-  PNG
-  JPEG
-  JPG
-  GIF
-  SVG
-  BMP
-  TIFF
-  ICO
-  WEBP
-
-  MP4
-  WEBM
-  FLV
-  AVI
-  MOV
-
-  MP3
-  OGG
-  WAV
-  FLAC
-  AAC
-  WMA
-
-  ZIP
-  TAR
-  GZ
-  BZ2
-  RAR
-
-  PDF
-  DOC
-  DOCX
-  XLS
-  XLSX
-  PPT
-  PPTX
-
-  MARKDOWN
-  HTML
-  JAVASCRIPT
-  JAVASCRIPTREACT
-  TYPESCRIPT
-  TYPESCRIPTREACT
-  CSS
-  LESS
-  SASS
-  SCSS
-  JSON
-  JSONC
-  YAML
-  TOML
-  XML
-  SQL
-  BASH
-  POWERSHELL
-  BATCH
-  C
-  CPP
-  DIFF
-  JAVA
-  PYTHON
-  RUBY
-  GO
-  RUST
-  SWIFT
-  KOTLIN
-  PHP
-  LUA
-  ERLANG
-  CSHARP
-  VB
-  COFFEESCRIPT
-  DART
-  MATLAB
-  LISP
-  NGINX
-  PRISMA
-
-  OTHER
+  UNKNOWN
 }
 
 model Project {
-  hash        String       @id
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  creatorId   Int
-  creator     User         @relation(fields: [creatorId], references: [id])
-  name        String
-  type        ProjectType
-  rootHash    String
+  hash       String      @id
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  creatorId  Int
+  creator    User        @relation(fields: [creatorId], references: [id])
+  name       String
+  type       ProjectType
+  rootHash   String
   // 根元素 parentHash 是自身
-  parentHash  String
+  parentHash String
   // 文本类项目此字段存储的是文本内容，其他类型项目此字段存储的是文件的 url
-  content     String?      @unique
-  contentType ContentType?
-  deleted     Boolean      @default(false)
+  content    String?     @unique
+  deleted    Boolean     @default(false)
 }
