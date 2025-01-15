@@ -108,7 +108,6 @@ export function TreeContextMenu({
         return
       }
       if (isDir) {
-        console.log(item.hash)
         if (childrenLen === 0) {
           await deleteProject({ hash: item.hash }).then(SA.decode)
           router.refresh()
