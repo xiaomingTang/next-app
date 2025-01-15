@@ -10,7 +10,7 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 
 interface Props {
-  params: { hash: string; paths: string[] }
+  params: { hash: string; paths?: string[] }
 }
 
 export async function generateMetadata({
@@ -25,7 +25,10 @@ export async function generateMetadata({
   })
 }
 
-export default async function Index({ params: { hash, paths } }: Props) {
+export default async function Index({
+  params: { hash, paths: rawPaths },
+}: Props) {
+  const paths = (rawPaths ?? []).map((p) => decodeURIComponent(p))
   return (
     <>
       <Suspense fallback={<ProjectPage loading size={1} />}>
