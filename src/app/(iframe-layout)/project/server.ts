@@ -60,7 +60,7 @@ export const getRootProjectMenu = SA.encode(
       where: { rootHash: hash, deleted: false },
       select,
       orderBy: {
-        parentHash: 'asc',
+        name: 'asc',
       },
     })
     if (projects.length === 0) {
