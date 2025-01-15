@@ -25,6 +25,7 @@ export function guessFileType(name: string): ProjectType {
     case 'flac':
     case 'aac':
     case 'wma':
+    case 'm4a':
       return 'AUDIO'
     default:
       return 'UNKNOWN'
