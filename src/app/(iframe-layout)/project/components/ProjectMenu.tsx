@@ -3,7 +3,12 @@
 import { FileExplorerTreeItem } from './FileExplorer'
 import { TreeContextMenu } from './TreeContextMenu'
 
-import { treeMap, type ProjectTree } from '../utils/arrayToTree'
+import {
+  findItemByPath,
+  findItemListByPath,
+  treeMap,
+  type ProjectTree,
+} from '../utils/arrayToTree'
 import { updateProject } from '../server'
 import { getRelPath } from '../utils/getRelPath'
 import { useProjectPath } from '../utils/useProjectPath'
@@ -15,7 +20,7 @@ import { useUser } from '@/user'
 import { useListen } from '@/hooks/useListen'
 
 import { RichTreeView, useTreeViewApiRef } from '@mui/x-tree-view'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Box, IconButton } from '@mui/material'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { sleepMs } from '@zimi/utils'
@@ -36,6 +41,14 @@ export function ProjectMenu(projectInfo: ProjectPageProps) {
   const [selectedItem, setSelectedItem] = useState<ProjectTree | null>(null)
   const [contextTarget, setContextTarget] = useState<HTMLElement | null>(null)
   const prevNameMapRef = useRef<{ [key: string]: string }>({})
+  const items = useMemo(
+    () => findItemListByPath(menuTreeData[0], projectInfo.paths ?? []),
+    [menuTreeData, projectInfo.paths]
+  )
+  const defaultSelectedItem = useMemo(
+    () => findItemByPath(menuTreeData[0], projectInfo.paths ?? []),
+    [menuTreeData, projectInfo.paths]
+  )
 
   const onUpdate = (id: string, newProject: ProjectTree) => {
     setMenuTreeData(([prevTree]) => [
@@ -101,6 +114,7 @@ export function ProjectMenu(projectInfo: ProjectPageProps) {
         })}
       >
         <RichTreeView
+          key={items.map((item) => item.hash).join(',')}
           apiRef={apiRef}
           items={menuTreeData}
           getItemId={getItemId}
@@ -110,7 +124,8 @@ export function ProjectMenu(projectInfo: ProjectPageProps) {
             editable && !projectInfo.error && !projectInfo.loading
           }
           experimentalFeatures={{ labelEditing: editable }}
-          defaultExpandedItems={[rootId]}
+          defaultExpandedItems={items.map((item) => item.hash)}
+          defaultSelectedItems={defaultSelectedItem?.hash}
           onSelectedItemsChange={(e, itemId) => {
             const root = menuTreeData[0]
             if (!isValidTree(root)) {

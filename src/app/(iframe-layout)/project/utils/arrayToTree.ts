@@ -42,11 +42,11 @@ export function treeMap(
 
 export function findItemByPath(
   tree: ProjectTree | undefined | null = null,
-  path: string
+  path: string | string[]
 ) {
-  const paths = path.split('/').filter(Boolean)
+  const paths = Array.isArray(path) ? path : path.split('/').filter(Boolean)
   let cur = tree
-  for (let i = 0; i < paths.length; i++) {
+  for (let i = 0; i < paths.length; i += 1) {
     const p = paths[i]
     const next = cur?.children?.find((child) => child.name === p)
     if (!next) {
@@ -55,4 +55,20 @@ export function findItemByPath(
     cur = next
   }
   return cur
+}
+
+export function findItemListByPath(tree: ProjectTree, path: string | string[]) {
+  const paths = Array.isArray(path) ? path : path.split('/').filter(Boolean)
+  let cur = tree
+  const list: ProjectTree[] = [tree]
+  for (let i = 0; i < paths.length; i += 1) {
+    const p = paths[i]
+    const next = cur.children?.find((child) => child.name === p)
+    if (!next) {
+      return list
+    }
+    list.push(next)
+    cur = next
+  }
+  return list
 }
