@@ -163,7 +163,7 @@ const EditNetworkFileModal = NiceModal.create(
         rules={{
           validate: (v) => {
             if (!v) {
-              throw new Error('必填项')
+              return '必填项'
             }
             try {
               validateFileName(v)
