@@ -146,6 +146,15 @@ export function TreeContextMenu({
       router.refresh()
     })
   )
+  const createNetworkFile = withClose(
+    cat(async () => {
+      await editNetworkFile({ parentHash: item.hash })
+      // 由于编辑网络文件有弹窗, useInjectHistory 会触发 history.back(), 会导致 router.refresh 应用失败, 所以这里延迟刷新
+      window.setTimeout(() => {
+        router.refresh()
+      }, 500)
+    })
+  )
   const createDir = withClose(
     cat(async () => {
       await createProject({
@@ -240,13 +249,7 @@ export function TreeContextMenu({
             </ListItemIcon>
             <ListItemText>新建文本文件</ListItemText>
           </MenuItem>
-          <MenuItem
-            onClick={withClose(
-              cat(async () => {
-                await editNetworkFile({ parentHash: item.hash })
-              })
-            )}
-          >
+          <MenuItem onClick={createNetworkFile}>
             <ListItemIcon>
               <InsertLinkIcon fontSize='small' />
             </ListItemIcon>
