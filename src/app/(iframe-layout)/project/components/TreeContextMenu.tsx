@@ -162,7 +162,7 @@ export function TreeContextMenu({
         onClick={withClose(() => {
           useProjectClipboardAction.cut({ type: item.type, hash: item.hash })
         })}
-        disabled={isRoot || clipboardData?.hash === item.hash}
+        disabled={isRoot}
       >
         <ListItemIcon>
           <ContentCut fontSize='small' />
@@ -173,9 +173,7 @@ export function TreeContextMenu({
         onClick={withClose(() => {
           useProjectClipboardAction.copy({ type: item.type, hash: item.hash })
         })}
-        disabled={
-          isRoot || clipboardData?.hash === item.hash || item.type !== 'TEXT'
-        }
+        disabled={isRoot || item.type !== 'TEXT'}
       >
         <ListItemIcon>
           <ContentCopy fontSize='small' />
