@@ -5,6 +5,7 @@ import { getProjectContent } from '../server'
 import { ImageWithState } from '@/components/ImageWithState'
 import { SA } from '@/errors/utils'
 import Anchor from '@/components/Anchor'
+import { cat } from '@/errors/catchAndToast'
 
 import { Alert, Box, CircularProgress, styled } from '@mui/material'
 import useSWR from 'swr'
@@ -24,23 +25,29 @@ export function OtherFileViewer(projectInfo: ProjectPageProps) {
   const curItem = findItemByPath(projectInfo.projectTree, curPath)
   const curHash = curItem?.hash ?? ''
   const isOthers = curItem && curItem.type !== 'TEXT' && curItem.type !== 'DIR'
+  // 见鬼了，这里的 useSWR 的 key 必须和 TextEditor 类型不一致，否则会导致只有那里能正常执行
   const { data: content = '', isValidating } = useSWR(
-    [getProjectContent, curHash, curItem?.updatedAt],
-    () => {
+    [
+      'getProjectContent',
+      curHash,
+      curItem?.type,
+      curItem?.updatedAt.toISOString(),
+    ],
+    cat(async () => {
       if (!curHash || !isOthers) {
         return ''
       }
       return getProjectContent({ hash: curHash })
         .then(SA.decode)
         .then((res) => res ?? '')
-    }
+    })
   )
 
-  if (projectInfo.error) {
+  if (projectInfo.error || !isOthers) {
     return <></>
   }
 
-  if (!curItem || !content || !isOthers) {
+  if (!curItem || !content) {
     if (isValidating) {
       return (
         <Container>
