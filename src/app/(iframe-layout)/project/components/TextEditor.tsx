@@ -1,6 +1,7 @@
 import { useProjectPath } from '../utils/useProjectPath'
 import { findItemByPath } from '../utils/arrayToTree'
 import { getProjectContent, updateProject } from '../server'
+import { guessLanguage } from '../utils/guessLanguage'
 
 import { useUser } from '@/user'
 import { SA } from '@/errors/utils'
@@ -42,6 +43,7 @@ export function TextEditor(projectInfo: ProjectPageProps) {
         .then((res) => res ?? '')
     })
   )
+  const language = guessLanguage(curItem?.name)
 
   useListen(content, () => {
     // TODO: 当内容有变时，需要用户确认
@@ -71,9 +73,15 @@ export function TextEditor(projectInfo: ProjectPageProps) {
 
   return (
     <Editor
-      key={content || projectInfo.projectTree?.hash || 'loading'}
+      key={[
+        language,
+        content,
+        projectInfo.projectTree?.hash,
+        'loading',
+        mode,
+      ].join('-')}
       theme={mode === 'dark' ? 'vs-dark' : 'light'}
-      defaultLanguage='markdown'
+      language={language}
       defaultValue={content}
       loading={
         <Box
