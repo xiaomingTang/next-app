@@ -5,6 +5,8 @@ import { TreeContextMenu } from './TreeContextMenu'
 
 import { treeMap, type ProjectTree } from '../utils/arrayToTree'
 import { updateProject } from '../server'
+import { getRelPath } from '../utils/getRelPath'
+import { useProjectPath } from '../utils/useProjectPath'
 
 import { cat } from '@/errors/catchAndToast'
 import { SA, toError } from '@/errors/utils'
@@ -50,6 +52,10 @@ const errorTreeData: [ProjectTree] = [
 const getItemId = (item: { hash: string }) => item.hash
 const getItemLabel = (item: { name: string }) => item.name
 
+function isValidTree(tree: ProjectTree) {
+  return tree.hash !== 'LOADING' && tree.hash !== 'ERROR'
+}
+
 export function ProjectMenu(projectInfo: ProjectPageProps) {
   const user = useUser()
   const editable =
@@ -74,6 +80,10 @@ export function ProjectMenu(projectInfo: ProjectPageProps) {
         return item
       }),
     ])
+    if (newProject.type !== 'DIR') {
+      // 点击一下文件，以便更新当前路由
+      apiRef.current?.getItemDOMElement(id)?.click()
+    }
   }
 
   useListen(selectedItem, (item) => {
@@ -133,17 +143,30 @@ export function ProjectMenu(projectInfo: ProjectPageProps) {
           experimentalFeatures={{ labelEditing: editable }}
           defaultExpandedItems={[rootId]}
           onSelectedItemsChange={(e, itemId) => {
-            setSelectedItem(
+            const root = menuTreeData[0]
+            if (!isValidTree(root)) {
+              return
+            }
+            const curSelectedItem: ProjectTree | null | undefined =
               apiRef.current?.getItem(itemId ?? '__NOT_EXIST_ID__')
-            )
+            if (!curSelectedItem) {
+              return
+            }
+            setSelectedItem(curSelectedItem)
+            if (curSelectedItem.type === 'DIR') {
+              return
+            }
+            const relPath = getRelPath(curSelectedItem, root)
+            useProjectPath.replace(relPath)
           }}
           onItemLabelChange={cat(async (itemId, newLabel) => {
             if (prevNameMapRef.current[itemId]) {
               delete prevNameMapRef.current[itemId]
               return
             }
-            const prevItem = apiRef.current?.getItem(itemId)
-            const prevLabel: string = prevItem?.name ?? newLabel
+            const prevItem: ProjectTree | null | undefined =
+              apiRef.current?.getItem(itemId)
+            const prevLabel = prevItem?.name ?? newLabel
             if (!prevItem || prevLabel === newLabel) {
               return
             }

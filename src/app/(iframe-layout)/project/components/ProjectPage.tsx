@@ -4,10 +4,12 @@ import { TextEditor } from './TextEditor'
 import { ProjectMenu } from './ProjectMenu'
 
 import { type ProjectTree } from '../utils/arrayToTree'
+import { useProjectPath } from '../utils/useProjectPath'
 
 import { type PlainError } from '@/errors/utils'
 
 import { Box } from '@mui/material'
+import { useEffect } from 'react'
 
 import type { LoadingAble } from '@/components/ServerComponent'
 
@@ -19,6 +21,15 @@ export type ProjectPageProps = LoadingAble<{
 }
 
 export function ProjectPage(projectInfo: ProjectPageProps) {
+  const rootHash = projectInfo.projectTree?.hash
+
+  useEffect(() => {
+    if (!rootHash) {
+      return
+    }
+    useProjectPath.setRootHash(rootHash)
+  }, [rootHash])
+
   return (
     <Box
       sx={{
