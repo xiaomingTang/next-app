@@ -7,6 +7,7 @@ import { treeMap, type ProjectTree } from '../utils/arrayToTree'
 import { updateProject } from '../server'
 import { getRelPath } from '../utils/getRelPath'
 import { useProjectPath } from '../utils/useProjectPath'
+import { errorTreeData, isValidTree, loadingTreeData } from '../utils/initTree'
 
 import { cat } from '@/errors/catchAndToast'
 import { SA, toError } from '@/errors/utils'
@@ -21,40 +22,8 @@ import { sleepMs } from '@zimi/utils'
 
 import type { ProjectPageProps } from './ProjectPage'
 
-const now = new Date()
-
-const loadingTreeData: [ProjectTree] = [
-  {
-    hash: 'LOADING',
-    type: 'DIR',
-    createdAt: now,
-    updatedAt: now,
-    name: '加载中...',
-    parentHash: 'LOADING',
-    children: [],
-    creatorId: 0,
-  },
-]
-
-const errorTreeData: [ProjectTree] = [
-  {
-    hash: 'ERROR',
-    type: 'DIR',
-    createdAt: now,
-    updatedAt: now,
-    name: '加载出错',
-    parentHash: 'ERROR',
-    children: [],
-    creatorId: 0,
-  },
-]
-
 const getItemId = (item: { hash: string }) => item.hash
 const getItemLabel = (item: { name: string }) => item.name
-
-function isValidTree(tree: ProjectTree) {
-  return tree.hash !== 'LOADING' && tree.hash !== 'ERROR'
-}
 
 export function ProjectMenu(projectInfo: ProjectPageProps) {
   const user = useUser()

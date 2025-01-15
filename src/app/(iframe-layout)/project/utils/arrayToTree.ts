@@ -39,3 +39,20 @@ export function treeMap(
   }
   return newTree
 }
+
+export function findItemByPath(
+  tree: ProjectTree | undefined | null = null,
+  path: string
+) {
+  const paths = path.split('/').filter(Boolean)
+  let cur = tree
+  for (let i = 0; i < paths.length; i++) {
+    const p = paths[i]
+    const next = cur?.children?.find((child) => child.name === p)
+    if (!next) {
+      return null
+    }
+    cur = next
+  }
+  return cur
+}
