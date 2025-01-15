@@ -22,8 +22,11 @@ import type { SimpleProjectItem } from '../utils/arrayToTree'
 import type { TransitionProps } from '@mui/material/transitions'
 
 const StyledTreeItemLabelInput = styled(TreeItem2LabelInput)(({ theme }) => ({
-  color: theme.palette.grey[800],
+  color: theme.palette.grey[400],
   fontWeight: 500,
+  ...theme.applyStyles('light', {
+    color: theme.palette.grey[800],
+  }),
 }))
 
 const StyledTreeItemRoot = styled(TreeItem2Root)(({ theme }) => ({
