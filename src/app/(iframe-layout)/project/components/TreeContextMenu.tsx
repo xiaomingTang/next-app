@@ -66,14 +66,14 @@ export function TreeContextMenu({
   setTarget,
   item,
   root,
-  onRename,
+  onUpdate,
 }: {
   target: HTMLElement | null
   setTarget: React.Dispatch<React.SetStateAction<HTMLElement | null>>
   item: ProjectTree | null
   root: ProjectTree
   apiRef: ApiRef
-  onRename: (id: string, newLabel: string) => void | Promise<void>
+  onUpdate: (id: string, newProject: ProjectTree) => void | Promise<void>
 }) {
   const { action: clipboardAction, data: clipboardData } =
     useProjectClipboardAction()
@@ -129,7 +129,10 @@ export function TreeContextMenu({
   const rename = withClose(
     cat(async () => {
       const res = await renameProject(item)
-      await onRename(res.hash, res.name)
+      await onUpdate(res.hash, {
+        ...item,
+        ...res,
+      })
     })
   )
   const createTextFile = withClose(
@@ -269,13 +272,16 @@ export function TreeContextMenu({
                 const content = await getProjectContent({
                   hash: item.hash,
                 }).then(SA.decode)
-                await editNetworkFile({
+                const newProject = await editNetworkFile({
                   project: {
                     ...item,
                     content: content || '',
                   },
                 })
-                router.refresh()
+                await onUpdate(item.hash, {
+                  ...item,
+                  ...newProject,
+                })
               })
             )}
           >

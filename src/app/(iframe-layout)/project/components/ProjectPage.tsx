@@ -86,13 +86,13 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
     setMenuTreeData([projectInfo.projectTree])
   }, [projectInfo])
 
-  const onRename = (id: string, newLabel: string) => {
+  const onUpdate = (id: string, newProject: ProjectTree) => {
     setMenuTreeData(([prevTree]) => [
       treeMap(prevTree, (item) => {
         if (item.hash === id) {
           return {
             ...item,
-            name: newLabel,
+            ...newProject,
           }
         }
         return item
@@ -154,9 +154,9 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
               delete prevNameMapRef.current[itemId]
               return
             }
-            const prevLabel: string =
-              apiRef.current?.getItem(itemId)?.name ?? newLabel
-            if (prevLabel === newLabel) {
+            const prevItem = apiRef.current?.getItem(itemId)
+            const prevLabel: string = prevItem?.name ?? newLabel
+            if (!prevItem || prevLabel === newLabel) {
               return
             }
             try {
@@ -164,7 +164,10 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
                 hash: itemId,
                 name: newLabel,
               }).then(SA.decode)
-              onRename(itemId, res.name)
+              onUpdate(itemId, {
+                ...prevItem,
+                name: res.name,
+              })
             } catch (err) {
               const error = toError(err)
               prevNameMapRef.current[itemId] = prevLabel
@@ -190,7 +193,6 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
                   throw new Error('未选中任何项目')
                 }
                 setContextTarget(target)
-                console.log('onContextMenu', item)
               }),
             },
           }}
@@ -255,7 +257,7 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
         root={menuTreeData[0]}
         target={contextTarget}
         setTarget={setContextTarget}
-        onRename={onRename}
+        onUpdate={onUpdate}
       />
     </Box>
   )
