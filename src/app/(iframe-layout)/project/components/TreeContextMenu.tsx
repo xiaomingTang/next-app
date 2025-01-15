@@ -251,9 +251,8 @@ export function TreeContextMenu({
             <ListItemIcon>
               <InsertLinkIcon fontSize='small' />
             </ListItemIcon>
-            <ListItemText>网络文件</ListItemText>
+            <ListItemText>新建网络文件</ListItemText>
           </MenuItem>
-          <Divider />
           <MenuItem onClick={createDir}>
             <ListItemIcon>
               <FolderIcon fontSize='small' />
