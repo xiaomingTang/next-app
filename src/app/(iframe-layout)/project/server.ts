@@ -59,9 +59,12 @@ export const getRootProjectMenu = SA.encode(
     const projects = await prisma.project.findMany({
       where: { rootHash: hash, deleted: false },
       select,
-      orderBy: {
-        name: 'asc',
-      },
+      orderBy: [
+        { type: 'asc' },
+        {
+          name: 'asc',
+        },
+      ],
     })
     if (projects.length === 0) {
       throw Boom.notFound(`项目不存在或已删除: ${hash}`)
