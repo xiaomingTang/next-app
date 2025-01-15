@@ -67,6 +67,7 @@ export function TreeContextMenu({
   item,
   root,
   onUpdate,
+  mode,
 }: {
   target: HTMLElement | null
   setTarget: React.Dispatch<React.SetStateAction<HTMLElement | null>>
@@ -74,6 +75,7 @@ export function TreeContextMenu({
   root: ProjectTree
   apiRef: ApiRef
   onUpdate: (id: string, newProject: ProjectTree) => void | Promise<void>
+  mode: 'edit' | 'view'
 }) {
   const { action: clipboardAction, data: clipboardData } =
     useProjectClipboardAction()
@@ -230,9 +232,8 @@ export function TreeContextMenu({
       </CopyToClipboard>
     </>
   )
-
-  return (
-    <Menu open anchorEl={target} onClose={withClose()}>
+  const createOrEditMenuItems = (
+    <>
       {isDir && (
         <>
           <MenuItem onClick={createTextFile}>
@@ -259,7 +260,6 @@ export function TreeContextMenu({
             </ListItemIcon>
             <ListItemText>新建文件夹</ListItemText>
           </MenuItem>
-          <Divider />
         </>
       )}
       {!isDir && item.type !== 'TEXT' && (
@@ -288,13 +288,23 @@ export function TreeContextMenu({
             </ListItemIcon>
             <ListItemText>编辑该网络文件</ListItemText>
           </MenuItem>
+        </>
+      )}
+    </>
+  )
+
+  return (
+    <Menu open anchorEl={target} onClose={withClose()}>
+      {mode === 'edit' && (
+        <>
+          {createOrEditMenuItems}
+          <Divider />
+          {clipboardMenuItems}
+          <Divider />
+          {editMenuItems}
           <Divider />
         </>
       )}
-      {clipboardMenuItems}
-      <Divider />
-      {editMenuItems}
-      <Divider />
       {copyPathMenuItems}
     </Menu>
   )

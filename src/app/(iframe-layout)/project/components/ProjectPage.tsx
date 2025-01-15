@@ -9,6 +9,7 @@ import { updateProject } from '../server'
 import { useListen } from '@/hooks/useListen'
 import { cat } from '@/errors/catchAndToast'
 import { SA, toError, type PlainError } from '@/errors/utils'
+import { useUser } from '@/user'
 
 import { RichTreeView, useTreeViewApiRef } from '@mui/x-tree-view'
 import { useEffect, useRef, useState } from 'react'
@@ -42,6 +43,7 @@ const loadingTreeData: [ProjectTree] = [
     name: '加载中...',
     parentHash: 'LOADING',
     children: [],
+    creatorId: 0,
   },
 ]
 
@@ -54,6 +56,7 @@ const errorTreeData: [ProjectTree] = [
     name: '加载出错',
     parentHash: 'ERROR',
     children: [],
+    creatorId: 0,
   },
 ]
 
@@ -61,6 +64,9 @@ const getItemId = (item: { hash: string }) => item.hash
 const getItemLabel = (item: { name: string }) => item.name
 
 export function ProjectPage(projectInfo: ProjectPageProps) {
+  const user = useUser()
+  const editable =
+    user.id === projectInfo.projectTree?.creatorId || user.role === 'ADMIN'
   const { mode } = useColorScheme()
   const [menuTreeData, setMenuTreeData] = useState(loadingTreeData)
   const apiRef = useTreeViewApiRef()
@@ -141,8 +147,10 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
           getItemId={getItemId}
           getItemLabel={getItemLabel}
           slots={{ item: FileExplorerTreeItem }}
-          isItemEditable={!projectInfo.error && !projectInfo.loading}
-          experimentalFeatures={{ labelEditing: true }}
+          isItemEditable={
+            editable && !projectInfo.error && !projectInfo.loading
+          }
+          experimentalFeatures={{ labelEditing: editable }}
           defaultExpandedItems={[rootId]}
           onSelectedItemsChange={(e, itemId) => {
             setSelectedItem(
@@ -240,7 +248,7 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
             tabSize: 2,
             lineNumbers: projectInfo.projectTree ? 'on' : 'off',
             placeholder: `输入内容 - ctrl + S 以保存`,
-            readOnly: projectInfo.loading || !!projectInfo.error,
+            readOnly: !editable || projectInfo.loading || !!projectInfo.error,
             scrollBeyondLastLine: true,
             minimap: {
               enabled: !!projectInfo.projectTree,
@@ -258,6 +266,7 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
         target={contextTarget}
         setTarget={setContextTarget}
         onUpdate={onUpdate}
+        mode={editable ? 'edit' : 'view'}
       />
     </Box>
   )

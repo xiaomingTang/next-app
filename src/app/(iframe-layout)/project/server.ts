@@ -19,6 +19,7 @@ const select = {
   name: true,
   type: true,
   parentHash: true,
+  creatorId: true,
 }
 
 function validateFileName(name: string) {
