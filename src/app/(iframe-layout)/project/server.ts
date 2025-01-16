@@ -122,7 +122,7 @@ const createProjectDto = z.object({
   name: z.string().min(1).max(200),
   parentHash: z.string().min(1).max(100),
   type: z.nativeEnum(ProjectType),
-  content: optionalString(z.string().min(1).max(20000)),
+  content: optionalString(z.string()),
 })
 
 export type CreateProjectProps = z.infer<typeof createProjectDto>
