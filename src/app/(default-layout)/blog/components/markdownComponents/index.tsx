@@ -210,7 +210,7 @@ function Iframe({ src = '' }: { src?: string }) {
       allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share'
       style={{
         width: '100%',
-        maxWidth: 720,
+        maxHeight: '80vh',
       }}
     />
   )

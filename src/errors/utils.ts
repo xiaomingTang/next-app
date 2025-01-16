@@ -122,6 +122,10 @@ export const SA = {
   decode: serverActionDecoder,
 }
 
+export type SA_RES<T> =
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends Func<any[], Promise<ServerResponse<infer R>>> ? R : never
+
 export function withRevalidate<T>({
   tags = [],
   paths = [],

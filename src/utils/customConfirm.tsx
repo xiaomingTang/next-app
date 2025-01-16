@@ -2,7 +2,13 @@ import 'client-only'
 import { random } from 'lodash-es'
 import { toast } from 'react-hot-toast'
 
-export async function customConfirm(message: string) {
+export async function customConfirm(
+  message: string,
+  level: 'SEVERE' | 'SLIGHT' = 'SEVERE'
+) {
+  if (level === 'SLIGHT') {
+    return window.confirm(message)
+  }
   const a = random(1, 10, false)
   const b = random(1, 10, false)
   const inputStr =

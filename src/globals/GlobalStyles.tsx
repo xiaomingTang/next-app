@@ -28,9 +28,20 @@ html, body {
   padding: 0;
   color: var(--custom-fg);
   background-color: var(--custom-bg);
-  font-family: -apple-system, system-ui, 'Segoe UI', Roboto, Ubuntu, Cantarell,
-    'Noto Sans', sans-serif, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC',
-    'Hiragino Sans GB', 'Microsoft YaHei', Arial;
+  font-family: -apple-system,
+    system-ui,
+    'Segoe UI',
+    Roboto,
+    Ubuntu,
+    Cantarell,
+    'Noto Sans',
+    sans-serif,
+    BlinkMacSystemFont,
+    'Helvetica Neue',
+    'PingFang SC',
+    'Hiragino Sans GB',
+    'Microsoft YaHei',
+    Arial;
 }
 `,
       }}
