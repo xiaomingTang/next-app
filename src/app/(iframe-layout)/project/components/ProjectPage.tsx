@@ -11,8 +11,9 @@ import { useProjectPath } from '../utils/useProjectPath'
 
 import { type PlainError } from '@/errors/utils'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
+import { PreferFullscreenLandscape } from '@/components/PreferFullscreenLandscape'
 
-import { Alert, Box } from '@mui/material'
+import { Alert, Box, NoSsr } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { PhotoProvider } from 'react-photo-view'
 
@@ -49,7 +50,7 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
       sx={{
         display: 'flex',
         flexDirection: 'row',
-        height: '100vh',
+        height: 'calc(var(--vh, 1vh)*100)',
       }}
     >
       <ProjectMenu {...projectInfo} />
@@ -81,6 +82,9 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
           </Box>
         )}
       </Box>
+      <NoSsr>
+        <PreferFullscreenLandscape />
+      </NoSsr>
     </Box>
   )
 }
