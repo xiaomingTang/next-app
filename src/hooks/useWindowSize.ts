@@ -72,10 +72,12 @@ export default function useWindowSize(type: GetWindowSizeType) {
 
     rawOnResize()
     window.addEventListener('resize', onResize)
+    document.addEventListener('fullscreenchange', onResize)
     document.addEventListener('visibilitychange', onVisibilityChange)
     return () => {
       isUnloaded = true
       window.removeEventListener('resize', onResize)
+      document.removeEventListener('fullscreenchange', onResize)
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
   }, [type])
