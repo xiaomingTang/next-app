@@ -139,7 +139,10 @@ export function PreferFullscreenLandscape({
             variant='contained'
             color='primary'
             sx={{ ml: 1, minWidth: 0 }}
-            onClick={requestFullscreenLandscape}
+            onClick={() => {
+              void requestFullscreenLandscape()
+              setClosed(true)
+            }}
           >
             立即切换
           </Button>
