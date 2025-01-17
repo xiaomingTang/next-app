@@ -1,8 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ENV_CONFIG } from '@/config'
 
 interface StaticFuncs {
-  [key: string]: (...args: any[]) => any
+  [key: string]: unknown
 }
 
 export function withStatic<T extends object, S extends StaticFuncs>(
