@@ -7,8 +7,8 @@ export function guessLanguage(name?: string): string {
   }
   switch (ext) {
     case 'js':
-    case 'jsx':
       return 'javascript'
+    case 'jsx':
     case 'ts':
     case 'tsx':
       return 'typescript'
@@ -19,13 +19,17 @@ export function guessLanguage(name?: string): string {
     case 'htm':
       return 'html'
     case 'css':
+      return 'css'
     case 'less':
+      return 'less'
     case 'scss':
     case 'sass':
-      return 'css'
+      return 'scss'
     case 'md':
     case 'mdx':
       return 'markdown'
+    case 'py':
+      return 'python'
   }
   return fallbackLang
 }
