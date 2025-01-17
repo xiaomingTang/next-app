@@ -37,11 +37,8 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
   })
 
   useEffect(() => {
-    if (rootHash) {
-      useProjectPath.setRootHash(rootHash)
-    }
-    if (paths) {
-      useProjectPath.replace(paths)
+    if (rootHash && paths) {
+      useProjectPath.init({ rootHash, path: paths })
     }
   }, [rootHash, paths])
 

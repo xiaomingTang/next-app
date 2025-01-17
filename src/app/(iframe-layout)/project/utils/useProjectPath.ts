@@ -21,24 +21,38 @@ function formatPath(p: string | string[]) {
 }
 
 export const useProjectPath = withStatic(useRawProjectPath, {
-  setRootHash(newRootHash: string) {
-    useRawProjectPath.setState({ rootHash: newRootHash })
+  _initialed: false,
+  init({ rootHash, path }: { rootHash: string; path: string | string[] }) {
+    if (useProjectPath._initialed) {
+      return
+    }
+    useProjectPath._initialed = true
+    useRawProjectPath.setState({
+      rootHash,
+      path: formatPath(path),
+    })
   },
   replace(newPath: string | string[]) {
-    const { rootHash } = useRawProjectPath.getState()
+    const { rootHash, path: prevPath } = useRawProjectPath.getState()
     if (!rootHash) {
       throw new Error('Root hash not found')
     }
     const p = formatPath(newPath)
+    if (p === prevPath) {
+      return
+    }
     useRawProjectPath.setState({ path: p })
     window.history.replaceState(null, '', `/project/${rootHash}${p}`)
   },
   push(newPath: string | string[]) {
-    const { rootHash } = useRawProjectPath.getState()
+    const { rootHash, path: prevPath } = useRawProjectPath.getState()
     if (!rootHash) {
       throw new Error('Root hash not found')
     }
     const p = formatPath(newPath)
+    if (p === prevPath) {
+      return
+    }
     useRawProjectPath.setState({ path: p })
     window.history.pushState(null, '', `/project/${rootHash}${p}`)
   },
