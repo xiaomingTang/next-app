@@ -50,7 +50,7 @@ export const webpackConfig = (config, { dev }) => {
   addSvgLoader(config)
 
   config.module.rules.push({
-    test: /\.sql$/,
+    test: /\.(sql|txt)$/,
     use: 'raw-loader',
   })
 
