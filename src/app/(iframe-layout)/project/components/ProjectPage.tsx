@@ -56,6 +56,7 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
       <ProjectMenu {...projectInfo} />
       <Box
         sx={{
+          position: 'relative',
           width: '0%',
           flexGrow: 1,
           display: 'flex',

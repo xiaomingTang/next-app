@@ -30,7 +30,11 @@ export function TextEditor(projectInfo: ProjectPageProps) {
   const [localContent, setLocalContent] = useState('')
   const [saveLoading, withSaveLoading] = useLoading()
   // 见鬼了，这里的 useSWR 的 key 必须和 OtherFileViewer 类型不一致，否则会导致只有这里能正常执行
-  const { data: content = '', mutate } = useSWR(
+  const {
+    data: content = '',
+    isValidating: isLoadContentLoading,
+    mutate,
+  } = useSWR(
     JSON.stringify([
       'getProjectContent',
       curHash,
@@ -86,16 +90,11 @@ export function TextEditor(projectInfo: ProjectPageProps) {
   return (
     <>
       <Editor
-        key={[
-          language,
-          content,
-          projectInfo.projectTree?.hash,
-          'loading',
-          mode,
-        ].join('-')}
+        key={projectInfo.projectTree?.hash}
         theme={mode === 'dark' ? 'vs-dark' : 'light'}
+        path={`file://${curPath}`}
         language={language}
-        defaultValue={content}
+        value={content}
         loading={
           <Box
             sx={{
@@ -126,11 +125,11 @@ export function TextEditor(projectInfo: ProjectPageProps) {
           },
         }}
       />
-      {saveLoading && (
+      {(saveLoading || isLoadContentLoading) && (
         <CircularProgress
           size={24}
           sx={{
-            position: 'fixed',
+            position: 'absolute',
             top: '24px',
             left: '50%',
             pointerEvents: 'none',
