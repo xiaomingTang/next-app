@@ -6,10 +6,9 @@ import { cat } from '@/errors/catchAndToast'
 import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
 
-import { Box, Stack, TextField } from '@mui/material'
+import { Box, Button, Stack, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 import toast from 'react-hot-toast'
-import { LoadingButton } from '@mui/lab'
 
 import type { BlogWithTags } from '@/app/admin/blog/server'
 import type { Control } from 'react-hook-form'
@@ -139,14 +138,14 @@ export function CommentArea({ blog }: { blog: BlogWithTags }) {
           <NicknameController control={control} />
         </Box>
       </Stack>
-      <LoadingButton
+      <Button
         loading={loading}
         variant='contained'
         type='submit'
         sx={{ width: { xs: '100%', sm: '36%', md: '30%' } }}
       >
         提交
-      </LoadingButton>
+      </Button>
     </form>
   )
 }

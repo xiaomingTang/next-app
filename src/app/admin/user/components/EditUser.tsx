@@ -16,6 +16,7 @@ import {
   Alert,
   AppBar,
   Box,
+  Button,
   Dialog,
   DialogContent,
   FormControl,
@@ -29,7 +30,6 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material'
-import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
 import CopyToClipboard from 'react-copy-to-clipboard'
 import { toast } from 'react-hot-toast'
@@ -252,9 +252,9 @@ const EditUserModal = NiceModal.create(({ user }: EditUserModalProps) => {
               </FormControl>
             )}
           />
-          <LoadingButton loading={loading} variant='contained' type='submit'>
+          <Button loading={loading} variant='contained' type='submit'>
             提交
-          </LoadingButton>
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

@@ -12,6 +12,7 @@ import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   AppBar,
+  Button,
   Dialog,
   DialogContent,
   IconButton,
@@ -19,7 +20,6 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material'
-import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
 
 import type { Tag } from '@prisma/client'
@@ -141,9 +141,9 @@ const EditTagModal = NiceModal.create(({ tag }: EditTagModalProps) => {
               },
             }}
           />
-          <LoadingButton loading={loading} variant='contained' type='submit'>
+          <Button loading={loading} variant='contained' type='submit'>
             提交
-          </LoadingButton>
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

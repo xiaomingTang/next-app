@@ -43,10 +43,10 @@ import type {
   UseTreeViewLabelSignature,
   UseTreeViewSelectionSignature,
 } from '@mui/x-tree-view/internals'
-import type { MutableRefObject } from 'react'
+import type { RefObject } from 'react'
 import type { ProjectTree } from '../utils/arrayToTree'
 
-type ApiRef = MutableRefObject<
+type ApiRef = RefObject<
   | TreeViewPublicAPI<
       readonly [
         UseTreeViewItemsSignature,

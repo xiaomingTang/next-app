@@ -18,6 +18,7 @@ import { upload } from '@/app/(default-layout)/upload/components/Uploader'
 import { pick } from 'lodash-es'
 import {
   AppBar,
+  Button,
   Dialog,
   DialogContent,
   FormControl,
@@ -36,7 +37,6 @@ import { Controller, useForm } from 'react-hook-form'
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import CloseIcon from '@mui/icons-material/Close'
 import UploadIcon from '@mui/icons-material/Upload'
-import { LoadingButton } from '@mui/lab'
 import { useEffect } from 'react'
 
 import type { Or } from '@zimi/type-utils'
@@ -249,9 +249,9 @@ const EditNetworkFileModal = NiceModal.create(
             {nameElem}
             {urlElem}
             {typeElem}
-            <LoadingButton loading={loading} variant='contained' type='submit'>
+            <Button loading={loading} variant='contained' type='submit'>
               提交
-            </LoadingButton>
+            </Button>
           </form>
         </DialogContent>
       </Dialog>

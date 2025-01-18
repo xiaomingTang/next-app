@@ -1,15 +1,13 @@
 import { useLoading } from '@/hooks/useLoading'
 
-import { LoadingButton } from '@mui/lab'
+import { Button } from '@mui/material'
 
-import type { LoadingButtonProps } from '@mui/lab'
+import type { ButtonProps } from '@mui/material'
 
-export type CustomLoadingButtonProps = LoadingButtonProps
-
-export function CustomLoadingButton(props: CustomLoadingButtonProps) {
+export function CustomLoadingButton(props: ButtonProps) {
   const [loading, withLoading] = useLoading()
   return (
-    <LoadingButton
+    <Button
       {...props}
       loading={props.loading ?? loading}
       onClick={props.onClick && withLoading(props.onClick)}

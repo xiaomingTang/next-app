@@ -4,8 +4,7 @@ import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
 import { getShortUrl } from '@ADMIN/shortUrl/server'
 
-import { LoadingButton } from '@mui/lab'
-import { Alert, TextField } from '@mui/material'
+import { Alert, Button, TextField } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
 
 export function UrlRequirePassword({ hash }: { hash: string }) {
@@ -71,9 +70,9 @@ export function UrlRequirePassword({ hash }: { hash: string }) {
         }}
       />
       <br />
-      <LoadingButton loading={loading} variant='contained' type='submit'>
+      <Button loading={loading} variant='contained' type='submit'>
         提交
-      </LoadingButton>
+      </Button>
     </form>
   )
 }

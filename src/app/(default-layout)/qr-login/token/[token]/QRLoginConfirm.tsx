@@ -6,7 +6,6 @@ import { SA } from '@/errors/utils'
 import { useLoading } from '@/hooks/useLoading'
 import { cat } from '@/errors/catchAndToast'
 
-import { LoadingButton } from '@mui/lab'
 import { Box, Button, Typography } from '@mui/material'
 import { useRouter } from 'next/navigation'
 
@@ -51,14 +50,9 @@ export function QRLoginConfirm({ token = '' }: { token?: string }) {
       >
         扫码授权登录
       </Typography>
-      <LoadingButton
-        fullWidth
-        loading={loading}
-        variant='contained'
-        type='submit'
-      >
+      <Button fullWidth loading={loading} variant='contained' type='submit'>
         确认授权登录
-      </LoadingButton>
+      </Button>
       <Button fullWidth LinkComponent={LinkWithReplace} href='/qrcode/scan'>
         重新扫码
       </Button>

@@ -12,6 +12,7 @@ import { pick } from 'lodash-es'
 import {
   Alert,
   AppBar,
+  Button,
   Dialog,
   DialogContent,
   IconButton,
@@ -22,7 +23,6 @@ import {
 import { Controller, useForm } from 'react-hook-form'
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import CloseIcon from '@mui/icons-material/Close'
-import { LoadingButton } from '@mui/lab'
 
 import type { SA_RES } from '@/errors/utils'
 import type { SimpleProjectItem } from '../utils/arrayToTree'
@@ -111,9 +111,9 @@ const RenameModal = NiceModal.create(({ project }: RenameModalProps) => {
               },
             }}
           />
-          <LoadingButton loading={loading} variant='contained' type='submit'>
+          <Button loading={loading} variant='contained' type='submit'>
             提交
-          </LoadingButton>
+          </Button>
         </form>
       </DialogContent>
     </Dialog>

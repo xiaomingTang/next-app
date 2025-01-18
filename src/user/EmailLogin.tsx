@@ -11,7 +11,6 @@ import {
   Stack,
   TextField,
 } from '@mui/material'
-import { LoadingButton } from '@mui/lab'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import { useState } from 'react'
@@ -130,9 +129,9 @@ export function EmailLogin({ loginType, setLoginType }: EmailLoginProps) {
     <Stack component='form' onSubmit={onSubmit}>
       {emailInput}
       {passwordInput}
-      <LoadingButton loading={loading} variant='contained' type='submit'>
+      <Button loading={loading} variant='contained' type='submit'>
         登录
-      </LoadingButton>
+      </Button>
       <Button onClick={() => setLoginType('qrcode')}>切换扫码登录</Button>
     </Stack>
   )

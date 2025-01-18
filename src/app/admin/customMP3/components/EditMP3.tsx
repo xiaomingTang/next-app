@@ -14,6 +14,7 @@ import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   AppBar,
+  Button,
   Dialog,
   DialogContent,
   FormControl,
@@ -26,7 +27,6 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material'
-import { LoadingButton } from '@mui/lab'
 import CloseIcon from '@mui/icons-material/Close'
 import UploadIcon from '@mui/icons-material/Upload'
 
@@ -211,9 +211,9 @@ const EditMP3Modal = NiceModal.create(({ mp3 }: EditMP3ModalProps) => {
               </FormControl>
             )}
           />
-          <LoadingButton loading={loading} variant='contained' type='submit'>
+          <Button loading={loading} variant='contained' type='submit'>
             提交
-          </LoadingButton>
+          </Button>
         </form>
       </DialogContent>
     </Dialog>
