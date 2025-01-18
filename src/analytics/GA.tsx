@@ -8,7 +8,10 @@ export function GA() {
   if (nodeEnv === 'production' && gaId) {
     return (
       <>
-        <Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+          async
+        />
         <Script id='google-analytics'>
           {`
             window.dataLayer = window.dataLayer || [];
