@@ -7,7 +7,7 @@ export interface ProjectTree extends SimpleProjectItem {
   children?: ProjectTree[]
 }
 
-export function arrayToTree(items: ProjectTree[]) {
+export function arrayToTree(items: SimpleProjectItem[]) {
   const map: Record<string, ProjectTree> = {}
   const root = items.find((item) => item.hash === item.parentHash)
 
