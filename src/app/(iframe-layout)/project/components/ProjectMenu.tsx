@@ -141,7 +141,7 @@ export function ProjectMenu(projectInfo: ProjectPageProps) {
               return
             }
             const relPath = getRelPath(curSelectedItem, root)
-            useProjectPath.replace(relPath)
+            void useProjectPath.replace(relPath)
           }}
           onItemLabelChange={cat(async (itemId, newLabel) => {
             if (prevNameMapRef.current[itemId]) {

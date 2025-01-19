@@ -9,12 +9,14 @@ import { useKeyDown } from '@/hooks/useKey'
 import { useListen } from '@/hooks/useListen'
 import { cat } from '@/errors/catchAndToast'
 import { useLoading } from '@/hooks/useLoading'
+import { customConfirm } from '@/utils/customConfirm'
 
 import { Editor } from '@monaco-editor/react'
 import { Box, CircularProgress, useColorScheme } from '@mui/material'
 import useSWR from 'swr'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
+import { noop } from 'lodash-es'
 
 import type { ProjectPageProps } from './ProjectPage'
 
@@ -27,8 +29,10 @@ export function TextEditor(projectInfo: ProjectPageProps) {
   const curItem = findItemByPath(projectInfo.projectTree, curPath)
   const curHash = curItem?.hash
   const isTxt = curItem?.type === 'TEXT'
+  const language = guessLanguage(curItem?.name)
   const [localContent, setLocalContent] = useState('')
   const [saveLoading, withSaveLoading] = useLoading()
+
   // 见鬼了，这里的 useSWR 的 key 必须和 OtherFileViewer 类型不一致，否则会导致只有这里能正常执行
   const {
     data: content = '',
@@ -50,22 +54,71 @@ export function TextEditor(projectInfo: ProjectPageProps) {
         .then((res) => res ?? '')
     })
   )
-  const language = guessLanguage(curItem?.name)
 
   useListen(content, () => {
-    // TODO: 当内容有变时，需要用户确认
     setLocalContent(content)
   })
+
+  // 前端路由前，提示用户保存
+  useProjectPath.useBeforePathChanged(
+    async (_, prevPath) => {
+      if (
+        !editable ||
+        !prevPath ||
+        !curHash ||
+        !isTxt ||
+        localContent === content ||
+        !(await customConfirm('是否保存当前文件？', 'SLIGHT'))
+      ) {
+        return
+      }
+      await toast.promise(
+        async () =>
+          updateProject({
+            hash: curHash,
+            content: localContent,
+          }).then(SA.decode),
+        {
+          loading: '正在保存...',
+          success: '保存成功',
+          error: '保存失败',
+        }
+      )
+    },
+    [content, localContent, editable, curHash, isTxt]
+  )
+
+  // 用户离开页面前，提示用户保存
+  useEffect(() => {
+    if (
+      !editable ||
+      !curPath ||
+      !curHash ||
+      !isTxt ||
+      localContent === content
+    ) {
+      return noop
+    }
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      return '文件尚未保存，确定要离开吗？'
+    }
+    window.addEventListener('beforeunload', onBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', onBeforeUnload)
+    }
+  }, [content, curHash, curPath, editable, isTxt, localContent])
 
   useKeyDown(
     withSaveLoading(
       cat(async (e) => {
         if (
+          editable &&
           curHash &&
           isTxt &&
           (e.ctrlKey || e.metaKey) &&
-          e.key === 's' &&
-          editable
+          e.key === 's'
         ) {
           e.preventDefault()
           if (localContent === content) {
