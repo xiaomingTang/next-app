@@ -12,6 +12,7 @@ import { useDefaultAsideDetail } from '@/layout/utils'
 import { onAnchorClick } from '@/components/Anchor/utils'
 
 import {
+  Box,
   Button,
   ClickAwayListener,
   IconButton,
@@ -22,7 +23,11 @@ import {
 import { createElement, useEffect } from 'react'
 import LinkIcon from '@mui/icons-material/Link'
 import ListIcon from '@mui/icons-material/List'
+import OpenInNewIcon from '@mui/icons-material/OpenInNew'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { matchRemotePattern } from 'next/dist/shared/lib/match-remote-pattern'
+import CopyToClipboard from 'react-copy-to-clipboard'
+import toast from 'react-hot-toast'
 
 import type { RemotePattern } from 'next/dist/shared/lib/image-config'
 import type { MDXComponents } from 'mdx/types'
@@ -178,9 +183,11 @@ function formatIframeSrc(src?: string) {
   const whiteListPatterns: RemotePattern[] = [
     { hostname: thisSiteUrl.hostname },
     { hostname: `**.${thisSiteUrl.hostname}` },
+    { hostname: '16px.cc' },
     { hostname: 'youtu.be' },
     { hostname: 'youtube.com' },
     { hostname: 'bilibili.com' },
+    { hostname: '**.16px.cc' },
     { hostname: '**.youtu.be' },
     { hostname: '**.youtube.com' },
     { hostname: '**.bilibili.com' },
@@ -194,6 +201,13 @@ function formatIframeSrc(src?: string) {
   return null
 }
 
+function formatText(text: string, headingLen: number, tailLen: number) {
+  if (text.length <= headingLen + tailLen) {
+    return text
+  }
+  return `${text.slice(0, headingLen)}...${text.slice(-tailLen)}`
+}
+
 function Iframe({ src = '' }: { src?: string }) {
   const srcUrl = formatIframeSrc(src)
 
@@ -201,18 +215,36 @@ function Iframe({ src = '' }: { src?: string }) {
     return <></>
   }
 
+  const linkStr = `${srcUrl.host}${formatText(srcUrl.pathname, 12, 5)}${formatText(srcUrl.search, 5, 5)}${formatText(srcUrl.hash, 5, 5)}`
+
   return (
-    <iframe
-      src={srcUrl.href}
-      width={720}
-      height={450}
-      allowFullScreen
-      allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share'
-      style={{
-        width: '100%',
-        maxHeight: '80vh',
-      }}
-    />
+    <>
+      <Box sx={{ mb: 1 }}>
+        <Anchor href={srcUrl.href} target='_blank' title={srcUrl.href}>
+          {linkStr}
+          <OpenInNewIcon fontSize='small' />
+        </Anchor>
+        <CopyToClipboard
+          text={srcUrl.href}
+          onCopy={() => toast.success('链接已复制')}
+        >
+          <IconButton aria-label='复制链接' sx={{ ml: 1 }}>
+            <ContentCopyIcon fontSize='small' />
+          </IconButton>
+        </CopyToClipboard>
+      </Box>
+      <iframe
+        src={srcUrl.href}
+        width={720}
+        height={450}
+        allowFullScreen
+        allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share'
+        style={{
+          width: '100%',
+          maxHeight: '80vh',
+        }}
+      />
+    </>
   )
 }
 
