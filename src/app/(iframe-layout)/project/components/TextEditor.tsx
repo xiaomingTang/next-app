@@ -12,7 +12,7 @@ import { useLoading } from '@/hooks/useLoading'
 import { customConfirm } from '@/utils/customConfirm'
 
 import { Editor } from '@monaco-editor/react'
-import { Box, CircularProgress, useColorScheme } from '@mui/material'
+import { Box, Button, CircularProgress, useColorScheme } from '@mui/material'
 import useSWR from 'swr'
 import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
@@ -188,6 +188,30 @@ export function TextEditor(projectInfo: ProjectPageProps) {
             pointerEvents: 'none',
           }}
         />
+      )}
+      {editable && curHash && localContent !== content && (
+        <Button
+          loading={saveLoading}
+          variant='contained'
+          sx={{
+            position: 'absolute',
+            left: '50%',
+            bottom: '24px',
+            transform: 'translateX(-50%)',
+          }}
+          onClick={withSaveLoading(
+            cat(async () => {
+              await updateProject({
+                hash: curHash,
+                content: localContent,
+              }).then(SA.decode)
+              toast.success('保存成功')
+              await mutate()
+            })
+          )}
+        >
+          保存
+        </Button>
       )}
     </>
   )
