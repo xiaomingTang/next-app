@@ -155,7 +155,7 @@ export const BlogContent = forwardRef(function BlogContent(
     <>
       <Typography
         component='article'
-        className='markdown-body shadow'
+        className='markdown-body shadow-sm'
         id={BLOG_MARKDOWN_ID}
         sx={{
           p: 2,

@@ -135,7 +135,7 @@ export const Toc = forwardRef(function Toc(
 
   return (
     <Box
-      className={clsx('shadow', className)}
+      className={clsx('shadow-sm', className)}
       ref={ref}
       sx={{
         p: 1,
