@@ -7,7 +7,7 @@ ENV PORT ${PORT}
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 COPY package.json /app
-RUN corepack enable pnpm
+RUN npm i -g pnpm
 
 WORKDIR /app
 
