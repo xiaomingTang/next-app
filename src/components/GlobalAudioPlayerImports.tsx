@@ -6,21 +6,28 @@ import { useMediaLoading } from '@/hooks/useMediaLoading'
 import { useListen } from '@/hooks/useListen'
 import { remainder } from '@/utils/math'
 import { sleepMs } from '@/utils/time'
+import { useDelayedValue } from '@/hooks/useDelayedValue'
 
 import { useAudio as useReactUseAudio } from 'react-use'
-import { useEffect, useMemo } from 'react'
+import { useEffect } from 'react'
 import { noop } from 'lodash-es'
+
+function reactUseAudioProps(src?: string) {
+  return {
+    src: src || '/static/medias/empty.mp3',
+  } satisfies Parameters<typeof useReactUseAudio>[0]
+}
 
 export function GlobalAudioPlayer() {
   const { loading, setMedia } = useMediaLoading()
   const activeMP3 = useAudio((state) => state.activeMP3)
   const mp3s = useAudio((state) => state.mp3s)
-  const props: Parameters<typeof useReactUseAudio>[0] = useMemo(
-    () => ({
-      src: activeMP3?.mp3 || '/static/medias/empty.mp3',
-    }),
-    [activeMP3]
-  )
+  // fix: react-use 第一次获取到的 state.duration 为空（以及由此导致的 controls.seek() 跳不到特定的时间节点）
+  const props =
+    useDelayedValue(
+      async () => reactUseAudioProps(activeMP3?.mp3),
+      [activeMP3]
+    ) ?? reactUseAudioProps()
 
   const [audio, state, controls, ref] = useReactUseAudio(props)
 
