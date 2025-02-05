@@ -1,9 +1,3 @@
-.pseudo {
-  position: absolute;
-  pointer-events: none;
-  user-select: none;
-}
-
 .previewEnabled {
   cursor: zoom-in;
 }
@@ -14,7 +8,10 @@
 }
 
 .error::before {
-  @extend .pseudo;
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+
   content: '';
   left: 0;
   top: 0;
@@ -26,7 +23,10 @@
 }
 
 .error::after {
-  @extend .pseudo;
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+
   content: attr(alt);
   display: block;
   padding: 0 0.5em;

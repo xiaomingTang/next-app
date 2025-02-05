@@ -1,6 +1,6 @@
 'use client'
 
-import './styles/markdown-overrides.scss'
+import './styles/markdown-overrides.css'
 import 'react-photo-view/dist/react-photo-view.css'
 
 import { markdownComponents } from './markdownComponents'

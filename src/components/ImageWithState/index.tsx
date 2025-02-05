@@ -1,4 +1,4 @@
-import styles from './index.module.scss'
+import styles from './index.module.css'
 
 import { getImageSizeFromUrl } from '@/utils/urlImageSize'
 import imageConfig from '@ROOT/next-image.config'

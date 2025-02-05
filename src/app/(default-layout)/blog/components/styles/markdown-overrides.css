@@ -1,6 +1,6 @@
-@import './github-markdown.scss';
+@import './github-markdown.css';
 @import './prism-line-number.css';
-@import './prism-vsc-dark-plus.scss';
+@import './prism-vsc-dark-plus.css';
 
 .markdown-body {
   img,

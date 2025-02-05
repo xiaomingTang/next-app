@@ -1,4 +1,4 @@
-import styles from './MusicTriggerButton.module.scss'
+import styles from './MusicTriggerButton.module.css'
 
 import { useAudio } from '@/components/useAudio'
 import { useLyricsViewer } from '@/components/LyricsViewer/context'
