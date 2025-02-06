@@ -172,8 +172,8 @@ export function GlobalAudioPlayer() {
     try {
       navigator.mediaSession.setPositionState({
         // bug: https://issues.chromium.org/issues/40287871
-        // bug 描述: 'position' 设置无效, 干脆隐藏进度条算了
-        duration: 0,
+        // bug 描述: 'position' 设置无效
+        duration: state.duration,
       })
     } catch (_) {
       console.warn(`not supported: "setPositionState"`)
