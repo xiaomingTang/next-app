@@ -174,11 +174,12 @@ export function GlobalAudioPlayer() {
         // bug: https://issues.chromium.org/issues/40287871
         // bug 描述: 'position' 设置无效
         duration: state.duration,
+        position: state.time,
       })
     } catch (_) {
       console.warn(`not supported: "setPositionState"`)
     }
-  }, [activeMP3, state.duration])
+  }, [activeMP3, state.duration, state.time])
 
   return <>{audio}</>
 }
