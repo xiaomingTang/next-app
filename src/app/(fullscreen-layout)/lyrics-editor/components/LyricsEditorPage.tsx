@@ -2,6 +2,7 @@
 
 import { useLyricsEditor } from './store'
 import { SettingsTrigger } from './SettingsTrigger'
+import { AudioControls } from './AudioControls'
 
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { STYLE } from '@/config'
@@ -29,8 +30,6 @@ export function LyricsEditorPage() {
       }
     })
   )
-  const { audioFile, lrcFile } = useLyricsEditor()
-  console.log({ audioFile, lrcFile })
   return (
     <Box
       sx={{
@@ -54,7 +53,7 @@ export function LyricsEditorPage() {
         <SettingsTrigger />
       </Box>
       {/* 控制区 */}
-      <Box></Box>
+      <AudioControls />
       {/* 时间 + 歌词时间轴 + 波形图区 */}
       <Box
         component='canvas'

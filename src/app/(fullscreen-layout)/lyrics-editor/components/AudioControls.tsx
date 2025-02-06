@@ -1,11 +1,47 @@
+import {
+  LyricsEditorAudioPlayer,
+  useLyricsEditor,
+  useLyricsEditorAudio,
+} from './store'
+
+import { useListen } from '@/hooks/useListen'
+
 import PauseIcon from '@mui/icons-material/Pause'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
-import { Box } from '@mui/material'
-import { useMemo } from 'react'
+import { Box, Button, ButtonGroup, IconButton } from '@mui/material'
 
-export function AudioControls({ file }: { file: File }) {
-  const src = useMemo(() => URL.createObjectURL(file), [file])
-  // const audio
+export function AudioControls() {
+  const url = useLyricsEditor.useAudioUrl()
+  const paused = useLyricsEditorAudio((s) => s.state.paused)
+  const controls = useLyricsEditorAudio((s) => s.controls)
+  const loading = useLyricsEditorAudio((s) => s.loading)
+  useListen(url, () => {
+    useLyricsEditorAudio.setState({ src: url })
+  })
 
-  return <Box></Box>
+  return (
+    <Box>
+      <ButtonGroup variant='outlined' disabled={loading} size='medium'>
+        <Button onClick={() => controls.seekBackward(10)}>-10s</Button>
+        <Button onClick={() => controls.seekBackward(5)}>-5s</Button>
+        <Button onClick={() => controls.seekBackward(3)}>-3s</Button>
+        <Button onClick={() => controls.seekBackward(1)}>-1s</Button>
+      </ButtonGroup>
+      <IconButton
+        loading={loading}
+        onClick={() => controls.togglePlay()}
+        color='primary'
+        sx={{ mx: 2 }}
+      >
+        {paused ? <PlayArrowIcon /> : <PauseIcon />}
+      </IconButton>
+      <ButtonGroup variant='outlined' disabled={loading} size='medium'>
+        <Button onClick={() => controls.seekForward(1)}>+1s</Button>
+        <Button onClick={() => controls.seekForward(3)}>+3s</Button>
+        <Button onClick={() => controls.seekForward(5)}>+5s</Button>
+        <Button onClick={() => controls.seekForward(10)}>+10s</Button>
+      </ButtonGroup>
+      <LyricsEditorAudioPlayer />
+    </Box>
+  )
 }

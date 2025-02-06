@@ -1,6 +1,8 @@
 import { customConfirm } from '@/utils/customConfirm'
+import { generateUseAudio } from '@/utils/media/useAudio'
 
 import { withStatic } from '@zimi/utils'
+import { useMemo } from 'react'
 import { create } from 'zustand'
 
 const useRawLyricsEditor = create(() => ({
@@ -23,4 +25,14 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
       useRawLyricsEditor.setState({ [type]: f })
     }
   },
+  useAudioUrl() {
+    const audioFile = useRawLyricsEditor((s) => s.audioFile)
+    return useMemo(
+      () => (audioFile ? URL.createObjectURL(audioFile) : null),
+      [audioFile]
+    )
+  },
 })
+
+export const [useLyricsEditorAudio, LyricsEditorAudioPlayer] =
+  generateUseAudio()
