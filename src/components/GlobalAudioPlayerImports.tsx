@@ -1,6 +1,6 @@
 'use client'
 
-import { useAudio } from './useAudio'
+import { useGlobalAudio } from './useGlobalAudio'
 
 import { useMediaLoading } from '@/hooks/useMediaLoading'
 import { useListen } from '@/hooks/useListen'
@@ -20,8 +20,8 @@ function reactUseAudioProps(src?: string) {
 
 export function GlobalAudioPlayer() {
   const { loading, setMedia } = useMediaLoading()
-  const activeMP3 = useAudio((state) => state.activeMP3)
-  const mp3s = useAudio((state) => state.mp3s)
+  const activeMP3 = useGlobalAudio((state) => state.activeMP3)
+  const mp3s = useGlobalAudio((state) => state.mp3s)
   // fix: react-use 第一次获取到的 state.duration 为空（以及由此导致的 controls.seek() 跳不到特定的时间节点）
   const props =
     useDelayedValue(
@@ -32,13 +32,13 @@ export function GlobalAudioPlayer() {
   const [audio, state, controls, ref] = useReactUseAudio(props)
 
   useListen(audio, () => {
-    useAudio.setState({ audio })
+    useGlobalAudio.setState({ audio })
   })
   useListen(state, () => {
-    useAudio.setState({ state })
+    useGlobalAudio.setState({ state })
   })
   useListen(controls, () => {
-    useAudio.setState({
+    useGlobalAudio.setState({
       controls: {
         ...controls,
         play: async () => {
@@ -47,14 +47,14 @@ export function GlobalAudioPlayer() {
         },
         togglePlay: async () => {
           const { state: audioState, controls: audioControls } =
-            useAudio.getState()
+            useGlobalAudio.getState()
           if (audioState.paused) {
             return audioControls.play()
           }
           return audioControls.pause()
         },
         switchTo: (mp3) => {
-          useAudio.setState({
+          useGlobalAudio.setState({
             activeMP3: mp3,
           })
         },
@@ -62,7 +62,7 @@ export function GlobalAudioPlayer() {
           if (mp3s.length === 0) {
             return
           }
-          useAudio.setState({
+          useGlobalAudio.setState({
             activeMP3: mp3s[remainder(n, mp3s.length)],
           })
         },
@@ -73,7 +73,7 @@ export function GlobalAudioPlayer() {
           const activeIndex = mp3s.findIndex(
             (item) => item.hash === activeMP3?.hash
           )
-          useAudio.setState({
+          useGlobalAudio.setState({
             activeMP3: mp3s[remainder(activeIndex + 1, mp3s.length)],
           })
         },
@@ -84,7 +84,7 @@ export function GlobalAudioPlayer() {
           const activeIndex = mp3s.findIndex(
             (item) => item.hash === activeMP3?.hash
           )
-          useAudio.setState({
+          useGlobalAudio.setState({
             activeMP3: mp3s[remainder(activeIndex - 1, mp3s.length)],
           })
         },
@@ -92,12 +92,12 @@ export function GlobalAudioPlayer() {
     })
   })
   useListen(ref, () => {
-    useAudio.setState({ ref })
+    useGlobalAudio.setState({ ref })
     setMedia(ref?.current)
   })
 
   useListen(loading, () => {
-    useAudio.setState({ loading })
+    useGlobalAudio.setState({ loading })
   })
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export function GlobalAudioPlayer() {
         controls: audioControls,
         settings: { repeatMode },
         activeMP3: mp3,
-      } = useAudio.getState()
+      } = useGlobalAudio.getState()
       const hasNext = mp3 !== mp3s[mp3s.length - 1]
       switch (repeatMode) {
         case 'Pause-when-Finished':

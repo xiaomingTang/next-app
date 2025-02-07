@@ -1,6 +1,6 @@
 import styles from './MusicTriggerButton.module.css'
 
-import { useAudio } from '@/components/useAudio'
+import { useGlobalAudio } from '@/components/useGlobalAudio'
 import { useLyricsViewer } from '@/components/LyricsViewer/context'
 
 import { IconButton } from '@mui/material'
@@ -8,7 +8,7 @@ import MusicNoteIcon from '@mui/icons-material/MusicNote'
 import clsx from 'clsx'
 
 export function MusicTriggerButton() {
-  const { state, mp3s, loading, activeMP3, controls } = useAudio()
+  const { state, mp3s, loading, activeMP3, controls } = useGlobalAudio()
   const { visible: lyricsViewerVisible } = useLyricsViewer()
 
   return (

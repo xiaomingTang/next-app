@@ -1,5 +1,5 @@
 import { AnchorProvider } from '../AnchorProvider'
-import { useAudio } from '../useAudio'
+import { useGlobalAudio } from '../useGlobalAudio'
 
 import RepeatOneIcon from '@mui/icons-material/RepeatOne'
 import RepeatIcon from '@mui/icons-material/Repeat'
@@ -13,7 +13,7 @@ import {
   MenuItem,
 } from '@mui/material'
 
-import type { RepeatMode } from '../useAudio'
+import type { RepeatMode } from '../useGlobalAudio'
 
 const RepeatModeList: RepeatMode[] = [
   'Repeat-Playlist',
@@ -50,7 +50,7 @@ const RepeatModeMap: Record<
 export function RepeatTrigger() {
   const {
     settings: { repeatMode },
-  } = useAudio()
+  } = useGlobalAudio()
   return (
     <AnchorProvider>
       {(anchorEl, setAnchorEl) => (
@@ -87,7 +87,7 @@ export function RepeatTrigger() {
                 key={k}
                 selected={repeatMode === k}
                 onClick={() => {
-                  useAudio.setState({
+                  useGlobalAudio.setState({
                     settings: {
                       repeatMode: k,
                     },
