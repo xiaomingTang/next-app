@@ -1,23 +1,13 @@
-import {
-  LyricsEditorAudioPlayer,
-  useLyricsEditor,
-  useLyricsEditorAudio,
-} from './store'
-
-import { useListen } from '@/hooks/useListen'
+import { LyricsEditorAudioPlayer, useLyricsEditorAudio } from './store'
 
 import PauseIcon from '@mui/icons-material/Pause'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import { Box, Button, ButtonGroup, IconButton } from '@mui/material'
 
 export function AudioControls() {
-  const url = useLyricsEditor.useAudioUrl()
   const paused = useLyricsEditorAudio((s) => s.state.paused)
   const controls = useLyricsEditorAudio((s) => s.controls)
   const loading = useLyricsEditorAudio((s) => s.loading)
-  useListen(url, () => {
-    useLyricsEditorAudio.setState({ src: url })
-  })
 
   return (
     <Box>

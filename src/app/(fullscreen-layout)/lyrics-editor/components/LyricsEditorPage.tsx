@@ -3,6 +3,7 @@
 import { useLyricsEditor } from './store'
 import { SettingsTrigger } from './SettingsTrigger'
 import { AudioControls } from './AudioControls'
+import { LyricsEditor } from './LyricsEditor'
 
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { STYLE } from '@/config'
@@ -20,10 +21,10 @@ export function LyricsEditorPage() {
         (f) => f.name.endsWith('.lrc') || f.name.endsWith('.txt')
       )
       if (lrcFile) {
-        await useLyricsEditor.setFile(lrcFile, 'lrcFile').catch(noop)
+        await useLyricsEditor.setFile(lrcFile, 'lrc').catch(noop)
       }
       if (audioFile) {
-        await useLyricsEditor.setFile(audioFile, 'audioFile').catch(noop)
+        await useLyricsEditor.setFile(audioFile, 'audio').catch(noop)
       }
       if (!audioFile && !lrcFile) {
         throw new Error('请选择音频文件或歌词文件')
@@ -49,7 +50,7 @@ export function LyricsEditorPage() {
           flex: '1 1 auto',
         }}
       >
-        歌词区
+        <LyricsEditor />
         <SettingsTrigger />
       </Box>
       {/* 控制区 */}

@@ -4,7 +4,15 @@ import { AnchorProvider } from '@/components/AnchorProvider'
 import { RawUploader } from '@/app/(default-layout)/upload/components/RawUploader'
 import { cat } from '@/errors/catchAndToast'
 
-import { IconButton, Menu, MenuItem } from '@mui/material'
+import {
+  IconButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+} from '@mui/material'
+import MusicNoteIcon from '@mui/icons-material/MusicNote'
+import StickyNote2Icon from '@mui/icons-material/StickyNote2'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 export function SettingsTrigger() {
@@ -35,16 +43,20 @@ export function SettingsTrigger() {
             }}
           >
             <MenuItem sx={{ position: 'relative' }}>
-              歌词上传
               <RawUploader
                 multiple={false}
                 accept='.lrc,.txt'
                 onChange={cat(async ([f]) => {
                   if (f) {
-                    await useLyricsEditor.setFile(f, 'lrcFile')
+                    await useLyricsEditor.setFile(f, 'lrc')
+                    setAnchorEl(null)
                   }
                 })}
               />
+              <ListItemIcon>
+                <StickyNote2Icon fontSize='small' />
+              </ListItemIcon>
+              <ListItemText>歌词上传</ListItemText>
             </MenuItem>
             <MenuItem sx={{ position: 'relative' }}>
               <RawUploader
@@ -52,11 +64,15 @@ export function SettingsTrigger() {
                 accept='audio/*'
                 onChange={cat(async ([f]) => {
                   if (f) {
-                    await useLyricsEditor.setFile(f, 'audioFile')
+                    await useLyricsEditor.setFile(f, 'audio')
+                    setAnchorEl(null)
                   }
                 })}
               />
-              音频上传
+              <ListItemIcon>
+                <MusicNoteIcon fontSize='small' />
+              </ListItemIcon>
+              <ListItemText>音频上传</ListItemText>
             </MenuItem>
           </Menu>
         </>

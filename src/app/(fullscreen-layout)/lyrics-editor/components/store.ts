@@ -2,35 +2,62 @@ import { customConfirm } from '@/utils/customConfirm'
 import { generateUseAudio } from '@/utils/media/useAudio'
 
 import { withStatic } from '@zimi/utils'
-import { useMemo } from 'react'
 import { create } from 'zustand'
 
 const useRawLyricsEditor = create(() => ({
+  audioUrl: '',
   audioFile: null as File | null,
-  lrcFile: null as File | null,
+  lrcContent: '',
 }))
 
 export const useLyricsEditor = withStatic(useRawLyricsEditor, {
-  async setFile(f: File, type: 'audioFile' | 'lrcFile') {
-    const prevFile = useRawLyricsEditor.getState()[type]
-    if (!prevFile) {
-      useRawLyricsEditor.setState({ [type]: f })
+  async setFile(f: File, type: 'audio' | 'lrc') {
+    if (type === 'lrc') {
+      const prevText = useRawLyricsEditor.getState().lrcContent
+      const newText = await f.text()
+      if (
+        prevText &&
+        newText !== prevText &&
+        !(await customConfirm('是否覆盖歌词文件？', 'SLIGHT'))
+      ) {
+        return
+      }
+      if (newText === prevText) {
+        return
+      }
+      useRawLyricsEditor.setState({
+        lrcContent: newText,
+      })
       return
     }
-    const res = await customConfirm(
-      `是否使用新的${type === 'audioFile' ? '音频' : '歌词'}文件？`,
-      'SLIGHT'
-    )
-    if (res) {
-      useRawLyricsEditor.setState({ [type]: f })
+    const prevFile = useRawLyricsEditor.getState().audioFile
+    if (
+      prevFile &&
+      !(await customConfirm('是否使用新的音频文件？', 'SLIGHT'))
+    ) {
+      return
     }
+    const url = URL.createObjectURL(f)
+    useLyricsEditorAudio.setState({ src: url })
+    useRawLyricsEditor.setState({
+      audioFile: f,
+      audioUrl: url,
+    })
   },
-  useAudioUrl() {
-    const audioFile = useRawLyricsEditor((s) => s.audioFile)
-    return useMemo(
-      () => (audioFile ? URL.createObjectURL(audioFile) : null),
-      [audioFile]
-    )
+  async setAudioUrl(url: string) {
+    const prevUrl = useRawLyricsEditor.getState().audioUrl
+    if (
+      prevUrl &&
+      prevUrl !== url &&
+      !(await customConfirm('是否使用新的音频文件？', 'SLIGHT'))
+    ) {
+      return
+    }
+    if (prevUrl === url) {
+      return
+    }
+    useLyricsEditorAudio.setState({ src: url })
+    useRawLyricsEditor.setState({ audioUrl: url, audioFile: null })
   },
 })
 
