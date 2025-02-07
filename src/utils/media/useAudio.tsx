@@ -13,7 +13,7 @@ import { clamp } from 'lodash-es'
 
 type UseAudioRet = ReturnType<typeof useReactUseAudio>
 
-interface AudioStore {
+export interface AudioStore {
   src?: string | null
   playList: string[]
   audio: UseAudioRet[0]
