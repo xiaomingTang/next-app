@@ -50,7 +50,7 @@ export function LyricsEditor() {
             setLyricItems((prev) => {
               const newItems = [...prev]
               newItems[idx] = newItem
-              return newItems
+              return newItems.sort(sortLyricItems)
             })
           }}
         />
