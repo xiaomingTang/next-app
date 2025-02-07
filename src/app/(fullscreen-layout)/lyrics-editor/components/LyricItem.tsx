@@ -1,16 +1,68 @@
 import { LyricItem } from '../Lyrics'
 
-import { Box, TextField, Typography } from '@mui/material'
+import { customConfirm } from '@/utils/customConfirm'
+import { SilentError } from '@/errors/SilentError'
+import { cat } from '@/errors/catchAndToast'
+
+import { Box, ClickAwayListener, TextField, Typography } from '@mui/material'
 import { useState } from 'react'
+
+import type { FormEvent } from 'react'
 
 interface LyricItemProps {
   lyricItem: LyricItem
   onChange?: (value: LyricItem) => void
 }
 
+/**
+ * 帮助校验笔误
+ */
+async function checkLrcContent(str: string, prevLyricItem: LyricItem) {
+  const match = str.match(/(\d\d：\d\d)/)
+  if (match) {
+    if (
+      await customConfirm(
+        `注意到你的【${match[0]}】是中文冒号，仍要继续吗？`,
+        'SLIGHT'
+      )
+    ) {
+      return str
+    }
+    throw new SilentError('用户取消操作')
+  }
+  const newLyricItem = new LyricItem(str)
+  if (newLyricItem.type === prevLyricItem.type) {
+    return str
+  }
+  if (prevLyricItem.type === 'lyric') {
+    if (
+      await customConfirm(
+        `【普通歌词】将会改为【元数据】，可能是由中文冒号笔误导致的，仍要继续吗？`,
+        'SLIGHT'
+      )
+    ) {
+      return str
+    }
+    throw new SilentError('用户取消操作')
+  }
+  if (newLyricItem.type === 'lyric') {
+    if (
+      await customConfirm(
+        `【元数据】将会改为【普通歌词】，可能是由中文冒号笔误导致的，仍要继续吗？`,
+        'SLIGHT'
+      )
+    ) {
+      return str
+    }
+    throw new SilentError('用户取消操作')
+  }
+  return str
+}
+
 export function LyricItemDom({ lyricItem, onChange }: LyricItemProps) {
   const { type, time: timestamp, value: text } = lyricItem
   const [editing, setEditing] = useState(false)
+  const [newStr, setNewStr] = useState(lyricItem.toString())
   const m = Math.floor(timestamp / 60)
     .toString()
     .padStart(2, '0')
@@ -24,37 +76,40 @@ export function LyricItemDom({ lyricItem, onChange }: LyricItemProps) {
 
   if (editing) {
     return (
-      <Box
-        component='form'
-        autoComplete='off'
-        sx={{
-          height: '42px',
-        }}
-        onSubmit={(e) => {
-          e.preventDefault()
-          const formData = new FormData(e.target as HTMLFormElement)
-          const str = (formData.get('content') ?? '') as string
+      <ClickAwayListener
+        onClickAway={cat(async () => {
+          const str = await checkLrcContent(newStr, lyricItem)
           if (str !== lyricItem.toString()) {
             onChange?.(new LyricItem(str))
           }
           setEditing(false)
-        }}
+        })}
       >
-        <TextField
-          name='content'
-          sx={{ width: '100%' }}
-          key={lyricItem.toString()}
-          defaultValue={lyricItem.toString()}
-          autoFocus
-          onBlur={(e) => {
-            const str = e.target.value
+        <Box
+          component='form'
+          autoComplete='off'
+          sx={{
+            height: '42px',
+          }}
+          onSubmit={cat(async (e: FormEvent<HTMLFormElement>) => {
+            e.preventDefault()
+            const str = await checkLrcContent(newStr, lyricItem)
             if (str !== lyricItem.toString()) {
               onChange?.(new LyricItem(str))
             }
             setEditing(false)
-          }}
-        />
-      </Box>
+          })}
+        >
+          <TextField
+            name='content'
+            sx={{ width: '100%' }}
+            key={lyricItem.toString()}
+            autoFocus
+            value={newStr}
+            onChange={(e) => setNewStr(e.target.value)}
+          />
+        </Box>
+      </ClickAwayListener>
     )
   }
   return (
