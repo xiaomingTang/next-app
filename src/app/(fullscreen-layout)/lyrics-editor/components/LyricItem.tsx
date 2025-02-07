@@ -63,6 +63,7 @@ export function LyricItemDom({ lyricItem, onChange }: LyricItemProps) {
   const { type, time: timestamp, value: text } = lyricItem
   const [editing, setEditing] = useState(false)
   const [newStr, setNewStr] = useState(lyricItem.toString())
+
   const m = Math.floor(timestamp / 60)
     .toString()
     .padStart(2, '0')
