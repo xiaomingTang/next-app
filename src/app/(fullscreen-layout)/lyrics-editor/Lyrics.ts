@@ -124,3 +124,21 @@ export class Lyrics {
     }
   }
 }
+
+/**
+ * type === lyric 排后面;
+ * time 升序;
+ * type 不同则按字母序排
+ */
+export function sortLyricItems(a: LyricItem, b: LyricItem) {
+  if (a.type === b.type) {
+    return a.time - b.time
+  }
+  if (a.type === 'lyric') {
+    return 1
+  }
+  if (b.type === 'lyric') {
+    return -1
+  }
+  return a.type.localeCompare(b.type)
+}

@@ -1,14 +1,29 @@
 import { useLyricsEditor } from './store'
+import { NoAudio, NoLrc } from './Empty'
+import { LyricItemDom } from './LyricItem'
 
+import { LyricItem, sortLyricItems } from '../Lyrics'
+
+import { useListen } from '@/hooks/useListen'
 import { STYLE } from '@/config'
-import { parseLRC } from '@/utils/lrc'
 
-import { Box } from '@mui/material'
-import { useMemo } from 'react'
+import { Box, Divider } from '@mui/material'
+import { useState } from 'react'
 
 export function LyricsEditor() {
   const lrcContent = useLyricsEditor((state) => state.lrcContent)
-  const parsedLrc = useMemo(() => parseLRC(lrcContent), [lrcContent])
+  const [lyricItems, setLyricItems] = useState<LyricItem[]>([])
+  const audioUrl = useLyricsEditor((s) => s.audioUrl)
+
+  useListen(lrcContent, () => {
+    setLyricItems(
+      lrcContent
+        .split('\n')
+        .filter(Boolean)
+        .map((s) => new LyricItem(s))
+        .sort(sortLyricItems)
+    )
+  })
 
   return (
     <Box
@@ -16,20 +31,29 @@ export function LyricsEditor() {
         maxWidth: STYLE.width.desktop,
         mx: 'auto',
         p: 2,
+        height: '100%',
+        overflowY: 'auto',
       }}
     >
-      {parsedLrc.lrcData.length === 0 && '歌词为空'}
-      {parsedLrc.lrcData.map((item, index) => (
-        <Box
-          key={[item.timestamp, item.text, index].join('')}
-          sx={{
-            display: 'flex',
-            alignItems: 'stretch',
+      {!audioUrl && (
+        <>
+          <NoAudio />
+          <Divider sx={{ my: 1 }} />
+        </>
+      )}
+      {lyricItems.length === 0 && <NoLrc />}
+      {lyricItems.map((item, idx) => (
+        <LyricItemDom
+          key={[item.type, item.time, item.value].join('-')}
+          lyricItem={item}
+          onChange={(newItem) => {
+            setLyricItems((prev) => {
+              const newItems = [...prev]
+              newItems[idx] = newItem
+              return newItems
+            })
           }}
-        >
-          <Box>[{item.timestamp}]</Box>
-          <Box>{item.text}</Box>
-        </Box>
+        />
       ))}
     </Box>
   )
