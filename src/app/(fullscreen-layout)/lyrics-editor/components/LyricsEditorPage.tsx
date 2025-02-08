@@ -9,6 +9,7 @@ import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { STYLE } from '@/config'
 import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCatcherHandler'
 import { cat } from '@/errors/catchAndToast'
+import { useBeforeUnload } from '@/hooks/useBeforeUnload'
 
 import { Box } from '@mui/material'
 import { noop } from 'lodash-es'
@@ -31,6 +32,8 @@ export function LyricsEditorPage() {
       }
     })
   )
+  useBeforeUnload(useLyricsEditor((state) => state.lrcItems.length > 0))
+
   return (
     <Box
       sx={{

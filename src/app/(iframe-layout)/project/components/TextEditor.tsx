@@ -10,13 +10,13 @@ import { useListen } from '@/hooks/useListen'
 import { cat } from '@/errors/catchAndToast'
 import { useLoading } from '@/hooks/useLoading'
 import { customConfirm } from '@/utils/customConfirm'
+import { useBeforeUnload } from '@/hooks/useBeforeUnload'
 
 import { Editor } from '@monaco-editor/react'
 import { Box, Button, CircularProgress, useColorScheme } from '@mui/material'
 import useSWR from 'swr'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import toast from 'react-hot-toast'
-import { noop } from 'lodash-es'
 
 import type { ProjectPageProps } from './ProjectPage'
 
@@ -88,27 +88,7 @@ export function TextEditor(projectInfo: ProjectPageProps) {
     [content, localContent, editable, curHash, isTxt]
   )
 
-  // 用户离开页面前，提示用户保存
-  useEffect(() => {
-    if (
-      !editable ||
-      !curPath ||
-      !curHash ||
-      !isTxt ||
-      localContent === content
-    ) {
-      return noop
-    }
-    const onBeforeUnload = (e: BeforeUnloadEvent) => {
-      e.preventDefault()
-      e.stopPropagation()
-      return '文件尚未保存，确定要离开吗？'
-    }
-    window.addEventListener('beforeunload', onBeforeUnload)
-    return () => {
-      window.removeEventListener('beforeunload', onBeforeUnload)
-    }
-  }, [content, curHash, curPath, editable, isTxt, localContent])
+  useBeforeUnload(editable && !!curHash && isTxt && localContent !== content)
 
   useKeyDown(
     withSaveLoading(
