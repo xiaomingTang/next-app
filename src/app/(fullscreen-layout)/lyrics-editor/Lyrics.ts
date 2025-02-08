@@ -67,6 +67,9 @@ export class LyricItem {
   }
 
   offset(offset: number) {
+    if (this.type !== 'lyric') {
+      return
+    }
     this.time = Math.max(0, this.time + offset)
   }
 

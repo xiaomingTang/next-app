@@ -35,7 +35,7 @@ export function LyricsEditor() {
           key={[item.type, item.time, item.value, idx].join('-')}
           lyricItem={item}
           onChange={(newItem) => {
-            useLyricsEditor.updateLrcItem(idx, newItem)
+            useLyricsEditor.updateItem(idx, newItem)
           }}
           onDelete={() => {
             useLyricsEditor.deleteLrcItem(idx)
