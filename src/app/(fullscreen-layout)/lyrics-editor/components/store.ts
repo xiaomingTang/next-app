@@ -1,13 +1,18 @@
+import { LyricItem, sortLyricItems } from '../Lyrics'
+
 import { customConfirm } from '@/utils/customConfirm'
 import { generateUseAudio } from '@/utils/media/useAudio'
 
 import { withStatic } from '@zimi/utils'
 import { create } from 'zustand'
 
+import type { LyricType } from '../Lyrics'
+
 const useRawLyricsEditor = create(() => ({
   audioUrl: '',
   audioFile: null as File | null,
   lrcContent: '',
+  lrcItems: [] as LyricItem[],
 }))
 
 export const useLyricsEditor = withStatic(useRawLyricsEditor, {
@@ -27,6 +32,11 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
       }
       useRawLyricsEditor.setState({
         lrcContent: newText,
+        lrcItems: newText
+          .split('\n')
+          .filter(Boolean)
+          .map((s) => new LyricItem(s))
+          .sort(sortLyricItems),
       })
       return
     }
@@ -58,6 +68,40 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
     }
     useLyricsEditorAudio.setState({ src: url })
     useRawLyricsEditor.setState({ audioUrl: url, audioFile: null })
+  },
+  insertMeta(n: number, { type, value }: { type: LyricType; value: string }) {
+    useRawLyricsEditor.setState((s) => ({
+      lrcItems: [
+        ...s.lrcItems.slice(0, n),
+        new LyricItem({
+          type,
+          value,
+        }),
+        ...s.lrcItems.slice(n),
+      ].sort(sortLyricItems),
+    }))
+  },
+  insertLrc(n: number, { value, time }: { value: string; time?: number }) {
+    const { lrcItems } = useRawLyricsEditor.getState()
+    const newTime = time ?? lrcItems[n - 1]?.time ?? 0
+    useRawLyricsEditor.setState((s) => ({
+      lrcItems: [
+        ...s.lrcItems.slice(0, n),
+        new LyricItem({
+          type: 'lyric',
+          value,
+          time: newTime,
+        }),
+        ...s.lrcItems.slice(n),
+      ].sort(sortLyricItems),
+    }))
+  },
+  updateLrcItem(n: number, newItem: LyricItem) {
+    useRawLyricsEditor.setState((s) => ({
+      lrcItems: s.lrcItems
+        .map((item, idx) => (idx === n ? newItem : item))
+        .sort(sortLyricItems),
+    }))
   },
 })
 

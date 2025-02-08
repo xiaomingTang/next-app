@@ -2,28 +2,13 @@ import { useLyricsEditor } from './store'
 import { NoAudio, NoLrc } from './Empty'
 import { LyricItemDom } from './LyricItem'
 
-import { LyricItem, sortLyricItems } from '../Lyrics'
-
-import { useListen } from '@/hooks/useListen'
 import { STYLE } from '@/config'
 
 import { Box, Divider } from '@mui/material'
-import { useState } from 'react'
 
 export function LyricsEditor() {
-  const lrcContent = useLyricsEditor((state) => state.lrcContent)
-  const [lyricItems, setLyricItems] = useState<LyricItem[]>([])
+  const lrcItems = useLyricsEditor((state) => state.lrcItems)
   const audioUrl = useLyricsEditor((s) => s.audioUrl)
-
-  useListen(lrcContent, () => {
-    setLyricItems(
-      lrcContent
-        .split('\n')
-        .filter(Boolean)
-        .map((s) => new LyricItem(s))
-        .sort(sortLyricItems)
-    )
-  })
 
   return (
     <Box
@@ -34,6 +19,9 @@ export function LyricsEditor() {
         height: '100%',
         overflowY: 'auto',
       }}
+      onDoubleClick={() => {
+        useLyricsEditor.insertLrc(99999999, { value: '' })
+      }}
     >
       {!audioUrl && (
         <>
@@ -41,17 +29,13 @@ export function LyricsEditor() {
           <Divider sx={{ my: 1 }} />
         </>
       )}
-      {lyricItems.length === 0 && <NoLrc />}
-      {lyricItems.map((item, idx) => (
+      {lrcItems.length === 0 && <NoLrc />}
+      {lrcItems.map((item, idx) => (
         <LyricItemDom
-          key={[item.type, item.time, item.value].join('-')}
+          key={[item.type, item.time, item.value, idx].join('-')}
           lyricItem={item}
           onChange={(newItem) => {
-            setLyricItems((prev) => {
-              const newItems = [...prev]
-              newItems[idx] = newItem
-              return newItems.sort(sortLyricItems)
-            })
+            useLyricsEditor.updateLrcItem(idx, newItem)
           }}
         />
       ))}

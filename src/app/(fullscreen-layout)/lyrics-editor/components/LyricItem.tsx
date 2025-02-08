@@ -4,7 +4,14 @@ import { customConfirm } from '@/utils/customConfirm'
 import { SilentError } from '@/errors/SilentError'
 import { cat } from '@/errors/catchAndToast'
 
-import { Box, ClickAwayListener, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  ClickAwayListener,
+  colors,
+  TextField,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import { useState } from 'react'
 
 import type { FormEvent } from 'react'
@@ -60,6 +67,7 @@ async function checkLrcContent(str: string, prevLyricItem: LyricItem) {
 }
 
 export function LyricItemDom({ lyricItem, onChange }: LyricItemProps) {
+  const theme = useTheme()
   const { type, time: timestamp, value: text } = lyricItem
   const [editing, setEditing] = useState(false)
   const [newStr, setNewStr] = useState(lyricItem.toString())
@@ -123,14 +131,17 @@ export function LyricItemDom({ lyricItem, onChange }: LyricItemProps) {
           backgroundColor: 'rgba(0, 0, 0, 0.1)',
         },
       }}
-      onDoubleClick={() => setEditing(true)}
+      onDoubleClick={(e) => {
+        e.stopPropagation()
+        setEditing(true)
+      }}
     >
       {type !== 'lyric' && (
         <>
           <Typography
             component='code'
-            className='text-gray-400'
             sx={{
+              color: theme.palette.grey[400],
               [`&:before`]: {
                 content: '"元数据"',
                 display: 'inline-block',
@@ -145,24 +156,36 @@ export function LyricItemDom({ lyricItem, onChange }: LyricItemProps) {
             [
           </Typography>
           <code>{type}</code>
-          <code className='mx-1 text-gray-400'>:</code>
+          <code className='mx-1 text-grey-400'>:</code>
           <span>{text}</span>
-          <code className='text-gray-400'>]</code>
+          <code className='text-grey-400'>]</code>
         </>
       )}
       {type === 'lyric' && (
         <>
           <span className='inline-block w-28 text-right'>
-            <code className='text-gray-400'>[</code>
+            <code className='text-grey-400'>[</code>
             <code>{m}</code>
             <code className='mx-1'>:</code>
             <code>{s}</code>
-            <code className='text-gray-400 ml-1'>.</code>
-            <code className='text-gray-400'>{ms}</code>
-            <code className='text-gray-400'>]</code>
+            <code className='text-grey-400 ml-1'>.</code>
+            <code className='text-grey-400'>{ms}</code>
+            <code className='text-grey-400'>]</code>
           </span>
           <span> </span>
-          <span className='ml-4'>{text}</span>
+          <Typography
+            component='span'
+            sx={{
+              ml: 1,
+              [`&:before`]: {
+                content: !text.trim() ? '"双击可编辑该行"' : '""',
+                display: 'inline-block',
+                color: colors.grey[400],
+              },
+            }}
+          >
+            {text}
+          </Typography>
         </>
       )}
     </Box>
