@@ -4,9 +4,9 @@ import { useLyricsEditor } from './store'
 import { SettingsTrigger } from './SettingsTrigger'
 import { AudioControls } from './AudioControls'
 import { LyricsEditor } from './LyricsEditor'
+import { Timeline } from './Timeline'
 
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
-import { STYLE } from '@/config'
 import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCatcherHandler'
 import { cat } from '@/errors/catchAndToast'
 import { useBeforeUnload } from '@/hooks/useBeforeUnload'
@@ -60,14 +60,7 @@ export function LyricsEditorPage() {
       {/* 控制区 */}
       <AudioControls />
       {/* 时间 + 歌词时间轴 + 波形图区 */}
-      <Box
-        component='canvas'
-        sx={{
-          height: '30%',
-          width: '100%',
-          maxWidth: STYLE.width.desktop,
-        }}
-      />
+      <Timeline />
     </Box>
   )
 }
