@@ -37,6 +37,9 @@ export function LyricsEditor() {
           onChange={(newItem) => {
             useLyricsEditor.updateLrcItem(idx, newItem)
           }}
+          onDelete={() => {
+            useLyricsEditor.deleteLrcItem(idx)
+          }}
         />
       ))}
     </Box>

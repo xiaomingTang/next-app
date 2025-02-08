@@ -103,6 +103,11 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
         .sort(sortLyricItems),
     }))
   },
+  deleteLrcItem(n: number) {
+    useRawLyricsEditor.setState((s) => ({
+      lrcItems: s.lrcItems.filter((_, idx) => idx !== n),
+    }))
+  },
 })
 
 export const [useLyricsEditorAudio, LyricsEditorAudioPlayer] =

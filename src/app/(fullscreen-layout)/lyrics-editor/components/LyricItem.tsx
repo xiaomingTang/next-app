@@ -8,10 +8,12 @@ import {
   Box,
   ClickAwayListener,
   colors,
+  IconButton,
   TextField,
   Typography,
   useTheme,
 } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
 import { useState } from 'react'
 
 import type { FormEvent } from 'react'
@@ -19,6 +21,7 @@ import type { FormEvent } from 'react'
 interface LyricItemProps {
   lyricItem: LyricItem
   onChange?: (value: LyricItem) => void
+  onDelete?: () => void
 }
 
 /**
@@ -66,7 +69,11 @@ async function checkLrcContent(str: string, prevLyricItem: LyricItem) {
   return str
 }
 
-export function LyricItemDom({ lyricItem, onChange }: LyricItemProps) {
+export function LyricItemDom({
+  lyricItem,
+  onChange,
+  onDelete,
+}: LyricItemProps) {
   const theme = useTheme()
   const { type, time: timestamp, value: text } = lyricItem
   const [editing, setEditing] = useState(false)
@@ -124,11 +131,15 @@ export function LyricItemDom({ lyricItem, onChange }: LyricItemProps) {
   return (
     <Box
       sx={{
+        position: 'relative',
         height: '42px',
         py: 1,
         textAlign: type === 'lyric' ? 'left' : 'center',
         [`&:hover`]: {
           backgroundColor: 'rgba(0, 0, 0, 0.1)',
+          [`& > .visible-when-parent-hover`]: {
+            display: 'inline-flex',
+          },
         },
       }}
       onDoubleClick={(e) => {
@@ -188,6 +199,23 @@ export function LyricItemDom({ lyricItem, onChange }: LyricItemProps) {
           </Typography>
         </>
       )}
+      <IconButton
+        className='visible-when-parent-hover'
+        onClick={() => {
+          onDelete?.()
+        }}
+        sx={{
+          display: 'none',
+          position: 'absolute',
+          right: 0,
+          top: 0,
+          bottom: 0,
+          m: 'auto',
+          color: theme.palette.error.main,
+        }}
+      >
+        <DeleteIcon />
+      </IconButton>
     </Box>
   )
 }
