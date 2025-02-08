@@ -1,3 +1,5 @@
+import { clamp } from 'lodash-es'
+
 export const lyricTypeMap = {
   ar: '艺术家/演唱者',
   ti: '歌曲标题',
@@ -100,7 +102,8 @@ export class Lyrics {
     )
   }
 
-  insertLyric(n: number, { value }: { value: string }) {
+  insertLyric(inputN: number, { value }: { value: string }) {
+    const n = clamp(inputN, 0, this.items.length)
     const prevLyricTime = this.items[n - 1]?.time ?? 0
     const nextLyricTime = this.items[n]?.time ?? prevLyricTime + 2
     this.items.splice(

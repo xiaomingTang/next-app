@@ -5,6 +5,7 @@ import { generateUseAudio } from '@/utils/media/useAudio'
 
 import { withStatic } from '@zimi/utils'
 import { create } from 'zustand'
+import { clamp } from 'lodash-es'
 
 import type { LyricType } from '../Lyrics'
 
@@ -81,8 +82,9 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
       ].sort(sortLyricItems),
     }))
   },
-  insertLrc(n: number, { value, time }: { value: string; time?: number }) {
+  insertLrc(inputN: number, { value, time }: { value: string; time?: number }) {
     const { lrcItems } = useRawLyricsEditor.getState()
+    const n = clamp(inputN, 0, lrcItems.length)
     const newTime = time ?? lrcItems[n - 1]?.time ?? 0
     useRawLyricsEditor.setState((s) => ({
       lrcItems: [

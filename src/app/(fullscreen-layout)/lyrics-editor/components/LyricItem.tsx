@@ -14,6 +14,7 @@ import {
   useTheme,
 } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
+import AddCircleIcon from '@mui/icons-material/AddCircle'
 import { useState } from 'react'
 
 import type { FormEvent } from 'react'
@@ -22,6 +23,8 @@ interface LyricItemProps {
   lyricItem: LyricItem
   onChange?: (value: LyricItem) => void
   onDelete?: () => void
+  onInsertBefore?: (value?: LyricItem) => void
+  onInsertAfter?: (value?: LyricItem) => void
 }
 
 /**
@@ -73,6 +76,8 @@ export function LyricItemDom({
   lyricItem,
   onChange,
   onDelete,
+  onInsertBefore,
+  onInsertAfter,
 }: LyricItemProps) {
   const theme = useTheme()
   const { type, time: timestamp, value: text } = lyricItem
@@ -135,6 +140,9 @@ export function LyricItemDom({
         height: '42px',
         py: 1,
         textAlign: type === 'lyric' ? 'left' : 'center',
+        [`& > .visible-when-parent-hover`]: {
+          display: 'none',
+        },
         [`&:hover`]: {
           backgroundColor: 'rgba(0, 0, 0, 0.1)',
           [`& > .visible-when-parent-hover`]: {
@@ -205,7 +213,6 @@ export function LyricItemDom({
           onDelete?.()
         }}
         sx={{
-          display: 'none',
           position: 'absolute',
           right: 0,
           top: 0,
@@ -215,6 +222,36 @@ export function LyricItemDom({
         }}
       >
         <DeleteIcon />
+      </IconButton>
+      <IconButton
+        className='visible-when-parent-hover'
+        sx={{
+          position: 'absolute',
+          left: '50%',
+          top: 0,
+          transform: 'translate(-50%, -50%)',
+          color: theme.palette.primary.main,
+        }}
+        onClick={() => {
+          onInsertBefore?.()
+        }}
+      >
+        <AddCircleIcon />
+      </IconButton>
+      <IconButton
+        className='visible-when-parent-hover'
+        sx={{
+          position: 'absolute',
+          left: '50%',
+          bottom: 0,
+          transform: 'translate(-50%, 50%)',
+          color: theme.palette.primary.main,
+        }}
+        onClick={() => {
+          onInsertAfter?.()
+        }}
+      >
+        <AddCircleIcon />
       </IconButton>
     </Box>
   )

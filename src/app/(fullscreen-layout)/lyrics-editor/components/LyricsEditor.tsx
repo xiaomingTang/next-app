@@ -40,6 +40,12 @@ export function LyricsEditor() {
           onDelete={() => {
             useLyricsEditor.deleteLrcItem(idx)
           }}
+          onInsertBefore={(item) => {
+            useLyricsEditor.insertLrc(idx, item ?? { value: '' })
+          }}
+          onInsertAfter={(item) => {
+            useLyricsEditor.insertLrc(idx + 1, item ?? { value: '' })
+          }}
         />
       ))}
     </Box>
