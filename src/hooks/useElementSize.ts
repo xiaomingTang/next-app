@@ -6,7 +6,11 @@ interface Size {
   height: number
 }
 
-export function useElementSize<T extends HTMLElement = HTMLElement>() {
+type SizeType = 'offsetSize' | 'clientSize' | 'scrollSize'
+
+export function useElementSize<T extends HTMLElement = HTMLElement>(
+  type: SizeType = 'offsetSize'
+) {
   const [elem, setElem] = useState<T | null | undefined>()
   const [size, setSize] = useState<Size>({
     width: 0,
@@ -21,10 +25,26 @@ export function useElementSize<T extends HTMLElement = HTMLElement>() {
       }
       // 未被卸载才执行 setState
       // (由于被 throttle, 可能在组件被卸载之后仍在执行, 所以需要加一个 flag)
-      setSize({
-        width: elem.clientWidth,
-        height: elem.clientHeight,
-      })
+      switch (type) {
+        case 'offsetSize':
+          setSize({
+            width: elem.offsetWidth,
+            height: elem.offsetHeight,
+          })
+          break
+        case 'clientSize':
+          setSize({
+            width: elem.clientWidth,
+            height: elem.clientHeight,
+          })
+          break
+        case 'scrollSize':
+          setSize({
+            width: elem.scrollWidth,
+            height: elem.scrollHeight,
+          })
+          break
+      }
     }
     const onResize = throttle(rawOnResize, 500, {
       leading: false,
@@ -45,7 +65,7 @@ export function useElementSize<T extends HTMLElement = HTMLElement>() {
       window.removeEventListener('resize', onResize)
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
-  }, [elem])
+  }, [elem, type])
 
   return [size, elem, setElem] as const
 }
