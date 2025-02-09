@@ -232,7 +232,8 @@ export function LyricItemDom({
       )}
       <IconButton
         className='visible-when-parent-hover'
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation()
           onDelete?.()
         }}
         sx={{
@@ -255,7 +256,8 @@ export function LyricItemDom({
           transform: 'translate(-50%, -50%)',
           color: theme.palette.primary.main,
         }}
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation()
           onInsertBefore?.()
         }}
       >
@@ -270,7 +272,8 @@ export function LyricItemDom({
           transform: 'translate(-50%, 50%)',
           color: theme.palette.primary.main,
         }}
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation()
           onInsertAfter?.()
         }}
       >
