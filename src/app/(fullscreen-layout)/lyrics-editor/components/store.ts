@@ -104,7 +104,9 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
   insertLrc(inputN: number, { value, time }: { value: string; time?: number }) {
     const { lrcItems } = useRawLyricsEditor.getState()
     const n = clamp(inputN, 0, lrcItems.length)
-    const newTime = time ?? lrcItems[n - 1]?.time ?? 0
+    const curTime = lrcItems[n - 1]?.time ?? 0
+    const nextTime = lrcItems[n]?.time ?? curTime
+    const newTime = time ?? (nextTime + curTime) / 2
     useRawLyricsEditor.setState((s) => ({
       lrcItems: formatLrcItems([
         ...s.lrcItems.slice(0, n),
