@@ -3,12 +3,15 @@ import 'client-only'
 type Listener = ((
   e: React.MouseEvent<HTMLElement, MouseEvent>,
   reason: 'click'
-) => void) &
+) => void | Promise<void>) &
   ((
     e: React.MouseEvent<HTMLElement, MouseEvent>,
     reason: 'middleClick'
-  ) => void) &
-  ((e: React.KeyboardEvent<HTMLElement>, reason: 'enter') => void)
+  ) => void | Promise<void>) &
+  ((
+    e: React.KeyboardEvent<HTMLElement>,
+    reason: 'enter'
+  ) => void | Promise<void>)
 
 export function triggerMenuItemEvents(callback: Listener) {
   return {
@@ -18,12 +21,12 @@ export function triggerMenuItemEvents(callback: Listener) {
       // 中键
       if (e.button === 1) {
         e.preventDefault()
-        callback(e, 'middleClick')
+        void callback(e, 'middleClick')
       }
     },
     onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
       if (e.key === 'Enter') {
-        callback(e, 'enter')
+        void callback(e, 'enter')
       }
     },
   }
