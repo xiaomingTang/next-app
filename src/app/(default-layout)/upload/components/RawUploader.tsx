@@ -1,14 +1,15 @@
-interface AudioUploaderProps {
-  accept?: string
-  multiple?: boolean
+import type { InputHTMLAttributes } from 'react'
+
+interface AudioUploaderProps
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    'onChange' | 'onInput' | 'style' | 'type'
+  > {
   onChange?: (files: File[]) => void
 }
 
-export function RawUploader({
-  onChange,
-  multiple,
-  accept,
-}: AudioUploaderProps) {
+export function RawUploader(props: AudioUploaderProps) {
+  const { onChange, autoFocus = true, ...restProps } = props
   return (
     <input
       type='file'
@@ -22,9 +23,8 @@ export function RawUploader({
         overflow: 'hidden',
         cursor: 'pointer',
       }}
-      autoFocus
-      multiple={multiple}
-      accept={accept}
+      autoFocus={autoFocus}
+      {...restProps}
       onInput={(e) => {
         const target = e.target as HTMLInputElement
         onChange?.(Array.from(target.files ?? []))
