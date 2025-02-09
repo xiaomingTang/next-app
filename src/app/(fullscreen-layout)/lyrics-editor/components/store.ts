@@ -20,7 +20,7 @@ const useRawLyricsEditor = create(() => ({
  * 注意，这里直接修改了 LyricItem 的值，在 react 中不推荐这样做，
  * 万一之后出现了 bug，记得检查这里
  */
-function formatLrcItems(lrcItems: LyricItem[]) {
+export function formatLrcItems(lrcItems: LyricItem[]) {
   const sortedItems = lrcItems.sort(sortLyricItems)
   const offsetItem = sortedItems.find((item) => item.type === 'offset')
   if (offsetItem) {
