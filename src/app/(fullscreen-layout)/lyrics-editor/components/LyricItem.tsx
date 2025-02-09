@@ -3,6 +3,7 @@ import { LyricItem } from '../Lyrics'
 import { customConfirm } from '@/utils/customConfirm'
 import { SilentError } from '@/errors/SilentError'
 import { cat } from '@/errors/catchAndToast'
+import { useKeyDown } from '@/hooks/useKey'
 
 import {
   Box,
@@ -83,6 +84,13 @@ export function LyricItemDom({
   const { type, time: timestamp, value: text } = lyricItem
   const [editing, setEditing] = useState(false)
   const [newStr, setNewStr] = useState(lyricItem.toString())
+
+  useKeyDown((e) => {
+    if (e.key === 'Escape' && editing) {
+      setNewStr(lyricItem.toString())
+      setEditing(false)
+    }
+  })
 
   const m = Math.floor(timestamp / 60)
     .toString()
