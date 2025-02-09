@@ -4,6 +4,8 @@ import {
   useLyricsEditorAudio,
 } from './store'
 
+import { isButton, isInputting, useKeyDown, useKeyPress } from '@/hooks/useKey'
+
 import PauseIcon from '@mui/icons-material/Pause'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import { Box, Button, ButtonGroup, IconButton } from '@mui/material'
@@ -14,6 +16,21 @@ export function AudioControls() {
   const loading = useLyricsEditorAudio((s) => s.loading)
   const audioUrl = useLyricsEditor((s) => s.audioUrl)
   const disabled = loading || !audioUrl
+
+  useKeyPress((e) => {
+    if (e.key === ' ' && !isButton(e) && !isInputting(e)) {
+      void controls.togglePlay()
+    }
+  })
+
+  useKeyDown((e) => {
+    if (e.key === 'ArrowLeft' && !isButton(e) && !isInputting(e)) {
+      void controls.seekBackward(3)
+    }
+    if (e.key === 'ArrowRight' && !isButton(e) && !isInputting(e)) {
+      void controls.seekForward(3)
+    }
+  })
 
   return (
     <Box sx={{ py: 1 }}>
