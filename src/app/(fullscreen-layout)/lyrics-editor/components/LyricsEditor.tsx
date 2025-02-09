@@ -40,11 +40,25 @@ export function LyricsEditor() {
           onDelete={() => {
             useLyricsEditor.deleteLrcItem(idx)
           }}
-          onInsertBefore={(item) => {
-            useLyricsEditor.insertLrc(idx, item ?? { value: '' })
+          onInsertBefore={(value) => {
+            if (item.type === 'lyric') {
+              useLyricsEditor.insertLrc(idx, value ?? { value: '' })
+            } else {
+              useLyricsEditor.insertMeta(idx, {
+                type: item.type,
+                value: value?.value ?? 'unknown',
+              })
+            }
           }}
-          onInsertAfter={(item) => {
-            useLyricsEditor.insertLrc(idx + 1, item ?? { value: '' })
+          onInsertAfter={(value) => {
+            if (item.type === 'lyric') {
+              useLyricsEditor.insertLrc(idx + 1, value ?? { value: '' })
+            } else {
+              useLyricsEditor.insertMeta(idx + 1, {
+                type: item.type,
+                value: value?.value ?? 'unknown',
+              })
+            }
           }}
         />
       ))}

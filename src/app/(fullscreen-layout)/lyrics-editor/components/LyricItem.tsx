@@ -26,8 +26,8 @@ interface LyricItemProps {
   lyricItem: LyricItem
   onChange?: (value: LyricItem) => void
   onDelete?: () => void
-  onInsertBefore?: (value?: LyricItem) => void
-  onInsertAfter?: (value?: LyricItem) => void
+  onInsertBefore?: (value?: { value: string; time?: number }) => void
+  onInsertAfter?: (value?: { value: string; time?: number }) => void
 }
 
 /**
