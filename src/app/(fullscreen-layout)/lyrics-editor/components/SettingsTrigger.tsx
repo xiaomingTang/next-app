@@ -4,15 +4,7 @@ import { AnchorProvider } from '@/components/AnchorProvider'
 import { RawUploader } from '@/app/(default-layout)/upload/components/RawUploader'
 import { cat } from '@/errors/catchAndToast'
 
-import {
-  IconButton,
-  ListItemIcon,
-  ListItemText,
-  Menu,
-  MenuItem,
-} from '@mui/material'
-import MusicNoteIcon from '@mui/icons-material/MusicNote'
-import StickyNote2Icon from '@mui/icons-material/StickyNote2'
+import { IconButton, ListItemText, Menu, MenuItem } from '@mui/material'
 import SettingsIcon from '@mui/icons-material/Settings'
 
 export function SettingsTrigger() {
@@ -44,35 +36,28 @@ export function SettingsTrigger() {
           >
             <MenuItem sx={{ position: 'relative' }}>
               <RawUploader
-                multiple={false}
-                accept='.lrc,.txt'
-                onChange={cat(async ([f]) => {
-                  if (f) {
-                    await useLyricsEditor.setFile(f, 'lrc')
-                    setAnchorEl(null)
+                multiple={true}
+                accept='.txt,.lrc,audio/*'
+                onChange={cat(async (files) => {
+                  const audioFile = files.find((f) =>
+                    f.type.startsWith('audio/')
+                  )
+                  const lrcFile = files.find(
+                    (f) => !f.type.startsWith('audio/')
+                  )
+                  if (audioFile) {
+                    await useLyricsEditor.setFile(audioFile, 'audio')
                   }
+                  if (lrcFile) {
+                    await useLyricsEditor.setFile(lrcFile, 'lrc')
+                  }
+                  if (!audioFile && !lrcFile) {
+                    throw new Error('请上传音频或歌词文件')
+                  }
+                  setAnchorEl(null)
                 })}
               />
-              <ListItemIcon>
-                <StickyNote2Icon fontSize='small' />
-              </ListItemIcon>
-              <ListItemText>歌词上传</ListItemText>
-            </MenuItem>
-            <MenuItem sx={{ position: 'relative' }}>
-              <RawUploader
-                multiple={false}
-                accept='audio/*'
-                onChange={cat(async ([f]) => {
-                  if (f) {
-                    await useLyricsEditor.setFile(f, 'audio')
-                    setAnchorEl(null)
-                  }
-                })}
-              />
-              <ListItemIcon>
-                <MusicNoteIcon fontSize='small' />
-              </ListItemIcon>
-              <ListItemText>音频上传</ListItemText>
+              <ListItemText primary='文件上传' secondary='音频或歌词文件' />
             </MenuItem>
           </Menu>
         </>
