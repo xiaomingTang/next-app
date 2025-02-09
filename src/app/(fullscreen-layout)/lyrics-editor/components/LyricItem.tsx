@@ -6,10 +6,8 @@ import { customConfirm } from '@/utils/customConfirm'
 import { SilentError } from '@/errors/SilentError'
 import { cat } from '@/errors/catchAndToast'
 import { useKeyDown } from '@/hooks/useKey'
-import { useListen } from '@/hooks/useListen'
 
 import {
-  alpha,
   Box,
   ClickAwayListener,
   colors,
@@ -25,8 +23,6 @@ import { useRef, useState } from 'react'
 import type { FormEvent } from 'react'
 
 interface LyricItemProps {
-  isScrolling: boolean
-  playingPercent: number
   lyricItem: LyricItem
   onChange?: (value: LyricItem) => void
   onDelete?: () => void
@@ -80,8 +76,6 @@ async function checkLrcContent(str: string, prevLyricItem: LyricItem) {
 }
 
 export function LyricItemDom({
-  isScrolling,
-  playingPercent,
   lyricItem,
   onChange,
   onDelete,
@@ -93,8 +87,6 @@ export function LyricItemDom({
   const { type, time: timestamp, value: text } = lyricItem
   const [editing, setEditing] = useState(false)
   const [newStr, setNewStr] = useState(lyricItem.toString())
-  const elemRef = useRef<HTMLElement>(null)
-  const isPlayingThis = playingPercent >= 0 && playingPercent < 1
 
   useKeyDown((e) => {
     if (e.key === 'Escape' && editing) {
@@ -103,16 +95,6 @@ export function LyricItemDom({
       if (prevPlayingRef.current) {
         void useLyricsEditorAudio.getState().controls.play()
       }
-    }
-  })
-
-  useListen(isPlayingThis, () => {
-    if (isPlayingThis && !isScrolling) {
-      elemRef.current?.scrollIntoView({
-        behavior: 'instant',
-        block: 'center',
-        inline: 'center',
-      })
     }
   })
 
@@ -173,7 +155,6 @@ export function LyricItemDom({
   }
   return (
     <Box
-      ref={elemRef}
       sx={{
         position: 'relative',
         height: '42px',
@@ -182,13 +163,8 @@ export function LyricItemDom({
         [`& > .visible-when-parent-hover`]: {
           display: 'none',
         },
-        backgroundColor: isPlayingThis
-          ? alpha(colors.blue[300], 0.5)
-          : 'transparent',
         [`&:hover`]: {
-          backgroundColor: isPlayingThis
-            ? alpha(colors.blue[300], 0.6)
-            : 'rgba(0, 0, 0, 0.1)',
+          backgroundColor: 'rgba(0, 0, 0, 0.1)',
           [`& > .visible-when-parent-hover`]: {
             display: 'inline-flex',
           },
