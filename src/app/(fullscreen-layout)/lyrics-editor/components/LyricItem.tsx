@@ -183,7 +183,7 @@ export function LyricItemDom({
           <Typography
             component='code'
             sx={{
-              color: theme.palette.grey[400],
+              color: theme.palette.grey[500],
               [`&:before`]: {
                 content: '"元数据"',
                 display: 'inline-block',
@@ -198,21 +198,21 @@ export function LyricItemDom({
             [
           </Typography>
           <code>{type}</code>
-          <code className='mx-1 text-grey-400'>:</code>
+          <code className='mx-1 text-grey-500'>:</code>
           <span>{text}</span>
-          <code className='text-grey-400'>]</code>
+          <code className='text-grey-500'>]</code>
         </>
       )}
       {type === 'lyric' && (
         <>
           <span className='inline-block w-28 text-right'>
-            <code className='text-grey-400'>[</code>
+            <code className='text-grey-500'>[</code>
             <code>{m}</code>
             <code className='mx-1'>:</code>
             <code>{s}</code>
-            <code className='text-grey-400 ml-1'>.</code>
-            <code className='text-grey-400'>{ms}</code>
-            <code className='text-grey-400'>]</code>
+            <code className='text-grey-500 ml-1'>.</code>
+            <code className='text-grey-500'>{ms}</code>
+            <code className='text-grey-500'>]</code>
           </span>
           <span> </span>
           <Typography
@@ -222,7 +222,7 @@ export function LyricItemDom({
               [`&:before`]: {
                 content: !text.trim() ? '"双击可编辑该行"' : '""',
                 display: 'inline-block',
-                color: colors.grey[400],
+                color: colors.grey[500],
               },
             }}
           >
