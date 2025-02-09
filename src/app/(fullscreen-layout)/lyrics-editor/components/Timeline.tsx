@@ -210,6 +210,9 @@ export function Timeline() {
                 width: rawWidth * scalar,
                 left: (item.time / duration) * size.width * scalar + offset,
               }}
+              onDoubleClick={() => {
+                useLyricsEditorAudio.getState().controls.seek(item.time)
+              }}
             />
           )
         })}
