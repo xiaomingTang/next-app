@@ -43,7 +43,7 @@ export function SettingsTrigger() {
                     f.type.startsWith('audio/')
                   )
                   const lrcFile = files.find(
-                    (f) => !f.type.startsWith('audio/')
+                    (f) => f.name.endsWith('.txt') || f.name.endsWith('.lrc')
                   )
                   if (audioFile) {
                     await useLyricsEditor.setFile(audioFile, 'audio')
