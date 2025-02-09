@@ -2,6 +2,7 @@ import { useLyricsEditor, useLyricsEditorAudio } from './store'
 
 import { useElementSize } from '@/hooks/useElementSize'
 import { STYLE } from '@/config'
+import { useListen } from '@/hooks/useListen'
 
 import { useEffect, useRef, useState } from 'react'
 import { alpha, Box, colors, styled, useTheme } from '@mui/material'
@@ -104,6 +105,20 @@ export function Timeline() {
       window.removeEventListener('mousemove', onMouseMove)
     }
   }, [isSettingTime, scalar, size.width])
+
+  // 判断当前指针是否处于屏幕中可见，如果不可见，改变 offset 使其可见
+  useListen(curTime, () => {
+    if (isSettingTime) {
+      return
+    }
+    const left = (size.width * scalar * curTime) / duration + offset
+    const delta = 24
+    if (left > 1024 - delta) {
+      setOffset((prev) =>
+        clamp(prev - size.width + 2 * delta, -size.width * (scalar - 1), 0)
+      )
+    }
+  })
 
   if (duration <= 0 || lrcItems.length === 0) {
     return (
