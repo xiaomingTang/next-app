@@ -50,8 +50,8 @@ export function Timeline() {
       setAction(null)
     }
     const onMouseMove = (e: MouseEvent) => {
-      const movementX = e.screenX - lastXForDragRef.current
-      lastXForDragRef.current = e.screenX
+      const movementX = e.clientX - lastXForDragRef.current
+      lastXForDragRef.current = e.clientX
       setOffset((prev) =>
         clamp(prev + movementX, -size.width * (scalar - 1), 0)
       )
@@ -90,8 +90,8 @@ export function Timeline() {
         return
       }
       const duration = useLyricsEditorAudio.getState().state.duration
-      const movementX = e.screenX - lastXForTimeRef.current
-      lastXForTimeRef.current = e.screenX
+      const movementX = e.clientX - lastXForTimeRef.current
+      lastXForTimeRef.current = e.clientX
       setTempTime((prev) => {
         const delta = (movementX / size.width / scalar) * duration
         return clamp(prev + delta, 0, duration)
@@ -132,7 +132,7 @@ export function Timeline() {
       }}
       onMouseDown={(e) => {
         setAction('drag')
-        lastXForDragRef.current = e.screenX
+        lastXForDragRef.current = e.clientX
       }}
       onWheel={(e) => {
         if (e.shiftKey) {
@@ -151,8 +151,8 @@ export function Timeline() {
         if (newScalar !== prevScalar) {
           const left = (e.currentTarget as HTMLElement).getBoundingClientRect()
             .x
+          const x = e.clientX - left
           setOffset((prevOffset) => {
-            const x = e.clientX - left
             const x0 = (x - prevOffset) / prevScalar
             return clamp(
               prevOffset + x0 * (prevScalar - newScalar),
@@ -214,7 +214,7 @@ export function Timeline() {
         onMouseDown={(e) => {
           e.preventDefault()
           e.stopPropagation()
-          lastXForTimeRef.current = e.screenX
+          lastXForTimeRef.current = e.clientX
           setTempTime(curTime)
           setIsSettingTime(true)
         }}
