@@ -19,6 +19,8 @@ export function AudioControls() {
 
   useKeyPress((e) => {
     if (e.key === ' ' && !isButton(e) && !isInputting(e)) {
+      e.preventDefault()
+      e.stopPropagation()
       void controls.togglePlay()
     }
   })
