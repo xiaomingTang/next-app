@@ -1,6 +1,5 @@
 import { LyricItem, sortLyricItems } from '../Lyrics'
 
-import { customConfirm } from '@/utils/customConfirm'
 import { generateUseAudio } from '@/utils/media/useAudio'
 
 import { withStatic } from '@zimi/utils'
@@ -37,18 +36,7 @@ function formatLrcItems(lrcItems: LyricItem[]) {
 export const useLyricsEditor = withStatic(useRawLyricsEditor, {
   async setFile(f: File, type: 'audio' | 'lrc') {
     if (type === 'lrc') {
-      const prevText = useRawLyricsEditor.getState().lrcContent
       const newText = await f.text()
-      if (
-        prevText &&
-        newText !== prevText &&
-        !(await customConfirm('是否覆盖歌词文件？', 'SLIGHT'))
-      ) {
-        return
-      }
-      if (newText === prevText) {
-        return
-      }
       useRawLyricsEditor.setState({
         lrcContent: newText,
         lrcItems: formatLrcItems(
@@ -60,13 +48,6 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
       })
       return
     }
-    const prevFile = useRawLyricsEditor.getState().audioFile
-    if (
-      prevFile &&
-      !(await customConfirm('是否使用新的音频文件？', 'SLIGHT'))
-    ) {
-      return
-    }
     const url = URL.createObjectURL(f)
     useLyricsEditorAudio.setState({ src: url })
     useRawLyricsEditor.setState({
@@ -75,17 +56,6 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
     })
   },
   async setAudioUrl(url: string) {
-    const prevUrl = useRawLyricsEditor.getState().audioUrl
-    if (
-      prevUrl &&
-      prevUrl !== url &&
-      !(await customConfirm('是否使用新的音频文件？', 'SLIGHT'))
-    ) {
-      return
-    }
-    if (prevUrl === url) {
-      return
-    }
     useLyricsEditorAudio.setState({ src: url })
     useRawLyricsEditor.setState({ audioUrl: url, audioFile: null })
   },
@@ -130,6 +100,29 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
     useRawLyricsEditor.setState((s) => ({
       lrcItems: s.lrcItems.filter((_, idx) => idx !== n),
     }))
+  },
+  resetTimeline() {
+    const duration = useLyricsEditorAudio.getState().state.duration
+    if (duration === 0) {
+      throw new Error('音频未加载完成')
+    }
+    const allItems = useRawLyricsEditor.getState().lrcItems
+    const metaItems = allItems.filter((item) => item.type !== 'lyric')
+    const lyricItems = allItems.filter((item) => item.type === 'lyric')
+    if (lyricItems.length === 0) {
+      throw new Error('未检测到歌词内容')
+    }
+    const timeStep = duration / lyricItems.length
+    useRawLyricsEditor.setState({
+      lrcItems: formatLrcItems([
+        ...metaItems,
+        ...lyricItems.map((item, idx) => {
+          const newItem = new LyricItem(item)
+          newItem.time = timeStep * idx
+          return newItem
+        }),
+      ]),
+    })
   },
 })
 
