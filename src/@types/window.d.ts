@@ -4,6 +4,10 @@ declare global {
   type SimpleUser = Omit<User, 'password' | 'email'> &
     Pick<Partial<User>, 'password' | 'email'>
 
+  interface Window {
+    webkitAudioContext: typeof AudioContext
+  }
+
   interface Document {
     mozFullScreenElement?: Element
     webkitFullscreenElement?: Element

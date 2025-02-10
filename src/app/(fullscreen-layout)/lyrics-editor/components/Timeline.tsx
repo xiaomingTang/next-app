@@ -3,10 +3,12 @@ import { useLyricsEditor, useLyricsEditorAudio } from './store'
 import { useElementSize } from '@/hooks/useElementSize'
 import { STYLE } from '@/config'
 import { useListen } from '@/hooks/useListen'
+import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 
 import { useEffect, useRef, useState } from 'react'
 import { alpha, Box, colors, styled, useTheme } from '@mui/material'
 import { clamp, noop } from 'lodash-es'
+import useSWR from 'swr'
 
 const IndicatorContainer = styled(Box)({
   position: 'absolute',
@@ -27,6 +29,25 @@ const IndicatorInner = styled(Box)({
   backgroundColor: colors.red[500],
 })
 
+function getChannelData(f: File, channel = 0) {
+  return new Promise<Float32Array>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => {
+      const audioContext = new (window.AudioContext ||
+        window.webkitAudioContext)()
+      void audioContext.decodeAudioData(
+        reader.result as ArrayBuffer,
+        (buffer) => {
+          const channelData = buffer.getChannelData(channel)
+          resolve(channelData)
+        }
+      )
+    }
+    reader.onerror = reject
+    reader.readAsArrayBuffer(f)
+  })
+}
+
 export function Timeline() {
   const theme = useTheme()
   const duration = useLyricsEditorAudio((s) => s.state.duration)
@@ -41,6 +62,19 @@ export function Timeline() {
   const [tempTime, setTempTime] = useState(0)
   const lastXForDragRef = useRef(0)
   const lastXForTimeRef = useRef(0)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const audioUrl = useLyricsEditor((s) => s.audioUrl)
+  const audioFile = useLyricsEditor((s) => s.audioFile)
+  const [delayedOffset, delayedScalar] = useDebouncedValue([offset, scalar], {
+    delay: 500,
+    deps: [offset, scalar],
+  })
+  const { data: channelData } = useSWR(['getChannelData', audioUrl], () => {
+    if (!audioFile) {
+      return null
+    }
+    return getChannelData(audioFile)
+  })
 
   // ui 左右拖动
   useEffect(() => {
@@ -120,7 +154,31 @@ export function Timeline() {
     }
   })
 
-  if (duration <= 0 || lrcItems.length === 0) {
+  useEffect(() => {
+    const canvas = canvasRef.current
+    const ctx = canvas?.getContext('2d')
+    if (!canvas || !ctx || !channelData) {
+      return
+    }
+    const canvasWidth = canvas.clientWidth
+    const canvasHeight = canvas.clientHeight
+
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+    ctx.fillStyle = 'rgb(255, 0, 0)'
+
+    const count = Math.floor(channelData.length / delayedScalar)
+    const startIndex = Math.floor(
+      (-delayedOffset / (size.width * delayedScalar)) * channelData.length
+    )
+    // TODO: 高度和宽度待优化
+    for (let i = 0; i < count; i += 10) {
+      const x = (i * canvasWidth) / count
+      const y = (channelData[startIndex + i] + 1) / 2
+      ctx.fillRect(x, canvasHeight * (1 - y), 1, canvasHeight)
+    }
+  }, [channelData, size, delayedOffset, delayedScalar])
+
+  if (duration <= 0) {
     return (
       <Box
         sx={{
@@ -219,6 +277,7 @@ export function Timeline() {
       </Box>
       <Box
         component='canvas'
+        ref={canvasRef}
         sx={{
           width: '100%',
           height: '0%',
