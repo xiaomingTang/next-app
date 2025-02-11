@@ -162,6 +162,8 @@ export function Timeline() {
     }
     const canvasWidth = canvas.clientWidth
     const canvasHeight = canvas.clientHeight
+    canvas.width = canvasWidth
+    canvas.height = canvasHeight
 
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
     ctx.fillStyle = 'rgb(255, 0, 0)'
@@ -170,11 +172,12 @@ export function Timeline() {
     const startIndex = Math.floor(
       (-delayedOffset / (size.width * delayedScalar)) * channelData.length
     )
-    // TODO: 高度和宽度待优化
-    for (let i = 0; i < count; i += 10) {
-      const x = (i * canvasWidth) / count
-      const y = (channelData[startIndex + i] + 1) / 2
-      ctx.fillRect(x, canvasHeight * (1 - y), 1, canvasHeight)
+    const step = Math.floor(count / (canvasWidth / 2))
+    for (let i = 0; i < canvasWidth; i += 2) {
+      const j = Math.floor((i * count) / canvasWidth)
+      const slices = channelData.slice(startIndex + j, startIndex + j + step)
+      const max = Math.max(...slices)
+      ctx.fillRect(i, ((1 - max) / 2) * canvasHeight, 1, max * canvasHeight)
     }
   }, [channelData, size, delayedOffset, delayedScalar])
 
@@ -197,8 +200,8 @@ export function Timeline() {
         position: 'relative',
         width: '100%',
         maxWidth: STYLE.width.desktop,
-        height: '30%',
         flexShrink: 0,
+        py: 2,
         display: 'flex',
         flexDirection: 'column',
         overflow: 'hidden',
@@ -280,8 +283,7 @@ export function Timeline() {
         ref={canvasRef}
         sx={{
           width: '100%',
-          height: '0%',
-          flexGrow: 1,
+          height: '75px',
         }}
       />
       <IndicatorContainer
