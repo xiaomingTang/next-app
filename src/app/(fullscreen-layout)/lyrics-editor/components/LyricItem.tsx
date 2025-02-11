@@ -232,6 +232,7 @@ export function LyricItemDom({
       )}
       <IconButton
         className='visible-when-parent-hover'
+        title='删除'
         onClick={(e) => {
           e.stopPropagation()
           onDelete?.()
@@ -249,6 +250,7 @@ export function LyricItemDom({
       </IconButton>
       <IconButton
         className='visible-when-parent-hover'
+        title='在上方插入'
         sx={{
           position: 'absolute',
           left: '50%',
@@ -265,6 +267,7 @@ export function LyricItemDom({
       </IconButton>
       <IconButton
         className='visible-when-parent-hover'
+        title='在下方插入'
         sx={{
           position: 'absolute',
           left: '50%',
