@@ -357,7 +357,7 @@ export function Timeline() {
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
-    if (!canvas || !ctx || !channelData) {
+    if (!canvas || !ctx) {
       return
     }
     const canvasWidth = canvas.clientWidth
@@ -366,6 +366,11 @@ export function Timeline() {
     canvas.height = canvasHeight
 
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
+
+    if (!channelData) {
+      return
+    }
+
     ctx.fillStyle = '#1876D2'
 
     const count = Math.floor(channelData.length / delayedScalar)
