@@ -48,6 +48,8 @@ function getChannelData(f: File, channel = 0) {
   })
 }
 
+const MAX_SCALAR = 20
+
 export function Timeline() {
   const theme = useTheme()
   const duration = useLyricsEditorAudio((s) => s.state.duration)
@@ -66,7 +68,7 @@ export function Timeline() {
   const audioUrl = useLyricsEditor((s) => s.audioUrl)
   const audioFile = useLyricsEditor((s) => s.audioFile)
   const [delayedOffset, delayedScalar] = useDebouncedValue([offset, scalar], {
-    delay: 500,
+    delay: 300,
     deps: [offset, scalar],
   })
   const { data: channelData } = useSWR(['getChannelData', audioUrl], () => {
@@ -166,7 +168,7 @@ export function Timeline() {
     canvas.height = canvasHeight
 
     ctx.clearRect(0, 0, canvasWidth, canvasHeight)
-    ctx.fillStyle = 'rgb(255, 0, 0)'
+    ctx.fillStyle = '#1876D2'
 
     const count = Math.floor(channelData.length / delayedScalar)
     const startIndex = Math.floor(
@@ -176,7 +178,7 @@ export function Timeline() {
     for (let i = 0; i < canvasWidth; i += 2) {
       const j = Math.floor((i * count) / canvasWidth)
       const slices = channelData.slice(startIndex + j, startIndex + j + step)
-      const max = Math.max(...slices)
+      const max = Math.max(...slices) * 0.9
       ctx.fillRect(i, ((1 - max) / 2) * canvasHeight, 1, max * canvasHeight)
     }
   }, [channelData, size, delayedOffset, delayedScalar])
@@ -222,7 +224,7 @@ export function Timeline() {
           return
         }
         const prevScalar = scalar
-        const newScalar = clamp(prevScalar - e.deltaY / 1000, 1, 10)
+        const newScalar = clamp(prevScalar - e.deltaY / 1000, 1, MAX_SCALAR)
         setScalar(newScalar)
         if (newScalar !== prevScalar) {
           const left = (e.currentTarget as HTMLElement).getBoundingClientRect()
