@@ -148,6 +148,7 @@ export function LyricItemDom({
             autoFocus
             value={newStr}
             onChange={(e) => setNewStr(e.target.value)}
+            placeholder='元数据的格式为：[元数据类型:值]'
           />
         </Box>
       </ClickAwayListener>
