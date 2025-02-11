@@ -28,6 +28,7 @@ import RestoreIcon from '@mui/icons-material/Restore'
 import LyricsIcon from '@mui/icons-material/Lyrics'
 import PodcastsIcon from '@mui/icons-material/Podcasts'
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt'
+import DownloadIcon from '@mui/icons-material/Download'
 import toast from 'react-hot-toast'
 
 export function SettingsTrigger() {
@@ -59,6 +60,29 @@ export function SettingsTrigger() {
               'aria-labelledby': '关闭编辑器设置菜单',
             }}
           >
+            <MenuItem
+              onClick={cat(async () => {
+                useLyricsEditor.setState({
+                  lrcContent: initLyricContent,
+                  lrcItems: formatLrcItems(
+                    initLyricContent
+                      .split('\n')
+                      .filter(Boolean)
+                      .map((s) => new LyricItem(s))
+                  ),
+                })
+                setAnchorEl(null)
+                await useLyricsEditor.setAudioUrl(initAudioUrl)
+                await sleepMs(1000)
+                useLyricsEditor.resetTimeline()
+              })}
+            >
+              <ListItemIcon>
+                <SentimentSatisfiedAltIcon fontSize='small' />
+              </ListItemIcon>
+              <ListItemText primary='测试音频及歌词' />
+            </MenuItem>
+            <Divider />
             <MenuItem>
               <RawUploader
                 multiple
@@ -206,25 +230,23 @@ export function SettingsTrigger() {
             <Divider />
             <MenuItem
               onClick={cat(async () => {
-                useLyricsEditor.setState({
-                  lrcContent: initLyricContent,
-                  lrcItems: formatLrcItems(
-                    initLyricContent
-                      .split('\n')
-                      .filter(Boolean)
-                      .map((s) => new LyricItem(s))
-                  ),
-                })
+                const lrc = useLyricsEditor
+                  .getState()
+                  .lrcItems.map((item) => item.toString())
+                  .join('\n')
+                const blob = new Blob([lrc], { type: 'text/plain' })
+                const url = URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = 'lyrics.lrc'
+                a.click()
                 setAnchorEl(null)
-                await useLyricsEditor.setAudioUrl(initAudioUrl)
-                await sleepMs(1000)
-                useLyricsEditor.resetTimeline()
               })}
             >
               <ListItemIcon>
-                <SentimentSatisfiedAltIcon fontSize='small' />
+                <DownloadIcon fontSize='small' />
               </ListItemIcon>
-              <ListItemText primary='测试音频及歌词' />
+              <ListItemText primary='导出歌词文件' />
             </MenuItem>
           </Menu>
         </>
