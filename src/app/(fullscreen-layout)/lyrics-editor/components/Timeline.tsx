@@ -6,6 +6,7 @@ import { useElementSize } from '@/hooks/useElementSize'
 import { STYLE } from '@/config'
 import { useListen } from '@/hooks/useListen'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
+import { formatText } from '@/utils/string'
 
 import { useEffect, useRef, useState } from 'react'
 import {
@@ -23,6 +24,7 @@ const IndicatorContainer = styled(Box)({
   position: 'absolute',
   width: '15px',
   height: '100%',
+  top: 0,
   left: '-7.5px',
   cursor: 'ew-resize',
   backgroundColor: 'transparent',
@@ -60,6 +62,18 @@ function TimeSlice({
   const [isDragging, setIsDragging] = useState(false)
   const [translateX, setTranslateX] = useState(0)
   const lastXRef = useRef(0)
+
+  const width = rawWidth * scalar
+  const left = (item.time / duration) * containerWidth * scalar + offset
+  // 该元素的中点在屏幕中则视为该元素可见
+  const isMostlyInView =
+    left + width / 2 > 0 && left - width / 2 < containerWidth
+  // 根据 width 的大小，决定显示的文本长度
+  const txt =
+    isMostlyInView && (width > 50 || width / 20 >= item.value.length)
+      ? formatText(item.value, width / 20, width / 20)
+      : ''
+
   const onDragEndRef = useEventCallback((x: number) => {
     // 2 个
     const GAP = 0.5
@@ -163,19 +177,24 @@ function TimeSlice({
       key={[item.type, item.time, item.value, index].join('-')}
       sx={{
         position: 'absolute',
-        height: '100%',
+        height: '50px',
+        lineHeight: '50px',
         borderLeft: '1px solid',
         borderRight: '1px solid',
         borderColor: colors.grey[400],
+        textAlign: 'center',
+        fontSize: '10px',
+        userSelect: 'none',
       }}
       style={{
-        width: rawWidth * scalar,
-        left: (item.time / duration) * containerWidth * scalar + offset,
+        width,
+        left,
       }}
       onDoubleClick={() => {
         useLyricsEditorAudio.getState().controls.seek(item.time)
       }}
     >
+      {txt}
       <IndicatorContainer
         sx={{
           zIndex: isDragging ? 1 : 0,
@@ -430,7 +449,7 @@ export function Timeline() {
           flexShrink: 0,
           border: '1px solid',
           borderColor: theme.palette.grey[400],
-          overflowX: 'hidden',
+          overflow: 'hidden',
         }}
       >
         {lrcItems.map((item, idx) => (
