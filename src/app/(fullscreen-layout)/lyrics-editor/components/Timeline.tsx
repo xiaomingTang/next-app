@@ -8,11 +8,17 @@ import { useListen } from '@/hooks/useListen'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 import { formatText } from '@/utils/string'
 
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft'
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight'
 import { useEffect, useRef, useState } from 'react'
 import {
   alpha,
   Box,
   colors,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
   styled,
   useEventCallback,
   useTheme,
@@ -61,6 +67,10 @@ function TimeSlice({
   const rawWidth = (containerWidth * (endTime - item.time)) / duration
   const [isDragging, setIsDragging] = useState(false)
   const [translateX, setTranslateX] = useState(0)
+  const [contextMenu, setContextMenu] = useState<{
+    mouseX: number
+    mouseY: number
+  } | null>(null)
   const lastXRef = useRef(0)
 
   const width = rawWidth * scalar
@@ -141,6 +151,10 @@ function TimeSlice({
     })
   })
 
+  const closeContextMenu = () => {
+    setContextMenu(null)
+  }
+
   // 拖拽
   useEffect(() => {
     if (!isDragging) {
@@ -185,6 +199,9 @@ function TimeSlice({
         textAlign: 'center',
         fontSize: '10px',
         userSelect: 'none',
+        backgroundColor: !contextMenu
+          ? 'transparent'
+          : alpha(colors.grey[400], 0.4),
       }}
       style={{
         width,
@@ -192,6 +209,17 @@ function TimeSlice({
       }}
       onDoubleClick={() => {
         useLyricsEditorAudio.getState().controls.seek(item.time)
+      }}
+      onContextMenu={(e) => {
+        e.preventDefault()
+        setContextMenu((prev) =>
+          prev
+            ? null
+            : {
+                mouseX: e.clientX,
+                mouseY: e.clientY,
+              }
+        )
       }}
     >
       {txt}
@@ -211,6 +239,9 @@ function TimeSlice({
           transform: `translateX(${translateX}px)`,
         }}
         onMouseDown={(e) => {
+          if (e.button !== 0) {
+            return
+          }
           e.stopPropagation()
           e.preventDefault()
           setIsDragging(true)
@@ -222,6 +253,39 @@ function TimeSlice({
           sx={{ backgroundColor: 'transparent' }}
         />
       </IndicatorContainer>
+      <Menu
+        open={!!contextMenu}
+        onClose={closeContextMenu}
+        anchorReference='anchorPosition'
+        anchorPosition={
+          contextMenu !== null
+            ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+            : undefined
+        }
+      >
+        <MenuItem
+          onClick={() => {
+            closeContextMenu()
+            useLyricsEditor.resetTimeline(index, 'backward')
+          }}
+        >
+          <ListItemIcon>
+            <FormatAlignLeftIcon fontSize='small' />
+          </ListItemIcon>
+          <ListItemText primary='重置之前歌词的时间轴' />
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            closeContextMenu()
+            useLyricsEditor.resetTimeline(index, 'forward')
+          }}
+        >
+          <ListItemIcon>
+            <FormatAlignRightIcon fontSize='small' />
+          </ListItemIcon>
+          <ListItemText primary='重置自身及之后歌词的时间轴' />
+        </MenuItem>
+      </Menu>
     </Box>
   )
 }
@@ -415,6 +479,10 @@ export function Timeline() {
         overflow: 'hidden',
       }}
       onMouseDown={(e) => {
+        if (e.button !== 0) {
+          return
+        }
+        e.preventDefault()
         setAction('drag')
         lastXForDragRef.current = e.clientX
       }}
@@ -486,6 +554,9 @@ export function Timeline() {
           transform: `translateX(${((isSettingTime ? tempTime : curTime) / duration) * size.width * scalar + offset}px)`,
         }}
         onMouseDown={(e) => {
+          if (e.button !== 0) {
+            return
+          }
           e.preventDefault()
           e.stopPropagation()
           lastXForTimeRef.current = e.clientX

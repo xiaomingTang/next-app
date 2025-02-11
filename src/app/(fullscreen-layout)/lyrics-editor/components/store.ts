@@ -104,28 +104,58 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
       lrcItems: s.lrcItems.filter((_, idx) => idx !== n),
     }))
   },
-  resetTimeline() {
-    const duration = useLyricsEditorAudio.getState().state.duration
-    if (duration === 0) {
-      throw new Error('音频未加载完成')
-    }
+  resetTimeline(lyricIndex = 0, dir: 'forward' | 'backward' = 'forward') {
     const allItems = useRawLyricsEditor.getState().lrcItems
     const metaItems = allItems.filter((item) => item.type !== 'lyric')
     const lyricItems = allItems.filter((item) => item.type === 'lyric')
+    const curItem = lyricItems[lyricIndex]
+    if (!curItem) {
+      throw new Error('当前歌词项有误')
+    }
+    const fullDuration = useLyricsEditorAudio.getState().state.duration
+    let duration: number
+    if (dir === 'forward') {
+      duration = fullDuration - (curItem.time ?? fullDuration)
+    } else {
+      duration = curItem.time ?? 0
+    }
+    if (!duration || duration <= 0) {
+      throw new Error('剩余时间有误')
+    }
     if (lyricItems.length === 0) {
       throw new Error('未检测到歌词内容')
     }
-    const timeStep = duration / lyricItems.length
-    useRawLyricsEditor.setState({
-      lrcItems: formatLrcItems([
-        ...metaItems,
-        ...lyricItems.map((item, idx) => {
-          const newItem = new LyricItem(item)
-          newItem.time = timeStep * idx
-          return newItem
-        }),
-      ]),
-    })
+    if (dir === 'forward') {
+      const timeStep = duration / (lyricItems.length - lyricIndex)
+      useRawLyricsEditor.setState({
+        lrcItems: formatLrcItems([
+          ...metaItems,
+          ...lyricItems.map((item, idx) => {
+            if (idx <= lyricIndex) {
+              return item
+            }
+            const newItem = new LyricItem(item)
+            newItem.time = curItem.time + timeStep * (idx - lyricIndex)
+            return newItem
+          }),
+        ]),
+      })
+    } else {
+      const timeStep = duration / lyricIndex
+      useRawLyricsEditor.setState({
+        lrcItems: formatLrcItems([
+          ...metaItems,
+          ...lyricItems.map((item, idx) => {
+            if (idx >= lyricIndex) {
+              return item
+            }
+            const newItem = new LyricItem(item)
+            newItem.time = timeStep * idx
+            return newItem
+          }),
+        ]),
+      })
+    }
   },
 })
 
