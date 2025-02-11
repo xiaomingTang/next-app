@@ -1,4 +1,5 @@
 import { formatLrcItems, useLyricsEditor } from './store'
+import { initAudioUrl, initLyricContent } from './initData'
 
 import { LyricItem } from '../Lyrics'
 
@@ -7,9 +8,11 @@ import { RawUploader } from '@/app/(default-layout)/upload/components/RawUploade
 import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'
 import { openSimpleModal } from '@/components/SimpleModal'
+import { sleepMs } from '@/utils/time'
 
 import {
   Alert,
+  Divider,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -24,6 +27,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import RestoreIcon from '@mui/icons-material/Restore'
 import LyricsIcon from '@mui/icons-material/Lyrics'
 import PodcastsIcon from '@mui/icons-material/Podcasts'
+import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt'
 import toast from 'react-hot-toast'
 
 export function SettingsTrigger() {
@@ -55,7 +59,7 @@ export function SettingsTrigger() {
               'aria-labelledby': '关闭编辑器设置菜单',
             }}
           >
-            <MenuItem sx={{ position: 'relative' }}>
+            <MenuItem>
               <RawUploader
                 multiple
                 accept='.txt,.lrc,audio/*'
@@ -84,7 +88,6 @@ export function SettingsTrigger() {
               <ListItemText primary='文件上传' secondary='音频或歌词文件' />
             </MenuItem>
             <MenuItem
-              sx={{ position: 'relative' }}
               onClick={cat(async () => {
                 let text = useLyricsEditor
                   .getState()
@@ -139,7 +142,6 @@ export function SettingsTrigger() {
               <ListItemText primary='输入/编辑全部歌词' />
             </MenuItem>
             <MenuItem
-              sx={{ position: 'relative' }}
               onClick={cat(async () => {
                 let text = useLyricsEditor.getState().audioUrl
                 await openSimpleModal({
@@ -172,8 +174,8 @@ export function SettingsTrigger() {
                 if (!text) {
                   throw new Error('请输入音频的网址')
                 }
-                useLyricsEditor.setAudioUrl(text)
                 setAnchorEl(null)
+                await useLyricsEditor.setAudioUrl(text)
               })}
             >
               <ListItemIcon>
@@ -182,7 +184,7 @@ export function SettingsTrigger() {
               <ListItemText primary='输入在线音频' />
             </MenuItem>
             <MenuItem
-              sx={{ position: 'relative', color: theme.palette.error.main }}
+              sx={{ color: theme.palette.error.main }}
               onClick={cat(async () => {
                 if (
                   await customConfirm(
@@ -200,6 +202,29 @@ export function SettingsTrigger() {
                 <RestoreIcon fontSize='small' />
               </ListItemIcon>
               <ListItemText primary='重置时间轴' />
+            </MenuItem>
+            <Divider />
+            <MenuItem
+              onClick={cat(async () => {
+                useLyricsEditor.setState({
+                  lrcContent: initLyricContent,
+                  lrcItems: formatLrcItems(
+                    initLyricContent
+                      .split('\n')
+                      .filter(Boolean)
+                      .map((s) => new LyricItem(s))
+                  ),
+                })
+                setAnchorEl(null)
+                await useLyricsEditor.setAudioUrl(initAudioUrl)
+                await sleepMs(1000)
+                useLyricsEditor.resetTimeline()
+              })}
+            >
+              <ListItemIcon>
+                <SentimentSatisfiedAltIcon fontSize='small' />
+              </ListItemIcon>
+              <ListItemText primary='测试音频及歌词' />
             </MenuItem>
           </Menu>
         </>

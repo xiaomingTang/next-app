@@ -55,9 +55,12 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
       audioUrl: url,
     })
   },
-  setAudioUrl(url: string) {
+  async setAudioUrl(url: string) {
     useLyricsEditorAudio.setState({ src: url })
     useRawLyricsEditor.setState({ audioUrl: url, audioFile: null })
+    const res = await fetch(url)
+    const blob = await res.blob()
+    useRawLyricsEditor.setState({ audioFile: new File([blob], 'audio.mp3') })
   },
   insertMeta(n: number, { type, value }: { type: LyricType; value: string }) {
     useRawLyricsEditor.setState((s) => ({

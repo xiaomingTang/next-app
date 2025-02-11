@@ -268,12 +268,15 @@ export function Timeline() {
     delay: 300,
     deps: [offset, scalar],
   })
-  const { data: channelData } = useSWR(['getChannelData', audioUrl], () => {
-    if (!audioFile) {
-      return null
+  const { data: channelData } = useSWR(
+    ['getChannelData', audioUrl, audioFile],
+    () => {
+      if (!audioFile) {
+        return null
+      }
+      return getChannelData(audioFile)
     }
-    return getChannelData(audioFile)
-  })
+  )
 
   // ui 左右拖动
   useEffect(() => {
