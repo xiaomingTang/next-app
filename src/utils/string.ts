@@ -23,3 +23,10 @@ export function validateFileName(name: string) {
   }
   return name
 }
+
+export function formatText(text: string, headingLen: number, tailLen: number) {
+  if (text.length <= headingLen + tailLen) {
+    return text
+  }
+  return `${text.slice(0, headingLen)}...${text.slice(-tailLen)}`
+}

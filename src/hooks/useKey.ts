@@ -46,3 +46,13 @@ export function isCtrlAnd(key: string, e: KeyboardEvent) {
 export function isInputting(e: KeyboardEvent) {
   return (e.target as HTMLElement)?.tagName?.match(/input|textarea/i)
 }
+
+export function isButton(e: KeyboardEvent) {
+  const target = e.target as HTMLElement
+  if (!target) {
+    return false
+  }
+  return (
+    target.tagName?.match(/button/i) || target.getAttribute('role') === 'button'
+  )
+}

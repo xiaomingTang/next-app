@@ -1,7 +1,7 @@
 import { RepeatTrigger } from './RepeatTrigger'
 import { MusicListTrigger } from './MusicListTrigger'
 
-import { useAudio } from '../useAudio'
+import { useGlobalAudio } from '../useGlobalAudio'
 
 import { useListen } from '@/hooks/useListen'
 import { dark } from '@/utils/theme'
@@ -36,7 +36,7 @@ export const MP3Controls = forwardRef(function MP3Controls(
   _props: {},
   ref: React.ForwardedRef<HTMLDivElement>
 ) {
-  const { controls, state } = useAudio()
+  const { controls, state } = useGlobalAudio()
   const [slideValue, setSlideValue] = useState(state.time)
   const [isSlideSetting, setIsSlideSetting] = useState(false)
 

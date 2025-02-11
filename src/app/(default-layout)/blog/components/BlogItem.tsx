@@ -66,9 +66,9 @@ function BlogDesc(blog: BlogItemProps) {
   return (
     <Typography
       sx={{
-        backgroundColor: alpha(common.black, 0.025),
+        backgroundColor: alpha(common.black, 0.05),
         [dark()]: {
-          backgroundColor: alpha(common.white, 0.025),
+          backgroundColor: alpha(common.white, 0.05),
         },
         p: 1,
         borderRadius: 1,

@@ -1,4 +1,5 @@
 const colors = require('material-ui-colors')
+const { colors: defaultColors } = require('tailwindcss/defaultTheme')
 
 /**
  * @param {T} color
@@ -11,6 +12,7 @@ const colors = require('material-ui-colors')
 function semantic(color) {
   return {
     ...color,
+    950: color[900],
     light: color[600],
     main: color[700],
     dark: color[800],
@@ -40,7 +42,7 @@ module.exports = {
         tablet: '640px', // => @media (min-width: 640px) { ... }
         desktop: '1024px', // => @media (min-width: 1024px) { ... }
       },
-      colors: semanticColors,
+      colors: { ...defaultColors, ...semanticColors },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':

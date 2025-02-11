@@ -1,11 +1,11 @@
 import { AnchorProvider } from '../AnchorProvider'
-import { useAudio } from '../useAudio'
+import { useGlobalAudio } from '../useGlobalAudio'
 
 import MenuIcon from '@mui/icons-material/Menu'
 import { IconButton, ListItemText, Menu, MenuItem } from '@mui/material'
 
 export function MusicListTrigger() {
-  const { mp3s, activeMP3, controls } = useAudio()
+  const { mp3s, activeMP3, controls } = useGlobalAudio()
   return (
     <AnchorProvider>
       {(anchorEl, setAnchorEl) => (

@@ -74,20 +74,20 @@ const defaultAudioStore: AudioStore = {
   },
 }
 
-export const useAudio = createSsrStore(() => defaultAudioStore, {
+export const useGlobalAudio = createSsrStore(() => defaultAudioStore, {
   name: 'audioPlayer',
   storage: createJsonStorage({
     partialKeys: ['activeMP3', 'settings', 'mp3s'],
   }),
 })
 
-export function useInitAudio() {
+export function useInitGlobalAudio() {
   const { data: rawMp3s } = useSWR('getMP3s', () => getMP3s({}).then(SA.decode))
-  const activeMP3 = useAudio((state) => state.activeMP3)
-  const mp3s = useAudio((state) => state.mp3s)
+  const activeMP3 = useGlobalAudio((state) => state.activeMP3)
+  const mp3s = useGlobalAudio((state) => state.mp3s)
 
   useListen(rawMp3s, () => {
-    useAudio.setState({ mp3s: rawMp3s ?? [] })
+    useGlobalAudio.setState({ mp3s: rawMp3s ?? [] })
   })
 
   useEffect(() => {
@@ -101,58 +101,58 @@ export function useInitAudio() {
       [
         'play',
         () => {
-          void useAudio.getState().controls.play()
+          void useGlobalAudio.getState().controls.play()
         },
       ],
       [
         'pause',
         () => {
-          useAudio.getState().controls.pause()
+          useGlobalAudio.getState().controls.pause()
         },
       ],
       [
         'nexttrack',
         () => {
-          useAudio.getState().controls.next()
-          void useAudio.getState().controls.play()
+          useGlobalAudio.getState().controls.next()
+          void useGlobalAudio.getState().controls.play()
         },
       ],
       [
         'previoustrack',
         () => {
-          useAudio.getState().controls.prev()
-          void useAudio.getState().controls.play()
+          useGlobalAudio.getState().controls.prev()
+          void useGlobalAudio.getState().controls.play()
         },
       ],
       [
         'seekbackward',
         (detail) => {
-          const { time: curTime, duration } = useAudio.getState().state
+          const { time: curTime, duration } = useGlobalAudio.getState().state
           const nextTime = curTime - numberFormat(detail.seekOffset, 10)
-          useAudio.getState().controls.seek(clamp(nextTime, 0, duration))
+          useGlobalAudio.getState().controls.seek(clamp(nextTime, 0, duration))
         },
       ],
       [
         'seekforward',
         (detail) => {
-          const { time: curTime, duration } = useAudio.getState().state
+          const { time: curTime, duration } = useGlobalAudio.getState().state
           const nextTime = curTime + numberFormat(detail.seekOffset, 10)
-          useAudio.getState().controls.seek(clamp(nextTime, 0, duration))
+          useGlobalAudio.getState().controls.seek(clamp(nextTime, 0, duration))
         },
       ],
       [
         'seekto',
         (detail) => {
-          const { time: curTime, duration } = useAudio.getState().state
+          const { time: curTime, duration } = useGlobalAudio.getState().state
           const nextTime = numberFormat(detail.seekTime, curTime + 10)
-          useAudio.getState().controls.seek(clamp(nextTime, 0, duration))
+          useGlobalAudio.getState().controls.seek(clamp(nextTime, 0, duration))
         },
       ],
       [
         'stop',
         () => {
-          useAudio.getState().controls.seek(0)
-          useAudio.getState().controls.pause()
+          useGlobalAudio.getState().controls.seek(0)
+          useGlobalAudio.getState().controls.pause()
         },
       ],
     ]

@@ -1,4 +1,7 @@
 interface LRCEntry {
+  /**
+   * seconds
+   */
   timestamp: number
   text: string
 }

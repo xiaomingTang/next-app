@@ -1,10 +1,10 @@
 'use client'
 
-import { useInitAudio } from '@/components/useAudio'
+import { useInitGlobalAudio } from '@/components/useGlobalAudio'
 import { useUser } from '@/user'
 
 export function GlobalBusinessHooks() {
   useUser.useInit()
-  useInitAudio()
+  useInitGlobalAudio()
   return <></>
 }

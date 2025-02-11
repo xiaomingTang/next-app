@@ -4,7 +4,7 @@ import { useLyricsViewer } from './context'
 import { useHasShown, useLyrics } from './utils'
 import { MP3Controls } from './MP3Controls'
 
-import { useAudio } from '../useAudio'
+import { useGlobalAudio } from '../useGlobalAudio'
 import { SlideUpTransition } from '../Transitions'
 
 import { dark } from '@/utils/theme'
@@ -25,7 +25,7 @@ import { common, red } from '@mui/material/colors'
 import type { SxProps, Theme } from '@mui/material'
 
 export function LyricsViewer() {
-  const { state, mp3s, activeMP3 } = useAudio()
+  const { state, mp3s, activeMP3 } = useGlobalAudio()
   const visible = useLyricsViewer((s) => s.visible)
   const hasShown = useHasShown(visible)
   const [controlsVisible, setControlsVisible] = useState(false)

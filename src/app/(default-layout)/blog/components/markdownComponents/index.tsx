@@ -10,6 +10,7 @@ import { resolvePath } from '@/utils/url'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { useDefaultAsideDetail } from '@/layout/utils'
 import { onAnchorClick } from '@/components/Anchor/utils'
+import { formatText } from '@/utils/string'
 
 import {
   Box,
@@ -199,13 +200,6 @@ function formatIframeSrc(src?: string) {
     return srcUrl
   }
   return null
-}
-
-function formatText(text: string, headingLen: number, tailLen: number) {
-  if (text.length <= headingLen + tailLen) {
-    return text
-  }
-  return `${text.slice(0, headingLen)}...${text.slice(-tailLen)}`
 }
 
 function Iframe({ src = '' }: { src?: string }) {

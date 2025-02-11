@@ -1,6 +1,7 @@
 'use client'
 
 import { FileInfoDisplay } from './FileInfoDisplay'
+import { RawUploader } from './RawUploader'
 
 import { deleteFile, requestUploadFiles } from '../server'
 import { fileToCopyableMarkdownStr, geneFileKey } from '../utils/geneFileKey'
@@ -359,24 +360,10 @@ const Uploader = NiceModal.create(
       <>
         <Button variant='outlined' tabIndex={-1}>
           添加文件
-          <input
-            type='file'
-            style={{
-              opacity: 0,
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              right: 0,
-              bottom: 0,
-              overflow: 'hidden',
-              cursor: 'pointer',
-            }}
-            autoFocus
+          <RawUploader
             multiple
             accept={accept}
-            onInput={(e) => {
-              const target = e.target as HTMLInputElement
-              const files = Array.from(target.files ?? [])
+            onChange={(files) => {
               updateFileInfos(files.map(initFileToInfo), false)
             }}
           />
