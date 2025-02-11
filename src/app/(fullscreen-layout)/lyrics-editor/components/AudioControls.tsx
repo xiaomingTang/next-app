@@ -4,6 +4,7 @@ import {
   useLyricsEditorAudio,
 } from './store'
 
+import { cat } from '@/errors/catchAndToast'
 import { isButton, isInputting, useKeyDown, useKeyPress } from '@/hooks/useKey'
 
 import PauseIcon from '@mui/icons-material/Pause'
@@ -45,7 +46,7 @@ export function AudioControls() {
       <IconButton
         disabled={disabled}
         loading={loading}
-        onClick={() => controls.togglePlay()}
+        onClick={cat(() => controls.togglePlay())}
         color='primary'
         sx={{ mx: 2 }}
       >

@@ -55,7 +55,7 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
       audioUrl: url,
     })
   },
-  async setAudioUrl(url: string) {
+  setAudioUrl(url: string) {
     useLyricsEditorAudio.setState({ src: url })
     useRawLyricsEditor.setState({ audioUrl: url, audioFile: null })
   },

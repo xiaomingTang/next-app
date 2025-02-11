@@ -22,6 +22,8 @@ import {
 import SettingsIcon from '@mui/icons-material/Settings'
 import EditIcon from '@mui/icons-material/Edit'
 import RestoreIcon from '@mui/icons-material/Restore'
+import LyricsIcon from '@mui/icons-material/Lyrics'
+import PodcastsIcon from '@mui/icons-material/Podcasts'
 import toast from 'react-hot-toast'
 
 export function SettingsTrigger() {
@@ -76,6 +78,9 @@ export function SettingsTrigger() {
                   setAnchorEl(null)
                 })}
               />
+              <ListItemIcon>
+                <LyricsIcon fontSize='small' />
+              </ListItemIcon>
               <ListItemText primary='文件上传' secondary='音频或歌词文件' />
             </MenuItem>
             <MenuItem
@@ -132,6 +137,49 @@ export function SettingsTrigger() {
                 <EditIcon fontSize='small' />
               </ListItemIcon>
               <ListItemText primary='输入/编辑全部歌词' />
+            </MenuItem>
+            <MenuItem
+              sx={{ position: 'relative' }}
+              onClick={cat(async () => {
+                let text = useLyricsEditor.getState().audioUrl
+                await openSimpleModal({
+                  dialogProps: {
+                    maxWidth: 'md',
+                  },
+                  title: '在线音频输入',
+                  content: (
+                    <>
+                      <Alert severity='warning' sx={{ mb: 2 }}>
+                        <Typography>
+                          注意，在线音频不支持音频波形图。（建议使用本地音频文件）
+                        </Typography>
+                        <Typography>网址必须为 https://...</Typography>
+                      </Alert>
+                      <TextField
+                        autoFocus
+                        fullWidth
+                        variant='outlined'
+                        label='请输入音频的网址'
+                        placeholder='https://...'
+                        defaultValue={text}
+                        onChange={(e) => {
+                          text = e.target.value
+                        }}
+                      />
+                    </>
+                  ),
+                })
+                if (!text) {
+                  throw new Error('请输入音频的网址')
+                }
+                useLyricsEditor.setAudioUrl(text)
+                setAnchorEl(null)
+              })}
+            >
+              <ListItemIcon>
+                <PodcastsIcon fontSize='small' />
+              </ListItemIcon>
+              <ListItemText primary='输入在线音频' />
             </MenuItem>
             <MenuItem
               sx={{ position: 'relative', color: theme.palette.error.main }}
