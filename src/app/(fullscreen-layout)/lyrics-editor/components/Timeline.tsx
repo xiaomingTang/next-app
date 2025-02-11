@@ -1,12 +1,21 @@
 import { useLyricsEditor, useLyricsEditorAudio } from './store'
 
+import { LyricItem } from '../Lyrics'
+
 import { useElementSize } from '@/hooks/useElementSize'
 import { STYLE } from '@/config'
 import { useListen } from '@/hooks/useListen'
 import { useDebouncedValue } from '@/hooks/useDebouncedValue'
 
 import { useEffect, useRef, useState } from 'react'
-import { alpha, Box, colors, styled, useTheme } from '@mui/material'
+import {
+  alpha,
+  Box,
+  colors,
+  styled,
+  useEventCallback,
+  useTheme,
+} from '@mui/material'
 import { clamp, noop } from 'lodash-es'
 import useSWR from 'swr'
 
@@ -28,6 +37,175 @@ const IndicatorInner = styled(Box)({
   height: '100%',
   backgroundColor: colors.red[500],
 })
+
+function TimeSlice({
+  curItem: item,
+  nextItem,
+  duration,
+  index,
+  containerWidth,
+  scalar,
+  offset,
+}: {
+  curItem: LyricItem
+  nextItem?: LyricItem
+  duration: number
+  index: number
+  containerWidth: number
+  scalar: number
+  offset: number
+}) {
+  const endTime = nextItem?.time ?? duration
+  const rawWidth = (containerWidth * (endTime - item.time)) / duration
+  const [isDragging, setIsDragging] = useState(false)
+  const [translateX, setTranslateX] = useState(0)
+  const lastXRef = useRef(0)
+  const onDragEndRef = useEventCallback((x: number) => {
+    // 2 个
+    const GAP = 0.5
+    const deltaTime = (x / (containerWidth * scalar)) * duration
+    if (deltaTime === 0) {
+      return
+    }
+    const ft = (t: number) => {
+      return clamp(t, 0, duration)
+    }
+    if (deltaTime < 0) {
+      useLyricsEditor.setState((prev) => {
+        const newItems = [...prev.lrcItems]
+        let tempItem = new LyricItem({
+          type: item.type,
+          value: item.value,
+          time: ft(item.time + deltaTime),
+        })
+        newItems[index] = tempItem
+        for (let i = index - 1; i > 0; i -= 1) {
+          const curItem = newItems[i]
+          if (curItem.time > tempItem.time - GAP) {
+            newItems[i] = new LyricItem({
+              type: curItem.type,
+              value: curItem.value,
+              time: ft(tempItem.time - GAP),
+            })
+            tempItem = newItems[i]
+          } else {
+            break
+          }
+        }
+        return {
+          ...prev,
+          lrcItems: newItems,
+        }
+      })
+      return
+    }
+    useLyricsEditor.setState((prev) => {
+      const newItems = [...prev.lrcItems]
+      let tempItem = new LyricItem({
+        type: item.type,
+        value: item.value,
+        time: ft(item.time + deltaTime),
+      })
+      newItems[index] = tempItem
+      for (let i = index + 1; i < newItems.length - 1; i += 1) {
+        const curItem = newItems[i]
+        if (curItem.time < tempItem.time + GAP) {
+          newItems[i] = new LyricItem({
+            type: curItem.type,
+            value: curItem.value,
+            time: ft(tempItem.time + GAP),
+          })
+          tempItem = newItems[i]
+        } else {
+          break
+        }
+      }
+      return {
+        ...prev,
+        lrcItems: newItems,
+      }
+    })
+  })
+
+  // 拖拽
+  useEffect(() => {
+    if (!isDragging) {
+      return noop
+    }
+    const onMouseMove = (e: MouseEvent) => {
+      const movementX = e.clientX - lastXRef.current
+      lastXRef.current = e.clientX
+      setTranslateX((prev) => prev + movementX)
+    }
+    window.addEventListener('mousemove', onMouseMove)
+    return () => {
+      window.removeEventListener('mousemove', onMouseMove)
+    }
+  }, [isDragging])
+
+  // 释放鼠标
+  useEffect(() => {
+    const onMouseUp = () => {
+      if (isDragging) {
+        onDragEndRef(translateX)
+        setIsDragging(false)
+        setTranslateX(0)
+      }
+    }
+    window.addEventListener('mouseup', onMouseUp)
+    return () => {
+      window.removeEventListener('mouseup', onMouseUp)
+    }
+  }, [isDragging, onDragEndRef, translateX])
+
+  return (
+    <Box
+      key={[item.type, item.time, item.value, index].join('-')}
+      sx={{
+        position: 'absolute',
+        height: '100%',
+        borderLeft: '1px solid',
+        borderRight: '1px solid',
+        borderColor: colors.grey[400],
+      }}
+      style={{
+        width: rawWidth * scalar,
+        left: (item.time / duration) * containerWidth * scalar + offset,
+      }}
+      onDoubleClick={() => {
+        useLyricsEditorAudio.getState().controls.seek(item.time)
+      }}
+    >
+      <IndicatorContainer
+        sx={{
+          zIndex: isDragging ? 1 : 0,
+          width: '15px',
+          left: '-8px',
+          [`&:hover`]: {
+            backgroundColor: alpha(colors.blue[500], 0.2),
+            [`& > .indicator-inner`]: {
+              backgroundColor: colors.blue[500],
+            },
+          },
+        }}
+        style={{
+          transform: `translateX(${translateX}px)`,
+        }}
+        onMouseDown={(e) => {
+          e.stopPropagation()
+          e.preventDefault()
+          setIsDragging(true)
+          lastXRef.current = e.clientX
+        }}
+      >
+        <IndicatorInner
+          className='indicator-inner'
+          sx={{ backgroundColor: 'transparent' }}
+        />
+      </IndicatorContainer>
+    </Box>
+  )
+}
 
 function getChannelData(f: File, channel = 0) {
   return new Promise<Float32Array>((resolve, reject) => {
@@ -156,6 +334,7 @@ export function Timeline() {
     }
   })
 
+  // 绘制音频波形图
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
@@ -249,36 +428,23 @@ export function Timeline() {
           height: '50px',
           flexBasis: '50px',
           flexShrink: 0,
-          borderTop: '1px solid',
-          borderBottom: '1px solid',
+          border: '1px solid',
           borderColor: theme.palette.grey[400],
           overflowX: 'hidden',
         }}
       >
-        {lrcItems.map((item, idx) => {
-          const nextItem = lrcItems[idx + 1]
-          const endTime = nextItem ? nextItem.time : duration
-          const rawWidth = (size.width * (endTime - item.time)) / duration
-          return (
-            <Box
-              key={[item.type, item.time, item.value, idx].join('-')}
-              sx={{
-                position: 'absolute',
-                height: '100%',
-                borderLeft: '1px solid',
-                borderRight: '1px solid',
-                borderColor: theme.palette.grey[400],
-              }}
-              style={{
-                width: rawWidth * scalar,
-                left: (item.time / duration) * size.width * scalar + offset,
-              }}
-              onDoubleClick={() => {
-                useLyricsEditorAudio.getState().controls.seek(item.time)
-              }}
-            />
-          )
-        })}
+        {lrcItems.map((item, idx) => (
+          <TimeSlice
+            key={idx}
+            index={idx}
+            curItem={item}
+            nextItem={lrcItems[idx + 1]}
+            duration={duration}
+            containerWidth={size.width}
+            scalar={scalar}
+            offset={offset}
+          />
+        ))}
       </Box>
       <Box
         component='canvas'
