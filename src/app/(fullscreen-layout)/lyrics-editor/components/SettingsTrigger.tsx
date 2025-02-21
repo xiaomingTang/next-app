@@ -265,17 +265,8 @@ export function SettingsTrigger() {
             </MenuItem>
             <Divider />
             <MenuItem
-              onClick={cat(async () => {
-                const lrc = useLyricsEditor
-                  .getState()
-                  .lrcItems.map((item) => item.toString())
-                  .join('\n')
-                const blob = new Blob([lrc], { type: 'text/plain' })
-                const url = URL.createObjectURL(blob)
-                const a = document.createElement('a')
-                a.href = url
-                a.download = 'lyrics.lrc'
-                a.click()
+              onClick={cat(() => {
+                useLyricsEditor.saveLrc()
                 setAnchorEl(null)
               })}
             >

@@ -157,6 +157,21 @@ export const useLyricsEditor = withStatic(useRawLyricsEditor, {
       })
     }
   },
+  saveLrc() {
+    const items = useLyricsEditor
+      .getState()
+      .lrcItems.map((item) => item.toString())
+    if (items.length === 0) {
+      throw new Error('未检测到歌词内容')
+    }
+    const lrc = items.join('\n')
+    const blob = new Blob([lrc], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'lyrics.lrc'
+    a.click()
+  },
 })
 
 export const [useLyricsEditorAudio, LyricsEditorAudioPlayer] =
