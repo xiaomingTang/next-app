@@ -5,7 +5,7 @@ import { guessLanguage } from '../utils/guessLanguage'
 
 import { useUser } from '@/user'
 import { SA } from '@/errors/utils'
-import { useKeyDown } from '@/hooks/useKey'
+import { isCtrlAnd, useKeyDown } from '@/hooks/useKey'
 import { useListen } from '@/hooks/useListen'
 import { cat } from '@/errors/catchAndToast'
 import { useLoading } from '@/hooks/useLoading'
@@ -93,13 +93,7 @@ export function TextEditor(projectInfo: ProjectPageProps) {
   useKeyDown(
     withSaveLoading(
       cat(async (e) => {
-        if (
-          editable &&
-          curHash &&
-          isTxt &&
-          (e.ctrlKey || e.metaKey) &&
-          e.key === 's'
-        ) {
+        if (editable && curHash && isTxt && isCtrlAnd('s', e)) {
           e.preventDefault()
           if (localContent === content) {
             toast.success('已保存成功')
