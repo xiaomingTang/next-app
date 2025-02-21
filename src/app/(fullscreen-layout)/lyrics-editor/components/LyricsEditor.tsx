@@ -46,7 +46,7 @@ export function LyricsEditor() {
             } else {
               useLyricsEditor.insertMeta(idx, {
                 type: item.type,
-                value: value?.value ?? 'unknown',
+                value: value?.value ?? '未知',
               })
             }
           }}
@@ -56,7 +56,7 @@ export function LyricsEditor() {
             } else {
               useLyricsEditor.insertMeta(idx + 1, {
                 type: item.type,
-                value: value?.value ?? 'unknown',
+                value: value?.value ?? '未知',
               })
             }
           }}

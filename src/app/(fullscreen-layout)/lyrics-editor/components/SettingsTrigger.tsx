@@ -29,6 +29,7 @@ import LyricsIcon from '@mui/icons-material/Lyrics'
 import PodcastsIcon from '@mui/icons-material/Podcasts'
 import SentimentSatisfiedAltIcon from '@mui/icons-material/SentimentSatisfiedAlt'
 import DownloadIcon from '@mui/icons-material/Download'
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts'
 import toast from 'react-hot-toast'
 
 export function SettingsTrigger() {
@@ -82,7 +83,6 @@ export function SettingsTrigger() {
               </ListItemIcon>
               <ListItemText primary='测试音频及歌词' />
             </MenuItem>
-            <Divider />
             <MenuItem>
               <RawUploader
                 multiple
@@ -111,6 +111,7 @@ export function SettingsTrigger() {
               </ListItemIcon>
               <ListItemText primary='文件上传' secondary='音频或歌词文件' />
             </MenuItem>
+            <Divider />
             <MenuItem
               onClick={cat(async () => {
                 let text = useLyricsEditor
@@ -206,6 +207,41 @@ export function SettingsTrigger() {
                 <PodcastsIcon fontSize='small' />
               </ListItemIcon>
               <ListItemText primary='输入在线音频' />
+            </MenuItem>
+            <Divider />
+            <MenuItem
+              onClick={cat(async () => {
+                useLyricsEditor.setState((prev) => {
+                  const prevLrcItems = [...prev.lrcItems]
+                  if (!prevLrcItems.find((item) => item.type === 'au')) {
+                    prevLrcItems.unshift(
+                      new LyricItem({ type: 'au', value: '未知' })
+                    )
+                  }
+                  if (!prevLrcItems.find((item) => item.type === 'al')) {
+                    prevLrcItems.unshift(
+                      new LyricItem({ type: 'al', value: '未知' })
+                    )
+                  }
+                  if (!prevLrcItems.find((item) => item.type === 'ar')) {
+                    prevLrcItems.unshift(
+                      new LyricItem({ type: 'ar', value: '未知' })
+                    )
+                  }
+                  if (!prevLrcItems.find((item) => item.type === 'ti')) {
+                    prevLrcItems.unshift(
+                      new LyricItem({ type: 'ti', value: '未知' })
+                    )
+                  }
+                  return { ...prev, lrcItems: prevLrcItems }
+                })
+                setAnchorEl(null)
+              })}
+            >
+              <ListItemIcon>
+                <ManageAccountsIcon fontSize='small' />
+              </ListItemIcon>
+              <ListItemText primary='添加元数据模板' />
             </MenuItem>
             <MenuItem
               sx={{ color: theme.palette.error.main }}

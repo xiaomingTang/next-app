@@ -1,6 +1,6 @@
 import { useLyricsEditorAudio } from './store'
 
-import { LyricItem } from '../Lyrics'
+import { LyricItem, lyricTypeMap } from '../Lyrics'
 
 import { customConfirm } from '@/utils/customConfirm'
 import { SilentError } from '@/errors/SilentError'
@@ -73,6 +73,11 @@ async function checkLrcContent(str: string, prevLyricItem: LyricItem) {
     throw new SilentError('用户取消操作')
   }
   return str
+}
+
+function getMetaTypeName(type: string) {
+  const name = lyricTypeMap[type as keyof typeof lyricTypeMap]
+  return name ? `元数据-${name}` : '元数据'
 }
 
 export function LyricItemDom({
@@ -183,10 +188,11 @@ export function LyricItemDom({
         <>
           <Typography
             component='code'
+            meta-name={getMetaTypeName(type)}
             sx={{
               color: theme.palette.grey[500],
               [`&:before`]: {
-                content: '"元数据"',
+                content: 'attr(meta-name)',
                 display: 'inline-block',
                 px: 1,
                 mr: 1,
