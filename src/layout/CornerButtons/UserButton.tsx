@@ -10,6 +10,7 @@ import LogoutIcon from '@mui/icons-material/Logout'
 import PersonIcon from '@mui/icons-material/Person'
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -75,6 +76,22 @@ function LoggedButton() {
             <VerifiedUserIcon fontSize='small' />
           </ListItemIcon>
           管理后台
+        </MenuItem>
+        <MenuItem
+          divider
+          {...triggerMenuItemEvents((e, reason) => {
+            handleClose()
+            if (reason === 'middleClick') {
+              window.open('/project/new', '_blank')
+            } else {
+              router.push('/project/new')
+            }
+          })}
+        >
+          <ListItemIcon>
+            <CreateNewFolderIcon fontSize='small' />
+          </ListItemIcon>
+          Project - New
         </MenuItem>
         <MenuItem
           {...triggerMenuItemEvents(

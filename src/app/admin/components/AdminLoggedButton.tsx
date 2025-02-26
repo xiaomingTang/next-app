@@ -7,6 +7,7 @@ import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 import PersonIcon from '@mui/icons-material/Person'
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser'
 import LogoutIcon from '@mui/icons-material/Logout'
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder'
 import { IconButton, Menu, MenuItem, ListItemIcon } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -54,7 +55,6 @@ export function AdminLoggedButton() {
           {user.name}
         </MenuItem>
         <MenuItem
-          divider
           {...triggerMenuItemEvents((e, reason) => {
             handleClose()
             if (reason === 'middleClick') {
@@ -68,6 +68,22 @@ export function AdminLoggedButton() {
             <VerifiedUserIcon fontSize='small' />
           </ListItemIcon>
           前台首页
+        </MenuItem>
+        <MenuItem
+          divider
+          {...triggerMenuItemEvents((e, reason) => {
+            handleClose()
+            if (reason === 'middleClick') {
+              window.open('/project/new', '_blank')
+            } else {
+              router.push('/project/new')
+            }
+          })}
+        >
+          <ListItemIcon>
+            <CreateNewFolderIcon fontSize='small' />
+          </ListItemIcon>
+          Project - New
         </MenuItem>
         <MenuItem
           onClick={withLoading(async () => {
