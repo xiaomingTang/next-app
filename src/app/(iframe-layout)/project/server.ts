@@ -3,7 +3,7 @@
 import { SA, toError } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { zf } from '@/request/validator'
-import { getSelf } from '@/user/server'
+import { authValidate, getSelf } from '@/user/server'
 import { validateFileName as rawValidateFileName } from '@/utils/string'
 import { optionalString } from '@/request/utils'
 
@@ -199,6 +199,38 @@ export const deleteProject = SA.encode(
   })
 )
 
+const resumeProjectDto = z.object({
+  hash: z.string(),
+})
+
+export const resumeProject = SA.encode(
+  zf(resumeProjectDto, async ({ hash }) => {
+    const user = await getSelf(true)
+    if (user.role === 'ADMIN') {
+      await prisma.project.updateMany({
+        where: {
+          OR: [
+            { hash, deleted: true },
+            { parentHash: hash, deleted: true },
+            { rootHash: hash, deleted: true },
+          ],
+        },
+        data: { deleted: false },
+      })
+    }
+    await prisma.project.updateMany({
+      where: {
+        OR: [
+          { hash, deleted: true, creatorId: user.id },
+          { parentHash: hash, deleted: true, creatorId: user.id },
+          { rootHash: hash, deleted: true, creatorId: user.id },
+        ],
+      },
+      data: { deleted: false },
+    })
+  })
+)
+
 const updateProjectDto = z.object({
   hash: z.string().min(1).max(100),
   name: optionalString(z.string().min(1).max(200)),
@@ -340,3 +372,19 @@ export const getProjectContent = SA.encode(
     return project.content
   })
 )
+
+export const getAllProjects = SA.encode(async () => {
+  await authValidate(await getSelf(), { roles: ['ADMIN'] })
+  const projects = await prisma.project.findMany({
+    where: {
+      rootHash: {
+        equals: prisma.project.fields.hash,
+      },
+    },
+    select: {
+      ...select,
+      deleted: true,
+    },
+  })
+  return projects
+})

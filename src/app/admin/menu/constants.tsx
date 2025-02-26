@@ -7,6 +7,7 @@ import LinkIcon from '@mui/icons-material/Link'
 import HomeWorkIcon from '@mui/icons-material/HomeWork'
 import MusicNoteIcon from '@mui/icons-material/MusicNote'
 import MessageIcon from '@mui/icons-material/Message'
+import SnippetFolderIcon from '@mui/icons-material/SnippetFolder'
 import { usePathname } from 'next/navigation'
 import { useMemo } from 'react'
 
@@ -54,6 +55,12 @@ export const menuList: NestedMenu[] = [
     roles: ['ADMIN'],
     path: '/admin/customMP3',
     icon: <MusicNoteIcon />,
+  },
+  {
+    name: '项目管理',
+    roles: ['ADMIN'],
+    path: '/admin/project',
+    icon: <SnippetFolderIcon />,
   },
 ]
 
