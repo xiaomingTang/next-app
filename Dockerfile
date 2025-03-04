@@ -7,7 +7,7 @@ ENV PORT ${PORT}
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 COPY package.json /app
-RUN npm i -g pnpm
+RUN npm i -g pnpm@9
 
 WORKDIR /app
 
