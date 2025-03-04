@@ -592,7 +592,7 @@ index 1a7d823cf5ed7d3a196d47859286049872f46eb3..69a4c4e6e797b8f760ada19ae116aac0
          }
      }
 diff --git a/core/MotionPathControls.d.ts b/core/MotionPathControls.d.ts
-index b13b70cf331b46311eafee9b267c7bd67dc77145..a36d779a3f2b8d26f3265826f504ab1939f99b25 100644
+index 16dea2ffda9222b6c0c8c483936f6ae8461328e7..cf5b364a8504167e6137e86539703ebd1be7234d 100644
 --- a/core/MotionPathControls.d.ts
 +++ b/core/MotionPathControls.d.ts
 @@ -1,6 +1,6 @@
@@ -602,7 +602,7 @@ index b13b70cf331b46311eafee9b267c7bd67dc77145..a36d779a3f2b8d26f3265826f504ab19
 +type MotionPathProps = JSX_IntrinsicElements['group'] & {
      curves?: THREE.Curve<THREE.Vector3>[];
      debug?: boolean;
-     object?: React.MutableRefObject<THREE.Object3D>;
+     debugColor?: THREE.ColorRepresentation;
 diff --git a/core/MultiMaterial.d.ts b/core/MultiMaterial.d.ts
 index 8459dc5e5cf7ca72b5be4e32dab3dc4c9d0cda53..ba46bd1c56ae815d0ffd1bd9f8df909495960efc 100644
 --- a/core/MultiMaterial.d.ts
