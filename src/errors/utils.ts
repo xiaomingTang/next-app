@@ -1,5 +1,4 @@
 import Boom from '@hapi/boom'
-import { revalidateTag, revalidatePath } from 'next/cache'
 
 import type { Func } from '@/utils/function'
 
@@ -125,25 +124,3 @@ export const SA = {
 export type SA_RES<T> =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends Func<any[], Promise<ServerResponse<infer R>>> ? R : never
-
-export function withRevalidate<T>({
-  tags = [],
-  paths = [],
-}: {
-  tags?: string[]
-  paths?: string[]
-}) {
-  return async function pipeResponse(res: T) {
-    try {
-      tags.forEach((tag) => {
-        revalidateTag(tag)
-      })
-      paths.forEach((p) => {
-        revalidatePath(p)
-      })
-    } catch (_) {
-      // pass
-    }
-    return res
-  }
-}

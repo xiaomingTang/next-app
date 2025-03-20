@@ -1,6 +1,5 @@
 import * as React from 'react'
 import clsx from 'clsx'
-import { animated, useSpring } from '@react-spring/web'
 import { styled, alpha, Box, Collapse, Typography } from '@mui/material'
 import {
   treeItemClasses,
@@ -93,21 +92,18 @@ const StyledTreeItemContent = styled(TreeItem2Content)(({ theme }) => ({
   },
 }))
 
-const AnimatedCollapse = animated(
-  styled(Collapse)({
-    paddingLeft: '16px',
-  })
-)
-
 function TransitionCollapse(props: TransitionProps) {
-  const style = useSpring({
-    to: {
-      opacity: props.in ? 1 : 0,
-      transform: `translate3d(0,${props.in ? 0 : 20}px,0)`,
-    },
-  })
-
-  return <AnimatedCollapse style={style} {...props} />
+  return (
+    <Collapse
+      sx={{
+        paddingLeft: '16px',
+        opacity: props.in ? 1 : 0,
+        transform: `translate3d(0,${props.in ? 0 : 20}px,0)`,
+        transition: 'opacity 0.2s, transform 0.2s',
+      }}
+      {...props}
+    />
+  )
 }
 
 const StyledTreeItemLabelText = styled(Typography)({

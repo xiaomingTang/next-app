@@ -1,6 +1,7 @@
 'use server'
 
-import { SA, withRevalidate } from '@/errors/utils'
+import { SA } from '@/errors/utils'
+import { withRevalidate } from '@/errors/revalidate'
 import { prisma } from '@/request/prisma'
 import { getSelf } from '@/user/server'
 import { zf } from '@/request/validator'
