@@ -378,7 +378,9 @@ const Uploader = NiceModal.create(
       <Dialog
         fullWidth
         fullScreen={fullScreen}
-        TransitionComponent={SlideUpTransition}
+        slots={{
+          transition: SlideUpTransition,
+        }}
         {...muiDialogV5(modal)}
         onClose={onClose}
       >

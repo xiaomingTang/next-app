@@ -147,7 +147,9 @@ export const SearchSection = NiceModal.create(() => {
   return (
     <Dialog
       {...muiDialogV5ReplaceOnClose(modal)}
-      TransitionComponent={DefaultDialogTransition}
+      slots={{
+        transition: DefaultDialogTransition,
+      }}
       fullWidth
       maxWidth='sm'
     >

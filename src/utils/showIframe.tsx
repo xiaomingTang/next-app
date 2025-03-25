@@ -55,7 +55,9 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
       fullWidth
       fullScreen={fullScreen}
       maxWidth='md'
-      TransitionComponent={DefaultDialogTransition}
+      slots={{
+        transition: DefaultDialogTransition,
+      }}
       {...muiDialogV5ReplaceOnClose(modal)}
     >
       {header}

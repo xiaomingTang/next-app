@@ -406,7 +406,9 @@ export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
     <Dialog
       fullWidth
       fullScreen
-      TransitionComponent={SlideUpTransition}
+      slots={{
+        transition: SlideUpTransition,
+      }}
       {...muiDialogV5(modal)}
       onClose={(_, reason) => {
         // 内容发生改变时, 禁用 esc close

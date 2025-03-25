@@ -79,7 +79,9 @@ export function RequestConnectionHandler() {
     <Dialog
       open={!!requestConnection}
       fullWidth
-      TransitionComponent={SlideUpTransition}
+      slots={{
+        transition: SlideUpTransition,
+      }}
       onClose={(_, reason) => {
         // 防止误点击, 因此屏蔽 backdropClick
         if (reason === 'backdropClick') {
