@@ -37,7 +37,7 @@ export function ProjectMenu(projectInfo: ProjectPageProps) {
   const [menuTreeData, setMenuTreeData] = useState(loadingTreeData)
   const apiRef = useTreeViewApiRef()
   const rootId = menuTreeData[0].hash
-  const selectedItemRef = useRef<ProjectTree | null>(null)
+  const selectedItemRef = useRef<ProjectTree>(null)
   const [selectedItem, setSelectedItem] = useState<ProjectTree | null>(null)
   const [contextTarget, setContextTarget] = useState<HTMLElement | null>(null)
   const prevNameMapRef = useRef<{ [key: string]: string }>({})

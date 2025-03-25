@@ -13,7 +13,6 @@ export function weightedRandom<T>(arr: ArrayLike<T>): T {
   for (let i = 0; i < arr.length; i += 1) {
     cumulativeWeight += arr.length - i
     if (randomValue <= cumulativeWeight) {
-      console.log({ total: arr.length, i })
       return arr[i]
     }
   }

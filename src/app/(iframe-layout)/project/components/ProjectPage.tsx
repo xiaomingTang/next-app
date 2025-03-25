@@ -16,6 +16,7 @@ import { PreferFullscreenLandscape } from '@/components/PreferFullscreenLandscap
 import { Alert, Box, NoSsr } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { PhotoProvider } from 'react-photo-view'
+import { noop } from 'lodash-es'
 
 import type { LoadingAble } from '@/components/ServerComponent'
 
@@ -30,10 +31,10 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
   const rootHash = projectInfo.projectTree?.hash
   const { paths } = projectInfo
   const [previewVisible, setPreviewVisible] = useState(false)
-  const closeRef = useRef<() => void>()
+  const closeRef = useRef(noop)
 
   useInjectHistory(previewVisible, () => {
-    closeRef.current?.()
+    closeRef.current()
   })
 
   useEffect(() => {

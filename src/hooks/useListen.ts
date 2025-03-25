@@ -20,7 +20,7 @@ export function useListen<T>(
   callback: (next: T, prev: T | undefined) => void
 ) {
   const isFirstCallbackRef = useRef(true)
-  const prevRef = useRef<T | undefined>(undefined)
+  const prevRef = useRef<T>(undefined)
   const callbackRef = useEventCallback(callback)
 
   useEnhancedEffect(() => {

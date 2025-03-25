@@ -22,6 +22,7 @@ import BorderColorIcon from '@mui/icons-material/BorderColor'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { forwardRef, useRef, useState } from 'react'
 import { common } from '@mui/material/colors'
+import { noop } from 'lodash-es'
 
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
 import type { LoadingAble } from '@/components/ServerComponent'
@@ -44,11 +45,11 @@ export const BlogContent = forwardRef(function BlogContent(
 ) {
   const user = useUser()
   const [previewVisible, setPreviewVisible] = useState(false)
-  const closeRef = useRef<() => void>()
+  const closeRef = useRef(noop)
   const [loading, withLoading] = useLoading()
 
   useInjectHistory(previewVisible, () => {
-    closeRef.current?.()
+    closeRef.current()
   })
 
   const titleElem = blog.loading ? (

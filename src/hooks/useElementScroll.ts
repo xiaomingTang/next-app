@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import type { RefObject } from 'react'
 
 interface Props {
-  elem: HTMLElement | RefObject<HTMLElement>
-  scrollElem?: HTMLElement | RefObject<HTMLElement>
+  elem: HTMLElement | null | RefObject<HTMLElement | null>
+  scrollElem?: HTMLElement | null | RefObject<HTMLElement | null>
 }
 
 /**
@@ -21,7 +21,7 @@ export function useElementScroll({ elem, scrollElem }: Props) {
 
     const onScroll = throttle(
       () => {
-        const realElem = elem instanceof HTMLElement ? elem : elem.current
+        const realElem = elem instanceof HTMLElement ? elem : elem?.current
         if (!realElem) {
           return
         }

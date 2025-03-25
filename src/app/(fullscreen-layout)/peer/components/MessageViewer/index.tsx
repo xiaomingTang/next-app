@@ -18,6 +18,7 @@ import { Box, alpha } from '@mui/material'
 import { common } from '@mui/material/colors'
 import { useRef, useState } from 'react'
 import { PhotoProvider } from 'react-photo-view'
+import { noop } from 'lodash-es'
 
 export function MessageViewer() {
   const { peer, activeConnectionInfo } = usePeer()
@@ -25,10 +26,10 @@ export function MessageViewer() {
   const messageList = messages[activeConnectionInfo?.targetPeerId ?? ''] ?? []
   const containerRef = useRef<HTMLElement>(null)
   const [previewVisible, setPreviewVisible] = useState(false)
-  const closeRef = useRef<() => void>()
+  const closeRef = useRef(noop)
 
   useInjectHistory(previewVisible, () => {
-    closeRef.current?.()
+    closeRef.current()
   })
 
   usePeerMessage.useInit(peer)
