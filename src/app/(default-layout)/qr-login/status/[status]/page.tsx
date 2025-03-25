@@ -6,16 +6,24 @@ export const metadata = seo.defaults({
   title: '扫码登录结果页',
 })
 
+interface Params {
+  status: 'success' | 'failed'
+}
+
 interface Props {
-  params: { status: 'success' | 'failed' }
+  params: Promise<Params>
 }
 
 export const dynamicParams = false
 
-export async function generateStaticParams(): Promise<Props['params'][]> {
+export async function generateStaticParams(): Promise<Params[]> {
   return [{ status: 'success' }, { status: 'failed' }]
 }
 
-export default function Index({ params: { status } }: Props) {
+export default async function Index(props: Props) {
+  const params = await props.params
+
+  const { status } = params
+
   return <QRLoginStatus status={status} />
 }

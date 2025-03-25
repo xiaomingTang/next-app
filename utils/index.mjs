@@ -14,35 +14,46 @@ function addSvgLoader(config) {
     rule.test?.test?.('.svg')
   )
 
-  nextImageLoaderRule.resourceQuery = {
-    not: [...nextImageLoaderRule.resourceQuery.not, /icon/],
-  }
-
-  config.module.rules.push({
-    resourceQuery: /icon/, // *.svg?icon
-    issuer: nextImageLoaderRule.issuer,
-    use: [
-      {
-        loader: '@svgr/webpack',
-        options: {
-          ref: true,
-          // https://react-svgr.com/docs/options/#dimensions
-          dimensions: false,
-          svgProps: {
-            width: '1em',
-            height: '1em',
-            display: 'inline-block',
-            fill: 'currentColor',
-            focusable: 'false',
-            color: 'inherit',
-            fontSize: 'inherit',
-            'data-generated-svg': '',
-            'aria-hidden': 'true',
+  config.module.rules.push(
+    // Reapply the existing rule, but only for svg imports ending in ?url
+    {
+      ...nextImageLoaderRule,
+      test: /\.svg$/i,
+      resourceQuery: /url/, // *.svg?url
+    },
+    // Convert all other *.svg imports to React components
+    {
+      test: /\.svg$/i,
+      issuer: nextImageLoaderRule.issuer,
+      resourceQuery: { not: [...nextImageLoaderRule.resourceQuery.not, /url/] }, // exclude if *.svg?url
+      use: [
+        {
+          loader: '@svgr/webpack',
+          options: {
+            ref: true,
+            // https://react-svgr.com/docs/options/#dimensions
+            dimensions: false,
+            svgProps: {
+              width: '1em',
+              height: '1em',
+              display: 'inline-block',
+              fill: 'currentColor',
+              focusable: 'false',
+              color: 'inherit',
+              fontSize: 'inherit',
+              'data-generated-svg': '',
+              'aria-hidden': 'true',
+            },
           },
         },
-      },
-    ],
-  })
+      ],
+    }
+  )
+
+  // Modify the file loader rule to ignore *.svg, since we have it handled now.
+  nextImageLoaderRule.exclude = /\.svg$/i
+
+  return config
 }
 
 /** @type {import('next').NextConfig['webpack']} */

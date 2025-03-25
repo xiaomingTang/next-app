@@ -6,20 +6,24 @@ import { notFound } from 'next/navigation'
 
 type ClockTheme = keyof typeof CLOCK_CONFIG_MAP
 
+interface Params {
+  theme: ClockTheme
+}
+
 interface Props {
-  params: { theme: ClockTheme }
+  params: Promise<Params>
 }
 
 export const dynamicParams = false
 
-export async function generateStaticParams(): Promise<Props['params'][]> {
+export async function generateStaticParams(): Promise<Params[]> {
   return CLOCK_CONFIGS.map((config) => ({
     theme: config.id,
   }))
 }
 
-export default function Index(props: Props) {
-  const { theme } = props.params
+export default async function Index(props: Props) {
+  const { theme } = await props.params
 
   const config = CLOCK_CONFIG_MAP[theme]
 

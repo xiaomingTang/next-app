@@ -9,13 +9,20 @@ import { Suspense } from 'react'
 
 import type { Metadata } from 'next'
 
-interface Props {
-  params: { hash: string; paths?: string[] }
+interface Params {
+  hash: string
+  paths?: string[]
 }
 
-export async function generateMetadata({
-  params: { hash },
-}: Props): Promise<Metadata> {
+interface Props {
+  params: Promise<Params>
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
+
+  const { hash } = params
+
   const { data: project } = await getRootProjectMeta({
     hash,
   })
@@ -25,9 +32,11 @@ export async function generateMetadata({
   })
 }
 
-export default async function Index({
-  params: { hash, paths: rawPaths },
-}: Props) {
+export default async function Index(props: Props) {
+  const params = await props.params
+
+  const { hash, paths: rawPaths } = params
+
   const paths = (rawPaths ?? []).map((p) => decodeURIComponent(p))
   return (
     <>

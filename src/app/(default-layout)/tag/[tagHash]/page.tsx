@@ -16,13 +16,19 @@ import { unstable_cache } from 'next/cache'
 
 import type { Metadata } from 'next'
 
-interface Props {
-  params: { tagHash: string }
+interface Params {
+  tagHash: string
 }
 
-export async function generateMetadata({
-  params: { tagHash },
-}: Props): Promise<Metadata> {
+interface Props {
+  params: Promise<Params>
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
+
+  const { tagHash } = params
+
   const { data: tag } = await unstable_cache(
     () =>
       getTag({
@@ -46,7 +52,11 @@ export async function generateMetadata({
   })
 }
 
-export default async function Index({ params: { tagHash } }: Props) {
+export default async function Index(props: Props) {
+  const params = await props.params
+
+  const { tagHash } = params
+
   return (
     <ScrollToTop>
       {/* tag list */}

@@ -9,11 +9,19 @@ export const metadata = seo.defaults({
   description: '确认是否登录？',
 })
 
-interface Props {
-  params: { token: string }
+interface Params {
+  token: string
 }
 
-export default function Index({ params: { token } }: Props) {
+interface Props {
+  params: Promise<Params>
+}
+
+export default async function Index(props: Props) {
+  const params = await props.params
+
+  const { token } = params
+
   return (
     <AuthRequired fallback={<Forbidden />}>
       <QRLoginConfirm token={token} />

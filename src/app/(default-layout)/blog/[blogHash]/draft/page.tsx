@@ -14,13 +14,19 @@ import { serialize } from 'next-mdx-remote/serialize'
 
 import type { Metadata } from 'next'
 
-interface Props {
-  params: { blogHash: string }
+interface Params {
+  blogHash: string
 }
 
-export async function generateMetadata({
-  params: { blogHash },
-}: Props): Promise<Metadata> {
+interface Props {
+  params: Promise<Params>
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
+
+  const { blogHash } = params
+
   const { data: blog } = await unstable_cache(
     () =>
       getBlog({
@@ -68,7 +74,11 @@ const getBlogWithSource = SA.encode(async (blogHash: string) => {
   }
 })
 
-export default async function Index({ params: { blogHash } }: Props) {
+export default async function Index(props: Props) {
+  const params = await props.params
+
+  const { blogHash } = params
+
   return (
     <Suspense fallback={<BlogContent loading size={8} mode='preview' />}>
       <ServerComponent

@@ -32,9 +32,9 @@ export async function setCookieAsUser(
     }
   )
 
-  const proto = headers().get('origin') ?? ''
+  const proto = (await headers()).get('origin') ?? ''
 
-  cookies().set({
+  ;(await cookies()).set({
     name: authorizationKey,
     value: token,
     httpOnly: true,
@@ -75,7 +75,7 @@ export const login = SA.encode(
 )
 
 export const logout = SA.encode(async () => {
-  cookies().delete(authorizationKey)
+  ;(await cookies()).delete(authorizationKey)
 })
 
 /**
@@ -85,8 +85,8 @@ export const logout = SA.encode(async () => {
  */
 export async function getSelf(strict = false) {
   const token =
-    cookies().get(authorizationKey)?.value ||
-    headers().get(authorizationKey) ||
+    (await cookies()).get(authorizationKey)?.value ||
+    (await headers()).get(authorizationKey) ||
     ''
   if (!token) {
     throw Boom.unauthorized('用户未登录')

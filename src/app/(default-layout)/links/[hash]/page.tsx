@@ -22,13 +22,15 @@ export const metadata = seo.defaults({
   title: '友链',
 })
 
+interface Params {
+  /**
+   * hash 既可能是 FriendsLinkStatus, 也可能是 FriendsLink.hash
+   */
+  hash: string
+}
+
 interface Props {
-  params: {
-    /**
-     * hash 既可能是 FriendsLinkStatus, 也可能是 FriendsLink.hash
-     */
-    hash: string
-  }
+  params: Promise<Params>
 }
 
 function toFriendsLinkStatus(s: string): FriendsLinkStatus | undefined {
@@ -45,7 +47,11 @@ function toFriendsLinkStatus(s: string): FriendsLinkStatus | undefined {
  *   - 'REJECTED': 已接受的所有 hash
  *   - 其他任意特定 hash
  */
-export default async function Index({ params: { hash } }: Props) {
+export default async function Index(props: Props) {
+  const params = await props.params
+
+  const { hash } = params
+
   // 注意, 这个变量不是 status, 需要使用时自行判断
   const status = toFriendsLinkStatus(hash)
   return (

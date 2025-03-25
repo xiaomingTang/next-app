@@ -2,11 +2,10 @@ import { Link } from '../CustomLink'
 
 import { resolvePath } from '@/utils/url'
 
-import { forwardRef } from 'react'
 import { clsx } from 'clsx'
 
 import type { LinkProps } from 'next/link'
-import type { AnchorHTMLAttributes, ForwardedRef } from 'react'
+import type { AnchorHTMLAttributes } from 'react'
 
 export interface AnchorProps extends AnchorHTMLAttributes<HTMLAnchorElement> {
   /**
@@ -33,22 +32,19 @@ const APP_URL = resolvePath('/')
  * <Anchor href='/inner'>inner link</Anchor>
  * ```
  */
-export default forwardRef(function Anchor(
-  {
-    underline = false,
-    underlineOnHover = true,
-    bold = true,
-    href,
-    target,
-    rel,
-    className,
-    children,
-    tabIndex = 0,
-    linkProps,
-    ...props
-  }: AnchorProps,
-  ref: ForwardedRef<HTMLAnchorElement>
-) {
+export default function Anchor({
+  underline = false,
+  underlineOnHover = true,
+  bold = true,
+  href,
+  target,
+  rel,
+  className,
+  children,
+  tabIndex = 0,
+  linkProps,
+  ...props
+}: AnchorProps) {
   // 站内链接
   const isInternal = resolvePath(href || '').hostname.endsWith(APP_URL.hostname)
   const finalTarget = target ?? (isInternal ? '_self' : '_blank')
@@ -56,7 +52,6 @@ export default forwardRef(function Anchor(
 
   const anchor = (
     <a
-      ref={ref}
       href={href}
       target={finalTarget}
       rel={finalRel}
@@ -90,4 +85,4 @@ export default forwardRef(function Anchor(
       {anchor}
     </Link>
   )
-})
+}
