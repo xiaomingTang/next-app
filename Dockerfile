@@ -1,13 +1,13 @@
 # docker build -t 16px_cc --progress plain .
 # docker run -itdp 3000:3000 16px_cc
 
-FROM --platform=linux/amd64 ubuntu_with_node_20 AS base
+FROM --platform=linux/amd64 ubuntu_with_node_22 AS base
 ARG PORT=3000
 ENV PORT ${PORT}
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 COPY package.json /app
-RUN npm i -g pnpm@9
+RUN npm i -g pnpm@latest-10
 
 WORKDIR /app
 
