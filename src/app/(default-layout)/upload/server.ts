@@ -175,6 +175,7 @@ export const requestUploadFiles = SA.encode(
           policy: strictPolicy,
           secretId: SECRET_ID,
           secretKey: SECRET_KEY,
+          region: REGION,
         })
 
         return {
