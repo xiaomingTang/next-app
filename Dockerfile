@@ -23,7 +23,6 @@ RUN pnpm run build
 
 FROM base AS runner
 RUN mkdir .next
-COPY --from=builder /app/.npmrc ./
 COPY --from=builder /app/.env.local ./
 COPY --from=builder /app/public ./public
 # https://nextjs.org/docs/advanced-features/output-file-tracing
