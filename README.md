@@ -41,3 +41,16 @@
 - 从 docker 里面把文件取出来，上传到云 (`pnpm run docker:deploy` 就是干这个的)
   - 优点：仅有项目构建产物，体积很小，不到 50M (目前不到 40M)
   - 缺点：docker 需要与云上环境维持一致
+
+### acme 配置
+
+- 配置好 `Tencent_SecretId` 和 `Tencent_SecretKey`
+- `acme.sh --issue -d domain.com -d "\*.domain.com" --dns dns_tencent`
+- install-cert:
+  ```
+  acme.sh --install-cert -d domain \
+      --key-file /path/to/your/customized/dir/domain.key \
+      --fullchain-file /path/to/your/customized/dir/fullchain.cer \
+      --reloadcmd "sudo nginx -s reload"
+  ```
+- 配置 nginx `ssl_certificate` & `ssl_certificate_key`
