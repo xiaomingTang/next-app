@@ -102,7 +102,7 @@ export function BlogPage(blog: BlogContentProps) {
       <Box sx={{ mb: 1 }}>
         {blog.loading ? (
           <>
-            {shuffledArray7.slice(0, 5).map((n, i) => (
+            {shuffledArray7.slice(0, 2).map((n, i) => (
               <TagItem key={i} loading size={n} sx={{ mr: 1, mb: 1 }} />
             ))}
           </>
