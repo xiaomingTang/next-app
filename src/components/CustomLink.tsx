@@ -3,7 +3,15 @@
 import NextLink from 'next/link'
 import { forwardRef } from 'react'
 
-import type { LinkProps } from 'next/link'
+import type { LinkProps as NextLinkProps } from 'next/link'
+
+type LinkProps = Omit<
+  React.AnchorHTMLAttributes<HTMLAnchorElement>,
+  keyof NextLinkProps
+> &
+  NextLinkProps & {
+    children?: React.ReactNode | undefined
+  } & React.RefAttributes<HTMLAnchorElement>
 
 export function geneLink(defaultProps?: Partial<LinkProps>) {
   function RawLink(

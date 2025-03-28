@@ -50,9 +50,32 @@ export default function Anchor({
   const finalTarget = target ?? (isInternal ? '_self' : '_blank')
   const finalRel = rel ?? (isInternal ? undefined : 'noopener nofollow')
 
-  const anchor = (
-    <a
-      href={href}
+  if (!href || !isInternal) {
+    return (
+      <a
+        href={href}
+        target={finalTarget}
+        rel={finalRel}
+        tabIndex={tabIndex}
+        className={clsx(
+          className,
+          'cursor-pointer',
+          'text-primary-main active:text-primary-dark dark:text-primary-200 dark:active:text-primary-400',
+          underline && 'underline',
+          underlineOnHover && 'hover:underline',
+          bold && 'font-bold'
+        )}
+        {...props}
+      >
+        {children}
+      </a>
+    )
+  }
+
+  return (
+    <Link
+      prefetch={false}
+      href={href ?? '/'}
       target={finalTarget}
       rel={finalRel}
       tabIndex={tabIndex}
@@ -65,24 +88,9 @@ export default function Anchor({
         bold && 'font-bold'
       )}
       {...props}
-    >
-      {children}
-    </a>
-  )
-
-  if (!href || !isInternal) {
-    return anchor
-  }
-
-  return (
-    <Link
-      href={href ?? '/'}
-      passHref
-      legacyBehavior
-      prefetch={false}
       {...linkProps}
     >
-      {anchor}
+      {children}
     </Link>
   )
 }
