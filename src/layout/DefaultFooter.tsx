@@ -1,3 +1,5 @@
+import { CopyrightYear } from './components/CopyrightYear'
+
 import Anchor from '@/components/Anchor'
 import SvgGithub from '@/svg/assets/github.svg?icon'
 import { dark } from '@/utils/theme'
@@ -6,8 +8,6 @@ import Stack from '@mui/material/Stack'
 import Typography from '@mui/material/Typography'
 import { common, grey } from '@mui/material/colors'
 import Image from 'next/image'
-
-const year = new Date().getFullYear()
 
 export function DefaultFooter() {
   return (
@@ -40,7 +40,7 @@ export function DefaultFooter() {
         }}
       >
         <Stack spacing={1} direction='row' justifyContent='center'>
-          <Typography aria-label={`版权声明: ${year} 年`}>© {year}</Typography>
+          <CopyrightYear />
         </Stack>
         <Stack spacing={1} direction='row' justifyContent='center'>
           <Anchor

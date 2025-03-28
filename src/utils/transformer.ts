@@ -57,22 +57,7 @@ export function friendlySize(size: number) {
  */
 export function friendlyFormatTime(time: number | string | Date) {
   const date = time instanceof Date ? time : new Date(time)
-  const nowDate = new Date()
-  const diff = nowDate.getTime() - date.getTime()
-  const hour = 60 * 60 * 1000
-  if (diff < hour) {
-    return '一小时内'
-  }
-  if (diff < 24 * hour) {
-    return `${Math.floor(diff / hour)}小时前`
-  }
-  if (diff < 7 * 24 * hour) {
-    return `${Math.floor(diff / (24 * hour))}天前`
-  }
   const md = `${date.getMonth() + 1}月${date.getDate()}日`
-  if (nowDate.getFullYear() === date.getFullYear()) {
-    return md
-  }
   return `${date.getFullYear()}年${md}`
 }
 

@@ -1,13 +1,14 @@
 import type { ProjectTree } from './arrayToTree'
 
-const now = new Date()
+// 随便初始化一个时间
+const initDate = new Date('2025-01-01T00:00:00Z')
 
 export const loadingTreeData: [ProjectTree] = [
   {
     hash: 'LOADING',
     type: 'DIR',
-    createdAt: now,
-    updatedAt: now,
+    createdAt: initDate,
+    updatedAt: initDate,
     name: '加载中...',
     parentHash: 'LOADING',
     children: [],
@@ -19,8 +20,8 @@ export const errorTreeData: [ProjectTree] = [
   {
     hash: 'ERROR',
     type: 'DIR',
-    createdAt: now,
-    updatedAt: now,
+    createdAt: initDate,
+    updatedAt: initDate,
     name: '加载出错',
     parentHash: 'ERROR',
     children: [],
