@@ -43,7 +43,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm i -g pm2 concurrently pee
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-RUN chown -R nextjs:nodejs /app
+RUN chown -R nextjs:nodejs /app /pnpm
 USER nextjs
 
 EXPOSE ${PORT}
