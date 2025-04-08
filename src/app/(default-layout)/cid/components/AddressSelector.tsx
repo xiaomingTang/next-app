@@ -9,7 +9,7 @@ import {
   Autocomplete,
   FormControl,
   FormHelperText,
-  Grid2,
+  Grid,
   TextField,
 } from '@mui/material'
 import { Controller } from 'react-hook-form'
@@ -210,8 +210,8 @@ export function AddressSelector({ form }: { form: UseFormReturn<FormProps> }) {
   )
 
   return (
-    <Grid2 container spacing={1}>
-      <Grid2
+    <Grid container spacing={1}>
+      <Grid
         size={{
           xs: 12,
           sm: 6,
@@ -219,8 +219,8 @@ export function AddressSelector({ form }: { form: UseFormReturn<FormProps> }) {
         }}
       >
         {provinceElem}
-      </Grid2>
-      <Grid2
+      </Grid>
+      <Grid
         size={{
           xs: 12,
           sm: 6,
@@ -228,8 +228,8 @@ export function AddressSelector({ form }: { form: UseFormReturn<FormProps> }) {
         }}
       >
         {cityElem}
-      </Grid2>
-      <Grid2
+      </Grid>
+      <Grid
         size={{
           xs: 12,
           sm: 6,
@@ -237,7 +237,7 @@ export function AddressSelector({ form }: { form: UseFormReturn<FormProps> }) {
         }}
       >
         {areaElem}
-      </Grid2>
-    </Grid2>
+      </Grid>
+    </Grid>
   )
 }

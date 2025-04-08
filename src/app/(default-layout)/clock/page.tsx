@@ -5,7 +5,7 @@ import { Clock } from '@D/clock/components/Clock'
 import { CLOCK_CONFIGS } from '@D/clock/constants'
 import { Hands } from '@D/clock/components/Hands'
 
-import Grid2 from '@mui/material/Grid2'
+import Grid from '@mui/material/Grid'
 
 export const metadata = seo.defaults({
   title: '时钟橱窗',
@@ -15,9 +15,9 @@ export const metadata = seo.defaults({
 
 export default function Index() {
   return (
-    <Grid2 container sx={{ width: '100%' }} spacing={2}>
+    <Grid container sx={{ width: '100%' }} spacing={2}>
       {CLOCK_CONFIGS.map((config) => (
-        <Grid2
+        <Grid
           key={config.id}
           size={{
             xs: 6,
@@ -44,8 +44,8 @@ export default function Index() {
               <Hands config={config} />
             </Clock>
           </HoverableClock>
-        </Grid2>
+        </Grid>
       ))}
-    </Grid2>
+    </Grid>
   )
 }

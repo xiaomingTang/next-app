@@ -1,5 +1,7 @@
-import { useEventCallback } from '@mui/material'
-import useEnhancedEffect from '@mui/material/utils/useEnhancedEffect'
+import {
+  unstable_useEnhancedEffect as useEnhancedEffect,
+  useEventCallback,
+} from '@mui/material'
 import { useRef } from 'react'
 
 /**
