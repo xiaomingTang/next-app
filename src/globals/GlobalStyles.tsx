@@ -20,7 +20,7 @@ export function GlobalStyles() {
 
 :root[data-dark] {
   --custom-fg: #bdbdbd;
-  --custom-bg: #1a2027;
+  --custom-bg: #29323d;
 }
 
 html, body {
