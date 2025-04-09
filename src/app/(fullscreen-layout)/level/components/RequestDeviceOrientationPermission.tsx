@@ -6,8 +6,9 @@ import { Alert, Tooltip, Typography } from '@mui/material'
 
 export function RequestDeviceOrientationPermission() {
   const { permissionState, requestPermission } = useRequestPermission(
-    (DeviceOrientationEvent as unknown as IosDeviceOrientationEvent)
-      .requestPermission
+    () =>
+      (DeviceOrientationEvent as unknown as IosDeviceOrientationEvent)
+        .requestPermission
   )
 
   if (permissionState === 'granted') {
