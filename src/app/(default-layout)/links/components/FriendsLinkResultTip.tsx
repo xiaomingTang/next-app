@@ -3,6 +3,7 @@ import { resolvePath } from '@/utils/url'
 import { ENV_CONFIG } from '@/config'
 import { SilentError } from '@/errors/SilentError'
 import { muiDialogV5ReplaceOnClose } from '@/utils/muiDialogV5ReplaceOnClose'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import {
@@ -16,8 +17,6 @@ import {
   Typography,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import CopyToClipboard from 'react-copy-to-clipboard'
-import toast from 'react-hot-toast'
 
 import type { SimpleFriendsLink } from '../server'
 
@@ -73,23 +72,21 @@ export const FriendsLinkResultTip = NiceModal.create(
           </Toolbar>
         </AppBar>
         <DialogContent>
-          <CopyToClipboard
-            text={link.email}
-            onCopy={() => toast.success('复制成功')}
+          <Typography
+            sx={{ cursor: 'copy' }}
+            onClick={() => copyToClipboard(link.email)}
           >
-            <Typography sx={{ cursor: 'copy' }}>邮箱: {link.email}</Typography>
-          </CopyToClipboard>
+            邮箱: {link.email}
+          </Typography>
           <Divider sx={{ my: 2 }} />
-          <CopyToClipboard
-            text={texts.join('\n')}
-            onCopy={() => toast.success('复制成功')}
+          <Box
+            sx={{ cursor: 'copy' }}
+            onClick={() => copyToClipboard(texts.join('\n'))}
           >
-            <Box sx={{ cursor: 'copy' }}>
-              {texts.map((t, i) => (
-                <Typography key={`${i}${t}`}>{t}</Typography>
-              ))}
-            </Box>
-          </CopyToClipboard>
+            {texts.map((t, i) => (
+              <Typography key={`${i}${t}`}>{t}</Typography>
+            ))}
+          </Box>
         </DialogContent>
       </Dialog>
     )

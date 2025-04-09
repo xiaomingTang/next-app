@@ -6,11 +6,11 @@ import { useIsOnline } from '@/hooks/useIsOnline'
 import { useListen } from '@/hooks/useListen'
 import { useVisibilityState } from '@/hooks/useVisibilityState'
 import { openSimpleModal } from '@/components/SimpleModal'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 import { Button, Stack, Typography } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
-import CopyToClipboard from 'react-copy-to-clipboard'
 import toast from 'react-hot-toast'
 import { QRCodeSVG } from 'qrcode.react'
 import { noop } from 'lodash-es'
@@ -43,37 +43,33 @@ export function SelfPeer() {
         maxWidth: '450px',
       }}
     >
-      <CopyToClipboard
-        text={peerId}
-        onCopy={() => {
-          if (peerId) {
-            toast.success('复制成功')
-          } else {
+      <Button
+        variant='outlined'
+        color={peerDisconnected ? 'error' : 'primary'}
+        title={peerError?.type && PEER_ERROR_MAP[peerError.type]}
+        sx={{
+          width: '100%',
+        }}
+        onClick={() => {
+          if (!peerId) {
             toast.error('未连接到 peer 服务器')
+            return
           }
+          void copyToClipboard(peerId)
         }}
       >
-        <Button
-          variant='outlined'
-          color={peerDisconnected ? 'error' : 'primary'}
-          title={peerError?.type && PEER_ERROR_MAP[peerError.type]}
+        我的 ID:
+        <Typography
           sx={{
-            width: '100%',
+            mx: 1,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
           }}
         >
-          我的 ID:
-          <Typography
-            sx={{
-              mx: 1,
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-            }}
-          >
-            {peerId}
-          </Typography>
-          {peerId && <ContentCopyIcon fontSize='inherit' />}
-        </Button>
-      </CopyToClipboard>
+          {peerId}
+        </Typography>
+        {peerId && <ContentCopyIcon fontSize='inherit' />}
+      </Button>
       <Button
         variant='outlined'
         color={peerDisconnected ? 'error' : 'primary'}

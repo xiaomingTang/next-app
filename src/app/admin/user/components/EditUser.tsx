@@ -9,6 +9,7 @@ import { ENV_CONFIG } from '@/config'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SilentError } from '@/errors/SilentError'
 import { muiDialogV5ReplaceOnClose } from '@/utils/muiDialogV5ReplaceOnClose'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import NiceModal, { useModal } from '@ebay/nice-modal-react'
 import { Controller, useForm } from 'react-hook-form'
@@ -31,8 +32,6 @@ import {
   Typography,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import CopyToClipboard from 'react-copy-to-clipboard'
-import { toast } from 'react-hot-toast'
 import { noop } from 'lodash-es'
 
 import type { PickAndPartial } from '@/utils/type'
@@ -89,16 +88,14 @@ const UserTip = NiceModal.create(({ user }: { user: User }) => {
         请记住你的用户名和密码, 仅会展示这一次, 且不可找回 (以下内容可点击复制)
       </Alert>
       <DialogContent>
-        <CopyToClipboard
-          text={texts.join('\n')}
-          onCopy={() => toast.success('复制成功')}
+        <Box
+          sx={{ cursor: 'copy' }}
+          onClick={() => copyToClipboard(texts.join('\n'))}
         >
-          <Box sx={{ cursor: 'copy' }}>
-            {texts.map((t) => (
-              <Typography key={t}>{t}</Typography>
-            ))}
-          </Box>
-        </CopyToClipboard>
+          {texts.map((t) => (
+            <Typography key={t}>{t}</Typography>
+          ))}
+        </Box>
       </DialogContent>
     </Dialog>
   )

@@ -4,6 +4,7 @@ import { geneRunOnly } from '@/utils/runOnce'
 import { useVisibilityState } from '@/hooks/useVisibilityState'
 import { isValidUrl } from '@/utils/url'
 import { isPointInsideQuadrilateral } from '@/utils/math'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import {
   Button,
@@ -17,8 +18,6 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import TextFieldsIcon from '@mui/icons-material/TextFields'
 import LinkIcon from '@mui/icons-material/Link'
 import { useEffect, useMemo, useState } from 'react'
-import CopyToClipboard from 'react-copy-to-clipboard'
-import { toast } from 'react-hot-toast'
 
 import type { QRCode } from 'jsqr'
 
@@ -117,20 +116,18 @@ export function QrcodeDisplayItem({
               },
             }}
           >
-            <CopyToClipboard
-              text={qrcode.data}
-              onCopy={() => {
-                toast.success('复制成功')
+            <MenuItem
+              key='复制'
+              onClick={() => {
+                void copyToClipboard(qrcode.data)
                 setAnchorEl(null)
               }}
             >
-              <MenuItem key='复制'>
-                <ListItemIcon>
-                  <ContentCopyIcon fontSize='small' />
-                </ListItemIcon>
-                <ListItemText>复制</ListItemText>
-              </MenuItem>
-            </CopyToClipboard>
+              <ListItemIcon>
+                <ContentCopyIcon fontSize='small' />
+              </ListItemIcon>
+              <ListItemText>复制</ListItemText>
+            </MenuItem>
             {isUrl && (
               <MenuItem
                 key='访问'

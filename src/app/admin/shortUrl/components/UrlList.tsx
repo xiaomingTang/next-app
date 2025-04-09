@@ -10,8 +10,8 @@ import { SA } from '@/errors/utils'
 import { AuthRequired } from '@/components/AuthRequired'
 import { RoleNameMap } from '@/constants'
 import { resolvePath } from '@/utils/url'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
-import { CopyToClipboard } from 'react-copy-to-clipboard'
 import {
   ButtonGroup,
   Paper,
@@ -23,7 +23,6 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import { toast } from 'react-hot-toast'
 
 import type { ShortUrlWithCreator } from '../server'
 
@@ -57,54 +56,44 @@ export function UrlEditUrlList({
                 key={url.hash}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
-                <CopyToClipboard
-                  text={resolvePath(`/u/${url.hash}`).href}
-                  onCopy={() => {
-                    toast.success('复制成功')
-                  }}
+                <TableCell
+                  component='th'
+                  scope='row'
+                  sx={{ cursor: 'copy', wordBreak: 'break-all' }}
+                  onClick={() =>
+                    copyToClipboard(resolvePath(`/u/${url.hash}`).href)
+                  }
                 >
-                  <TableCell
-                    component='th'
-                    scope='row'
-                    sx={{ cursor: 'copy', wordBreak: 'break-all' }}
-                  >
-                    {url.encrypt && (
-                      <Typography
-                        component='span'
-                        sx={{
-                          color: 'success.main',
-                          fontWeight: 'bold',
-                        }}
-                      >
-                        [已加密]
-                      </Typography>
-                    )}{' '}
-                    {resolvePath(`/u/${url.hash}`).href}
-                  </TableCell>
-                </CopyToClipboard>
+                  {url.encrypt && (
+                    <Typography
+                      component='span'
+                      sx={{
+                        color: 'success.main',
+                        fontWeight: 'bold',
+                      }}
+                    >
+                      [已加密]
+                    </Typography>
+                  )}{' '}
+                  {resolvePath(`/u/${url.hash}`).href}
+                </TableCell>
                 <TableCell>{url.description}</TableCell>
                 <AuthRequired roles={['ADMIN']}>
                   <TableCell>
                     [{RoleNameMap[url.creator.role]}]{url.creator.name}
                   </TableCell>
                 </AuthRequired>
-                <CopyToClipboard
-                  text={url.url}
-                  onCopy={() => {
-                    toast.success('复制成功')
+                <TableCell
+                  component='th'
+                  scope='row'
+                  sx={{
+                    cursor: 'copy',
+                    wordBreak: 'break-all',
                   }}
+                  onClick={() => copyToClipboard(url.url)}
                 >
-                  <TableCell
-                    component='th'
-                    scope='row'
-                    sx={{
-                      cursor: 'copy',
-                      wordBreak: 'break-all',
-                    }}
-                  >
-                    {url.url}
-                  </TableCell>
-                </CopyToClipboard>
+                  {url.url}
+                </TableCell>
                 <TableCell>{url.limit}</TableCell>
                 <TableCell>{formatTime(url.timeout)}</TableCell>
                 <TableCell>

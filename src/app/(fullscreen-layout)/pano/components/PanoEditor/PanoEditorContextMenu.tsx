@@ -2,13 +2,12 @@ import { usePanoStore } from '../store'
 
 import { formatView } from '@F/pano/components/PanoControls/utils'
 import { STYLE } from '@/config'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import { Menu, MenuItem } from '@mui/material'
 import { Html } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 import { useEffect, useMemo, useState } from 'react'
-import CopyToClipboard from 'react-copy-to-clipboard'
-import toast from 'react-hot-toast'
 import { Spherical, Vector3 } from 'three'
 
 import type { PerspectiveCamera } from 'three'
@@ -82,6 +81,11 @@ export function PanoEditorContextMenu() {
 
   const handleClose = () => setContextMenu(null)
 
+  const geneCopyThenClose = (text: string) => () => {
+    void copyToClipboard(text)
+    handleClose()
+  }
+
   useEffect(() => {
     const onContextMenu = (e: MouseEvent) => {
       e.preventDefault()
@@ -112,26 +116,24 @@ export function PanoEditorContextMenu() {
           left: contextMenu?.mouseX ?? 0,
         }}
       >
-        <CopyToClipboard
-          text={`"h": ${curView.h},\n"v": ${curView.v},\n"fov": ${curView.fov}`}
-          onCopy={() => toast.success('复制成功')}
+        <MenuItem
+          onClick={geneCopyThenClose(
+            `"h": ${curView.h},\n"v": ${curView.v},\n"fov": ${curView.fov}`
+          )}
         >
-          <MenuItem onClick={handleClose}>复制【相机】信息</MenuItem>
-        </CopyToClipboard>
+          复制【相机】信息
+        </MenuItem>
+        <MenuItem onClick={geneCopyThenClose(JSON.stringify(pano, null, 2))}>
+          复制【全场景】信息
+        </MenuItem>
 
-        <CopyToClipboard
-          text={JSON.stringify(pano, null, 2)}
-          onCopy={() => toast.success('复制成功')}
+        <MenuItem
+          onClick={geneCopyThenClose(
+            `"h": ${mouseView?.h},\n"v": ${mouseView?.v}`
+          )}
         >
-          <MenuItem onClick={handleClose}>复制【全场景】信息</MenuItem>
-        </CopyToClipboard>
-
-        <CopyToClipboard
-          text={`"h": ${mouseView?.h},\n"v": ${mouseView?.v}`}
-          onCopy={() => toast.success('复制成功')}
-        >
-          <MenuItem onClick={handleClose}>复制【鼠标】信息</MenuItem>
-        </CopyToClipboard>
+          复制【鼠标】信息
+        </MenuItem>
       </Menu>
     </Html>
   )

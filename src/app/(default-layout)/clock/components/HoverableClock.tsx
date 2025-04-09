@@ -6,6 +6,7 @@ import { resolvePath } from '@/utils/url'
 import Anchor from '@/components/Anchor'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { useSimulateClick } from '@/hooks/useSimulateClick'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import CloseIcon from '@mui/icons-material/Close'
 import {
@@ -20,8 +21,6 @@ import {
   Typography,
 } from '@mui/material'
 import { useState } from 'react'
-import CopyToClipboard from 'react-copy-to-clipboard'
-import toast from 'react-hot-toast'
 import { grey } from '@mui/material/colors'
 
 import type { BoxProps } from '@mui/material'
@@ -125,27 +124,21 @@ export function HoverableClock({
           <Typography my={1}>
             复制下面的 iframe，粘贴到你的网站，你也能拥有同款时钟
           </Typography>
-          <CopyToClipboard
-            text={text}
-            onCopy={() => {
-              toast.success('复制成功')
+          <Typography
+            sx={{
+              p: 1,
+              borderRadius: 1,
+              wordBreak: 'break-word',
+              cursor: 'copy',
+              backgroundColor: grey[200],
+              [dark()]: {
+                backgroundColor: grey[600],
+              },
             }}
+            onClick={() => copyToClipboard(text)}
           >
-            <Typography
-              sx={{
-                p: 1,
-                borderRadius: 1,
-                wordBreak: 'break-word',
-                cursor: 'copy',
-                backgroundColor: grey[200],
-                [dark()]: {
-                  backgroundColor: grey[600],
-                },
-              }}
-            >
-              {text}
-            </Typography>
-          </CopyToClipboard>
+            {text}
+          </Typography>
         </DialogContent>
       </Dialog>
     </>

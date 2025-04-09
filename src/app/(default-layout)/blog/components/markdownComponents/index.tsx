@@ -11,6 +11,7 @@ import { AnchorProvider } from '@/components/AnchorProvider'
 import { useDefaultAsideDetail } from '@/layout/utils'
 import { onAnchorClick } from '@/components/Anchor/utils'
 import { formatText } from '@/utils/string'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import {
   Box,
@@ -27,8 +28,6 @@ import ListIcon from '@mui/icons-material/List'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { matchRemotePattern } from 'next/dist/shared/lib/match-remote-pattern'
-import CopyToClipboard from 'react-copy-to-clipboard'
-import toast from 'react-hot-toast'
 
 import type { RemotePattern } from 'next/dist/shared/lib/image-config'
 import type { MDXComponents } from 'mdx/types'
@@ -218,14 +217,13 @@ function Iframe({ src = '' }: { src?: string }) {
           {linkStr}
           <OpenInNewIcon fontSize='small' />
         </Anchor>
-        <CopyToClipboard
-          text={srcUrl.href}
-          onCopy={() => toast.success('链接已复制')}
+        <IconButton
+          aria-label='复制链接'
+          sx={{ ml: 1 }}
+          onClick={() => copyToClipboard(srcUrl.href)}
         >
-          <IconButton aria-label='复制链接' sx={{ ml: 1 }}>
-            <ContentCopyIcon fontSize='small' />
-          </IconButton>
-        </CopyToClipboard>
+          <ContentCopyIcon fontSize='small' />
+        </IconButton>
       </Box>
       <iframe
         src={srcUrl.href}

@@ -14,6 +14,7 @@ import { cat } from '@/errors/catchAndToast'
 import { customConfirm } from '@/utils/customConfirm'
 import { SA } from '@/errors/utils'
 import { resolvePath } from '@/utils/url'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import {
   Divider,
@@ -24,8 +25,6 @@ import {
   useTheme,
 } from '@mui/material'
 import { useRouter } from 'next/navigation'
-import CopyToClipboard from 'react-copy-to-clipboard'
-import toast from 'react-hot-toast'
 import ContentCut from '@mui/icons-material/ContentCut'
 import ContentCopy from '@mui/icons-material/ContentCopy'
 import ContentPaste from '@mui/icons-material/ContentPaste'
@@ -221,22 +220,12 @@ export function TreeContextMenu({
   )
   const copyPathMenuItems = (
     <>
-      <CopyToClipboard
-        text={relPath}
-        onCopy={() => {
-          toast.success('已复制')
-        }}
-      >
-        <MenuItem onClick={withClose()}>复制相对路径</MenuItem>
-      </CopyToClipboard>
-      <CopyToClipboard
-        text={absPath}
-        onCopy={() => {
-          toast.success('已复制')
-        }}
-      >
-        <MenuItem onClick={withClose()}>复制完整 URL</MenuItem>
-      </CopyToClipboard>
+      <MenuItem onClick={withClose(() => copyToClipboard(relPath))}>
+        复制相对路径
+      </MenuItem>
+      <MenuItem onClick={withClose(() => copyToClipboard(absPath))}>
+        复制完整 URL
+      </MenuItem>
     </>
   )
   const createOrEditMenuItems = (

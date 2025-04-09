@@ -7,9 +7,9 @@ import { cat } from '@/errors/catchAndToast'
 import { obj } from '@/utils/tiny'
 import Anchor from '@/components/Anchor'
 import SvgLoading from '@/svg/assets/loading.svg?icon'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import useSWR from 'swr'
-import { CopyToClipboard } from 'react-copy-to-clipboard'
 import {
   Collapse,
   IconButton,
@@ -22,7 +22,6 @@ import {
   TableRow,
   Typography,
 } from '@mui/material'
-import { toast } from 'react-hot-toast'
 import { useState } from 'react'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
@@ -60,26 +59,18 @@ function Row({ comment }: { comment: Comment }) {
           )}
         </TableCell>
         <TableCell>{formatTime(comment.createdAt)}</TableCell>
-        <CopyToClipboard
-          text={comment.name}
-          onCopy={() => {
-            toast.success('复制成功')
-          }}
+        <TableCell
+          sx={{ cursor: 'copy', wordBreak: 'break-all' }}
+          onClick={() => copyToClipboard(comment.name)}
         >
-          <TableCell sx={{ cursor: 'copy', wordBreak: 'break-all' }}>
-            {comment.name || '-'}
-          </TableCell>
-        </CopyToClipboard>
-        <CopyToClipboard
-          text={comment.email}
-          onCopy={() => {
-            toast.success('复制成功')
-          }}
+          {comment.name || '-'}
+        </TableCell>
+        <TableCell
+          sx={{ cursor: 'copy', wordBreak: 'break-all' }}
+          onClick={() => copyToClipboard(comment.email)}
         >
-          <TableCell sx={{ cursor: 'copy', wordBreak: 'break-all' }}>
-            {comment.email || '-'}
-          </TableCell>
-        </CopyToClipboard>
+          {comment.email || '-'}
+        </TableCell>
         <TableCell
           sx={{
             minWidth: 400,

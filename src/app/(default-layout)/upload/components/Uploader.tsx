@@ -17,6 +17,7 @@ import { AnchorProvider } from '@/components/AnchorProvider'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { getImageSize } from '@/utils/getImageSize'
 import { useUser } from '@/user'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import CheckCircleIcon from '@mui/icons-material/CheckCircle'
 import SettingsIcon from '@mui/icons-material/Settings'
@@ -44,8 +45,6 @@ import {
 import { Controller, useForm } from 'react-hook-form'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { omit } from 'lodash-es'
-import { toast } from 'react-hot-toast'
-import CopyToClipboard from 'react-copy-to-clipboard'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import COS from 'cos-js-sdk-v5'
 
@@ -299,22 +298,26 @@ const Uploader = NiceModal.create(
                 anchorEl={copyableAnchorEl}
                 onClose={() => setCopyableAnchorEl(null)}
               >
-                <CopyToClipboard
-                  text={copyableTexts.map((t) => t.raw).join('\n')}
-                  onCopy={() => toast.success('复制成功')}
+                <MenuItem
+                  onClick={() => {
+                    setCopyableAnchorEl(null)
+                    void copyToClipboard(
+                      copyableTexts.map((t) => t.raw).join('\n')
+                    )
+                  }}
                 >
-                  <MenuItem onClick={() => setCopyableAnchorEl(null)}>
-                    复制所有 url
-                  </MenuItem>
-                </CopyToClipboard>
-                <CopyToClipboard
-                  text={copyableTexts.map((t) => t.markdown).join('\n')}
-                  onCopy={() => toast.success('复制成功')}
+                  复制所有 url
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    setCopyableAnchorEl(null)
+                    void copyToClipboard(
+                      copyableTexts.map((t) => t.markdown).join('\n')
+                    )
+                  }}
                 >
-                  <MenuItem onClick={() => setCopyableAnchorEl(null)}>
-                    复制所有 markdown 格式
-                  </MenuItem>
-                </CopyToClipboard>
+                  复制所有 markdown 格式
+                </MenuItem>
               </Menu>
             </>
           )

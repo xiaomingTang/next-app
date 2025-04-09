@@ -5,6 +5,7 @@ import { checkIsImage } from '../utils/checkIsImage'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { obj } from '@/utils/tiny'
 import { MB_SIZE, friendlySize } from '@/utils/transformer'
+import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import WarningIcon from '@mui/icons-material/Warning'
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
@@ -23,8 +24,6 @@ import {
   ListItemAvatar,
   Avatar,
 } from '@mui/material'
-import { toast } from 'react-hot-toast'
-import CopyToClipboard from 'react-copy-to-clipboard'
 
 export interface FileInfo {
   file: File
@@ -171,18 +170,12 @@ export function FileInfoDisplay({
           </Typography>
           {info.url && (
             <ButtonGroup variant='outlined'>
-              <CopyToClipboard
-                text={copyableTexts.raw}
-                onCopy={() => toast.success('复制成功')}
-              >
-                <Button>复制 url</Button>
-              </CopyToClipboard>
-              <CopyToClipboard
-                text={copyableTexts.markdown}
-                onCopy={() => toast.success('复制成功')}
-              >
-                <Button>复制 markdown 格式</Button>
-              </CopyToClipboard>
+              <Button onClick={() => copyToClipboard(copyableTexts.raw)}>
+                复制 url
+              </Button>
+              <Button onClick={() => copyToClipboard(copyableTexts.markdown)}>
+                复制 markdown 格式
+              </Button>
             </ButtonGroup>
           )}
         </Stack>
