@@ -1,12 +1,14 @@
 import Anchor from '@/components/Anchor'
 import { cat } from '@/errors/catchAndToast'
-import { useRequestDeviceOrientationPermission } from '@/hooks/useRequestDeviceOrientationPermission'
+import { useRequestPermission } from '@/hooks/useRequestPermission'
 
 import { Alert, Tooltip, Typography } from '@mui/material'
 
 export function RequestDeviceOrientationPermission() {
-  const { permissionState, requestPermission } =
-    useRequestDeviceOrientationPermission()
+  const { permissionState, requestPermission } = useRequestPermission(
+    (DeviceOrientationEvent as unknown as IosDeviceOrientationEvent)
+      .requestPermission
+  )
 
   if (permissionState === 'granted') {
     return <></>
