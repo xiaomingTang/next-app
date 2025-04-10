@@ -1,4 +1,4 @@
-const colors = require('material-ui-colors')
+const colors = require('@mui/material/colors')
 const { colors: defaultColors } = require('tailwindcss/defaultTheme')
 
 /**
