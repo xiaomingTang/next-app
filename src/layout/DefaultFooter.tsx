@@ -9,6 +9,13 @@ import Typography from '@mui/material/Typography'
 import { common, grey } from '@mui/material/colors'
 import Image from 'next/image'
 
+const V_LINE = (
+  <Typography
+    component='span'
+    sx={{ borderLeft: '1px solid currentColor', opacity: 0.25, mx: 1 }}
+  />
+)
+
 export function DefaultFooter() {
   return (
     <Stack
@@ -66,19 +73,24 @@ export function DefaultFooter() {
             src='/static/images/公网安备-64x64.png'
             width={16}
             height={16}
-          />{' '}
+            className='mr-1 select-none'
+            aria-hidden
+          />
           粤公网安备44030002002476号
         </Anchor>
       </Stack>
       <Typography>
-        Powered by <Anchor href='https://nextjs.org/'>Next.js</Anchor>
-        <Typography
-          component='span'
-          sx={{ borderLeft: '1px solid currentColor', opacity: 0.25, mx: 1 }}
-        />
         <Anchor href='/rss.xml' target='_blank'>
           RSS
         </Anchor>
+        {V_LINE}
+        <Typography component='span' className='text-green-600'>
+          ipv6
+        </Typography>
+        {V_LINE}
+        <Typography component='span'>
+          Powered by <Anchor href='https://nextjs.org/'>Next.js</Anchor>
+        </Typography>
       </Typography>
     </Stack>
   )
