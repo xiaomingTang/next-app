@@ -25,9 +25,9 @@
 
 1. `pnpm run docker:build-base`
    - 这条命令平常的时候构建一次，用于生成基础景象，不必每次部署都执行
-2. `dotenv -e .env.deploy.local -- pnpm run docker:build`
+2. `dotenv -e .env.deploy -c -- pnpm run docker:build`
    - `PORT=3001 pnpm run docker:build` 能指定 docker PORT 使用 3001
-   - `dotenv -e .env.deploy.local -- pnpm run xxx` 以 `.env.deploy.local` 作为环境变量 provider 来执行命令
+   - `dotenv -e .env.deploy -c -- pnpm run xxx` 利用 [dotenv-cli](https://www.npmjs.com/package/dotenv-cli) 以 `.env.deploy.local` 作为环境变量 provider 来执行命令
 3. 构建产物部署到云服务器
    - `pnpm run docker:deploy`
 
