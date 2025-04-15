@@ -21,7 +21,6 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
-  Fade,
   FormControl,
   FormHelperText,
   IconButton,
@@ -145,14 +144,7 @@ export const SearchSection = NiceModal.create(() => {
   )
 
   return (
-    <Dialog
-      {...muiDialogV5ReplaceOnClose(modal)}
-      slots={{
-        transition: Fade,
-      }}
-      fullWidth
-      maxWidth='sm'
-    >
+    <Dialog fullWidth maxWidth='sm' {...muiDialogV5ReplaceOnClose(modal)}>
       {/* zIndex 是 Blog */}
       <DialogTitle sx={{ p: 0, position: 'relative', zIndex: 1 }}>
         <Paper component='form' onSubmit={onSubmit}>

@@ -10,7 +10,6 @@ import {
   AppBar,
   Box,
   Dialog,
-  Fade,
   IconButton,
   Toolbar,
   useMediaQuery,
@@ -55,9 +54,6 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
       fullWidth
       fullScreen={fullScreen}
       maxWidth='md'
-      slots={{
-        transition: Fade,
-      }}
       {...muiDialogV5ReplaceOnClose(modal)}
     >
       {header}
