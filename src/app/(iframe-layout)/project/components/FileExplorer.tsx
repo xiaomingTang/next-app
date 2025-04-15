@@ -142,15 +142,11 @@ function CustomLabel({ icon: Icon, children, ...other }: CustomLabelProps) {
   )
 }
 
-interface FileExplorerTreeItemProps
-  extends Omit<UseTreeItem2Parameters, 'rootRef'>,
-    Omit<React.HTMLAttributes<HTMLLIElement>, 'onFocus'> {}
+type FileExplorerTreeItemProps = UseTreeItem2Parameters &
+  Omit<React.HTMLAttributes<HTMLLIElement>, 'onFocus'>
 
-function RawFileExplorerTreeItem(
-  props: FileExplorerTreeItemProps,
-  ref: React.Ref<HTMLLIElement>
-) {
-  const { id, itemId, label, disabled, children, ...other } = props
+export function FileExplorerTreeItem(props: FileExplorerTreeItemProps) {
+  const { id, itemId, label, disabled, children, rootRef, ...other } = props
 
   const {
     getRootProps,
@@ -163,7 +159,7 @@ function RawFileExplorerTreeItem(
     getDragAndDropOverlayProps,
     publicAPI,
     status: rawStatus,
-  } = useTreeItem2({ id, itemId, children, label, disabled, rootRef: ref })
+  } = useTreeItem2({ id, itemId, children, label, disabled, rootRef })
 
   const item: TreeViewBaseItem<SimpleProjectItem> = publicAPI.getItem(itemId)
 
@@ -221,5 +217,3 @@ function RawFileExplorerTreeItem(
     </TreeItem2Provider>
   )
 }
-
-export const FileExplorerTreeItem = React.forwardRef(RawFileExplorerTreeItem)

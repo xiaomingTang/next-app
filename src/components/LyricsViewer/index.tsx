@@ -5,7 +5,6 @@ import { useHasShown, useLyrics } from './utils'
 import { MP3Controls } from './MP3Controls'
 
 import { useGlobalAudio } from '../useGlobalAudio'
-import { SlideUpTransition } from '../Transitions'
 
 import { dark } from '@/utils/theme'
 import { useListen } from '@/hooks/useListen'
@@ -16,6 +15,7 @@ import {
   ButtonBase,
   ClickAwayListener,
   Fade,
+  Slide,
   Stack,
   alpha,
 } from '@mui/material'
@@ -134,7 +134,7 @@ export function LyricsViewer() {
 
   return (
     // unmountOnExit 是用于使其内的 Button autoFocus 生效，不能移除
-    <SlideUpTransition in={visible} unmountOnExit>
+    <Slide in={visible} unmountOnExit direction='up'>
       <Box
         sx={{
           position: 'fixed',
@@ -175,6 +175,6 @@ export function LyricsViewer() {
           </Stack>
         </ClickAwayListener>
       </Box>
-    </SlideUpTransition>
+    </Slide>
   )
 }

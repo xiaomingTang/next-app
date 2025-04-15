@@ -12,7 +12,7 @@ import SkipPreviousIcon from '@mui/icons-material/SkipPrevious'
 import SkipNextIcon from '@mui/icons-material/SkipNext'
 import { Slider, IconButton, Box, alpha, Divider } from '@mui/material'
 import { common, red } from '@mui/material/colors'
-import { forwardRef, useState } from 'react'
+import { useState } from 'react'
 
 function ps(n: number) {
   return n.toString().padStart(2, '0')
@@ -32,10 +32,7 @@ function timeFormat(sec: number) {
 /**
  * _props: {} 必须要: MUI Fade 等组件要传东西下来
  */
-export const MP3Controls = forwardRef(function MP3Controls(
-  _props: {},
-  ref: React.ForwardedRef<HTMLDivElement>
-) {
+export function MP3Controls(_props: {}) {
   const { controls, state } = useGlobalAudio()
   const [slideValue, setSlideValue] = useState(state.time)
   const [isSlideSetting, setIsSlideSetting] = useState(false)
@@ -49,7 +46,6 @@ export const MP3Controls = forwardRef(function MP3Controls(
   return (
     <Box
       {..._props}
-      ref={ref}
       sx={{
         position: 'relative',
         display: 'flex',
@@ -121,4 +117,4 @@ export const MP3Controls = forwardRef(function MP3Controls(
       </>
     </Box>
   )
-})
+}

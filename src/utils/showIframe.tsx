@@ -2,7 +2,6 @@
 
 import { muiDialogV5ReplaceOnClose } from './muiDialogV5ReplaceOnClose'
 
-import { DefaultDialogTransition } from '@/components/Transitions'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SilentError } from '@/errors/SilentError'
 
@@ -11,6 +10,7 @@ import {
   AppBar,
   Box,
   Dialog,
+  Fade,
   IconButton,
   Toolbar,
   useMediaQuery,
@@ -56,7 +56,7 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
       fullScreen={fullScreen}
       maxWidth='md'
       slots={{
-        transition: DefaultDialogTransition,
+        transition: Fade,
       }}
       {...muiDialogV5ReplaceOnClose(modal)}
     >

@@ -1,6 +1,5 @@
 'use client'
 
-import { DefaultDialogTransition } from '@/components/Transitions'
 import { cat } from '@/errors/catchAndToast'
 import { searchBlog } from '@ADMIN/blog/server'
 import { SA } from '@/errors/utils'
@@ -22,6 +21,7 @@ import {
   DialogContent,
   DialogTitle,
   Divider,
+  Fade,
   FormControl,
   FormHelperText,
   IconButton,
@@ -148,7 +148,7 @@ export const SearchSection = NiceModal.create(() => {
     <Dialog
       {...muiDialogV5ReplaceOnClose(modal)}
       slots={{
-        transition: DefaultDialogTransition,
+        transition: Fade,
       }}
       fullWidth
       maxWidth='sm'

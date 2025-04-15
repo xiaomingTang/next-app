@@ -3,7 +3,7 @@ import { usePeer } from '../store/usePeer'
 import { isDC } from '../utils'
 
 import { useInjectHistory } from '@/hooks/useInjectHistory'
-import { SlideUpTransition } from '@/components/Transitions'
+import { SlideUp } from '@/components/Transitions'
 import { getUserMedia } from '@/utils/media'
 import { toPlainError } from '@/errors/utils'
 
@@ -80,7 +80,7 @@ export function RequestConnectionHandler() {
       open={!!requestConnection}
       fullWidth
       slots={{
-        transition: SlideUpTransition,
+        transition: SlideUp,
       }}
       onClose={(_, reason) => {
         // 防止误点击, 因此屏蔽 backdropClick
