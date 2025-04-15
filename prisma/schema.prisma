@@ -167,3 +167,44 @@ model Project {
   content    String?     @db.Text()
   deleted    Boolean     @default(false)
 }
+
+enum BookStatus {
+  PUBLISHED
+  UNPUBLISHED
+}
+
+model BookTag {
+  hash        String   @id
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  description String   @default("") @db.VarChar(1000)
+  books       Book[]
+}
+
+model BookChapter {
+  hash      String   @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  content   String   @db.Text()
+  bookHash  String
+  book      Book     @relation(fields: [bookHash], references: [hash])
+
+  @@fulltext([name, content])
+}
+
+model Book {
+  hash        String        @id
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  name        String
+  author      String
+  description String        @default("") @db.VarChar(1000)
+  cover       String        @default("")
+  status      BookStatus
+  tags        BookTag[]
+  chapters    BookChapter[]
+
+  @@fulltext([name, author, description])
+}
