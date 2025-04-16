@@ -3,7 +3,8 @@
 import { SA, toError } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { zf } from '@/request/validator'
-import { authValidate, getSelf } from '@/user/server'
+import { getSelf } from '@/user/server'
+import { ensureUser } from '@/user/validate'
 import { validateFileName as rawValidateFileName } from '@/utils/string'
 import { optionalString } from '@/request/utils'
 
@@ -374,7 +375,7 @@ export const getProjectContent = SA.encode(
 )
 
 export const getAllProjects = SA.encode(async () => {
-  await authValidate(await getSelf(), { roles: ['ADMIN'] })
+  ensureUser(await getSelf(), { roles: ['ADMIN'] })
   const projects = await prisma.project.findMany({
     where: {
       rootHash: {

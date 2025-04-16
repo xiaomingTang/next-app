@@ -2,7 +2,8 @@
 
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
-import { authValidate, getSelf, setCookieAsUser } from '@/user/server'
+import { getSelf, setCookieAsUser } from '@/user/server'
+import { ensureUser } from '@/user/validate'
 import { zf } from '@/request/validator'
 import { generatePassword } from '@/utils/password'
 import { emptyToUndefined, optionalString } from '@/request/utils'
@@ -52,7 +53,7 @@ export const getUser = SA.encode(async (props: Prisma.UserWhereUniqueInput) => {
 })
 
 export const getUsers = SA.encode(async (props: Prisma.UserWhereInput) => {
-  await authValidate(await getSelf(), {
+  ensureUser(await getSelf(), {
     roles: [Role.ADMIN],
   })
 
@@ -75,7 +76,7 @@ const saveDto = z.object({
 
 export const saveUser = SA.encode(
   zf(saveDto, async (props) => {
-    await authValidate(await getSelf(), {
+    ensureUser(await getSelf(), {
       roles: [Role.ADMIN],
     })
     const { id, email, name, role, password } = emptyToUndefined(props, [
@@ -114,7 +115,7 @@ export const saveUser = SA.encode(
 )
 
 export const deleteUsers = SA.encode(async (ids: number[]) => {
-  await authValidate(await getSelf(), {
+  ensureUser(await getSelf(), {
     roles: [Role.ADMIN],
   })
   return prisma.user.deleteMany({

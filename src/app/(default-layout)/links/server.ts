@@ -5,7 +5,8 @@ import { withRevalidate } from '@/errors/revalidate'
 import { prisma } from '@/request/prisma'
 import { emptyToUndefined, optionalString } from '@/request/utils'
 import { zf } from '@/request/validator'
-import { authValidate, getSelf } from '@/user/server'
+import { getSelf } from '@/user/server'
+import { ensureUser } from '@/user/validate'
 
 import Boom from '@hapi/boom'
 import {
@@ -170,7 +171,7 @@ export const saveFriendsLink = SA.encode(
 )
 
 export const getFriendsLinkCounts = SA.encode(async () => {
-  await authValidate(await getSelf(), { roles: ['ADMIN'] })
+  ensureUser(await getSelf(), { roles: ['ADMIN'] })
   return prisma.friendsLink.groupBy({
     by: ['status'],
     _count: {
