@@ -37,7 +37,7 @@ type DraftProps = LoadingAble<
    * @default 'production'
    */
   mode?: 'preview' | 'production'
-  ref: React.ForwardedRef<HTMLDivElement>
+  ref?: React.ForwardedRef<HTMLDivElement>
 }
 
 export function BlogContent({ mode = 'production', ref, ...blog }: DraftProps) {

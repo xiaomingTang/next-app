@@ -36,7 +36,7 @@ type Props = Omit<ImageProps, 'src' | 'alt'> & {
    * @warning 开启 preview 则必须在其上层用 react-photo-view PhotoProvider 包裹
    */
   preview?: boolean
-  ref: React.Ref<HTMLImageElement>
+  ref?: React.Ref<HTMLImageElement>
 }
 
 export function ImageWithState({ preview = false, ref, ...props }: Props) {
