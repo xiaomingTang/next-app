@@ -1,3 +1,12 @@
+'use server'
+
+// ✅ 所有书 /b/t/?s=xxx
+// ✅ 某个标签内所有书 /b/t/{tagHash}/?s=xxx&qc=xxx
+// ✅ 某本书目录页 /b/{book-hash}/?p=1&sz=20
+// ✅ 详情页 /b/{book-hash}/{N}/
+
+// TODO: 增删改
+
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { zf } from '@/request/validator'
