@@ -171,15 +171,15 @@ model Project {
 enum BookStatus {
   PUBLISHED
   UNPUBLISHED
+  DELETED
 }
 
 model BookTag {
-  hash        String   @id
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  name        String
-  description String   @default("") @db.VarChar(1000)
-  books       Book[]
+  hash      String   @id
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  books     Book[]
 }
 
 model BookChapter {
@@ -188,6 +188,7 @@ model BookChapter {
   updatedAt DateTime @updatedAt
   name      String
   content   String   @db.Text()
+  index     Int
   bookHash  String
   book      Book     @relation(fields: [bookHash], references: [hash])
 
@@ -200,6 +201,7 @@ model Book {
   updatedAt   DateTime      @updatedAt
   name        String
   author      String
+  nsfw        Boolean       @default(false)
   description String        @default("") @db.VarChar(1000)
   cover       String        @default("")
   status      BookStatus
