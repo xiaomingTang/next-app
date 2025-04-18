@@ -187,8 +187,8 @@ model BookChapter {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String
-  content   String   @db.Text()
-  index     Int
+  content   String   @default("") @db.Text()
+  index     Int      @default(0)
   bookHash  String
   book      Book     @relation(fields: [bookHash], references: [hash])
 
@@ -200,11 +200,11 @@ model Book {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   name        String
-  author      String
+  author      String        @default("")
   nsfw        Boolean       @default(false)
   description String        @default("") @db.VarChar(1000)
   cover       String        @default("")
-  status      BookStatus
+  status      BookStatus    @default(PUBLISHED)
   tags        BookTag[]
   chapters    BookChapter[]
 
