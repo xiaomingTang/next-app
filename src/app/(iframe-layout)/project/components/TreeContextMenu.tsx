@@ -32,33 +32,7 @@ import TextSnippetIcon from '@mui/icons-material/TextSnippet'
 import FolderIcon from '@mui/icons-material/Folder'
 import InsertLinkIcon from '@mui/icons-material/InsertLink'
 
-import type {
-  TreeViewPublicAPI,
-  UseTreeViewExpansionSignature,
-  UseTreeViewFocusSignature,
-  UseTreeViewIconsSignature,
-  UseTreeViewItemsSignature,
-  UseTreeViewKeyboardNavigationSignature,
-  UseTreeViewLabelSignature,
-  UseTreeViewSelectionSignature,
-} from '@mui/x-tree-view/internals'
-import type { RefObject } from 'react'
 import type { ProjectTree } from '../utils/arrayToTree'
-
-type ApiRef = RefObject<
-  | TreeViewPublicAPI<
-      readonly [
-        UseTreeViewItemsSignature,
-        UseTreeViewExpansionSignature,
-        UseTreeViewSelectionSignature,
-        UseTreeViewFocusSignature,
-        UseTreeViewKeyboardNavigationSignature,
-        UseTreeViewIconsSignature,
-        UseTreeViewLabelSignature,
-      ]
-    >
-  | undefined
->
 
 export function TreeContextMenu({
   target,
@@ -72,7 +46,6 @@ export function TreeContextMenu({
   setTarget: React.Dispatch<React.SetStateAction<HTMLElement | null>>
   item: ProjectTree | null
   root: ProjectTree
-  apiRef: ApiRef
   onUpdate: (id: string, newProject: ProjectTree) => void | Promise<void>
   mode: 'edit' | 'view'
 }) {
