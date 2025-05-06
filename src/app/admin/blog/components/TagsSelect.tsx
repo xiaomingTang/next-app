@@ -1,7 +1,6 @@
 import CheckBoxIcon from '@mui/icons-material/CheckBox'
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank'
 import { Autocomplete, Checkbox, Chip, TextField } from '@mui/material'
-import { forwardRef } from 'react'
 
 import type { BaseTextFieldProps } from '@mui/material'
 
@@ -21,19 +20,14 @@ interface MultiSelectProps<T extends string | number>
   onNoMatch?: (s: string) => void
 }
 
-export const MultiSelect = forwardRef(function MultiSelect<
-  T extends string | number,
->(
-  {
-    selectList,
-    selectedList,
-    onChange,
-    onNoMatch,
-    ...restProps
-  }: MultiSelectProps<T>,
-  // 不知道 Autocomplete 需要什么 ref, 等需要的时候再改吧
-  ref: React.ForwardedRef<HTMLDivElement>
-) {
+export function MultiSelect<T extends string | number>({
+  selectList,
+  selectedList,
+  onChange,
+  onNoMatch,
+  ref,
+  ...restProps
+}: MultiSelectProps<T>) {
   return (
     <Autocomplete
       ref={ref}
@@ -90,4 +84,4 @@ export const MultiSelect = forwardRef(function MultiSelect<
       }}
     />
   )
-})
+}

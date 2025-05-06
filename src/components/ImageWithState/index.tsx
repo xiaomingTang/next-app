@@ -6,7 +6,7 @@ import { resolvePath } from '@/utils/url'
 
 import { matchRemotePattern } from 'next/dist/shared/lib/match-remote-pattern'
 import Image from 'next/image'
-import { forwardRef, useState } from 'react'
+import { useState } from 'react'
 import clsx from 'clsx'
 import { PhotoView } from 'react-photo-view'
 
@@ -36,12 +36,10 @@ type Props = Omit<ImageProps, 'src' | 'alt'> & {
    * @warning 开启 preview 则必须在其上层用 react-photo-view PhotoProvider 包裹
    */
   preview?: boolean
+  ref?: React.Ref<HTMLImageElement>
 }
 
-export const ImageWithState = forwardRef(function ImageWithState(
-  { preview = false, ...props }: Props,
-  ref: React.Ref<HTMLImageElement>
-) {
+export function ImageWithState({ preview = false, ref, ...props }: Props) {
   const src = props.src || '/static/images/empty.png'
   const size = getImageSizeFromUrl(resolvePath(src))
   const [loading, setLoading] = useState(true)
@@ -81,4 +79,4 @@ export const ImageWithState = forwardRef(function ImageWithState(
   }
 
   return <PhotoView src={src}>{elem}</PhotoView>
-})
+}

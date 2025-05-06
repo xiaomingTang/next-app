@@ -4,7 +4,7 @@ import { BLOG_MARKDOWN_ID } from './constants'
 
 import { create } from 'zustand'
 import { Box, Divider, Link, Typography } from '@mui/material'
-import { forwardRef, useEffect } from 'react'
+import { useEffect } from 'react'
 import clsx from 'clsx'
 
 import type { BoxProps } from '@mui/material'
@@ -123,10 +123,7 @@ export function useTocList() {
   return tocList
 }
 
-export const Toc = forwardRef(function Toc(
-  { className, sx, children, ...props }: BoxProps,
-  ref: React.ForwardedRef<HTMLDivElement>
-) {
+export function Toc({ className, sx, children, ref, ...props }: BoxProps) {
   const tocList = useTocList()
 
   if (tocList.length === 0) {
@@ -156,4 +153,4 @@ export const Toc = forwardRef(function Toc(
       {children}
     </Box>
   )
-})
+}

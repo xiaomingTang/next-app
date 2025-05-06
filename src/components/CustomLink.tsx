@@ -1,7 +1,6 @@
 'use client'
 
 import NextLink from 'next/link'
-import { forwardRef } from 'react'
 
 import type { LinkProps as NextLinkProps } from 'next/link'
 
@@ -10,20 +9,15 @@ type LinkProps = Omit<
   keyof NextLinkProps
 > &
   NextLinkProps & {
-    children?: React.ReactNode | undefined
+    children?: React.ReactNode | React.ReactNode[]
   } & React.RefAttributes<HTMLAnchorElement>
 
 export function geneLink(defaultProps?: Partial<LinkProps>) {
-  function RawLink(
-    props: LinkProps & {
-      children?: React.ReactNode | React.ReactNode[]
-    },
-    ref: React.ForwardedRef<HTMLAnchorElement>
-  ) {
-    return <NextLink ref={ref} {...defaultProps} {...props} />
+  function RawLink(props: LinkProps) {
+    return <NextLink {...defaultProps} {...props} />
   }
 
-  return forwardRef(RawLink)
+  return RawLink
 }
 
 export const Link = geneLink()
