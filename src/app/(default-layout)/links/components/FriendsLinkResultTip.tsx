@@ -20,6 +20,9 @@ import CloseIcon from '@mui/icons-material/Close'
 
 import type { SimpleFriendsLink } from '../server'
 
+const sp = '\u00A0'
+const sp3 = sp.repeat(3)
+
 export const FriendsLinkResultTip = NiceModal.create(
   ({ link }: { link: SimpleFriendsLink }) => {
     const modal = useModal()
@@ -33,24 +36,24 @@ export const FriendsLinkResultTip = NiceModal.create(
             `特此告知: 您发起的友链申请已通过;`,
             `请查看 ${resolvePath('/links')} ;`,
             `我站:`,
-            `\u00A0\u00A0\u00A0- 名称: ${ENV_CONFIG.manifest.name}`,
-            `\u00A0\u00A0\u00A0- 地址: ${ENV_CONFIG.public.origin}`,
+            `${sp3}- 名称: ${ENV_CONFIG.manifest.name}`,
+            `${sp3}- 地址: ${ENV_CONFIG.public.origin}`,
             `你站:`,
-            `\u00A0\u00A0\u00A0- 名称: ${link.name}`,
-            `\u00A0\u00A0\u00A0- 地址: ${link.url}`,
+            `${sp3}- 名称: ${link.name}`,
+            `${sp3}- 地址: ${link.url}`,
           ]
         : [
             `特此告知: 您发起的友链申请未通过;`,
             `我站:`,
-            `\u00A0\u00A0\u00A0- 名称: ${ENV_CONFIG.manifest.name}`,
-            `\u00A0\u00A0\u00A0- 地址: ${ENV_CONFIG.public.origin}`,
+            `${sp3}- 名称: ${ENV_CONFIG.manifest.name}`,
+            `${sp3}- 地址: ${ENV_CONFIG.public.origin}`,
             `你站:`,
-            `\u00A0\u00A0\u00A0- 名称: ${link.name}`,
-            `\u00A0\u00A0\u00A0- 地址: ${link.url}`,
+            `${sp3}- 名称: ${link.name}`,
+            `${sp3}- 地址: ${link.url}`,
             `原因是:`,
-            `\u00A0\u00A0\u00A0- `,
-            `\u00A0\u00A0\u00A0- `,
-            `\u00A0\u00A0\u00A0- `,
+            `${sp3}- `,
+            `${sp3}- `,
+            `${sp3}- `,
           ]
     return (
       <Dialog {...muiDialogV5ReplaceOnClose(modal)} fullWidth maxWidth='xs'>
