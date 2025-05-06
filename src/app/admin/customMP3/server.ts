@@ -2,7 +2,8 @@
 
 import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
-import { authValidate, getSelf } from '@/user/server'
+import { getSelf } from '@/user/server'
+import { ensureUser } from '@/user/validate'
 import { zf } from '@/request/validator'
 import { emptyToUndefined, optionalString } from '@/request/utils'
 
@@ -51,7 +52,7 @@ const saveMP3Dto = z.object({
 export const saveMP3 = SA.encode(
   zf(saveMP3Dto, async (props) => {
     const { hash, name, mp3, lrc } = emptyToUndefined(props, ['hash', 'lrc'])
-    await authValidate(await getSelf(), {
+    ensureUser(await getSelf(), {
       roles: ['ADMIN'],
     })
     if (!hash) {
@@ -80,7 +81,7 @@ export const saveMP3 = SA.encode(
 )
 
 export const deleteMP3s = SA.encode(async (hashes: string[]) => {
-  await authValidate(await getSelf(), {
+  ensureUser(await getSelf(), {
     roles: ['ADMIN'],
   })
   const res = await prisma.customMP3.deleteMany({

@@ -4,7 +4,8 @@ import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { optionalString } from '@/request/utils'
 import { zf } from '@/request/validator'
-import { authValidate, getSelf } from '@/user/server'
+import { getSelf } from '@/user/server'
+import { ensureUser } from '@/user/validate'
 
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
@@ -30,6 +31,6 @@ export const saveComment = SA.encode(
 )
 
 export const getComments = SA.encode(async () => {
-  await authValidate(await getSelf(), { roles: ['ADMIN'] })
+  ensureUser(await getSelf(), { roles: ['ADMIN'] })
   return prisma.comment.findMany()
 })

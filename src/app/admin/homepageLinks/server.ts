@@ -4,7 +4,8 @@ import { SA } from '@/errors/utils'
 import { prisma } from '@/request/prisma'
 import { optionalString } from '@/request/utils'
 import { zf } from '@/request/validator'
-import { authValidate, getSelf } from '@/user/server'
+import { getSelf } from '@/user/server'
+import { ensureUser } from '@/user/validate'
 
 import Boom from '@hapi/boom'
 import { nanoid } from 'nanoid'
@@ -63,7 +64,7 @@ export const saveHomepageLink = SA.encode(
   zf(saveHomepageLinkDto, async (props) => {
     const { hash, name, url, description = '', image = '', enabled } = props
     const user = await getSelf()
-    await authValidate(user, {
+    ensureUser(user, {
       roles: ['ADMIN'],
     })
     if (!hash) {
@@ -98,7 +99,7 @@ export const saveHomepageLink = SA.encode(
 )
 
 export const deleteHomepageLinks = SA.encode(async (hashes: string[]) => {
-  await authValidate(await getSelf(), {
+  ensureUser(await getSelf(), {
     roles: ['ADMIN'],
   })
   const res = await prisma.homepageLinks.deleteMany({
