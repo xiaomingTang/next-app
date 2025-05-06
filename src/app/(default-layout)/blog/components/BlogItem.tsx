@@ -174,7 +174,7 @@ export function BlogItem({ sx, selected, ...blog }: BlogItemProps) {
         >
           <BlogTime {...blog} />
           {(blog.tags ?? []).map((tag) => (
-            <Chip key={tag.hash} label={tag.name} />
+            <Chip key={tag.hash} label={tag.name} sx={{ borderRadius: 1 }} />
           ))}
         </Stack>
       </Stack>

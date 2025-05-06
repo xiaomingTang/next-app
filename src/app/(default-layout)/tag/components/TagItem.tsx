@@ -44,7 +44,7 @@ export function TagItem(tag: TagItemProps) {
       aria-labelledby={ariaLabel}
       LinkComponent={Link}
       href={`/tag/${tag.hash}`}
-      sx={{ borderRadius: 99, fontSize: `${REM}rem`, ...tag.sx }}
+      sx={{ borderRadius: 1, fontSize: `${REM}rem`, ...tag.sx }}
       role={tag.loading ? 'none' : undefined}
     >
       <Typography component='span'>
