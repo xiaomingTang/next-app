@@ -3,12 +3,12 @@ import { useEventCallback } from '@mui/material'
 
 import type { DataConnectionEvents, MediaConnectionEvents } from '../type'
 import type { DataConnection, MediaConnection, Peer, PeerEvents } from 'peerjs'
-import type { EventListener } from 'eventemitter3'
+import type EventEmitter from 'eventemitter3'
 
 export function usePeerListener<K extends keyof PeerEvents>(
   instance: Peer,
   event: K,
-  callback: EventListener<PeerEvents, K>
+  callback: EventEmitter.EventListener<PeerEvents, K>
 ) {
   const finalCallback = useEventCallback(callback)
 
@@ -24,7 +24,7 @@ export function usePeerListener<K extends keyof PeerEvents>(
 export function useDataConnectionListener<K extends keyof DataConnectionEvents>(
   instance: DataConnection | null,
   event: K,
-  callback: EventListener<DataConnectionEvents, K>
+  callback: EventEmitter.EventListener<DataConnectionEvents, K>
 ) {
   const finalCallback = useEventCallback(callback)
 
@@ -42,9 +42,10 @@ export function useMediaConnectionListener<
 >(
   instance: MediaConnection | null,
   event: K,
-  callback: EventListener<MediaConnectionEvents, K>
+  callback: EventEmitter.EventListener<MediaConnectionEvents, K>
 ) {
-  const finalCallback = useEventCallback(callback)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const finalCallback: any = useEventCallback(callback)
 
   useEffect(() => {
     instance?.addListener(event, finalCallback)

@@ -207,7 +207,6 @@ export function ProjectMenu(projectInfo: ProjectPageProps) {
         )}
       </Box>
       <TreeContextMenu
-        apiRef={apiRef}
         item={selectedItem}
         root={menuTreeData[0]}
         target={contextTarget}

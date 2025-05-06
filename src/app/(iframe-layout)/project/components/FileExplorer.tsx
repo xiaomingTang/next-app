@@ -3,24 +3,24 @@ import clsx from 'clsx'
 import { styled, alpha, Box, Collapse, Typography } from '@mui/material'
 import {
   treeItemClasses,
-  TreeItem2DragAndDropOverlay,
-  TreeItem2Icon,
-  TreeItem2LabelInput,
-  TreeItem2Provider,
-  TreeItem2Checkbox,
-  TreeItem2Content,
-  TreeItem2IconContainer,
-  TreeItem2Label,
-  TreeItem2Root,
-  useTreeItem2,
-  type UseTreeItem2Parameters,
+  TreeItemDragAndDropOverlay,
+  TreeItemIcon,
+  TreeItemLabelInput,
+  TreeItemProvider,
+  TreeItemCheckbox,
+  TreeItemContent,
+  TreeItemIconContainer,
+  TreeItemLabel,
+  TreeItemRoot,
+  useTreeItem,
+  type UseTreeItemParameters,
   type TreeViewBaseItem,
 } from '@mui/x-tree-view'
 
 import type { SimpleProjectItem } from '../utils/arrayToTree'
 import type { TransitionProps } from '@mui/material/transitions'
 
-const StyledTreeItemLabelInput = styled(TreeItem2LabelInput)(({ theme }) => ({
+const StyledTreeItemLabelInput = styled(TreeItemLabelInput)(({ theme }) => ({
   color: theme.palette.grey[400],
   fontWeight: 500,
   ...theme.applyStyles('light', {
@@ -28,7 +28,7 @@ const StyledTreeItemLabelInput = styled(TreeItem2LabelInput)(({ theme }) => ({
   }),
 }))
 
-const StyledTreeItemRoot = styled(TreeItem2Root)(({ theme }) => ({
+const StyledTreeItemRoot = styled(TreeItemRoot)(({ theme }) => ({
   color: theme.palette.grey[400],
   position: 'relative',
   [`& .${treeItemClasses.groupTransition}`]: {
@@ -37,9 +37,9 @@ const StyledTreeItemRoot = styled(TreeItem2Root)(({ theme }) => ({
   ...theme.applyStyles('light', {
     color: theme.palette.grey[800],
   }),
-})) as unknown as typeof TreeItem2Root
+})) as unknown as typeof TreeItemRoot
 
-const StyledTreeItemContent = styled(TreeItem2Content)(({ theme }) => ({
+const StyledTreeItemContent = styled(TreeItemContent)(({ theme }) => ({
   borderRadius: theme.spacing(0.5),
   marginBottom: theme.spacing(0.5),
   marginTop: theme.spacing(0.5),
@@ -118,7 +118,7 @@ interface CustomLabelProps {
 
 function CustomLabel({ icon: Icon, children, ...other }: CustomLabelProps) {
   return (
-    <TreeItem2Label
+    <TreeItemLabel
       {...other}
       sx={{
         display: 'flex',
@@ -138,12 +138,12 @@ function CustomLabel({ icon: Icon, children, ...other }: CustomLabelProps) {
       <StyledTreeItemLabelText variant='body2'>
         {children}
       </StyledTreeItemLabelText>
-    </TreeItem2Label>
+    </TreeItemLabel>
   )
 }
 
 interface FileExplorerTreeItemProps
-  extends Omit<UseTreeItem2Parameters, 'rootRef'>,
+  extends Omit<UseTreeItemParameters, 'rootRef'>,
     Omit<React.HTMLAttributes<HTMLLIElement>, 'onFocus'> {}
 
 function RawFileExplorerTreeItem(
@@ -163,7 +163,7 @@ function RawFileExplorerTreeItem(
     getDragAndDropOverlayProps,
     publicAPI,
     status: rawStatus,
-  } = useTreeItem2({ id, itemId, children, label, disabled, rootRef: ref })
+  } = useTreeItem({ id, itemId, children, label, disabled, rootRef: ref })
 
   const item: TreeViewBaseItem<SimpleProjectItem> = publicAPI.getItem(itemId)
 
@@ -177,7 +177,7 @@ function RawFileExplorerTreeItem(
   const isEmptyDir = status.expandable && !item.children?.length
 
   return (
-    <TreeItem2Provider itemId={itemId}>
+    <TreeItemProvider itemId={itemId} id={id}>
       <StyledTreeItemRoot {...getRootProps(other)}>
         <StyledTreeItemContent
           {...getContentProps({
@@ -190,13 +190,17 @@ function RawFileExplorerTreeItem(
             status,
             onClick: (event) => {
               if (status.expandable && !status.disabled && !status.editing) {
-                publicAPI.setItemExpansion(event, itemId, !status.expanded)
+                publicAPI.setItemExpansion({
+                  event,
+                  itemId,
+                  shouldBeExpanded: !status.expanded,
+                })
               }
             },
           })}
         >
-          <TreeItem2IconContainer {...getIconContainerProps()}>
-            <TreeItem2Icon
+          <TreeItemIconContainer {...getIconContainerProps()}>
+            <TreeItemIcon
               status={status}
               slotProps={{
                 collapseIcon: {
@@ -207,18 +211,18 @@ function RawFileExplorerTreeItem(
                 },
               }}
             />
-          </TreeItem2IconContainer>
-          <TreeItem2Checkbox {...getCheckboxProps()} />
+          </TreeItemIconContainer>
+          <TreeItemCheckbox {...getCheckboxProps()} />
           {status.editing ? (
             <StyledTreeItemLabelInput {...getLabelInputProps()} />
           ) : (
             <CustomLabel {...getLabelProps()} />
           )}
-          <TreeItem2DragAndDropOverlay {...getDragAndDropOverlayProps()} />
+          <TreeItemDragAndDropOverlay {...getDragAndDropOverlayProps()} />
         </StyledTreeItemContent>
         {children && <TransitionCollapse {...getGroupTransitionProps()} />}
       </StyledTreeItemRoot>
-    </TreeItem2Provider>
+    </TreeItemProvider>
   )
 }
 
