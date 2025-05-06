@@ -7,6 +7,7 @@
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import NiceModal from '@ebay/nice-modal-react'
 import { SWRConfig } from 'swr'
+import { Fade } from '@mui/material'
 
 const muiTheme = createTheme({
   cssVariables: {
@@ -128,6 +129,13 @@ const muiTheme = createTheme({
     MuiToolbar: {
       defaultProps: {
         variant: 'dense',
+      },
+    },
+    MuiDialog: {
+      defaultProps: {
+        slots: {
+          transition: Fade,
+        },
       },
     },
   },

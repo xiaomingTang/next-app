@@ -12,7 +12,7 @@ import { setImageSizeForUrl } from '@/utils/urlImageSize'
 import { SA, toPlainError } from '@/errors/utils'
 import { cat } from '@/errors/catchAndToast'
 import { CustomLoadingButton } from '@/components/CustomLoadingButton'
-import { SlideUpTransition } from '@/components/Transitions'
+import { SlideUp } from '@/components/Transitions'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { getImageSize } from '@/utils/getImageSize'
@@ -382,7 +382,7 @@ const Uploader = NiceModal.create(
         fullWidth
         fullScreen={fullScreen}
         slots={{
-          transition: SlideUpTransition,
+          transition: SlideUp,
         }}
         {...muiDialogV5(modal)}
         onClose={onClose}

@@ -10,7 +10,7 @@ import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { cat } from '@/errors/catchAndToast'
 import { formatTime, friendlyFormatTime } from '@/utils/transformer'
 import { useLoading } from '@/hooks/useLoading'
-import { SlideUpTransition } from '@/components/Transitions'
+import { SlideUp } from '@/components/Transitions'
 import { UploadTrigger } from '@/layout/CornerButtons/UploadTrigger'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import SvgLoading from '@/svg/assets/loading.svg?icon'
@@ -407,7 +407,7 @@ export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
       fullWidth
       fullScreen
       slots={{
-        transition: SlideUpTransition,
+        transition: SlideUp,
       }}
       {...muiDialogV5(modal)}
       onClose={(_, reason) => {

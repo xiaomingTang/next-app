@@ -1,6 +1,5 @@
 'use client'
 
-import { DefaultDialogTransition } from '@/components/Transitions'
 import { cat } from '@/errors/catchAndToast'
 import { searchBlog } from '@ADMIN/blog/server'
 import { SA } from '@/errors/utils'
@@ -145,14 +144,7 @@ export const SearchSection = NiceModal.create(() => {
   )
 
   return (
-    <Dialog
-      {...muiDialogV5ReplaceOnClose(modal)}
-      slots={{
-        transition: DefaultDialogTransition,
-      }}
-      fullWidth
-      maxWidth='sm'
-    >
+    <Dialog fullWidth maxWidth='sm' {...muiDialogV5ReplaceOnClose(modal)}>
       {/* zIndex 是 Blog */}
       <DialogTitle sx={{ p: 0, position: 'relative', zIndex: 1 }}>
         <Paper component='form' onSubmit={onSubmit}>
