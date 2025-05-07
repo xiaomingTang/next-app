@@ -1,6 +1,6 @@
 import { Typography } from '@mui/material'
 
-import type { BlogType } from '@prisma/client'
+import type { BlogType } from '@/generated-prisma-client'
 
 export const BlogTypeMap: Record<
   BlogType,

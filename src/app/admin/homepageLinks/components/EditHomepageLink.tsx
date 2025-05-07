@@ -30,7 +30,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import UploadIcon from '@mui/icons-material/Upload'
 
-import type { HomepageLinks } from '@prisma/client'
+import type { HomepageLinks } from '@/generated-prisma-client'
 import type { PickAndPartial } from '@/utils/type'
 
 type PartialHomepageLink = PickAndPartial<

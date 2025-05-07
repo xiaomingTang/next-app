@@ -11,7 +11,7 @@ import { resolvePath } from '@/utils/url'
 import { Box, Button, Collapse, Typography, styled } from '@mui/material'
 import toast from 'react-hot-toast'
 
-import type { FriendsLinkStatus } from '@prisma/client'
+import type { FriendsLinkStatus } from '@/generated-prisma-client'
 
 const ThemedLabel = styled('span')({
   display: 'inline-block',

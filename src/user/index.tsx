@@ -12,7 +12,7 @@ import { useEffect } from 'react'
 import { isEqual } from 'lodash-es'
 
 import type { NiceModalHocProps } from '@ebay/nice-modal-react'
-import type { User } from '@prisma/client'
+import type { User } from '@/generated-prisma-client'
 
 const defaultUser: Required<User> = {
   id: 0,

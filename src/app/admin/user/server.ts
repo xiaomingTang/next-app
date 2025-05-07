@@ -7,14 +7,14 @@ import { ensureUser } from '@/user/validate'
 import { zf } from '@/request/validator'
 import { generatePassword } from '@/utils/password'
 import { emptyToUndefined, optionalString } from '@/request/utils'
+import { Role } from '@/generated-prisma-client'
 
 import Boom from '@hapi/boom'
-import { Role } from '@prisma/client'
 import { noop } from 'lodash-es'
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
 
-import type { Prisma } from '@prisma/client'
+import type { Prisma } from '@/generated-prisma-client'
 
 function mosaic<T extends Record<string, unknown>>(
   obj: T,

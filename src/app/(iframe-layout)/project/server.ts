@@ -7,9 +7,9 @@ import { getSelf } from '@/user/server'
 import { ensureUser } from '@/user/validate'
 import { validateFileName as rawValidateFileName } from '@/utils/string'
 import { optionalString } from '@/request/utils'
+import { ProjectType } from '@/generated-prisma-client'
 
 import Boom from '@hapi/boom'
-import { ProjectType } from '@prisma/client'
 import { z } from 'zod'
 import { nanoid } from 'nanoid'
 

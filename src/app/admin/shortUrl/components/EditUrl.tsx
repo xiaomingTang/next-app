@@ -30,7 +30,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import { omit } from 'lodash-es'
 
-import type { ShortUrl } from '@prisma/client'
+import type { ShortUrl } from '@/generated-prisma-client'
 import type { PickAndPartial } from '@/utils/type'
 
 type PartialShortUrl = PickAndPartial<

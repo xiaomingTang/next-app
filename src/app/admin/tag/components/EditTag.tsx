@@ -22,7 +22,7 @@ import {
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 
-import type { Tag } from '@prisma/client'
+import type { Tag } from '@/generated-prisma-client'
 import type { PickAndPartial } from '@/utils/type'
 
 interface EditTagModalProps {

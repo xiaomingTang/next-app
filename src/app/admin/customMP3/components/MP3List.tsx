@@ -22,7 +22,7 @@ import {
   TableRow,
 } from '@mui/material'
 
-import type { CustomMP3 } from '@prisma/client'
+import type { CustomMP3 } from '@/generated-prisma-client'
 
 export function MP3EditMP3List({
   mp3s,

@@ -14,7 +14,7 @@ import { Badge, Menu, MenuItem } from '@mui/material'
 import { useRouter } from 'next/navigation'
 import useSWR from 'swr'
 
-import type { FriendsLinkStatus } from '@prisma/client'
+import type { FriendsLinkStatus } from '@/generated-prisma-client'
 
 const friendsLinkStatusList: {
   type: FriendsLinkStatus

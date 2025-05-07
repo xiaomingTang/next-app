@@ -35,7 +35,7 @@ import CloseIcon from '@mui/icons-material/Close'
 import { noop } from 'lodash-es'
 
 import type { PickAndPartial } from '@/utils/type'
-import type { User } from '@prisma/client'
+import type { User } from '@/generated-prisma-client'
 
 type PartialUser = PickAndPartial<User, 'id'>
 

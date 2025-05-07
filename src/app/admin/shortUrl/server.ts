@@ -5,13 +5,13 @@ import { prisma } from '@/request/prisma'
 import { getSelf } from '@/user/server'
 import { zf } from '@/request/validator'
 import { comparePassword, generatePassword } from '@/utils/password'
+import { Role } from '@/generated-prisma-client'
 
 import Boom from '@hapi/boom'
-import { Role } from '@prisma/client'
 import { nanoid } from 'nanoid'
 import { z } from 'zod'
 
-import type { Prisma } from '@prisma/client'
+import type { Prisma } from '@/generated-prisma-client'
 
 function mosaic<T extends Record<string, unknown>>(
   obj: T,

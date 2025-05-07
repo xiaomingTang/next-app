@@ -27,6 +27,7 @@ pnpm-debug.log*
 yarn-error.log*
 
 /.local
+/src/generated-prisma-client
 
 # local env files
 .env*.local

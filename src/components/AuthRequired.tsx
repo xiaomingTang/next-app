@@ -6,7 +6,7 @@ import { noop } from 'lodash-es'
 import { useEffect } from 'react'
 import { NoSsr } from '@mui/material'
 
-import type { Role, User } from '@prisma/client'
+import type { Role, User } from '@/generated-prisma-client'
 
 type AuthRequiredProps = {
   disabled?: boolean

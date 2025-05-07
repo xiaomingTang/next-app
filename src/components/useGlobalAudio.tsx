@@ -13,7 +13,7 @@ import { clamp, noop } from 'lodash-es'
 import useSWR from 'swr'
 
 import type { useAudio as useReactUseAudio } from 'react-use'
-import type { CustomMP3 } from '@prisma/client'
+import type { CustomMP3 } from '@/generated-prisma-client'
 
 export type RepeatMode =
   | 'Repeat-Playlist'

@@ -4,7 +4,7 @@ import { useListen } from '@/hooks/useListen'
 import useSWR from 'swr'
 import { useMemo, useState } from 'react'
 
-import type { CustomMP3 } from '@prisma/client'
+import type { CustomMP3 } from '@/generated-prisma-client'
 
 export function useHasShown(visible: boolean) {
   const [hasShown, setHasShown] = useState(false)

@@ -1,6 +1,5 @@
 import { ENV_CONFIG } from '@/config'
-
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@/generated-prisma-client'
 
 // 仅 dev 环境下才会写 global, 所以不能覆写 global 的类型,
 // 避免在其他地方使用 global 时出现类型错误,

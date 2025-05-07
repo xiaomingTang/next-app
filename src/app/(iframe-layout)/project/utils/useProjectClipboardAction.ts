@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { withStatic } from '@zimi/utils'
 
-import type { ProjectType } from '@prisma/client'
+import type { ProjectType } from '@/generated-prisma-client'
 
 interface ProjectClipboardData {
   type: ProjectType

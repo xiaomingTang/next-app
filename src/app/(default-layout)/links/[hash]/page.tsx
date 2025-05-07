@@ -16,7 +16,7 @@ import { AlertError } from '@/components/Error'
 import { Suspense } from 'react'
 import Divider from '@mui/material/Divider'
 
-import type { FriendsLinkStatus } from '@prisma/client'
+import type { FriendsLinkStatus } from '@/generated-prisma-client'
 
 export const metadata = seo.defaults({
   title: '友链',

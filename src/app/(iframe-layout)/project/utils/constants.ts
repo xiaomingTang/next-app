@@ -1,4 +1,4 @@
-import type { ProjectType } from '@prisma/client'
+import type { ProjectType } from '@/generated-prisma-client'
 
 interface NetworkFileTypeInfo {
   label: string

@@ -6,14 +6,14 @@ import { prisma } from '@/request/prisma'
 import { getSelf } from '@/user/server'
 import { zf } from '@/request/validator'
 import blogFullTextSearchSql from '@/sql/blog-full-text-search.sql'
+import { BlogType, Role } from '@/generated-prisma-client'
 
 import { nanoid } from 'nanoid'
 import { noop, omit } from 'lodash-es'
 import Boom from '@hapi/boom'
-import { BlogType, Role } from '@prisma/client'
 import { z } from 'zod'
 
-import type { Prisma, User } from '@prisma/client'
+import type { Prisma, User } from '@/generated-prisma-client'
 
 const blogSelect = {
   hash: true,

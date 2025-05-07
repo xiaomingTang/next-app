@@ -1,6 +1,4 @@
 import tsParser from '@typescript-eslint/parser'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import js from '@eslint/js'
 import { FlatCompat } from '@eslint/eslintrc'
 
@@ -23,6 +21,7 @@ export default [
       '**/out/',
       '**/public/',
       '**/node_modules/',
+      'src/generated-prisma-client'
     ],
   },
   ...compat.extends(

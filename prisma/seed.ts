@@ -1,6 +1,5 @@
 import { generatePassword } from '@/utils/password'
-
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@/generated-prisma-client'
 
 const prisma = new PrismaClient()
 

@@ -1,7 +1,8 @@
 import 'server-only'
 
+import { type User, Role } from '@/generated-prisma-client'
+
 import Boom from '@hapi/boom'
-import { type User, Role } from '@prisma/client'
 
 type AuthValidateProps = {
   /**

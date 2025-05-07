@@ -7,14 +7,14 @@ import { emptyToUndefined, optionalString } from '@/request/utils'
 import { zf } from '@/request/validator'
 import { getSelf } from '@/user/server'
 import { ensureUser } from '@/user/validate'
-
-import Boom from '@hapi/boom'
 import {
   Role,
   FriendsLinkStatus,
   type Prisma,
   type FriendsLink,
-} from '@prisma/client'
+} from '@/generated-prisma-client'
+
+import Boom from '@hapi/boom'
 import { noop } from 'lodash-es'
 import { nanoid } from 'nanoid'
 import { z } from 'zod'

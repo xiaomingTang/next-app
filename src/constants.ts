@@ -1,4 +1,4 @@
-import type { Role } from '@prisma/client'
+import type { Role } from '@/generated-prisma-client'
 
 export const InfiniteTimeout = 2 ** 31 - 1
 export const DEFAULT_BLUR_DATA_URL =

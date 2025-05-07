@@ -26,7 +26,7 @@ import { useState } from 'react'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 
-import type { Comment } from '@prisma/client'
+import type { Comment } from '@/generated-prisma-client'
 
 const SHOULD_COLLAPSE_FLOOR_LIMIT = 100
 

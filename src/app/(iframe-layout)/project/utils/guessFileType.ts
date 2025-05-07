@@ -1,4 +1,4 @@
-import type { ProjectType } from '@prisma/client'
+import type { ProjectType } from '@/generated-prisma-client'
 
 export function guessFileType(name: string): ProjectType {
   const ext = name.split('.').pop()?.toLowerCase()

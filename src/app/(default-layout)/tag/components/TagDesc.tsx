@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography'
 import SellIcon from '@mui/icons-material/Sell'
 
 import type { LoadingAble } from '@/components/ServerComponent'
-import type { Tag } from '@prisma/client'
+import type { Tag } from '@/generated-prisma-client'
 
 type TagDescProps = LoadingAble<Tag>
 

@@ -30,7 +30,7 @@ import {
 import CloseIcon from '@mui/icons-material/Close'
 import UploadIcon from '@mui/icons-material/Upload'
 
-import type { CustomMP3 } from '@prisma/client'
+import type { CustomMP3 } from '@/generated-prisma-client'
 import type { PickAndPartial } from '@/utils/type'
 
 type PartialMP3 = PickAndPartial<CustomMP3, 'createdAt' | 'updatedAt'>

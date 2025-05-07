@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@mui/material'
 
-import type { User } from '@prisma/client'
+import type { User } from '@/generated-prisma-client'
 
 export function UserEditUserList({
   users,

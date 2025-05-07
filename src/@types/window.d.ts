@@ -1,4 +1,4 @@
-import type { User } from '@prisma/client'
+import type { User } from '@/generated-prisma-client'
 
 declare global {
   type SimpleUser = Omit<User, 'password' | 'email'> &

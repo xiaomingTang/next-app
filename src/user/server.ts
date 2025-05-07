@@ -10,7 +10,7 @@ import Boom from '@hapi/boom'
 import { omit } from 'lodash-es'
 
 import type { PickAndPartial } from '@/utils/type'
-import type { User } from '@prisma/client'
+import type { User } from '@/generated-prisma-client'
 
 interface LoginProps {
   email: string

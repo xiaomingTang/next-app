@@ -1,6 +1,6 @@
 import Typography from '@mui/material/Typography'
 
-import type { FriendsLinkStatus } from '@prisma/client'
+import type { FriendsLinkStatus } from '@/generated-prisma-client'
 
 export const FriendsLinkStatusMap: Record<
   FriendsLinkStatus,

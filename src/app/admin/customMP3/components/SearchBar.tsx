@@ -17,7 +17,7 @@ import { useEffect, useMemo, useState } from 'react'
 import AddIcon from '@mui/icons-material/Add'
 import SearchIcon from '@mui/icons-material/Search'
 
-import type { CustomMP3 } from '@prisma/client'
+import type { CustomMP3 } from '@/generated-prisma-client'
 
 interface SearchProps {
   hash: string
