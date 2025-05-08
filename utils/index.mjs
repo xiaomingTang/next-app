@@ -6,6 +6,7 @@ function resolveRoot(...p) {
   return path.resolve(ROOT, ...p)
 }
 
+/** @type {import('next').NextConfig['webpack']} */
 function addSvgLoader(config) {
   // svg loader
   // https://react-svgr.com/docs/webpack/#use-svgr-and-asset-svg-in-the-same-project
@@ -57,8 +58,23 @@ function addSvgLoader(config) {
 }
 
 /** @type {import('next').NextConfig['webpack']} */
-export const webpackConfig = (config, { dev }) => {
-  addSvgLoader(config)
+function addWasmLoader(config, { isServer, dev }) {
+  config.module.rules.push({
+    test: /\.wasm$/,
+    type: 'asset/resource',
+    generator: {
+      filename: 'static/wasm/[name].[hash][ext]',
+    },
+  })
+
+  // Since Webpack 5 doesn't enable WebAssembly by default, we should do it manually
+  config.experiments = { ...config.experiments, asyncWebAssembly: true };
+}
+
+/** @type {import('next').NextConfig['webpack']} */
+export const webpackConfig = (config, ctx) => {
+  addSvgLoader(config, ctx)
+  addWasmLoader(config, ctx)
 
   config.module.rules.push({
     test: /\.(sql|txt)$/,
@@ -71,6 +87,7 @@ export const webpackConfig = (config, { dev }) => {
   config.resolve.alias['@F'] = resolveRoot('src/app/(fullscreen-layout)')
   config.resolve.alias['@I'] = resolveRoot('src/app/(iframe-layout)')
   config.resolve.alias['@ROOT'] = resolveRoot()
+  config.resolve.alias['@WASM'] = resolveRoot('src/wasm')
 
   return config
 }

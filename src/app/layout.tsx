@@ -62,6 +62,11 @@ export default function RootLayout({
       <body>
         <AppRouterCacheProvider options={{ key: 'emo' }}>
           <VConsoleLoader />
+          <Script
+            src='/scripts/wasm_exec.js'
+            id='wasm_exec'
+            strategy='beforeInteractive'
+          />
           <GetInitColorSchemeScript />
           <Providers>
             <Globals />

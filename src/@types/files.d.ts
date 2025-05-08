@@ -15,3 +15,8 @@ declare module '*.svg?icon' {
 
   export default content
 }
+
+declare module '*.wasm' {
+  const content: string
+  export default content
+}
