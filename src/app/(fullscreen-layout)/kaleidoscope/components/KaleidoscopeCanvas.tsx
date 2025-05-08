@@ -33,7 +33,7 @@ function initCanvasSize(canvas: HTMLCanvasElement) {
   }
 }
 
-type Pos = [number, number]
+type Pos = [x: number, y: number]
 
 function sameParity(a: number, b: number) {
   return Math.abs(a % 2) === Math.abs(b % 2)
