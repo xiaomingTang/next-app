@@ -52,15 +52,16 @@ async function filterFriendsLinksWithAuth<
   T extends Pick<FriendsLink, 'status' | 'email'>,
 >(links: (T | null | undefined)[]) {
   const self = await getSelf().catch(noop)
+  const nonEmptyLinks = links.filter((link) => !!link)
   if (self?.role === Role.ADMIN) {
-    return links.filter(Boolean) as T[]
+    return nonEmptyLinks
   }
-  return links
-    .filter((link) => link?.status === 'ACCEPTED')
+  return nonEmptyLinks
+    .filter((link) => link.status === 'ACCEPTED')
     .map((link) => ({
       ...link,
       email: '',
-    })) as T[]
+    }))
 }
 
 export const getFriendsLink = SA.encode(

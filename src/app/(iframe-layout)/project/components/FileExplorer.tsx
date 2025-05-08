@@ -37,7 +37,7 @@ const StyledTreeItemRoot = styled(TreeItemRoot)(({ theme }) => ({
   ...theme.applyStyles('light', {
     color: theme.palette.grey[800],
   }),
-})) as unknown as typeof TreeItemRoot
+}))
 
 const StyledTreeItemContent = styled(TreeItemContent)(({ theme }) => ({
   borderRadius: theme.spacing(0.5),

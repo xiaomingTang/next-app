@@ -73,15 +73,14 @@ async function filterBlogsWithAuth<
   },
 >(blogs: (B | null | undefined)[]) {
   const self = await getSelf().catch(noop)
-  const filteredBlogs = blogs.filter((b) => {
-    if (!b) {
-      return false
-    }
-    if (b.type === 'PUBLISHED') {
-      return true
-    }
-    return !!self && (self.role === Role.ADMIN || b.creator.id === self.id)
-  }) as B[]
+  const filteredBlogs = blogs
+    .filter((b) => !!b)
+    .filter((b) => {
+      if (b.type === 'PUBLISHED') {
+        return true
+      }
+      return !!self && (self.role === Role.ADMIN || b.creator.id === self.id)
+    })
   return filteredBlogs.map((item) => mosaicBlogUser(item))
 }
 
@@ -368,10 +367,7 @@ export const getRecommendBlogs = SA.encode(async (hash: string) => {
     ],
   })
 
-  return filterBlogsWithAuth(
-    // 这里可以忽略 non-null check, 因为后面 filter Boolean 了
-    [nextBlog, prevBlog, ...similarBlogs].filter(Boolean)
-  )
+  return filterBlogsWithAuth([nextBlog, prevBlog, ...similarBlogs])
 })
 
 const searchBlogDto = z.object({

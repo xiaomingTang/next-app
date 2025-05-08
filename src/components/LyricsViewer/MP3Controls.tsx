@@ -70,11 +70,11 @@ export function MP3Controls(_props: {}) {
         valueLabelFormat={timeFormat}
         value={slideValue}
         onChange={(_, newValue) => {
-          setSlideValue(newValue as number)
+          setSlideValue(newValue)
           setIsSlideSetting(true)
         }}
         onChangeCommitted={(_, newValue) => {
-          controls.seek(newValue as number)
+          controls.seek(newValue)
           setIsSlideSetting(false)
         }}
         step={1}

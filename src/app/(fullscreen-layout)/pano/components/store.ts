@@ -91,20 +91,18 @@ export const usePanoStore = withStatic(useRawPanoStore, {
           .map((dec) => {
             const patternName = enabledDecs[dec.name]
             if (!patternName) {
-              // 后面有 filter Boolean, 此处 as never 是为了类型
-              return null as never
+              return null
             }
             const pat = dec.patterns.find((item) => item.name === patternName)
             if (!pat) {
-              // 后面有 filter Boolean, 此处 as never 是为了类型
-              return null as never
+              return null
             }
             return {
               decoration: dec,
               pattern: pat,
             }
           })
-          .filter(Boolean),
+          .filter((s) => !!s),
       [curPos.decorations, enabledDecs]
     )
   },

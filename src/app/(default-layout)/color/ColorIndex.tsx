@@ -165,7 +165,7 @@ export function ColorIndex() {
           min={1}
           max={359}
           onChange={(_, newValue) => {
-            setTargetHue((newValue as number) / 360)
+            setTargetHue(newValue / 360)
           }}
           sx={{
             position: 'absolute',

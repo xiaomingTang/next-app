@@ -99,9 +99,10 @@ export function ProjectMenu(projectInfo: ProjectPageProps) {
           e.preventDefault()
           e.stopPropagation()
           const rootElem = apiRef.current?.getItemDOMElement(rootId)
-          const target = [...(rootElem?.children ?? [])].find((elem) =>
+          const children = [...(rootElem?.children ?? [])] as HTMLElement[]
+          const target = children.find((elem) =>
             elem.classList.contains('content')
-          ) as HTMLElement | null
+          )
           if (!target) {
             throw new Error('根 DOM 节点未找到')
           }

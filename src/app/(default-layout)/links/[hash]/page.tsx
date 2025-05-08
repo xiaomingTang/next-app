@@ -34,8 +34,9 @@ interface Props {
 }
 
 function toFriendsLinkStatus(s: string): FriendsLinkStatus | undefined {
-  if (sortedFriendsLinkStatus.includes(s.toUpperCase() as FriendsLinkStatus)) {
-    return s.toUpperCase() as FriendsLinkStatus
+  const upperCase = s.toUpperCase() as FriendsLinkStatus
+  if (sortedFriendsLinkStatus.includes(upperCase)) {
+    return upperCase
   }
   return undefined
 }
