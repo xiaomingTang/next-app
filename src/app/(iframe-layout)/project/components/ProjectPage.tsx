@@ -6,10 +6,8 @@ import { TextEditor } from './TextEditor'
 import { ProjectMenu } from './ProjectMenu'
 import { OtherFileViewer } from './OtherFileViewer'
 
-import { type ProjectTree } from '../utils/arrayToTree'
 import { useProjectPath } from '../utils/useProjectPath'
 
-import { type PlainError } from '@/errors/utils'
 import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { PreferFullscreenLandscape } from '@/components/PreferFullscreenLandscape'
 
@@ -18,6 +16,8 @@ import { useEffect, useRef, useState } from 'react'
 import { PhotoProvider } from 'react-photo-view'
 import { noop } from 'lodash-es'
 
+import type { PlainError } from '@/errors/utils'
+import type { ProjectTree } from '../utils/arrayToTree'
 import type { LoadingAble } from '@/components/ServerComponent'
 
 export type ProjectPageProps = LoadingAble<{

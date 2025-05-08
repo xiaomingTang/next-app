@@ -1,8 +1,8 @@
 import 'server-only'
 
-import { type User, Role } from '@/generated-prisma-client'
-
 import Boom from '@hapi/boom'
+
+import type { User, Role } from '@/generated-prisma-client'
 
 type AuthValidateProps = {
   /**
@@ -20,13 +20,13 @@ type AuthValidateProps = {
 
 export function ensureUser(
   user: Pick<User, 'role' | 'id'>,
-  { roles = [Role.USER], userIds = [] }: AuthValidateProps
+  { roles = ['USER'], userIds = [] }: AuthValidateProps
 ) {
   if (!user.id) {
     throw Boom.unauthorized('用户未登录')
   }
   if (
-    user.role === Role.ADMIN ||
+    user.role === 'ADMIN' ||
     roles.includes(user.role) ||
     userIds.includes(user.id)
   ) {
