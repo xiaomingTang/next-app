@@ -1,4 +1,5 @@
 import type { User } from '@/generated-prisma-client'
+import type { VConsole } from 'vconsole'
 
 declare global {
   type SimpleUser = Omit<User, 'password' | 'email'> &
@@ -6,6 +7,7 @@ declare global {
 
   interface Window {
     webkitAudioContext: typeof AudioContext
+    VConsole: VConsole
   }
 
   interface Document {
