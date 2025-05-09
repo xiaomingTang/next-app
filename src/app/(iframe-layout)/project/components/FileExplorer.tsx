@@ -22,7 +22,7 @@ import type { TransitionProps } from '@mui/material/transitions'
 
 const StyledTreeItemLabelInput = styled(TreeItemLabelInput)(({ theme }) => ({
   color: theme.palette.grey[400],
-  fontWeight: 500,
+  fontWeight: 'normal',
   ...theme.applyStyles('light', {
     color: theme.palette.grey[800],
   }),
@@ -46,7 +46,7 @@ const StyledTreeItemContent = styled(TreeItemContent)(({ theme }) => ({
   padding: theme.spacing(0.5),
   paddingRight: theme.spacing(1),
   gap: theme.spacing(0.5),
-  fontWeight: 500,
+  fontWeight: 'normal',
   [`&.Mui-expanded `]: {
     '&:not(.Mui-focused, .Mui-selected, .Mui-selected.Mui-focused) .labelIcon':
       {
@@ -82,6 +82,9 @@ const StyledTreeItemContent = styled(TreeItemContent)(({ theme }) => ({
     ...theme.applyStyles('light', {
       backgroundColor: alpha(theme.palette.primary.main, 0.5),
     }),
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.primary.dark, 0.4),
+    },
   },
   [`&.Mui-focused, &.Mui-selected.Mui-focused`]: {
     backgroundColor: theme.palette.primary.dark,
@@ -108,7 +111,7 @@ function TransitionCollapse(props: TransitionProps) {
 
 const StyledTreeItemLabelText = styled(Typography)({
   color: 'inherit',
-  fontWeight: 500,
+  fontWeight: 'normal',
 })
 
 interface CustomLabelProps {

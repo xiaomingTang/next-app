@@ -85,7 +85,7 @@ const muiTheme = createTheme({
     MuiTypography: {
       defaultProps: {
         fontSize: 'inherit',
-        fontWeight: 500,
+        fontWeight: 'normal',
       },
     },
     MuiSvgIcon: {

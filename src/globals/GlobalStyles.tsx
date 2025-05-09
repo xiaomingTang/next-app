@@ -26,7 +26,7 @@ export function GlobalStyles() {
 html, body {
   margin: 0;
   padding: 0;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--custom-fg);
   background-color: var(--custom-bg);
   font-family: -apple-system,
