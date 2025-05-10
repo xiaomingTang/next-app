@@ -18,6 +18,7 @@ const noneFileCatcherHandler: FileCatcherHandler = (_: File[]) => {
 }
 
 const useRawGlobalFileCatcherHandler = create(() => ({
+  hintText: '预备上传',
   handler: defaultFileCatcherHandler,
 }))
 
@@ -30,6 +31,25 @@ const useRawGlobalFileCatcherHandler = create(() => ({
 export const useGlobalFileCatcherHandler = withStatic(
   useRawGlobalFileCatcherHandler,
   {
+    updateHintText(newHintText: string) {
+      useRawGlobalFileCatcherHandler.setState({
+        hintText: newHintText,
+      })
+    },
+    useUpdateHintText(newHintText: string) {
+      useEffect(() => {
+        const prevHintText = useRawGlobalFileCatcherHandler.getState().hintText
+        useRawGlobalFileCatcherHandler.setState({
+          hintText: newHintText,
+        })
+
+        return () => {
+          useRawGlobalFileCatcherHandler.setState({
+            hintText: prevHintText,
+          })
+        }
+      }, [newHintText])
+    },
     updateHandler(newHandler: FileCatcherHandler) {
       useRawGlobalFileCatcherHandler.setState({
         handler: newHandler,

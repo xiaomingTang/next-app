@@ -28,6 +28,7 @@ function dragHandler(
 export function FileUploadCatcher() {
   const user = useUser()
   const [dragging, setDragging] = useState(false)
+  const { hintText } = useGlobalFileCatcherHandler()
 
   // 监听文件粘贴
   useEffect(() => {
@@ -120,7 +121,7 @@ export function FileUploadCatcher() {
             letterSpacing: '4px',
           }}
         >
-          预备上传
+          {hintText}
         </Typography>
       </Box>
     </Fade>
