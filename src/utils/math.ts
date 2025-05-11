@@ -39,3 +39,50 @@ export function isPointInsideQuadrilateral(
     isPointInsideTriangle(point, p1, p3, p4)
   )
 }
+
+/**
+ * 计算数组的众数
+ */
+export function getMode<T extends number | string>(arr: T[]): T | undefined
+export function getMode<T extends number | string>(arr: [T, ...T[]]): T
+export function getMode<T extends number | string>(arr: T[]) {
+  const frequencyMap = {} as Record<T, number>
+  let maxCount = 0
+  let mode = arr[0]
+
+  for (let i = 0; i < arr.length; i += 1) {
+    const item = arr[i]
+    const newCount = (frequencyMap[item] || 0) + 1
+    frequencyMap[item] = newCount
+
+    if (newCount > maxCount) {
+      maxCount = newCount
+      mode = item
+    }
+  }
+  return mode
+}
+
+export function getModeOf<T>(
+  arr: T[],
+  toString: (item: T) => string
+): T | undefined
+export function getModeOf<T>(arr: [T, ...T[]], toString: (item: T) => string): T
+export function getModeOf<T>(arr: T[], toString: (item: T) => string) {
+  const frequencyMap = {} as Record<string, number>
+  let maxCount = 0
+  let mode = arr[0]
+
+  for (let i = 0; i < arr.length; i += 1) {
+    const item = arr[i]
+    const key = toString(item)
+    const newCount = (frequencyMap[key] || 0) + 1
+    frequencyMap[key] = newCount
+
+    if (newCount > maxCount) {
+      maxCount = newCount
+      mode = item
+    }
+  }
+  return mode
+}

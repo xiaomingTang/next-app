@@ -4,6 +4,7 @@ interface PathItem {
 }
 
 export const toolList: PathItem[] = [
+  { pathname: '/to-gif', title: '图片转 gif' },
   { pathname: '/lyrics-editor', title: '歌词编辑器' },
   { pathname: '/pano', title: '全景看看' },
   { pathname: '/clock', title: '时钟橱窗' },

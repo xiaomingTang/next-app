@@ -117,6 +117,7 @@ export function DefaultHeaderShim() {
           sm: '56px',
         },
         flex: 'none',
+        flexShrink: 0,
         pointerEvents: 'none',
         userSelect: 'none',
       }}
