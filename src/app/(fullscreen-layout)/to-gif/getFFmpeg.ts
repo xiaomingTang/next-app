@@ -9,7 +9,7 @@ export function getFFmpeg() {
   storedFFmpeg = new FFmpeg()
   // TODO: 管理 log
   storedFFmpeg.on('log', (data) => {
-    console.log('ffmpeg log: ', data)
+    console.log('[ffmpeg]: ', data.message)
   })
   return storedFFmpeg
 }
