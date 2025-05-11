@@ -12,6 +12,7 @@ import {
   Menu,
   MenuItem,
   Grow,
+  Alert,
 } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { useState } from 'react'
@@ -19,7 +20,7 @@ import { useState } from 'react'
 import type { ExitableProps } from './Exitable'
 
 interface FFmpegSource {
-  name: 'unpkg' | 'jsDelivr'
+  name: 'unpkg' | 'jsDelivr' | '本站'
   coreURL: string
   wasmURL: string
 }
@@ -36,6 +37,13 @@ const FFMPEG_SOURCES: FFmpegSource[] = [
       'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd/ffmpeg-core.min.js',
     wasmURL:
       'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd/ffmpeg-core.wasm',
+  },
+  {
+    name: '本站',
+    coreURL:
+      'https://cdn.16px.cc/public/static/@ffmpeg/core@0.12.10/ffmpeg-core.min.js',
+    wasmURL:
+      'https://cdn.16px.cc/public/static/@ffmpeg/core@0.12.10/ffmpeg-core.wasm',
   },
 ]
 
@@ -77,6 +85,9 @@ export function LoadFFmpeg({ exited, onExited }: ExitableProps) {
         <Typography variant='body2'>
           图片转 gif 完全在浏览器中进行，本站不会上传你的图片，请放心使用。
         </Typography>
+        <Alert severity='warning'>
+          尽量使用 unpkg 或 jsDelivr 的源，本站很穷，怕流量超了，谢谢。
+        </Alert>
         <ButtonGroup
           variant='contained'
           size='large'
@@ -130,6 +141,15 @@ export function LoadFFmpeg({ exited, onExited }: ExitableProps) {
               }}
             >
               {s.name}
+              <Typography
+                component='span'
+                sx={{
+                  ml: 1,
+                  color: s.name === '本站' ? 'error.main' : undefined,
+                }}
+              >
+                {s.name === '本站' && '先试试上面的呢？'}
+              </Typography>
             </MenuItem>
           ))}
         </Menu>
