@@ -7,6 +7,7 @@ import { cat } from '@/errors/catchAndToast'
 import { numberFormat } from '@/utils/numberFormat'
 import Anchor from '@/components/Anchor'
 import { AnchorProvider } from '@/components/AnchorProvider'
+import { friendlySize } from '@/utils/transformer'
 
 import {
   Alert,
@@ -34,7 +35,7 @@ import { sleepMs } from '@zimi/utils'
 import { noop } from 'lodash-es'
 import Image from 'next/image'
 
-import type { ImageInfo } from './ImagesPreview'
+import type { ImageInfo } from '../store'
 
 function isInteger(value: number): boolean | string {
   if (value % 1 !== 0) {
@@ -82,6 +83,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
     void modal.hide()
   })
   const [gifUrl, setGifUrl] = useState('')
+  const [gifSize, setGifSize] = useState(0)
   const defaultConfig: GifConfig = useMemo(() => {
     const { width, height } = images[0]
     return {
@@ -171,6 +173,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
         )
         const url = URL.createObjectURL(outputFile)
         setGifUrl(url)
+        setGifSize(outputFile.size)
       })
     )
   )
@@ -261,35 +264,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
               </Typography>
               <Typography>* 建议使用原图尺寸，且宽高均 2000 以内</Typography>
             </Alert>
-            <Stack direction='row' spacing={2}>
-              <Controller
-                name='duration'
-                control={control}
-                render={({ field, fieldState: { error } }) => (
-                  <TextField
-                    label='每帧持续时间 (s)'
-                    type='number'
-                    error={!!error}
-                    helperText={error?.message ?? ' '}
-                    sx={{ width: '100%' }}
-                    {...field}
-                  />
-                )}
-                rules={{
-                  required: {
-                    value: true,
-                    message: '必填项',
-                  },
-                  min: {
-                    value: 0,
-                    message: '最小值为 0',
-                  },
-                  max: {
-                    value: 10,
-                    message: '最大值为 10',
-                  },
-                }}
-              />
+            <Stack direction='row' spacing={1}>
               <Controller
                 name='loop'
                 control={control}
@@ -322,8 +297,36 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                   },
                 }}
               />
+              <Controller
+                name='duration'
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <TextField
+                    label='每帧持续时间 (s)'
+                    type='number'
+                    error={!!error}
+                    helperText={error?.message ?? ' '}
+                    sx={{ width: '100%' }}
+                    {...field}
+                  />
+                )}
+                rules={{
+                  required: {
+                    value: true,
+                    message: '必填项',
+                  },
+                  min: {
+                    value: 0,
+                    message: '最小值为 0',
+                  },
+                  max: {
+                    value: 10,
+                    message: '最大值为 10',
+                  },
+                }}
+              />
             </Stack>
-            <Stack direction='row' spacing={2}>
+            <Stack direction='row' spacing={1}>
               <Controller
                 name='size.width'
                 control={control}
@@ -525,7 +528,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                   href={gifUrl}
                   download='output.gif'
                 >
-                  下载
+                  保存 （{friendlySize(gifSize)}）
                 </Button>
               </>
             )}

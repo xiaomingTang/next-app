@@ -2,7 +2,9 @@
 
 import { LoadFFmpeg } from './LoadFFmpeg'
 import { LoadImages } from './LoadImages'
-import { ImagesPreview, useImages } from './ImagesPreview'
+import { ImagesPreview } from './ImagesPreview'
+
+import { useImages } from '../store'
 
 import { useState } from 'react'
 import { Box } from '@mui/material'

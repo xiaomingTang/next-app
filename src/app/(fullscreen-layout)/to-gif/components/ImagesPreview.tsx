@@ -1,36 +1,20 @@
 import { toGif } from './ToGifModal'
 
+import { useImages } from '../store'
+
 import { isInputting, useKeyDown } from '@/hooks/useKey'
 import { useListen } from '@/hooks/useListen'
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
+import { RawUploader } from '@/app/(default-layout)/upload/components/RawUploader'
+import { cat } from '@/errors/catchAndToast'
 
-import { Box, Button, Divider } from '@mui/material'
+import { Box, Button, ButtonGroup, Divider, Stack } from '@mui/material'
+import FirstPageIcon from '@mui/icons-material/FirstPage'
+import LastPageIcon from '@mui/icons-material/LastPage'
 import { clsx } from 'clsx'
 import { clamp } from 'lodash-es'
 import Image from 'next/image'
 import { useState } from 'react'
-import { create } from 'zustand'
-
-export interface ImageInfo {
-  type: string
-  /**
-   * blob url
-   * @example blob:https://example.com/12345678-1234-1234-1234-123456789012
-   */
-  url: string
-  width: number
-  height: number
-  rawFile: File
-  /**
-   * 综合推断的图片的扩展名
-   * （避免用户输入图片的扩展名有误）
-   */
-  propertyExt: string
-}
-
-export const useImages = create(() => ({
-  images: [] as ImageInfo[],
-}))
 
 export function ImagesPreview() {
   const { images } = useImages()
@@ -56,6 +40,12 @@ export function ImagesPreview() {
     })
   })
 
+  useListen(images.length, (cur, prev = 0) => {
+    if (cur > prev) {
+      setActiveIndex(0)
+    }
+  })
+
   return (
     <Box
       sx={{
@@ -68,18 +58,82 @@ export function ImagesPreview() {
       }}
     >
       <DefaultHeaderShim />
-      <Box sx={{ width: '100%', p: 1 }}>
+      <Stack
+        sx={{ width: '100%', p: 1 }}
+        direction='row'
+        spacing={1}
+        alignItems='center'
+        justifyContent='space-between'
+      >
+        <Button variant='outlined' size='small'>
+          新增图片
+          <RawUploader
+            multiple
+            accept='image/*'
+            onChange={cat(async (files) => useImages.prependImages(files))}
+          />
+        </Button>
+        <ButtonGroup size='small'>
+          <Button
+            onClick={() => {
+              if (activeIndex === 0) {
+                return
+              }
+              // 交换 activeIndex 和 activeIndex - 1 的图片
+              const newImages = [...images]
+              const temp = newImages[activeIndex]
+              newImages[activeIndex] = newImages[activeIndex - 1]
+              newImages[activeIndex - 1] = temp
+              useImages.setState({ images: newImages })
+              setActiveIndex((i) => clamp(i - 1, 0, images.length - 1))
+            }}
+          >
+            <FirstPageIcon />
+            左移
+          </Button>
+          <Button
+            size='small'
+            variant='contained'
+            onClick={async () => {
+              await toGif({
+                images,
+              })
+            }}
+          >
+            转 gif
+          </Button>
+          <Button
+            onClick={() => {
+              if (activeIndex >= images.length - 1) {
+                return
+              }
+              // 交换 activeIndex 和 activeIndex + 1 的图片
+              const newImages = [...images]
+              const temp = newImages[activeIndex]
+              newImages[activeIndex] = newImages[activeIndex + 1]
+              newImages[activeIndex + 1] = temp
+              useImages.setState({ images: newImages })
+              setActiveIndex((i) => clamp(i + 1, 0, images.length - 1))
+            }}
+          >
+            右移
+            <LastPageIcon />
+          </Button>
+        </ButtonGroup>
         <Button
-          variant='contained'
-          onClick={async () => {
-            await toGif({
-              images,
-            })
+          variant='outlined'
+          size='small'
+          color='error'
+          onClick={() => {
+            const newImages = [...images]
+            newImages.splice(activeIndex, 1)
+            useImages.setState({ images: newImages })
+            setActiveIndex((i) => clamp(i, 0, newImages.length - 1))
           }}
         >
-          转为 gif
+          删除图片
         </Button>
-      </Box>
+      </Stack>
       <Divider sx={{ width: '100%' }} />
       {activeImage && (
         <Image
