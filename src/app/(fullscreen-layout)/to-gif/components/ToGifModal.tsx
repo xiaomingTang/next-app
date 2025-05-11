@@ -126,7 +126,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
               return
             }
             await ffmpeg.writeFile(`raw-images/${i}.${ext}`, f)
-            await ffmpeg.exec([
+            const cmds = [
               '-i',
               `raw-images/${i}.${ext}`,
               '-f',
@@ -138,7 +138,9 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
               '-frames:v',
               '1',
               `images/${i}.jpg`,
-            ])
+            ]
+            console.log('to-jpg parameters: ', cmds)
+            await ffmpeg.exec(cmds)
           })
         )
         let inputTxt = images
@@ -147,6 +149,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
         const lastImgIndex = images.length - 1
         // 最后一张图需要重复一次（gpt 说 FFmpeg bug 避免最后帧消失）
         inputTxt += `\nfile 'images/${lastImgIndex}.${images[lastImgIndex].propertyExt}'`
+        console.log('input.txt: ', inputTxt)
         await ffmpeg.writeFile('input.txt', inputTxt)
         const cmds = [
           '-y',
@@ -162,6 +165,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
           `${loop}`,
           OUTPUT_NAME,
         ]
+        console.log('to-gif parameters: ', cmds)
         await ffmpeg.exec(cmds)
         const data = await ffmpeg.readFile(OUTPUT_NAME)
         const outputFile = new File(
