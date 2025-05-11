@@ -34,6 +34,7 @@ import { useMemo, useState } from 'react'
 import { sleepMs } from '@zimi/utils'
 import { noop } from 'lodash-es'
 import Image from 'next/image'
+import toast from 'react-hot-toast'
 
 import type { ImageInfo } from '../store'
 
@@ -106,12 +107,23 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
       cat(async (e) => {
         await sleepMs(3000)
         const OUTPUT_NAME = 'output.gif'
-        const {
-          duration,
-          loop,
+        const { duration, loop, backgroundColor: bg } = e
+        let {
           size: { width: w, height: h },
-          backgroundColor: bg,
         } = e
+        const toastMsgForOdd = []
+        // fix: 奇数尺寸下 pad 滤镜会报错
+        if (w % 2 !== 0) {
+          w += 1
+          toastMsgForOdd.push('宽度不是偶数，已自动加 1')
+        }
+        if (h % 2 !== 0) {
+          h += 1
+          toastMsgForOdd.push('高度不是偶数，已自动加 1')
+        }
+        if (toastMsgForOdd.length > 0) {
+          toast(toastMsgForOdd.join('，'))
+        }
         const ffmpeg = getFFmpeg()
         await ffmpeg.createDir('raw-images').catch(noop)
         await ffmpeg.createDir('images').catch(noop)
@@ -507,7 +519,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                       unoptimized
                       src={gifUrl}
                       alt={`生成的 gif`}
-                      className='w-full h-[500] object-contain p-1 my-2'
+                      className='w-full h-[500px] object-contain p-1 my-2'
                       style={{
                         maxHeight: field.value.height,
                       }}
