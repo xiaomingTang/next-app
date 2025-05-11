@@ -63,6 +63,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...blogRoutes,
     ...tagRoutes,
     {
+      url: resolvePath('/to-gif').href,
+      lastModified: new Date(),
+      changeFrequency: 'yearly',
+      priority: 0.6,
+    },
+    {
       url: resolvePath('/clock').href,
       lastModified: new Date(),
       changeFrequency: 'yearly',
