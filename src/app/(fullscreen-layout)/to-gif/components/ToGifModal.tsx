@@ -70,7 +70,7 @@ interface GifConfig {
    */
   loop: number
   /**
-   * @default '0x000000'
+   * @default '000000'
    */
   backgroundColor: string
 }
@@ -94,7 +94,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
       },
       duration: 0.5,
       loop: 0,
-      backgroundColor: '0x000000',
+      backgroundColor: '000000',
     }
   }, [images])
   const { handleSubmit, control, setValue, getValues, clearErrors, trigger } =
@@ -132,7 +132,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
               '-f',
               'lavfi',
               '-i',
-              `color=c=${bg}:s=${w}x${h}`,
+              `color=c=0x${bg}:s=${w}x${h}`,
               '-filter_complex',
               '[1][0]overlay=(W-w)/2:(H-h)',
               '-frames:v',
@@ -160,7 +160,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
           '-i',
           'input.txt',
           '-vf',
-          `scale=w=${w}:h=${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2:color=${bg}`,
+          `scale=w=${w}:h=${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2:color=0x${bg}`,
           '-loop',
           `${loop}`,
           OUTPUT_NAME,
@@ -458,18 +458,19 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                     <Typography component='span'>背景色</Typography>
                     <PaletteIcon
                       sx={{
-                        color: field.value.replace('0x', '#'),
+                        color: `#${field.value}`,
                         ml: 1,
                       }}
                     />
                     <input
                       type='color'
-                      value={field.value}
+                      value={`#${field.value}`}
                       onChange={(e) => {
                         const color = e.target.value
-                        const hex = color.replace('#', '0x')
-                        if (hex) {
-                          setValue('backgroundColor', hex)
+                          .replace('#', '')
+                          .replace('0x', '')
+                        if (color) {
+                          setValue('backgroundColor', color)
                         }
                       }}
                       style={{
