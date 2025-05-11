@@ -293,6 +293,11 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                     helperText={error?.message ?? ' '}
                     sx={{ width: '100%' }}
                     {...field}
+                    onChange={(e) => {
+                      const newValue = numberFormat(e.target.value)
+                      setValue(field.name, newValue)
+                      void trigger(field.name)
+                    }}
                   />
                 )}
                 rules={{
@@ -324,6 +329,11 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                     helperText={error?.message ?? ' '}
                     sx={{ width: '100%' }}
                     {...field}
+                    onChange={(e) => {
+                      const newValue = numberFormat(e.target.value)
+                      setValue(field.name, newValue)
+                      void trigger(field.name)
+                    }}
                   />
                 )}
                 rules={{
@@ -361,6 +371,11 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                         const ratio = width / height
                         setValue('size.height', Math.round(nextValue / ratio))
                       }
+                    }}
+                    onChange={(e) => {
+                      const newValue = numberFormat(e.target.value)
+                      setValue(field.name, newValue)
+                      void trigger(field.name)
                     }}
                   />
                 )}
@@ -400,6 +415,11 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                         const ratio = width / height
                         setValue('size.width', Math.round(nextValue * ratio))
                       }
+                    }}
+                    onChange={(e) => {
+                      const newValue = numberFormat(e.target.value)
+                      setValue(field.name, newValue)
+                      void trigger(field.name)
                     }}
                   />
                 )}

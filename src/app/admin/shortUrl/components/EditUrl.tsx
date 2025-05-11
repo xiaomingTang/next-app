@@ -88,7 +88,7 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
     void modal.hide()
   })
   const [loading, withLoading] = useLoading()
-  const { handleSubmit, control, setError } = useForm<
+  const { handleSubmit, control, setError, setValue, trigger } = useForm<
     Pick<ShortUrl, 'hash' | 'url' | 'description' | 'limit' | 'password'> & {
       timeout: number
     }
@@ -241,6 +241,11 @@ const EditUrlModal = NiceModal.create(({ shortUrl }: EditUrlModalProps) => {
                     inputMode: 'numeric',
                     pattern: '[0-9]*',
                   },
+                }}
+                onChange={(e) => {
+                  const newValue = numberFormat(e.target.value)
+                  setValue(field.name, newValue)
+                  void trigger(field.name)
                 }}
               />
             )}
