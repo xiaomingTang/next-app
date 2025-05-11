@@ -14,7 +14,7 @@ import {
   Grow,
 } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import type { ExitableProps } from './Exitable'
 
@@ -57,14 +57,6 @@ export function LoadFFmpeg({ exited, onExited }: ExitableProps) {
   const open = Boolean(anchorEl)
   const [loaded, setLoaded] = useState(false)
 
-  // TODO: 仅测试阶段使用，懒得点击加载
-  // 上线前需要移除
-  useEffect(() => {
-    void loadFFmpeg(source).then(() => {
-      setLoaded(true)
-    })
-  }, [source])
-
   return (
     <Grow appear={false} in={!loaded} onExited={() => onExited(true)}>
       <Box
@@ -73,6 +65,7 @@ export function LoadFFmpeg({ exited, onExited }: ExitableProps) {
           flexDirection: 'column',
           width: '100%',
           height: '100%',
+          p: 2,
           justifyContent: 'center',
           alignItems: 'center',
           flexShrink: 0,

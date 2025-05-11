@@ -1,4 +1,4 @@
-import { getFFmpeg } from '../getFFmpeg'
+import { toGif } from './ToGifModal'
 
 import { isInputting, useKeyDown } from '@/hooks/useKey'
 import { useListen } from '@/hooks/useListen'
@@ -11,14 +11,25 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { create } from 'zustand'
 
+export interface ImageInfo {
+  type: string
+  /**
+   * blob url
+   * @example blob:https://example.com/12345678-1234-1234-1234-123456789012
+   */
+  url: string
+  width: number
+  height: number
+  rawFile: File
+  /**
+   * 综合推断的图片的扩展名
+   * （避免用户输入图片的扩展名有误）
+   */
+  propertyExt: string
+}
+
 export const useImages = create(() => ({
-  images: [] as {
-    type: string
-    url: string
-    width: number
-    height: number
-    rawFile: File
-  }[],
+  images: [] as ImageInfo[],
 }))
 
 export function ImagesPreview() {
@@ -61,39 +72,9 @@ export function ImagesPreview() {
         <Button
           variant='contained'
           onClick={async () => {
-            const { width: w, height: h } = images[0]
-            const ffmpeg = getFFmpeg()
-            // TODO: 管理 log
-            ffmpeg.on('log', (data) => {
-              console.log('ffmpeg log: ', data)
+            await toGif({
+              images,
             })
-            await ffmpeg.createDir('images')
-            await Promise.all(
-              images.map(async (img, i) =>
-                ffmpeg.writeFile(
-                  `images/${i}.jpg`,
-                  new Uint8Array(await img.rawFile.arrayBuffer())
-                )
-              )
-            )
-            await ffmpeg.exec([
-              '-framerate',
-              '2',
-              '-i',
-              'images/%d.jpg',
-              '-vf',
-              `scale=w=${w}:h=${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2:color='#000000'`,
-              'output.gif',
-            ])
-            const data = await ffmpeg.readFile('output.gif')
-            const url = URL.createObjectURL(
-              new Blob([(data as Uint8Array).buffer], { type: 'image/gif' })
-            )
-            const a = document.createElement('a')
-            a.setAttribute('download', 'output.gif')
-            a.setAttribute('href', url)
-            a.setAttribute('target', '_blank')
-            a.click()
           }}
         >
           转为 gif

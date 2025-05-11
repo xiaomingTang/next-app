@@ -3,6 +3,13 @@ import { FFmpeg } from '@ffmpeg/ffmpeg'
 let storedFFmpeg: FFmpeg | null = null
 
 export function getFFmpeg() {
-  storedFFmpeg = storedFFmpeg || new FFmpeg()
+  if (storedFFmpeg) {
+    return storedFFmpeg
+  }
+  storedFFmpeg = new FFmpeg()
+  // TODO: 管理 log
+  storedFFmpeg.on('log', (data) => {
+    console.log('ffmpeg log: ', data)
+  })
   return storedFFmpeg
 }
