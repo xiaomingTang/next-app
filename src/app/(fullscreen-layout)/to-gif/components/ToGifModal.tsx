@@ -11,6 +11,7 @@ import { AnchorProvider } from '@/components/AnchorProvider'
 import {
   Alert,
   AppBar,
+  Box,
   Button,
   Checkbox,
   ClickAwayListener,
@@ -27,6 +28,7 @@ import {
 import { Controller, useForm } from 'react-hook-form'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import CloseIcon from '@mui/icons-material/Close'
+import PaletteIcon from '@mui/icons-material/Palette'
 import { useMemo, useState } from 'react'
 import { sleepMs } from '@zimi/utils'
 import { noop } from 'lodash-es'
@@ -431,6 +433,53 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                 使用原图尺寸
               </Button>
             </Stack>
+            <Box>
+              <Controller
+                name='backgroundColor'
+                control={control}
+                render={({ field }) => (
+                  <Button
+                    sx={{
+                      position: 'relative',
+                      fontVariant: 'body2',
+                      fontSize: 'inherit',
+                      fontWeight: 'inherit',
+                      color: 'inherit',
+                      fontFamily: 'inherit',
+                    }}
+                  >
+                    <Typography component='span'>背景色</Typography>
+                    <PaletteIcon
+                      sx={{
+                        color: field.value.replace('0x', '#'),
+                        ml: 1,
+                      }}
+                    />
+                    <input
+                      type='color'
+                      value={field.value}
+                      onChange={(e) => {
+                        const color = e.target.value
+                        const hex = color.replace('#', '0x')
+                        if (hex) {
+                          setValue('backgroundColor', hex)
+                        }
+                      }}
+                      style={{
+                        opacity: 0,
+                        position: 'absolute',
+                        left: 0,
+                        top: 0,
+                        width: '100%',
+                        height: '100%',
+                        overflow: 'hidden',
+                        cursor: 'pointer',
+                      }}
+                    />
+                  </Button>
+                )}
+              />
+            </Box>
 
             <Button
               variant='outlined'
@@ -451,6 +500,9 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                       src={gifUrl}
                       alt={`生成的 gif`}
                       className='w-full h-[500] object-contain p-1 my-2'
+                      style={{
+                        maxHeight: field.value.height,
+                      }}
                       width={field.value.width}
                       height={field.value.height}
                     />
