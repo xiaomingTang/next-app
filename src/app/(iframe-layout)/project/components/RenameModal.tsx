@@ -120,9 +120,6 @@ const RenameModal = NiceModal.create(({ project }: RenameModalProps) => {
   )
 })
 
-/**
- * @param friendsLink 为空则为新建
- */
 export function renameProject(
   project: SimpleProjectItem
 ): Promise<SA_RES<typeof updateProject>> {
