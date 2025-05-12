@@ -1,3 +1,5 @@
+import { getPreferredSize, isInteger, toOdd, shouldStretch } from './utils'
+
 import { getFFmpeg } from '../getFFmpeg'
 
 import { useInjectHistory } from '@/hooks/useInjectHistory'
@@ -8,7 +10,6 @@ import { numberFormat } from '@/utils/numberFormat'
 import Anchor from '@/components/Anchor'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { friendlySize } from '@/utils/transformer'
-import { getModeOf } from '@/utils/math'
 
 import {
   Alert,
@@ -37,36 +38,6 @@ import Image from 'next/image'
 import toast from 'react-hot-toast'
 
 import type { ImageInfo } from '../store'
-
-function isInteger(value: number): boolean | string {
-  if (value % 1 !== 0) {
-    return '必须为整数'
-  }
-  return true
-}
-
-function toOdd(value: number): number {
-  const intValue = Math.floor(value)
-  return intValue % 2 === 0 ? intValue : intValue + 1
-}
-
-function shouldStretch(
-  target: {
-    width: number
-    height: number
-  },
-  cur: {
-    width: number
-    height: number
-  }
-) {
-  if (target.width > cur.width) {
-    return (
-      Math.abs((target.width / cur.width) * cur.height - target.height) < 3.5
-    )
-  }
-  return Math.abs((cur.width / target.width) * target.height - cur.height) < 3.5
-}
 
 interface ToGifModalProps {
   images: ImageInfo[]
@@ -107,15 +78,7 @@ interface GifInfo {
 const OUTPUT_NAME = 'output.gif'
 
 const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
-  const preferredSize = useMemo(() => {
-    const info =
-      getModeOf(images, (img) => `${toOdd(img.width)}x${toOdd(img.height)}`) ??
-      images[0]
-    return {
-      width: toOdd(info.width),
-      height: toOdd(info.height),
-    }
-  }, [images])
+  const preferredSize = useMemo(() => getPreferredSize(images), [images])
   const modal = useModal()
   const [loading, withLoading] = useLoading()
   const [gif, setGif] = useState<GifInfo | null>(null)
