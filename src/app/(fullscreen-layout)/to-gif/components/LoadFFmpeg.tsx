@@ -79,21 +79,16 @@ export function LoadFFmpeg({ exited, onExited }: ExitableProps) {
           flexShrink: 0,
         }}
       >
-        <Typography variant='body2'>
-          ffmpeg gzip 后约 10MB，首次加载可能需要一些时间，请耐心等待。
+        <Typography variant='body2' sx={{ mb: 1 }}>
+          * ffmpeg gzip 后约 10MB，首次加载可能需要一些时间，请耐心等待。
         </Typography>
-        <Typography variant='body2'>
-          图片转 gif 完全在浏览器中进行，本站不会上传你的图片，请放心使用。
+        <Typography variant='body2' sx={{ mb: 1 }}>
+          * 图片转 gif 完全在浏览器中进行，本站不会上传你的图片，请放心使用。
         </Typography>
-        <Alert severity='warning'>
+        <Alert severity='warning' sx={{ mb: 1 }}>
           尽量使用 unpkg 或 jsDelivr 的源，本站很穷，怕流量超了，谢谢。
         </Alert>
-        <ButtonGroup
-          variant='contained'
-          size='large'
-          disabled={loading}
-          sx={{ mt: 1 }}
-        >
+        <ButtonGroup variant='contained' size='large' disabled={loading}>
           <Button
             loading={loading}
             onClick={cat(

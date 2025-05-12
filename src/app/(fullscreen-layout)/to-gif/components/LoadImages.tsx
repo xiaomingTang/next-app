@@ -4,7 +4,7 @@ import { RawUploader } from '@/app/(default-layout)/upload/components/RawUploade
 import { cat } from '@/errors/catchAndToast'
 import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCatcherHandler'
 
-import { Box, Button, Grow } from '@mui/material'
+import { Box, Button, Grow, Typography } from '@mui/material'
 
 import type { ExitableProps } from './Exitable'
 
@@ -34,6 +34,12 @@ export function LoadImages({ exited, onExited }: ExitableProps) {
           flexShrink: 0,
         }}
       >
+        <Typography variant='body2' sx={{ mb: 1 }}>
+          * 支持 JPG、PNG、WEBP、BMP、TIFF... 等格式的图片
+        </Typography>
+        <Typography variant='body2' sx={{ mb: 1 }}>
+          * 支持拖拽及直接粘贴图片
+        </Typography>
         <Button variant='contained' size='large'>
           载入图片
           <RawUploader
