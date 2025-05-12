@@ -2,7 +2,6 @@ import { getImageExtension } from './utils'
 import { getFFmpeg } from './getFFmpeg'
 
 import { getImageSize } from '@/utils/getImageSize'
-import { getModeOf } from '@/utils/math'
 
 import { withStatic } from '@zimi/utils'
 import { create } from 'zustand'
@@ -35,22 +34,22 @@ export const useImages = withStatic(useRawImages, {
     if (imageFiles.length === 0) {
       throw new Error('请选择图片文件')
     }
-    if (!getFFmpeg().loaded) {
-      toast('点击加载 ffmpeg 吧')
+    if (
+      imageFiles.some((f) => {
+        const ext = getImageExtension(f)
+        return ext === 'gif' || ext === 'svg'
+      })
+    ) {
+      throw new Error('不支持 gif 或 svg 格式的图片')
     }
-    const prevImageInfos = useRawImages.getState().images
-    const allImageFiles = [
-      ...imageFiles,
-      ...prevImageInfos.map((i) => i.rawFile),
-    ]
-    const allImagesWithSize = await Promise.all(
-      allImageFiles.map(async (f) => {
+    const imageInfos = await Promise.all(
+      imageFiles.map(async (f) => {
         const url = URL.createObjectURL(f)
         const { width, height } = await getImageSize(url)
         const ext = getImageExtension(f)
         return {
           type: f.type,
-          url: URL.createObjectURL(f),
+          url,
           width,
           height,
           rawFile: f,
@@ -58,21 +57,21 @@ export const useImages = withStatic(useRawImages, {
         }
       })
     )
-    if (allImagesWithSize.some((i) => i.propertyExt === 'gif')) {
-      throw new Error('不支持 GIF 格式的图片')
+    const validImageInfos = imageInfos.filter(
+      (i) => i.width > 0 && i.height > 0 && i.rawFile.size > 0
+    )
+    if (validImageInfos.length === 0) {
+      throw new Error('没有有效的图片')
     }
-    const preferredSize =
-      getModeOf(allImagesWithSize, (i) => `${i.width}x${i.height}`) ??
-      allImagesWithSize[0]
-    if (preferredSize.width <= 0 || preferredSize.height <= 0) {
-      throw new Error('图片尺寸必须大于 0')
+    const delta = validImageInfos.length - imageInfos.length
+    if (delta > 0) {
+      toast(`已过滤掉 ${delta} 张空图片`)
     }
-    useRawImages.setState({
-      images: allImagesWithSize.map((i) => ({
-        ...i,
-        width: preferredSize.width,
-        height: preferredSize.height,
-      })),
-    })
+    if (!getFFmpeg().loaded) {
+      toast('点击加载 ffmpeg 吧')
+    }
+    useRawImages.setState((state) => ({
+      images: [...validImageInfos, ...state.images],
+    }))
   },
 })

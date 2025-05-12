@@ -8,6 +8,7 @@ import { numberFormat } from '@/utils/numberFormat'
 import Anchor from '@/components/Anchor'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { friendlySize } from '@/utils/transformer'
+import { getModeOf } from '@/utils/math'
 
 import {
   Alert,
@@ -31,7 +32,6 @@ import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import CloseIcon from '@mui/icons-material/Close'
 import PaletteIcon from '@mui/icons-material/Palette'
 import { useMemo, useState } from 'react'
-import { sleepMs } from '@zimi/utils'
 import { noop } from 'lodash-es'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
@@ -43,6 +43,29 @@ function isInteger(value: number): boolean | string {
     return '必须为整数'
   }
   return true
+}
+
+function toOdd(value: number): number {
+  const intValue = Math.floor(value)
+  return intValue % 2 === 0 ? intValue : intValue + 1
+}
+
+function shouldStretch(
+  target: {
+    width: number
+    height: number
+  },
+  cur: {
+    width: number
+    height: number
+  }
+) {
+  if (target.width > cur.width) {
+    return (
+      Math.abs((target.width / cur.width) * cur.height - target.height) < 3.5
+    )
+  }
+  return Math.abs((cur.width / target.width) * target.height - cur.height) < 3.5
 }
 
 interface ToGifModalProps {
@@ -76,28 +99,36 @@ interface GifConfig {
   backgroundColor: string
 }
 
+interface GifInfo {
+  url: string
+  size: number
+}
+
+const OUTPUT_NAME = 'output.gif'
+
 const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
+  const preferredSize = useMemo(() => {
+    const info =
+      getModeOf(images, (img) => `${toOdd(img.width)}x${toOdd(img.height)}`) ??
+      images[0]
+    return {
+      width: toOdd(info.width),
+      height: toOdd(info.height),
+    }
+  }, [images])
   const modal = useModal()
   const [loading, withLoading] = useLoading()
-  useInjectHistory(modal.visible, () => {
-    modal.reject(new SilentError('操作已取消'))
-    void modal.hide()
-  })
-  const [gifUrl, setGifUrl] = useState('')
-  const [gifSize, setGifSize] = useState(0)
-  const defaultConfig: GifConfig = useMemo(() => {
-    const { width, height } = images[0]
-    return {
+  const [gif, setGif] = useState<GifInfo | null>(null)
+  const defaultConfig: GifConfig = useMemo(
+    () => ({
       keepOriginalRatio: true,
-      size: {
-        width,
-        height,
-      },
+      size: preferredSize,
       duration: 0.5,
       loop: 0,
       backgroundColor: '000000',
-    }
-  }, [images])
+    }),
+    [preferredSize]
+  )
   const { handleSubmit, control, setValue, getValues, clearErrors, trigger } =
     useForm<GifConfig>({
       defaultValues: defaultConfig,
@@ -105,20 +136,20 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
   const onSubmit = handleSubmit(
     withLoading(
       cat(async (e) => {
-        await sleepMs(3000)
-        const OUTPUT_NAME = 'output.gif'
-        const { duration, loop, backgroundColor: bg } = e
+        const { duration, loop } = e
+        // '0xCCCCCC'
+        const bg = `0x${e.backgroundColor}`
         let {
           size: { width: w, height: h },
         } = e
         const toastMsgForOdd = []
         // fix: 奇数尺寸下 pad 滤镜会报错
         if (w % 2 !== 0) {
-          w += 1
+          w = toOdd(w)
           toastMsgForOdd.push('宽度不是偶数，已自动加 1')
         }
         if (h % 2 !== 0) {
-          h += 1
+          h = toOdd(h)
           toastMsgForOdd.push('高度不是偶数，已自动加 1')
         }
         if (toastMsgForOdd.length > 0) {
@@ -130,27 +161,48 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
         // 把所有图片写入 raw-images, 并把非 jpg 图片转成 jpg, 移动到 images 目录中
         await Promise.all(
           images.map(async (img, i) => {
-            const { width: w, height: h } = img
+            const { width: iw, height: ih } = img
             const ext = img.propertyExt
             const f = new Uint8Array(await img.rawFile.arrayBuffer())
-            if (ext === 'jpg') {
+            const willStretch = shouldStretch(
+              { width: w, height: h },
+              { width: iw, height: ih }
+            )
+            if (ext === 'jpg' && !willStretch) {
               await ffmpeg.writeFile(`images/${i}.jpg`, f)
               return
             }
             await ffmpeg.writeFile(`raw-images/${i}.${ext}`, f)
-            const cmds = [
-              '-i',
-              `raw-images/${i}.${ext}`,
-              '-f',
-              'lavfi',
-              '-i',
-              `color=c=0x${bg}:s=${w}x${h}`,
-              '-filter_complex',
-              '[1][0]overlay=(W-w)/2:(H-h)',
-              '-frames:v',
-              '1',
-              `images/${i}.jpg`,
-            ]
+            let cmds: string[] = []
+            if (willStretch) {
+              cmds = [
+                '-i',
+                `raw-images/${i}.${ext}`,
+                '-filter_complex',
+                `scale=${w}:${h},format=rgba,colorchannelmixer=aa=1[scaled];color=c=${bg}:s=${w}x${h}:d=1[bg];[bg][scaled]overlay=shortest=1`,
+                '-frames:v',
+                '1',
+                '-pix_fmt',
+                'yuvj420p',
+                `images/${i}.jpg`,
+              ]
+            } else {
+              cmds = [
+                '-i',
+                `raw-images/${i}.${ext}`,
+                '-f',
+                'lavfi',
+                '-i',
+                `color=c=${bg}:s=${iw}x${ih}:d=1`,
+                '-filter_complex',
+                '[1][0]overlay=(W-w)/2:(H-h):format=auto',
+                '-frames:v',
+                '1',
+                '-pix_fmt',
+                'yuvj420p',
+                `images/${i}.jpg`,
+              ]
+            }
             console.log('to-jpg parameters: ', cmds)
             await ffmpeg.exec(cmds)
           })
@@ -172,7 +224,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
           '-i',
           'input.txt',
           '-vf',
-          `scale=w=${w}:h=${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2:color=0x${bg}`,
+          `scale=w=${w}:h=${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2:color=${bg}`,
           '-loop',
           `${loop}`,
           OUTPUT_NAME,
@@ -187,12 +239,17 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
             type: 'image/gif',
           }
         )
-        const url = URL.createObjectURL(outputFile)
-        setGifUrl(url)
-        setGifSize(outputFile.size)
+        setGif({
+          url: URL.createObjectURL(outputFile),
+          size: outputFile.size,
+        })
       })
     )
   )
+  useInjectHistory(modal.visible, () => {
+    modal.reject(new SilentError('操作已取消'))
+    void modal.hide()
+  })
 
   return (
     <Dialog
@@ -367,7 +424,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                     onBlur={(e) => {
                       const nextValue = numberFormat(e.target.value)
                       if (getValues('keepOriginalRatio')) {
-                        const { width, height } = images[0]
+                        const { width, height } = preferredSize
                         const ratio = width / height
                         setValue('size.height', Math.round(nextValue / ratio))
                       }
@@ -411,7 +468,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                     onBlur={(e) => {
                       const nextValue = numberFormat(e.target.value)
                       if (getValues('keepOriginalRatio')) {
-                        const { width, height } = images[0]
+                        const { width, height } = preferredSize
                         const ratio = width / height
                         setValue('size.width', Math.round(nextValue * ratio))
                       }
@@ -463,7 +520,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                 sx={{ textDecoration: 'underline', fontWeight: 'bold' }}
                 onClick={() => {
                   clearErrors(['size.width', 'size.height'])
-                  const { width, height } = images[0]
+                  const { width, height } = preferredSize
                   setValue('size.width', width)
                   setValue('size.height', height)
                   void trigger(['size.width', 'size.height'])
@@ -529,7 +586,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
             >
               确定
             </Button>
-            {gifUrl && (
+            {gif && (
               <>
                 <Controller
                   name='size'
@@ -537,7 +594,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                   render={({ field }) => (
                     <Image
                       unoptimized
-                      src={gifUrl}
+                      src={gif.url}
                       alt={`生成的 gif`}
                       className='w-full h-[500px] object-contain p-1 my-2'
                       style={{
@@ -562,10 +619,10 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                   color='primary'
                   loading={loading}
                   LinkComponent={Anchor}
-                  href={gifUrl}
-                  download='output.gif'
+                  href={gif.url}
+                  download={OUTPUT_NAME}
                 >
-                  保存 （{friendlySize(gifSize)}）
+                  保存 （{friendlySize(gif.size)}）
                 </Button>
               </>
             )}
