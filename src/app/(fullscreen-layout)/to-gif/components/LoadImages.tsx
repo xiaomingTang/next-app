@@ -14,7 +14,7 @@ export function LoadImages({ exited, onExited }: ExitableProps) {
   useGlobalFileCatcherHandler.useUpdateHintText('载入图片')
 
   useGlobalFileCatcherHandler.useUpdateHandler(
-    cat(async (files) => useImages.prependImages(files))
+    cat(async (files) => useImages.appendImages(files))
   )
 
   return (
@@ -45,7 +45,7 @@ export function LoadImages({ exited, onExited }: ExitableProps) {
           <RawUploader
             multiple
             accept='image/*'
-            onChange={cat(async (files) => useImages.prependImages(files))}
+            onChange={cat(async (files) => useImages.appendImages(files))}
           />
         </Button>
       </Box>

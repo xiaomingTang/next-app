@@ -29,7 +29,7 @@ const useRawImages = create(() => ({
 }))
 
 export const useImages = withStatic(useRawImages, {
-  async prependImages(files: File[]) {
+  async uploadImages(files: File[]) {
     const imageFiles = files.filter((f) => f.type.startsWith('image/'))
     if (imageFiles.length === 0) {
       throw new Error('请选择图片文件')
@@ -67,11 +67,15 @@ export const useImages = withStatic(useRawImages, {
     if (delta > 0) {
       toast(`已过滤掉 ${delta} 张空图片`)
     }
+    return validImageInfos
+  },
+  async appendImages(files: File[]) {
+    const validImageInfos = await useImages.uploadImages(files)
     if (!getFFmpeg().loaded) {
       toast('点击加载 ffmpeg 吧')
     }
     useRawImages.setState((state) => ({
-      images: [...validImageInfos, ...state.images],
+      images: [...state.images, ...validImageInfos],
     }))
   },
 })

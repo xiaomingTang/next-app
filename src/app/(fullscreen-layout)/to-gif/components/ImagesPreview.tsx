@@ -42,7 +42,7 @@ export function ImagesPreview() {
 
   useListen(images.length, (cur, prev = 0) => {
     if (cur > prev) {
-      setActiveIndex(0)
+      setActiveIndex(cur - 1)
     }
   })
 
@@ -70,7 +70,7 @@ export function ImagesPreview() {
           <RawUploader
             multiple
             accept='image/*'
-            onChange={cat(async (files) => useImages.prependImages(files))}
+            onChange={cat(async (files) => useImages.appendImages(files))}
           />
         </Button>
         <ButtonGroup size='small'>
