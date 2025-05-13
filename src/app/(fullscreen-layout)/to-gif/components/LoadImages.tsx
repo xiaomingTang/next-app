@@ -29,6 +29,7 @@ export function LoadImages({ exited, onExited }: ExitableProps) {
           flexDirection: 'column',
           width: '100%',
           height: '100%',
+          p: 2,
           justifyContent: 'center',
           alignItems: 'center',
           flexShrink: 0,
