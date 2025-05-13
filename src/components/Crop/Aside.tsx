@@ -115,6 +115,7 @@ export function Aside({
         '&:hover': {
           color: CORNER_COLOR_HOVER,
         },
+        touchAction: 'none',
         ...sx,
       }}
       style={{

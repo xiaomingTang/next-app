@@ -135,6 +135,7 @@ export function Corner({
         '&:hover': {
           color: CORNER_COLOR_HOVER,
         },
+        touchAction: 'none',
         cursor: CURSOR_MAP[posKey],
         ...sx,
       }}

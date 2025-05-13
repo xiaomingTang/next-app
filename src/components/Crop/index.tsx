@@ -99,10 +99,10 @@ export function Crop({
       })
     }
 
-    document.addEventListener('pointermove', onPointerMove)
+    window.addEventListener('pointermove', onPointerMove, { passive: false })
 
     return () => {
-      document.removeEventListener('pointermove', onPointerMove)
+      window.removeEventListener('pointermove', onPointerMove)
     }
   }, [onTempChangeRef])
 
@@ -123,6 +123,7 @@ export function Crop({
           outline: `1px dashed ${DASH_COLOR}`,
           outlineOffset: '-1px',
           backgroundColor: CROP_BG,
+          pointerEvents: 'none',
         }}
         style={{
           left: `${tempValue.x}px`,
