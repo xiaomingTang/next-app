@@ -1,4 +1,5 @@
 import { getPreferredSize, isInteger, toOdd, shouldStretch } from './utils'
+import { CropGif } from './CropGif'
 
 import { getFFmpeg } from '../getFFmpeg'
 
@@ -38,6 +39,7 @@ import Image from 'next/image'
 import toast from 'react-hot-toast'
 
 import type { ImageInfo } from '../store'
+import type { CropParams } from '@/components/Crop'
 
 interface ToGifModalProps {
   images: ImageInfo[]
@@ -68,6 +70,7 @@ interface GifConfig {
    * @default '000000'
    */
   backgroundColor: string
+  cropParams: CropParams
 }
 
 interface GifInfo {
@@ -89,6 +92,12 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
       duration: 0.5,
       loop: 0,
       backgroundColor: '000000',
+      cropParams: {
+        x: 0,
+        y: 0,
+        w: preferredSize.width,
+        h: preferredSize.height,
+      },
     }),
     [preferredSize]
   )
@@ -99,7 +108,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
   const onSubmit = handleSubmit(
     withLoading(
       cat(async (e) => {
-        const { duration, loop } = e
+        const { duration, loop, cropParams: crop } = e
         // '0xCCCCCC'
         const bg = `0x${e.backgroundColor}`
         let {
@@ -187,7 +196,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
           '-i',
           'input.txt',
           '-vf',
-          `scale=w=${w}:h=${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2:color=${bg}`,
+          `scale=w=${w}:h=${h}:force_original_aspect_ratio=decrease,pad=${w}:${h}:(ow-iw)/2:(oh-ih)/2:color=${bg},crop=${crop.w}:${crop.h}:${crop.x}:${crop.y}`,
           '-loop',
           `${loop}`,
           OUTPUT_NAME,
@@ -537,6 +546,22 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                       }}
                     />
                   </Button>
+                )}
+              />
+            </Box>
+            <Box sx={{ mt: 1, mb: 2 }}>
+              <Controller
+                name='cropParams'
+                control={control}
+                render={({ field }) => (
+                  <CropGif
+                    realSize={preferredSize}
+                    images={images}
+                    cropParams={field.value}
+                    onChange={(value) => {
+                      setValue('cropParams', value)
+                    }}
+                  />
                 )}
               />
             </Box>
