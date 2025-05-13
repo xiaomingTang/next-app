@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { throttle } from 'lodash-es'
 
 interface Size {
@@ -16,35 +16,41 @@ export function useElementSize<T extends HTMLElement = HTMLElement>(
     width: 0,
     height: 0,
   })
+  const updateSize = useCallback(() => {
+    if (!elem) {
+      return
+    }
+    // 未被卸载才执行 setState
+    // (由于被 throttle, 可能在组件被卸载之后仍在执行, 所以需要加一个 flag)
+    switch (type) {
+      case 'offsetSize':
+        setSize({
+          width: elem.offsetWidth,
+          height: elem.offsetHeight,
+        })
+        break
+      case 'clientSize':
+        setSize({
+          width: elem.clientWidth,
+          height: elem.clientHeight,
+        })
+        break
+      case 'scrollSize':
+        setSize({
+          width: elem.scrollWidth,
+          height: elem.scrollHeight,
+        })
+        break
+    }
+  }, [elem, type])
 
   useEffect(() => {
     let isUnloaded = false
     const rawOnResize = () => {
-      if (!elem || isUnloaded) {
+      if (isUnloaded) {
         return
       }
-      // 未被卸载才执行 setState
-      // (由于被 throttle, 可能在组件被卸载之后仍在执行, 所以需要加一个 flag)
-      switch (type) {
-        case 'offsetSize':
-          setSize({
-            width: elem.offsetWidth,
-            height: elem.offsetHeight,
-          })
-          break
-        case 'clientSize':
-          setSize({
-            width: elem.clientWidth,
-            height: elem.clientHeight,
-          })
-          break
-        case 'scrollSize':
-          setSize({
-            width: elem.scrollWidth,
-            height: elem.scrollHeight,
-          })
-          break
-      }
+      updateSize()
     }
     const onResize = throttle(rawOnResize, 500, {
       leading: false,
@@ -65,7 +71,7 @@ export function useElementSize<T extends HTMLElement = HTMLElement>(
       window.removeEventListener('resize', onResize)
       document.removeEventListener('visibilitychange', onVisibilityChange)
     }
-  }, [elem, type])
+  }, [updateSize])
 
-  return [size, elem, setElem] as const
+  return [size, elem, setElem, updateSize] as const
 }
