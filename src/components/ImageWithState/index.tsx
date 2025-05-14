@@ -4,7 +4,7 @@ import { getImageSizeFromUrl } from '@/utils/urlImageSize'
 import imageConfig from '@ROOT/next-image.config'
 import { resolvePath } from '@/utils/url'
 
-import { matchRemotePattern } from 'next/dist/shared/lib/match-remote-pattern'
+import { hasRemoteMatch } from 'next/dist/shared/lib/match-remote-pattern'
 import Image from 'next/image'
 import { useState } from 'react'
 import clsx from 'clsx'
@@ -23,8 +23,10 @@ function isOptimizedUrl(url = '') {
   if (!imageConfig.remotePatterns || imageConfig.remotePatterns.length === 0) {
     return false
   }
-  return imageConfig.remotePatterns.some((pattern) =>
-    matchRemotePattern(pattern, resolvePath(url))
+  return hasRemoteMatch(
+    imageConfig.domains ?? [],
+    imageConfig.remotePatterns,
+    resolvePath(url)
   )
 }
 
