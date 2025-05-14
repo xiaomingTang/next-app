@@ -124,7 +124,6 @@ export function ProjectMenu(projectInfo: ProjectPageProps) {
           isItemEditable={
             editable && !projectInfo.error && !projectInfo.loading
           }
-          experimentalFeatures={{ labelEditing: editable }}
           defaultExpandedItems={items.map((item) => item.hash)}
           defaultSelectedItems={defaultSelectedItem?.hash}
           onSelectedItemsChange={(e, itemId) => {
