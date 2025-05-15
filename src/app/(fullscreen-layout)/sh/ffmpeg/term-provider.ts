@@ -19,6 +19,26 @@ type TerminalWithCore = Terminal & {
   _core: ITerminal
 }
 
+async function loadFFmpegAndLog(terminal: TerminalWithCore) {
+  for (let i = 0; i < FFMPEG_SOURCES.length; i += 1) {
+    const source = FFMPEG_SOURCES[i]
+    terminal.write(`\r\n正在加载 ffmpeg.wasm [源 ${i + 1}]...\r\n`)
+    try {
+      await loadFFmpeg(source)
+      terminal.write(`ffmpeg 加载已完成\r\n`)
+      terminal.write('欢迎使用 FFmpeg 命令行工具\r\n')
+      terminal.write('输入 help 查看帮助\r\n')
+      terminal.write('\r\n$ ')
+      break
+    } catch (_) {
+      terminal.write(`ffmpeg.wasm 加载失败\r\n`)
+      if (i === FFMPEG_SOURCES.length - 1) {
+        terminal.write('所有源加载失败，请检查网络连接\r\n')
+      }
+    }
+  }
+}
+
 function geneTerm() {
   let loadingFlag = 0
   let storedTerm: TerminalWithCore | null = null
@@ -37,8 +57,6 @@ function geneTerm() {
   const initTerm = async (container: HTMLElement) => {
     const term = getTerm()
     term.open(container)
-    term.write('Welcome to FFmpeg Terminal!')
-    sharedTerm.prompt()
     // @xterm/addon-fit ssr 下有问题
     const res = await import('@xterm/addon-fit')
     const fitAddon = new res.FitAddon()
@@ -52,7 +70,6 @@ function geneTerm() {
         ffmpeg: getFFmpeg(),
       })
       storedVirtualTerminal = new ShTerminal({ fileSystem, xterm: getTerm() })
-      void loadFFmpeg(FFMPEG_SOURCES[0])
       storedVirtualTerminal.registerCommand('cat', Cat)
       storedVirtualTerminal.registerCommand('cd', Cd)
       storedVirtualTerminal.registerCommand('echo', Echo)
@@ -61,6 +78,7 @@ function geneTerm() {
       storedVirtualTerminal.registerCommand('pwd', Pwd)
       storedVirtualTerminal.registerCommand('rm', Rm)
       storedVirtualTerminal.registerCommand('touch', Touch)
+      void loadFFmpegAndLog(getTerm())
     }
     return storedVirtualTerminal
   }
@@ -86,6 +104,9 @@ function geneTerm() {
     },
     set command(value: string) {
       command = value
+    },
+    get ffmpeg() {
+      return getFFmpeg()
     },
     initTerm,
     prompt,

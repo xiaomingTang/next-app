@@ -26,7 +26,10 @@ export function FFmpegRoot() {
     const { term, virtualTerminal } = sharedTerm
     term.onData((e) => {
       // 必须要放到 onData 里
-      const { command, isLoading } = sharedTerm
+      const { command, isLoading, ffmpeg } = sharedTerm
+      if (!ffmpeg.loaded) {
+        return
+      }
       if (isLoading) {
         return
       }
