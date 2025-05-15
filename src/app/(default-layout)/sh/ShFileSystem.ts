@@ -1,5 +1,4 @@
-import type { ShFile } from './ShAsset'
-import type { ShDir } from './ShAsset'
+import { ShFile, ShDir } from './ShAsset'
 
 export class ShFileSystem {
   root: ShDir
@@ -29,6 +28,28 @@ export class ShFileSystem {
 
   getAsset(path: string): ShFile | ShDir | null {
     return this.assets[path] ?? null
+  }
+
+  getFileOrThrow(path: string): ShFile {
+    const asset = this.getAsset(path)
+    if (!asset) {
+      throw new Error(`No such file or directory: ${path}`)
+    }
+    if (!ShFile.isFile(asset)) {
+      throw new Error(`Not a file: ${path}`)
+    }
+    return asset
+  }
+
+  getDirOrThrow(path: string): ShDir {
+    const asset = this.getAsset(path)
+    if (!asset) {
+      throw new Error(`No such file or directory: ${path}`)
+    }
+    if (!ShDir.isDir(asset)) {
+      throw new Error(`Not a directory: ${path}`)
+    }
+    return asset
   }
 
   async createFile(_path: string, _content: string): Promise<ShFile> {
