@@ -11,6 +11,7 @@ export class ShFileSystem {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   router: ShRouter<any>
 
+  // TODO: 自己管理个毛线，全部从 remote 拿
   assets: Record<string, ShFile | ShDir> = {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
