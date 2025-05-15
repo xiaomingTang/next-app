@@ -1,5 +1,7 @@
 import { parseCommand } from './utils/command'
 
+import { toError } from '@/errors/utils'
+
 import { Terminal } from '@xterm/xterm'
 
 import type { ShFileSystem } from './ShFileSystem'
@@ -45,6 +47,12 @@ export class ShTerminal {
       env,
       terminal: this,
     })
-    await commandInstance.execute()
+    try {
+      await commandInstance.execute()
+    } catch (e) {
+      const err = toError(e)
+      err.message = `[sh error] [${commandInstance.name}]: ${err.message}`
+      throw err
+    }
   }
 }
