@@ -10,6 +10,10 @@ import { Mkdir } from '../commands/mkdir'
 import { Touch } from '../commands/touch'
 import { Echo } from '../commands/echo'
 import { Rm } from '../commands/rm'
+import { Vi } from '../commands/vi'
+import { Vim } from '../commands/vim'
+import { Edit } from '../commands/edit'
+import { Help } from '../commands/help'
 
 import { Terminal } from '@xterm/xterm'
 
@@ -73,11 +77,15 @@ function geneTerm() {
       storedVirtualTerminal.registerCommand('cat', Cat)
       storedVirtualTerminal.registerCommand('cd', Cd)
       storedVirtualTerminal.registerCommand('echo', Echo)
+      storedVirtualTerminal.registerCommand('help', Help)
+      storedVirtualTerminal.registerCommand('edit', Edit)
       storedVirtualTerminal.registerCommand('ls', Ls)
       storedVirtualTerminal.registerCommand('mkdir', Mkdir)
       storedVirtualTerminal.registerCommand('pwd', Pwd)
       storedVirtualTerminal.registerCommand('rm', Rm)
       storedVirtualTerminal.registerCommand('touch', Touch)
+      storedVirtualTerminal.registerCommand('vi', Vi)
+      storedVirtualTerminal.registerCommand('vim', Vim)
       void loadFFmpegAndLog(getTerm())
     }
     return storedVirtualTerminal
