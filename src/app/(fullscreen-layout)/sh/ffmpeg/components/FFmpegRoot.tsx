@@ -145,6 +145,12 @@ export function FFmpegRoot() {
             height: '100%',
             padding: '8px',
           },
+          [`& .xterm-underline-5`]: {
+            textDecorationStyle: 'solid',
+            [`&:hover`]: {
+              color: 'primary.main',
+            },
+          },
         }}
       />
     </Box>
