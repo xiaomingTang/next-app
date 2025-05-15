@@ -10,6 +10,20 @@ export interface ShAssetProps {
 export class ShAsset {
   _isFile = false
 
+  static isAsset(asset?: unknown): asset is ShAsset {
+    if (!asset) {
+      return false
+    }
+    const _asset = asset as ShFile | ShDir
+    // 目前就只有 ShFile 和 ShDir
+    return (
+      typeof _asset._isFile === 'boolean' &&
+      typeof _asset.path === 'string' &&
+      _asset.getParent instanceof Function &&
+      _asset.getSize instanceof Function
+    )
+  }
+
   private _path = '/'
 
   /**
@@ -57,11 +71,11 @@ export interface ShFileProps extends ShAssetProps {
 export class ShFile extends ShAsset {
   _isFile = true
 
-  static isFile(asset?: ShAsset | null): asset is ShFile {
-    if (!asset) {
+  static isFile(asset?: unknown): asset is ShFile {
+    if (!ShAsset.isAsset(asset)) {
       return false
     }
-    return asset._isFile && !!(asset as ShFile).getContent
+    return (asset as ShFile)._isFile
   }
 
   getSize: ShFileProps['getSize']
@@ -93,12 +107,11 @@ export interface ShDirProps extends ShAssetProps {
 export class ShDir extends ShAsset {
   _isFile = false
 
-  static isDir(asset?: ShAsset | null): asset is ShDir {
-    if (!asset) {
+  static isDir(asset?: unknown): asset is ShDir {
+    if (!ShAsset.isAsset(asset)) {
       return false
     }
-    // 目前就只有 ShFile 和 ShDir
-    return !asset._isFile && !ShFile.isFile(asset)
+    return !(asset as ShFile)._isFile
   }
 
   getParent: () => Promise<ShDir | null>

@@ -182,6 +182,9 @@ importers:
       showdown:
         specifier: ^2.1.0
         version: 2.1.0
+      string-width:
+        specifier: ^7.2.0
+        version: 7.2.0
       swr:
         specifier: ^2.3.3
         version: 2.3.3(react@19.1.0)

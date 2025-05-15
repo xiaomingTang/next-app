@@ -1,5 +1,4 @@
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
-import { resolvePath } from '../utils/path'
 
 import type { ShCallableCommandProps } from '../ShCallableCommand'
 
@@ -22,8 +21,7 @@ export class Ls extends ShSimpleCallableCommand {
       withSimpleHelp: true,
     })
     const { fileSystem } = this.terminal
-    const targetPath = resolvePath(fileSystem.context.path, this.args[0])
-    const dir = fileSystem.getDirOrThrow(targetPath)
+    const dir = await fileSystem.getDirOrThrow(this.args[0])
     const children = await dir.getChildren()
     this.terminal.log(...children)
   }

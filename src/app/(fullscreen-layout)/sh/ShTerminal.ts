@@ -1,9 +1,10 @@
 import { parseCommand } from './utils/command'
+import { ShDir, ShFile } from './ShAsset'
 
 import { toError } from '@/errors/utils'
+import { SilentError } from '@/errors/SilentError'
 
-import { Terminal } from '@xterm/xterm'
-
+import type { Terminal } from '@xterm/xterm'
 import type { ShFileSystem } from './ShFileSystem'
 import type { ShCallableCommandConstructor } from './ShCallableCommand'
 
@@ -14,13 +15,27 @@ export class ShTerminal {
 
   fileSystem: ShFileSystem
 
-  constructor(fileSystem: ShFileSystem) {
-    this.xterm = new Terminal()
-    this.fileSystem = fileSystem
+  constructor(props: { fileSystem: ShFileSystem; xterm: Terminal }) {
+    this.xterm = props.xterm
+    this.fileSystem = props.fileSystem
   }
 
-  log(...args: unknown[]) {
-    this.xterm.writeln(args.join(' '))
+  log(...args: (ShFile | ShDir | string)[]) {
+    const { xterm } = this
+    args.forEach((arg) => {
+      if (typeof arg === 'string') {
+        xterm.write(arg.endsWith('\n') ? arg : `${arg} `)
+        return
+      }
+      if (ShFile.isFile(arg)) {
+        xterm.write(`${arg.name}\t`)
+        return
+      }
+      if (ShDir.isDir(arg)) {
+        xterm.write(`${arg.name}/\t`)
+        return
+      }
+    })
   }
 
   debug(...args: unknown[]) {
@@ -32,6 +47,9 @@ export class ShTerminal {
   }
 
   async executeCommand(cmd: string) {
+    if (!cmd.trim()) {
+      throw new SilentError('Empty command')
+    }
     this.debug('execute: ', cmd)
     const { name, args, env } = parseCommand(cmd)
     this.debug('parsed: ', { name, args, env })

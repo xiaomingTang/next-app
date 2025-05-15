@@ -20,9 +20,13 @@ export class Cat extends ShSimpleCallableCommand {
     this.normalizeOptionsAndArgs({
       withSimpleHelp: true,
     })
-    const f = this.terminal.fileSystem.getFileOrThrow(this.args[0])
+    const f = await this.terminal.fileSystem.getFileOrThrow(this.args[0])
     const content = await f.getContent()
-    this.terminal.log(content)
+    if (typeof content === 'string') {
+      this.terminal.log(content)
+    } else {
+      this.terminal.log('Uint8Array<ArrayBufferLike>')
+    }
   }
 
   constructor(props: ShCallableCommandProps) {

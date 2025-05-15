@@ -99,28 +99,30 @@ export class ShSimpleCallableCommand extends ShCallableCommand {
     const isHelp =
       config?.withSimpleHelp &&
       options.some(
-        (option) => option.shortName === 'h' || option.longName === 'help'
+        (option) =>
+          (option.shortName === 'h' || option.longName === 'help') &&
+          option.value
       )
     if (!isHelp) {
       return this
     }
     if (this.usage) {
-      this.terminal.log(this.usage)
+      this.terminal.log(`${this.usage}\r\n`)
     }
     if (this.description) {
-      this.terminal.log(this.description)
+      this.terminal.log(`${this.description}\r\n`)
     }
     const optionDescs = this.options.map((option) =>
       [
-        option.shortName ? `-${option.shortName}, ` : '',
+        ' ',
+        option.shortName ? `-${option.shortName},` : '',
         option.longName ? `--${option.longName}` : '',
         option.description,
       ]
         .filter(Boolean)
         .join(' ')
     )
-    this.terminal.log(optionDescs.join('\n'))
-    this.terminal.log('\n')
+    this.terminal.log(optionDescs.join('\r\n'))
 
     throw new SilentError('help finished')
   }

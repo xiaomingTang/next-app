@@ -21,7 +21,7 @@ export class Cd extends ShSimpleCallableCommand {
       withSimpleHelp: true,
     })
     const { fileSystem } = this.terminal
-    fileSystem.context = fileSystem.getDirOrThrow(this.args[0])
+    fileSystem.context = await fileSystem.getDirOrThrow(this.args[0])
   }
 
   constructor(props: ShCallableCommandProps) {

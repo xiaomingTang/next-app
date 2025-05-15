@@ -21,7 +21,7 @@ export class Pwd extends ShSimpleCallableCommand {
       withSimpleHelp: true,
     })
     const { fileSystem } = this.terminal
-    this.terminal.log(fileSystem.context)
+    this.terminal.log(fileSystem.context.path)
   }
 
   constructor(props: ShCallableCommandProps) {

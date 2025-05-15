@@ -76,7 +76,7 @@ export function parseCommand(input: string): ParsedCommandLine {
   }
 
   if (realArgs.length === 0) {
-    throw new Error('No command found')
+    throw new Error('Command not found')
   }
 
   const name = realArgs[0]

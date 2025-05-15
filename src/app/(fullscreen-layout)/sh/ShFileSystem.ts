@@ -1,15 +1,34 @@
 import { ShFile, ShDir } from './ShAsset'
+import { resolvePath } from './utils/path'
+
+import type { ShRouter } from './ShRouter'
 
 export class ShFileSystem {
   root: ShDir
 
   context: ShDir
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  router: ShRouter<any>
+
   assets: Record<string, ShFile | ShDir> = {}
 
-  constructor(props: { root: ShDir; context: ShDir }) {
-    this.root = props.root
-    this.context = props.context
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  constructor(props: { router: ShRouter<any> }) {
+    this.router = props.router
+    this.context = new ShDir({
+      path: '/',
+      getParent: async () => this.root,
+      getChildren: async () => [],
+    })
+    this.root = this.context
+    this.root = this.router.generate('[ROOT]', {
+      type: 'dir',
+      path: '/',
+      ctx: this,
+    })
+    this.context = this.root
+    void this.createAsset(this.root)
   }
 
   async createAsset(asset: ShFile | ShDir) {
@@ -27,10 +46,19 @@ export class ShFileSystem {
   }
 
   getAsset(path: string): ShFile | ShDir | null {
-    return this.assets[path] ?? null
+    const np = resolvePath(this.context.path, path)
+    return this.assets[np] ?? null
   }
 
-  getFileOrThrow(path: string): ShFile {
+  async createFile(_path: string, _content: string): Promise<ShFile> {
+    throw new Error('Not implemented')
+  }
+
+  async createDir(_path: string): Promise<ShDir> {
+    throw new Error('Not implemented')
+  }
+
+  async getFileOrThrow(path: string): Promise<ShFile> {
     const asset = this.getAsset(path)
     if (!asset) {
       throw new Error(`No such file or directory: ${path}`)
@@ -41,7 +69,7 @@ export class ShFileSystem {
     return asset
   }
 
-  getDirOrThrow(path: string): ShDir {
+  async getDirOrThrow(path: string): Promise<ShDir> {
     const asset = this.getAsset(path)
     if (!asset) {
       throw new Error(`No such file or directory: ${path}`)
@@ -50,13 +78,5 @@ export class ShFileSystem {
       throw new Error(`Not a directory: ${path}`)
     }
     return asset
-  }
-
-  async createFile(_path: string, _content: string): Promise<ShFile> {
-    throw new Error('Not implemented')
-  }
-
-  async createDir(_path: string): Promise<ShDir> {
-    throw new Error('Not implemented')
   }
 }

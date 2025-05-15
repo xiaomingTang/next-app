@@ -1,21 +1,39 @@
 export const DELIMITER = '/'
 
+function replaceInvalidChars(path: string | null | undefined) {
+  if (!path) {
+    return ''
+  }
+  return path
+    .replace(/\\/g, DELIMITER)
+    .replace(/[:*?'"<>|]/g, '')
+    .trim()
+}
+
 export function normalizePath(path: string | null | undefined) {
   if (!path) {
     return ''
   }
-  let p = path
-    .replace(/\\/g, DELIMITER)
-    .replace(/[:*?'"<>|]/g, '')
-    .trimStart()
-    .replace(/[. ]+$/g, '')
+  let p = replaceInvalidChars(path)
 
   const isAbsPath = p.startsWith(DELIMITER)
-  p = p
+  const pieces = p
     .split(DELIMITER)
-    .map((item) => item.trimStart().replace(/[. ]+$/g, ''))
+    .map((item) => item.trim())
     .filter(Boolean)
-    .join(DELIMITER)
+  const finalPieces: string[] = []
+  for (let i = 0; i < pieces.length; i += 1) {
+    const item = pieces[i]
+    if (item === '.') {
+      continue
+    }
+    if (item === '..') {
+      finalPieces.pop()
+      continue
+    }
+    finalPieces.push(item)
+  }
+  p = finalPieces.join(DELIMITER)
   if (isAbsPath) {
     return DELIMITER + p
   }
@@ -29,14 +47,14 @@ function isNonEmptyStr(s: string | null | undefined): s is string {
 export function resolvePath(...paths: (string | null | undefined)[]): string {
   let path = DELIMITER
   const normalizedPaths = paths
-    .map((p) => normalizePath(p))
+    .map((p) => replaceInvalidChars(p))
     .filter(isNonEmptyStr)
   for (const p of normalizedPaths) {
     if (p.startsWith(DELIMITER)) {
       path = p
     } else {
-      path = path + DELIMITER + p
+      path = path.endsWith(DELIMITER) ? path + p : path + DELIMITER + p
     }
   }
-  return path
+  return normalizePath(path)
 }
