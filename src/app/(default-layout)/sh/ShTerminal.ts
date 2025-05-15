@@ -21,18 +21,25 @@ export class ShTerminal {
     this.xterm.writeln(args.join(' '))
   }
 
+  debug(...args: unknown[]) {
+    console.debug('[sh]: ', ...args)
+  }
+
   registerCommand(name: string, c: ShCallableCommandConstructor) {
     this.commands[name] = c
   }
 
   async executeCommand(cmd: string) {
+    this.debug('execute: ', cmd)
     const { name, args, env } = parseCommand(cmd)
+    this.debug('parsed: ', { name, args, env })
     const CommandClass = this.commands[name]
     if (!CommandClass) {
       throw new Error(`Command not found: ${name}`)
     }
     // TODO: 实现 pipe
     const commandInstance = new CommandClass({
+      raw: cmd,
       name,
       args,
       env,

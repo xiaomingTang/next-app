@@ -1,6 +1,10 @@
 import type { ShTerminal } from './ShTerminal'
 
 export interface ShCallableCommandProps {
+  /**
+   * 原始命令字符串
+   */
+  raw: string
   name: string
   args: string[]
   env: Record<string, string>
@@ -8,6 +12,8 @@ export interface ShCallableCommandProps {
 }
 
 export class ShCallableCommand implements ShCallableCommandProps {
+  raw: string
+
   name: string
 
   args: string[]
@@ -22,6 +28,7 @@ export class ShCallableCommand implements ShCallableCommandProps {
   }
 
   constructor(props: ShCallableCommandProps) {
+    this.raw = props.raw
     this.name = props.name
     this.args = props.args
     this.env = props.env
