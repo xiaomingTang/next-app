@@ -26,7 +26,7 @@ export function FFmpegRoot() {
     const { term, virtualTerminal } = sharedTerm
     term.onData((e) => {
       // 必须要放到 onData 里
-      const { command, isLoading, ffmpeg } = sharedTerm
+      const { command, isLoading, ffmpeg, termPrefix } = sharedTerm
       if (!ffmpeg.loaded) {
         return
       }
@@ -62,7 +62,7 @@ export function FFmpegRoot() {
           const lines = sharedTerm.command.split(/\r\n|\r|\n/g)
           let offset = stringWidth(lines[lines.length - 1])
           if (lines.length <= 1) {
-            offset += 2
+            offset += stringWidth(termPrefix)
           }
           // 上移一行
           term.write('\x1b[1A')
@@ -104,11 +104,11 @@ export function FFmpegRoot() {
             sharedTerm.command += `${line}\n`
           } else if (i === lines.length - 1) {
             // 最后一行不需要换行
-            term.write(`  ${line}`)
-            sharedTerm.command += `  ${line}`
+            term.write(`${line}`)
+            sharedTerm.command += `${line}`
           } else {
-            term.write(`  ${line}\r\n`)
-            sharedTerm.command += `  ${line}\n`
+            term.write(`${line}\r\n`)
+            sharedTerm.command += `${line}\n`
           }
         }
         return
@@ -143,6 +143,7 @@ export function FFmpegRoot() {
           [`& .xterm`]: {
             width: '100%',
             height: '100%',
+            padding: '8px',
           },
         }}
       />

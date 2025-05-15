@@ -26,13 +26,13 @@ type TerminalWithCore = Terminal & {
 async function loadFFmpegAndLog(terminal: TerminalWithCore) {
   for (let i = 0; i < FFMPEG_SOURCES.length; i += 1) {
     const source = FFMPEG_SOURCES[i]
-    terminal.write(`\r\n正在加载 ffmpeg [源 ${i + 1}]...\r\n`)
+    terminal.write(`正在加载 ffmpeg [源 ${i + 1}]...\r\n`)
     try {
       await loadFFmpeg(source)
       terminal.write(`ffmpeg 加载已完成\r\n`)
       terminal.write('欢迎使用 FFmpeg 命令行工具\r\n')
       terminal.write('输入 help 查看帮助\r\n')
-      terminal.write('\r\n$ ')
+      terminal.write('\r\n/ > ')
       break
     } catch (_) {
       terminal.write(`ffmpeg 加载失败\r\n`)
@@ -91,10 +91,15 @@ function geneTerm() {
     return storedVirtualTerminal
   }
 
+  const getTermPrefix = () => {
+    const vt = getVirtualTerminal()
+    return `${vt.fileSystem.context.path} > `
+  }
+
   const prompt = () => {
     const term = getTerm()
     command = ''
-    term.write('\r\n$ ')
+    term.write(`\r\n${getTermPrefix()}`)
   }
 
   return {
@@ -115,6 +120,9 @@ function geneTerm() {
     },
     get ffmpeg() {
       return getFFmpeg()
+    },
+    get termPrefix() {
+      return getTermPrefix()
     },
     initTerm,
     prompt,
