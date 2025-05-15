@@ -1,7 +1,7 @@
 'use client'
 
 import { toError } from './utils'
-import { SilentErrorCode } from './SilentError'
+import { SilentError } from './SilentError'
 
 import { useUser } from '@/user'
 
@@ -37,7 +37,7 @@ export function cat<Args extends unknown[], Ret>(
           useUser.login().catch(noop)
         }
       }
-      if (error.code !== SilentErrorCode) {
+      if (!SilentError.isSilentError(error)) {
         toast.error(error.message ?? '服务器错误，请稍后再试')
       }
       return undefined
