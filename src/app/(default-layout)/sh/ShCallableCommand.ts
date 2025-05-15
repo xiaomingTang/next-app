@@ -4,7 +4,7 @@ export interface ShCallableCommandProps {
   /**
    * 原始命令字符串
    */
-  raw: string
+  rawCommand: string
   name: string
   args: string[]
   env: Record<string, string>
@@ -12,7 +12,17 @@ export interface ShCallableCommandProps {
 }
 
 export class ShCallableCommand implements ShCallableCommandProps {
-  raw: string
+  /**
+   * 用法描述（如 `usage: ls [OPTION]... [FILE]`）
+   */
+  usage = ''
+
+  /**
+   * 命令描述（如 `List information about the FILEs`）
+   */
+  description = ''
+
+  rawCommand: string
 
   name: string
 
@@ -28,7 +38,7 @@ export class ShCallableCommand implements ShCallableCommandProps {
   }
 
   constructor(props: ShCallableCommandProps) {
-    this.raw = props.raw
+    this.rawCommand = props.rawCommand
     this.name = props.name
     this.args = props.args
     this.env = props.env

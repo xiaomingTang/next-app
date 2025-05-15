@@ -1,22 +1,32 @@
-import { ShCallableCommand } from '../ShCallableCommand'
 import { resolvePath } from '../utils/path'
-import { ShFile } from '../ShAsset'
+import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
 
 import type { ShCallableCommandProps } from '../ShCallableCommand'
 
-export class Vi extends ShCallableCommand {
+export class Vi extends ShSimpleCallableCommand {
+  usage = 'vi [OPTION]... <file>'
+
+  description = 'Open a file in the editor'
+
+  options = [
+    {
+      shortName: 'h',
+      longName: 'help',
+      description: 'Show help message',
+    },
+  ]
+
   override async execute() {
+    this.normalizeOptions({
+      withSimpleHelp: true,
+      withValidate: true,
+    })
     const { fileSystem } = this.terminal
     const { context } = fileSystem
     const targetPath = resolvePath(context.path, this.args[0])
-    const asset = fileSystem.getAsset(targetPath)
-    if (!asset) {
-      throw new Error(`vi: ${targetPath}: No such file or directory`)
-    }
-    if (!ShFile.isFile(asset)) {
-      throw new Error(`vi: ${targetPath}: Is not a file`)
-    }
+    const f = fileSystem.getFileOrThrow(targetPath)
     // TODO: 用编辑器打开文件
+    this.terminal.log(`TODO: Open file: ${f.name}, path: ${f.path}`)
   }
 
   constructor(props: ShCallableCommandProps) {

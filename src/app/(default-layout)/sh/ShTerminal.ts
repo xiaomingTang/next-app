@@ -41,7 +41,7 @@ export class ShTerminal {
     }
     // TODO: 实现 pipe
     const commandInstance = new CommandClass({
-      raw: cmd,
+      rawCommand: cmd,
       name,
       args,
       env,
