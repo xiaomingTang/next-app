@@ -13,13 +13,13 @@ export class Ls extends ShSimpleCallableCommand {
       shortName: 'h',
       longName: 'help',
       description: 'show this help message and exit',
+      type: 'boolean' as const,
     },
   ]
 
   override async execute() {
-    this.normalizeOptions({
+    this.normalizeOptionsAndArgs({
       withSimpleHelp: true,
-      withValidate: true,
     })
     const { fileSystem } = this.terminal
     const targetPath = resolvePath(fileSystem.context.path, this.args[0])

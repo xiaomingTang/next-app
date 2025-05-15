@@ -12,16 +12,15 @@ export class Cat extends ShSimpleCallableCommand {
       shortName: 'h',
       longName: 'help',
       description: 'Show help message',
+      type: 'boolean' as const,
     },
   ]
 
   override async execute() {
-    this.normalizeOptions({
+    this.normalizeOptionsAndArgs({
       withSimpleHelp: true,
-      withValidate: true,
     })
-    const { fileSystem } = this.terminal
-    const f = fileSystem.getFileOrThrow(this.args[0])
+    const f = this.terminal.fileSystem.getFileOrThrow(this.args[0])
     const content = await f.getContent()
     this.terminal.log(content)
   }

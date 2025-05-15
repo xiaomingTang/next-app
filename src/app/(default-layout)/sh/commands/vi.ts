@@ -13,13 +13,13 @@ export class Vi extends ShSimpleCallableCommand {
       shortName: 'h',
       longName: 'help',
       description: 'Show help message',
+      type: 'boolean' as const,
     },
   ]
 
   override async execute() {
-    this.normalizeOptions({
+    this.normalizeOptionsAndArgs({
       withSimpleHelp: true,
-      withValidate: true,
     })
     const { fileSystem } = this.terminal
     const { context } = fileSystem
