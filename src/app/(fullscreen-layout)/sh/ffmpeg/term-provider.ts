@@ -26,7 +26,7 @@ type TerminalWithCore = Terminal & {
 async function loadFFmpegAndLog(terminal: TerminalWithCore) {
   for (let i = 0; i < FFMPEG_SOURCES.length; i += 1) {
     const source = FFMPEG_SOURCES[i]
-    terminal.write(`\r\n正在加载 ffmpeg.wasm [源 ${i + 1}]...\r\n`)
+    terminal.write(`\r\n正在加载 ffmpeg [源 ${i + 1}]...\r\n`)
     try {
       await loadFFmpeg(source)
       terminal.write(`ffmpeg 加载已完成\r\n`)
@@ -35,7 +35,7 @@ async function loadFFmpegAndLog(terminal: TerminalWithCore) {
       terminal.write('\r\n$ ')
       break
     } catch (_) {
-      terminal.write(`ffmpeg.wasm 加载失败\r\n`)
+      terminal.write(`ffmpeg 加载失败\r\n`)
       if (i === FFMPEG_SOURCES.length - 1) {
         terminal.write('所有源加载失败，请检查网络连接\r\n')
       }
