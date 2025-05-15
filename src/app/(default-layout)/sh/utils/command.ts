@@ -1,5 +1,3 @@
-import type { ShTerminal } from '../ShTerminal'
-
 export interface ParsedCommandLine {
   name: string
   args: string[]
@@ -86,36 +84,3 @@ export function parseCommand(input: string): ParsedCommandLine {
 
   return { name, args: finalArgs, env }
 }
-
-export interface CallableCommandProps {
-  name: string
-  args: string[]
-  env: Record<string, string>
-  terminal: ShTerminal
-}
-
-export class CallableCommand implements CallableCommandProps {
-  name: string
-
-  args: string[]
-
-  env: Record<string, string>
-
-  terminal: ShTerminal
-
-  async execute() {
-    // This method should be overridden by subclasses
-    throw new Error('execute() method not implemented')
-  }
-
-  constructor(props: CallableCommandProps) {
-    this.name = props.name
-    this.args = props.args
-    this.env = props.env
-    this.terminal = props.terminal
-  }
-}
-
-export type CallableCommandConstructor = new (
-  _: CallableCommandProps
-) => CallableCommand

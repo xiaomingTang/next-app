@@ -1,10 +1,10 @@
 import { ShDir } from '../ShAsset'
-import { CallableCommand } from '../utils/command'
+import { ShCallableCommand } from '../ShCallableCommand'
 import { resolvePath } from '../utils/path'
 
-import type { CallableCommandProps } from '../utils/command'
+import type { ShCallableCommandProps } from '../ShCallableCommand'
 
-export class Cd extends CallableCommand {
+export class Cd extends ShCallableCommand {
   override async execute() {
     const { fileSystem } = this.terminal
     const { context } = fileSystem
@@ -19,7 +19,7 @@ export class Cd extends CallableCommand {
     fileSystem.context = asset
   }
 
-  constructor(props: CallableCommandProps) {
+  constructor(props: ShCallableCommandProps) {
     super(props)
     this.name = 'cd'
   }

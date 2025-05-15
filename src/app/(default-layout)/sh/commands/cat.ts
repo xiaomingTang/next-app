@@ -1,10 +1,10 @@
-import { CallableCommand } from '../utils/command'
+import { ShCallableCommand } from '../ShCallableCommand'
 import { resolvePath } from '../utils/path'
 import { ShFile } from '../ShAsset'
 
-import type { CallableCommandProps } from '../utils/command'
+import type { ShCallableCommandProps } from '../ShCallableCommand'
 
-export class Cat extends CallableCommand {
+export class Cat extends ShCallableCommand {
   override async execute() {
     const { fileSystem } = this.terminal
     const { context } = fileSystem
@@ -20,7 +20,7 @@ export class Cat extends CallableCommand {
     this.terminal.log(content)
   }
 
-  constructor(props: CallableCommandProps) {
+  constructor(props: ShCallableCommandProps) {
     super(props)
     this.name = 'cat'
   }

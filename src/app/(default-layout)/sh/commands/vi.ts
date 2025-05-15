@@ -1,10 +1,10 @@
-import { CallableCommand } from '../utils/command'
+import { ShCallableCommand } from '../ShCallableCommand'
 import { resolvePath } from '../utils/path'
 import { ShFile } from '../ShAsset'
 
-import type { CallableCommandProps } from '../utils/command'
+import type { ShCallableCommandProps } from '../ShCallableCommand'
 
-export class Vi extends CallableCommand {
+export class Vi extends ShCallableCommand {
   override async execute() {
     const { fileSystem } = this.terminal
     const { context } = fileSystem
@@ -19,7 +19,7 @@ export class Vi extends CallableCommand {
     // TODO: 用编辑器打开文件
   }
 
-  constructor(props: CallableCommandProps) {
+  constructor(props: ShCallableCommandProps) {
     super(props)
     this.name = 'vi'
   }

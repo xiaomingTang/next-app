@@ -1,9 +1,9 @@
 import { Vi } from './vi'
 
-import type { CallableCommandProps } from '../utils/command'
+import type { ShCallableCommandProps } from '../ShCallableCommand'
 
 export class Vim extends Vi {
-  constructor(props: CallableCommandProps) {
+  constructor(props: ShCallableCommandProps) {
     super(props)
     this.name = 'vim'
   }

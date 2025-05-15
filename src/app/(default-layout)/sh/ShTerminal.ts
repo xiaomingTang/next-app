@@ -3,12 +3,12 @@ import { parseCommand } from './utils/command'
 import { Terminal } from '@xterm/xterm'
 
 import type { ShFileSystem } from './ShFileSystem'
-import type { CallableCommandConstructor } from './utils/command'
+import type { ShCallableCommandConstructor } from './ShCallableCommand'
 
 export class ShTerminal {
   xterm: Terminal
 
-  commands: Record<string, CallableCommandConstructor> = {}
+  commands: Record<string, ShCallableCommandConstructor> = {}
 
   fileSystem: ShFileSystem
 
@@ -21,7 +21,7 @@ export class ShTerminal {
     this.xterm.writeln(args.join(' '))
   }
 
-  registerCommand(name: string, c: CallableCommandConstructor) {
+  registerCommand(name: string, c: ShCallableCommandConstructor) {
     this.commands[name] = c
   }
 

@@ -1,9 +1,9 @@
-import { CallableCommand } from '../utils/command'
+import { ShCallableCommand } from '../ShCallableCommand'
 import { resolvePath } from '../utils/path'
 
-import type { CallableCommandProps } from '../utils/command'
+import type { ShCallableCommandProps } from '../ShCallableCommand'
 
-export class Mkdir extends CallableCommand {
+export class Mkdir extends ShCallableCommand {
   override async execute() {
     const { fileSystem } = this.terminal
     const { context } = fileSystem
@@ -12,7 +12,7 @@ export class Mkdir extends CallableCommand {
     this.terminal.log(`Created dir: ${dir.name}, path: ${dir.path}`)
   }
 
-  constructor(props: CallableCommandProps) {
+  constructor(props: ShCallableCommandProps) {
     super(props)
     this.name = 'mkdir'
   }
