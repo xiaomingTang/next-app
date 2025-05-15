@@ -14,6 +14,8 @@ import { Vi } from '../commands/vi'
 import { Vim } from '../commands/vim'
 import { Edit } from '../commands/edit'
 import { Help } from '../commands/help'
+import { FFmpegCmd } from '../commands/ffmpeg'
+import { Clear } from '../commands/clear'
 
 import { Terminal } from '@xterm/xterm'
 
@@ -70,15 +72,18 @@ function geneTerm() {
 
   const getVirtualTerminal = () => {
     if (!storedVirtualTerminal) {
+      const ffmpeg = getFFmpeg()
       const fileSystem = new FFmpegFileSystem({
-        ffmpeg: getFFmpeg(),
+        ffmpeg,
       })
       storedVirtualTerminal = new ShTerminal({ fileSystem, xterm: getTerm() })
       storedVirtualTerminal.registerCommand('cat', Cat)
       storedVirtualTerminal.registerCommand('cd', Cd)
+      storedVirtualTerminal.registerCommand('clear', Clear)
       storedVirtualTerminal.registerCommand('echo', Echo)
       storedVirtualTerminal.registerCommand('help', Help)
       storedVirtualTerminal.registerCommand('edit', Edit)
+      storedVirtualTerminal.registerCommand('ffmpeg', FFmpegCmd)
       storedVirtualTerminal.registerCommand('ls', Ls)
       storedVirtualTerminal.registerCommand('mkdir', Mkdir)
       storedVirtualTerminal.registerCommand('pwd', Pwd)
@@ -87,6 +92,9 @@ function geneTerm() {
       storedVirtualTerminal.registerCommand('vi', Vi)
       storedVirtualTerminal.registerCommand('vim', Vim)
       void loadFFmpegAndLog(getTerm())
+      ffmpeg.on('log', (data) => {
+        storedVirtualTerminal?.xterm.write(`[ffmpeg] ${data.message}\r\n`)
+      })
     }
     return storedVirtualTerminal
   }

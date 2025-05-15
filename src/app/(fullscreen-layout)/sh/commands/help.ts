@@ -12,6 +12,7 @@ export class Help extends ShSimpleCallableCommand {
       'Available commands:',
       '- echo: Print the message to the terminal',
       '- cd: Change the current directory',
+      '- clear: Clear the terminal screen',
       '- pwd: Print the current working directory',
       '- cat: Print the content of a file to the terminal',
       '- mkdir: Create a new directory',
@@ -20,6 +21,8 @@ export class Help extends ShSimpleCallableCommand {
       '- ls: List files and directories in the current directory',
       '- vi/vim/edit: edit a file',
       '- help: Display this help information',
+      '',
+      '- ffmpeg: 自己看文档吧',
     ].join('\r\n')
     this.terminal.log(msg)
   }

@@ -117,12 +117,12 @@ export class ShSimpleCallableCommand extends ShCallableCommand {
         ' ',
         option.shortName ? `-${option.shortName},` : '',
         option.longName ? `--${option.longName}` : '',
-        option.description,
+        `${option.description}\r\n`,
       ]
         .filter(Boolean)
         .join(' ')
     )
-    this.terminal.log(optionDescs.join('\r\n'))
+    this.terminal.log(optionDescs.join(''))
 
     throw new SilentError('help finished')
   }
