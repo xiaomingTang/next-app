@@ -28,7 +28,7 @@ export class Touch extends ShSimpleCallableCommand {
       return
     }
     const file = await fileSystem.createFile(filename, '')
-    this.terminal.log(`Created file: ${file.name}, path: ${file.path}`)
+    this.terminal.log(`Created: ${file.path}`)
   }
 
   constructor(props: ShCallableCommandProps) {

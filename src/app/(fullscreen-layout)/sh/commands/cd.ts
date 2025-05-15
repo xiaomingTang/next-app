@@ -23,6 +23,7 @@ export class Cd extends ShSimpleCallableCommand {
     })
     const { fileSystem } = this.terminal
     fileSystem.context = await fileSystem.getDirOrThrow(this.args[0])
+    this.terminal.log(`Changed directory to ${fileSystem.context.path}/`)
   }
 
   constructor(props: ShCallableCommandProps) {

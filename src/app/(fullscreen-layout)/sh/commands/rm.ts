@@ -32,9 +32,11 @@ export class Rm extends ShSimpleCallableCommand {
     }
     if (fRes.status === 'fulfilled') {
       await fileSystem.deleteAsset(fRes.value)
+      this.terminal.log(`Removed: ${fRes.value.path}`)
     }
     if (dRes.status === 'fulfilled') {
       await fileSystem.deleteAsset(dRes.value)
+      this.terminal.log(`Removed: ${dRes.value.path}/`)
     }
   }
 
