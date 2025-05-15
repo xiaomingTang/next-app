@@ -3,10 +3,10 @@ import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
 import type { ShSimpleCallableCommandOptions } from '../ShSimpleCallableCommand'
 import type { ShCallableCommandProps } from '../ShCallableCommand'
 
-export class Touch extends ShSimpleCallableCommand {
-  usage = 'touch [OPTION]... <file>'
+export class Rm extends ShSimpleCallableCommand {
+  usage = 'rm [OPTION]... <path>'
 
-  description = 'Create a new file'
+  description = 'Remove a file or directory'
 
   options: ShSimpleCallableCommandOptions[] = [
     {
@@ -22,17 +22,24 @@ export class Touch extends ShSimpleCallableCommand {
       withSimpleHelp: true,
     })
     const { fileSystem } = this.terminal
-    const filename = this.args[0]
-    if (!filename) {
-      this.terminal.log('Error: No file name provided')
+    const [fRes, dRes] = await Promise.allSettled([
+      fileSystem.getFileOrThrow(this.args[0]),
+      fileSystem.getDirOrThrow(this.args[0]),
+    ])
+    if (fRes.status === 'rejected' && dRes.status === 'rejected') {
+      this.terminal.log(`No such file or directory: ${this.args[0]}`)
       return
     }
-    const file = await fileSystem.createFile(filename, '')
-    this.terminal.log(`Created file: ${file.name}, path: ${file.path}`)
+    if (fRes.status === 'fulfilled') {
+      await fileSystem.deleteAsset(fRes.value)
+    }
+    if (dRes.status === 'fulfilled') {
+      await fileSystem.deleteAsset(dRes.value)
+    }
   }
 
   constructor(props: ShCallableCommandProps) {
     super(props)
-    this.name = 'touch'
+    this.name = 'rm'
   }
 }

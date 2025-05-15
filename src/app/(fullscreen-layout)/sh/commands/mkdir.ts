@@ -1,6 +1,7 @@
 import { resolvePath } from '../utils/path'
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
 
+import type { ShSimpleCallableCommandOptions } from '../ShSimpleCallableCommand'
 import type { ShCallableCommandProps } from '../ShCallableCommand'
 
 export class Mkdir extends ShSimpleCallableCommand {
@@ -8,12 +9,12 @@ export class Mkdir extends ShSimpleCallableCommand {
 
   description = 'Create a new directory'
 
-  options = [
+  options: ShSimpleCallableCommandOptions[] = [
     {
       shortName: 'h',
       longName: 'help',
       description: 'Show help message',
-      type: 'boolean' as const,
+      type: 'boolean',
     },
   ]
 

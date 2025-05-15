@@ -1,5 +1,6 @@
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
 
+import type { ShSimpleCallableCommandOptions } from '../ShSimpleCallableCommand'
 import type { ShCallableCommandProps } from '../ShCallableCommand'
 
 export class Vi extends ShSimpleCallableCommand {
@@ -7,12 +8,12 @@ export class Vi extends ShSimpleCallableCommand {
 
   description = 'Open a file in the editor'
 
-  options = [
+  options: ShSimpleCallableCommandOptions[] = [
     {
       shortName: 'h',
       longName: 'help',
       description: 'Show help message',
-      type: 'boolean' as const,
+      type: 'boolean',
     },
   ]
 

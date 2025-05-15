@@ -1,5 +1,6 @@
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
 
+import type { ShSimpleCallableCommandOptions } from '../ShSimpleCallableCommand'
 import type { ShCallableCommandProps } from '../ShCallableCommand'
 
 export class Cd extends ShSimpleCallableCommand {
@@ -7,12 +8,12 @@ export class Cd extends ShSimpleCallableCommand {
 
   description = 'Change the current working directory'
 
-  options = [
+  options: ShSimpleCallableCommandOptions[] = [
     {
       shortName: 'h',
       longName: 'help',
       description: 'Show help message',
-      type: 'boolean' as const,
+      type: 'boolean',
     },
   ]
 

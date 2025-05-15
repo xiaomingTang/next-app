@@ -9,6 +9,7 @@ import { Cat } from '../commands/cat'
 import { Mkdir } from '../commands/mkdir'
 import { Touch } from '../commands/touch'
 import { Echo } from '../commands/echo'
+import { Rm } from '../commands/rm'
 
 import { Terminal } from '@xterm/xterm'
 
@@ -46,6 +47,7 @@ function geneTerm() {
       storedVirtualTerminal.registerCommand('ls', Ls)
       storedVirtualTerminal.registerCommand('mkdir', Mkdir)
       storedVirtualTerminal.registerCommand('pwd', Pwd)
+      storedVirtualTerminal.registerCommand('rm', Rm)
       storedVirtualTerminal.registerCommand('touch', Touch)
     }
     return storedVirtualTerminal

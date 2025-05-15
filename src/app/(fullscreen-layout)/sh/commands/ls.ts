@@ -1,5 +1,6 @@
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
 
+import type { ShSimpleCallableCommandOptions } from '../ShSimpleCallableCommand'
 import type { ShCallableCommandProps } from '../ShCallableCommand'
 
 export class Ls extends ShSimpleCallableCommand {
@@ -7,12 +8,12 @@ export class Ls extends ShSimpleCallableCommand {
 
   description = 'list directory contents'
 
-  options = [
+  options: ShSimpleCallableCommandOptions[] = [
     {
       shortName: 'h',
       longName: 'help',
       description: 'show this help message and exit',
-      type: 'boolean' as const,
+      type: 'boolean',
     },
   ]
 
