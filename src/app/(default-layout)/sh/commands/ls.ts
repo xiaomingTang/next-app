@@ -22,7 +22,7 @@ export class Ls extends ShSimpleCallableCommand {
       withValidate: true,
     })
     const { fileSystem } = this.terminal
-    const targetPath = resolvePath(fileSystem.context.path, this.args[0] ?? '')
+    const targetPath = resolvePath(fileSystem.context.path, this.args[0])
     const dir = fileSystem.getDirOrThrow(targetPath)
     const children = await dir.getChildren()
     this.terminal.log(...children)
