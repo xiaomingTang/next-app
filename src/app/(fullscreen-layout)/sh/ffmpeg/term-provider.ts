@@ -34,6 +34,18 @@ function geneTerm() {
     return storedTerm
   }
 
+  const initTerm = async (container: HTMLElement) => {
+    const term = getTerm()
+    term.open(container)
+    term.write('Welcome to FFmpeg Terminal!')
+    sharedTerm.prompt()
+    // @xterm/addon-fit ssr 下有问题
+    const res = await import('@xterm/addon-fit')
+    const fitAddon = new res.FitAddon()
+    term.loadAddon(fitAddon)
+    fitAddon.fit()
+  }
+
   const getVirtualTerminal = () => {
     if (!storedVirtualTerminal) {
       const fileSystem = new FFmpegFileSystem({
@@ -75,6 +87,7 @@ function geneTerm() {
     set command(value: string) {
       command = value
     },
+    initTerm,
     prompt,
     loading: () => {
       loadingFlag += 1

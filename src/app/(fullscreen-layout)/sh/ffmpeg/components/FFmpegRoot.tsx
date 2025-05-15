@@ -19,10 +19,7 @@ export function FFmpegRoot() {
     if (!containerRef.current) {
       return
     }
-    const { term } = sharedTerm
-    term.open(containerRef.current)
-    term.write('Welcome to FFmpeg Terminal!')
-    sharedTerm.prompt()
+    void sharedTerm.initTerm(containerRef.current)
   }, [])
 
   useEffect(() => {
@@ -78,16 +75,19 @@ export function FFmpegRoot() {
         term.write(`\r\n`)
         void virtualTerminal
           .executeCommand(command)
+          .then(() => {
+            term.write(`\r\n`)
+          })
           .catch((e) => {
             const err = toError(e)
             if (SilentError.isSilentError(err)) {
               return
             }
             term.write(err.message)
+            term.write(`\r\n`)
           })
           .finally(() => {
             loaded()
-            term.write(`\r\n`)
             sharedTerm.prompt()
           })
         return
