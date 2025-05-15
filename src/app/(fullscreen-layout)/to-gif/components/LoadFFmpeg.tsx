@@ -1,9 +1,8 @@
-import { getFFmpeg } from '../getFFmpeg'
+import { FFMPEG_SOURCES, loadFFmpeg } from '../getFFmpeg'
 
 import { useLoading } from '@/hooks/useLoading'
 import { cat } from '@/errors/catchAndToast'
 
-import { toBlobURL } from '@ffmpeg/util'
 import {
   Box,
   Typography,
@@ -18,45 +17,6 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { useState } from 'react'
 
 import type { ExitableProps } from './Exitable'
-
-interface FFmpegSource {
-  name: 'unpkg' | 'jsDelivr' | '本站'
-  coreURL: string
-  wasmURL: string
-}
-
-const FFMPEG_SOURCES: FFmpegSource[] = [
-  {
-    name: 'unpkg',
-    coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd/ffmpeg-core.js',
-    wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd/ffmpeg-core.wasm',
-  },
-  {
-    name: 'jsDelivr',
-    coreURL:
-      'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd/ffmpeg-core.min.js',
-    wasmURL:
-      'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/umd/ffmpeg-core.wasm',
-  },
-  {
-    name: '本站',
-    coreURL:
-      'https://cdn.16px.cc/public/static/@ffmpeg/core@0.12.10/ffmpeg-core.min.js',
-    wasmURL:
-      'https://cdn.16px.cc/public/static/@ffmpeg/core@0.12.10/ffmpeg-core.wasm',
-  },
-]
-
-async function loadFFmpeg(source: FFmpegSource) {
-  const ffmpeg = getFFmpeg()
-  if (ffmpeg.loaded) {
-    return
-  }
-  await ffmpeg.load({
-    coreURL: await toBlobURL(source.coreURL, 'text/javascript'),
-    wasmURL: await toBlobURL(source.wasmURL, 'application/wasm'),
-  })
-}
 
 export function LoadFFmpeg({ exited, onExited }: ExitableProps) {
   const [source, setSource] = useState(FFMPEG_SOURCES[0])
