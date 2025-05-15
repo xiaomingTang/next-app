@@ -23,10 +23,12 @@ export class Cat extends ShSimpleCallableCommand {
     })
     const f = await this.terminal.fileSystem.getFileOrThrow(this.args[0])
     const content = await f.getContent()
+    this.terminal.debug('cat content: ', content)
     if (typeof content === 'string') {
       this.terminal.log(content)
     } else {
-      this.terminal.log('Uint8Array<ArrayBufferLike>')
+      const uint8 = new Uint8Array(content)
+      this.terminal.log(new TextDecoder().decode(uint8))
     }
   }
 
