@@ -1,6 +1,9 @@
 export const DELIMITER = '/'
 
-export function normalizePath(path: string) {
+export function normalizePath(path: string | null | undefined) {
+  if (!path) {
+    return ''
+  }
   let p = path
     .replace(/\\/g, DELIMITER)
     .replace(/[:*?'"<>|]/g, '')
@@ -19,9 +22,15 @@ export function normalizePath(path: string) {
   return p
 }
 
-export function resolvePath(...paths: string[]): string {
+function isNonEmptyStr(s: string | null | undefined): s is string {
+  return !!s
+}
+
+export function resolvePath(...paths: (string | null | undefined)[]): string {
   let path = DELIMITER
-  const normalizedPaths = paths.map((p) => normalizePath(p))
+  const normalizedPaths = paths
+    .map((p) => normalizePath(p))
+    .filter(isNonEmptyStr)
   for (const p of normalizedPaths) {
     if (p.startsWith(DELIMITER)) {
       path = p
