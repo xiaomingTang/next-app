@@ -1,5 +1,6 @@
 import { parseCommand } from './utils/command'
 import { ShDir, ShFile } from './ShAsset'
+import { xtDir, xtFile, xtLink } from './utils/link'
 
 import { toError } from '@/errors/utils'
 import { SilentError } from '@/errors/SilentError'
@@ -28,11 +29,11 @@ export class ShTerminal {
         return
       }
       if (ShFile.isFile(arg)) {
-        xterm.write(`${arg.name}\t`)
+        xterm.write(`${xtLink(arg.name, xtFile(arg.path))}\t`)
         return
       }
       if (ShDir.isDir(arg)) {
-        xterm.write(`${arg.name}/\t`)
+        xterm.write(`${xtLink(arg.name, xtDir(arg.path))}/\t`)
         return
       }
     })

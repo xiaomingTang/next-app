@@ -16,8 +16,10 @@ import { Edit } from '../commands/edit'
 import { Help } from '../commands/help'
 import { FFmpegCmd } from '../commands/ffmpeg'
 import { Clear } from '../commands/clear'
+import { XT_DIR_PREFIX, XT_FILE_PREFIX } from '../utils/link'
 
 import { Terminal } from '@xterm/xterm'
+import { noop } from 'lodash-es'
 
 import type { ITerminal } from '@xterm/xterm/src/browser/Types'
 
@@ -64,10 +66,33 @@ function geneTerm() {
     const term = getTerm()
     term.open(container)
     // @xterm/addon-fit ssr 下有问题
-    const res = await import('@xterm/addon-fit')
-    const fitAddon = new res.FitAddon()
+    const { FitAddon } = await import('@xterm/addon-fit')
+    const fitAddon = new FitAddon()
     term.loadAddon(fitAddon)
     fitAddon.fit()
+
+    term.options.linkHandler = {
+      activate: (_e, uri) => {
+        if (uri.startsWith(XT_FILE_PREFIX)) {
+          if (command.trim().length > 0) {
+            prompt()
+          }
+          term.input(`edit ${uri.slice(XT_FILE_PREFIX.length)}`)
+          term.input('\r')
+          return
+        }
+        if (uri.startsWith(XT_DIR_PREFIX)) {
+          if (command.trim().length > 0) {
+            prompt()
+          }
+          term.input(`cd ${uri.slice(XT_DIR_PREFIX.length)}`)
+          term.input('\r')
+        }
+      },
+      hover: noop,
+      leave: noop,
+      allowNonHttpProtocols: true,
+    }
   }
 
   const getVirtualTerminal = () => {

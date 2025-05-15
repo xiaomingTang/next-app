@@ -1,4 +1,5 @@
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
+import { xtDir, xtLink } from '../utils/link'
 
 import type { ShSimpleCallableCommandOptions } from '../ShSimpleCallableCommand'
 import type { ShCallableCommandProps } from '../ShCallableCommand'
@@ -23,7 +24,8 @@ export class Cd extends ShSimpleCallableCommand {
     })
     const { fileSystem } = this.terminal
     fileSystem.context = await fileSystem.getDirOrThrow(this.args[0])
-    this.terminal.log(`Changed directory to ${fileSystem.context.path}/`)
+    const { name, path } = fileSystem.context
+    this.terminal.log(`Changed directory to`, xtLink(`${name}/`, xtDir(path)))
   }
 
   constructor(props: ShCallableCommandProps) {
