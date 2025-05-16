@@ -1,4 +1,5 @@
 import { sleepMs } from '@zimi/utils'
+import stringWidth from 'string-width'
 
 import type { Terminal } from '@xterm/xterm'
 
@@ -7,7 +8,20 @@ export class TerminalSpinner {
 
   fps = 10
 
-  flags = ['\\', '|', '/', '-']
+  flags = [
+    '\\',
+    '|',
+    '/.',
+    '-.',
+    '\\..',
+    '|..',
+    '/...',
+    '-...',
+    '\\..',
+    '|..',
+    '/.',
+    '-.',
+  ]
 
   lastFlagIndex = -1
 
@@ -20,6 +34,7 @@ export class TerminalSpinner {
   start() {
     this.n += 1
     if (this.n === 1) {
+      this.lastFlagIndex = -1
       this.loadingStartTime = Date.now()
       void this.showLoadingUi()
     }
@@ -29,9 +44,9 @@ export class TerminalSpinner {
     this.n -= 1
     if (this.n <= 0) {
       this.n = 0
-      this.lastFlagIndex = -1
       this.loadingStartTime = 0
-      this.xterm.write('\b \b')
+      const w = stringWidth(this.flags[this.lastFlagIndex] ?? '')
+      this.xterm.write('\b \b'.repeat(w))
     }
   }
 
@@ -47,18 +62,15 @@ export class TerminalSpinner {
       return
     }
     const diff = Date.now() - this.loadingStartTime
-    const index = Math.floor((diff / 1000) * this.fps) % this.flags.length
-    if (index === this.lastFlagIndex) {
+    const curIndex = Math.floor((diff / 1000) * this.fps) % this.flags.length
+    if (curIndex === this.lastFlagIndex) {
       await this.showLoadingUi()
       return
     }
-    this.lastFlagIndex = index
-    const loadingFlagStr = this.flags[index]
-    if (this.lastFlagIndex < 0) {
-      this.xterm.write(loadingFlagStr)
-    } else {
-      this.xterm.write(`\b${loadingFlagStr}`)
-    }
+    const curFlagStr = this.flags[curIndex]
+    const w = stringWidth(this.flags[this.lastFlagIndex] ?? '')
+    this.xterm.write(`${'\b \b'.repeat(w)}${curFlagStr}`)
+    this.lastFlagIndex = curIndex
     await this.showLoadingUi()
   }
 }
