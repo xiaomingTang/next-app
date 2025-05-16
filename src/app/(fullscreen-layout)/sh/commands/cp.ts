@@ -29,7 +29,7 @@ export class Cp extends ShSimpleCallableCommand {
       return
     }
 
-    const [oldPath, newPath] = this.pathsRequired(args._[1], args._[1])
+    const [oldPath, newPath] = this.pathsRequired(args._[0], args._[1])
     await this.vt.fileSystem.copy(oldPath, newPath, {
       recursive: args['--recursive'],
     })
