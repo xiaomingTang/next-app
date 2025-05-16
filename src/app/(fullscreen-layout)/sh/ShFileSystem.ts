@@ -23,7 +23,7 @@ export class ShFileSystem {
       getChildren: async () => [],
     })
     this.root = this.context
-    this.root = this.router.generate('[ROOT]', {
+    this.root = this.router.generate('[*dir]', {
       type: 'dir',
       path: '/',
       ctx: this,

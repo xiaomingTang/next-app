@@ -67,8 +67,6 @@ router.register('[*dir]', (props) => {
   })
 })
 
-router.register('[ROOT]', router.routes['[*dir]'])
-
 export class FFmpegFileSystem extends ShFileSystem {
   ffmpeg: FFmpeg
 
