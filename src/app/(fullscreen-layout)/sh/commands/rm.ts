@@ -22,22 +22,9 @@ export class Rm extends ShSimpleCallableCommand {
       withSimpleHelp: true,
     })
     const { fileSystem } = this.vt
-    const [fRes, dRes] = await Promise.allSettled([
-      fileSystem.getFileOrThrow(this.args[0]),
-      fileSystem.getDirOrThrow(this.args[0]),
-    ])
-    if (fRes.status === 'rejected' && dRes.status === 'rejected') {
-      this.vt.log(`No such file or directory: ${this.args[0]}`)
-      return
-    }
-    if (fRes.status === 'fulfilled') {
-      await fileSystem.deleteAsset(fRes.value)
-      this.vt.log(`Removed: ${fRes.value.path}`)
-    }
-    if (dRes.status === 'fulfilled') {
-      await fileSystem.deleteAsset(dRes.value)
-      this.vt.log(`Removed: ${dRes.value.path}/`)
-    }
+    const [path] = this.pathsRequired(this.args[0])
+    // TODO: 支持传入 recursive 参数
+    await fileSystem.delete(path)
   }
 
   constructor(props: ShCallableCommandProps) {

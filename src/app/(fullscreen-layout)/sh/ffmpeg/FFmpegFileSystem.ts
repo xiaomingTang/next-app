@@ -1,146 +1,167 @@
-import { ShFileSystem } from '../ShFileSystem'
 import { ShDir, ShFile } from '../ShAsset'
 import { resolvePath } from '../utils/path'
-import { ShRouter } from '../ShRouter'
 
-import { assertNever } from '@/utils/function'
-
+import type { ShFileSystem } from '../ShFileSystem'
 import type { FFmpeg } from '@ffmpeg/ffmpeg'
 
-const router = new ShRouter<FFmpegFileSystem>()
+export class FFmpegFileSystem implements ShFileSystem {
+  root: ShDir
 
-router.register('[*file]', (props) => {
-  if (props.type !== 'file') {
-    throw new Error(`Invalid type, accept 'file', got: ${props.type}`)
-  }
-  const { ctx } = props
-  const path = resolvePath(ctx.context.path, props.path)
-  return new ShFile({
-    path,
-    getParent: async () => ctx.context,
-    getContent: async () => ctx.ffmpeg.readFile(path),
-    setContent: async (data: Uint8Array | string) => {
-      const ok = await ctx.ffmpeg.writeFile(path, data)
-      if (!ok) {
-        throw new Error(`Failed to write file: ${path}`)
-      }
-    },
-    getSize: async () => {
-      const f = await ctx.ffmpeg.readFile(path)
-      if (typeof f === 'string') {
-        return new TextEncoder().encode(f).length
-      }
-      return f.byteLength
-    },
-  })
-})
+  context: ShDir
 
-router.register('[*dir]', (props) => {
-  if (props.type !== 'dir') {
-    throw new Error(`Invalid type, accept 'dir', got: ${props.type}`)
-  }
-  const { ctx } = props
-  const path = resolvePath(ctx.context.path, props.path)
-  return new ShDir({
-    path,
-    getParent: async () => ctx.context,
-    getChildren: async () => {
-      const assetInfos = (await ctx.ffmpeg.listDir(path)).filter(
-        (f) => f.name !== '.' && f.name !== '..'
-      )
-      return assetInfos.map((node) => {
-        const nodePath = resolvePath(path, node.name)
-        if (node.isDir) {
-          return ctx.router.generate('[*dir]', {
-            type: 'dir',
-            path: nodePath,
-            ctx,
-          })
-        }
-        return ctx.router.generate('[*file]', {
-          type: 'file',
-          path: nodePath,
-          ctx,
-        })
-      })
-    },
-  })
-})
-
-export class FFmpegFileSystem extends ShFileSystem {
   ffmpeg: FFmpeg
 
-  router: ShRouter<FFmpegFileSystem>
-
   constructor(props: { ffmpeg: FFmpeg }) {
-    super({ ...props, router })
+    this.context = new ShDir({
+      path: '/',
+    })
+    this.root = this.context
+    this.context = this.root
     this.ffmpeg = props.ffmpeg
-    this.router = router
   }
 
-  async deleteAsset(asset: ShFile | ShDir): Promise<void> {
-    if (ShFile.isFile(asset)) {
-      await this.ffmpeg.deleteFile(asset.path)
-    } else if (ShDir.isDir(asset)) {
-      await this.ffmpeg.deleteDir(asset.path)
-    } else {
-      assertNever(asset)
+  async copyFile(oldPath: string, newPath: string) {
+    const content = await this.ffmpeg.readFile(oldPath)
+    await this.ffmpeg.writeFile(newPath, content)
+  }
+
+  async copyDir(
+    oldPath: string,
+    newPath: string,
+    options?: { recursive?: boolean }
+  ) {
+    const recursive = options?.recursive ?? false
+    const children = await this.ffmpeg.listDir(oldPath)
+    if (!recursive && children.length > 0) {
+      throw new Error(`Directory is not empty: ${oldPath}`)
     }
-    await super.deleteAsset(asset)
+    const ok = await this.ffmpeg.createDir(newPath)
+    if (!ok) {
+      throw new Error(`FFmpeg failed to create dir: ${newPath}`)
+    }
+    for (const child of children) {
+      if (!child.isDir) {
+        await this.copyFile(
+          resolvePath(oldPath, child.name),
+          resolvePath(newPath, child.name)
+        )
+      } else {
+        await this.copyDir(
+          resolvePath(oldPath, child.name),
+          resolvePath(newPath, child.name),
+          options
+        )
+      }
+    }
   }
 
-  async moveAsset(oldPath: string, newPath: string): Promise<void> {
+  async copy(
+    oldPath: string,
+    newPath: string,
+    options?: { recursive?: boolean }
+  ) {
+    const asset = await this.getAssetOrThrow(oldPath)
+    if (ShFile.isFile(asset)) {
+      await this.copyFile(oldPath, newPath)
+      return
+    }
+    await this.copyDir(oldPath, newPath, options)
+  }
+
+  async move(oldPath: string, newPath: string): Promise<void> {
     await this.ffmpeg.rename(oldPath, newPath)
   }
 
+  async deleteFile(path: string): Promise<void> {
+    const ok = await this.ffmpeg.deleteFile(path)
+    if (!ok) {
+      throw new Error(`FFmpeg failed to delete file: ${path}`)
+    }
+  }
+
+  async deleteDir(
+    path: string,
+    options?: { recursive?: boolean }
+  ): Promise<void> {
+    const recursive = options?.recursive ?? false
+    const children = await this.ffmpeg.listDir(path)
+    if (children.length === 0) {
+      const ok = await this.ffmpeg.deleteDir(path)
+      if (!ok) {
+        throw new Error(`FFmpeg failed to delete dir: ${path}`)
+      }
+      return
+    }
+    if (!recursive) {
+      throw new Error(`Directory is not empty: ${path}`)
+    }
+    for (const child of children) {
+      if (!child.isDir) {
+        await this.deleteFile(resolvePath(path, child.name))
+      } else {
+        await this.deleteDir(resolvePath(path, child.name), options)
+      }
+    }
+  }
+
+  async delete(
+    path: string,
+    options?: {
+      recursive?: boolean
+    }
+  ): Promise<void> {
+    const asset = await this.getAssetOrThrow(path)
+    if (ShFile.isFile(asset)) {
+      await this.deleteFile(path)
+      return
+    }
+    await this.deleteDir(path, options)
+  }
+
+  async listDir(path: string): Promise<(ShDir | ShFile)[]> {
+    const children = await this.ffmpeg.listDir(path)
+    return children
+      .filter((child) => child.name !== '.' && child.name !== '..')
+      .map((child) => {
+        if (child.isDir) {
+          return new ShDir({ path: resolvePath(path, child.name) })
+        }
+        return new ShFile({ path: resolvePath(path, child.name) })
+      })
+  }
+
+  getFileContent(
+    path: string,
+    encoding?: string
+  ): Promise<string | Uint8Array> {
+    return this.ffmpeg.readFile(path, encoding)
+  }
+
   async createFile(
-    input: string,
+    path: string,
     content: Uint8Array | string
   ): Promise<ShFile> {
-    const path = resolvePath(this.context.path, input)
-    const file = this.router.generate('[*file]', {
-      type: 'file',
-      path,
-      ctx: this,
-    })
-    try {
-      const ok = await this.ffmpeg.writeFile(path, content)
-      if (!ok) {
-        throw new Error(`FFmpeg failed to write file: ${path}`)
-      }
-    } catch (e) {
-      await this.deleteAsset(file)
-      throw e
+    const ok = await this.ffmpeg.writeFile(path, content)
+    if (!ok) {
+      throw new Error(`FFmpeg failed to write file: ${path}`)
     }
-    return file
+    return new ShFile({ path })
   }
 
-  async createDir(input: string): Promise<ShDir> {
-    const path = resolvePath(this.context.path, input)
-    const dir = this.router.generate('[*dir]', {
-      type: 'dir',
-      path,
-      ctx: this,
-    })
-    try {
-      const ok = await this.ffmpeg.createDir(path)
-      if (!ok) {
-        throw new Error(`FFmpeg failed to create dir: ${path}`)
-      }
-    } catch (e) {
-      await this.deleteAsset(dir)
-      throw e
+  async createDir(path: string): Promise<ShDir> {
+    const ok = await this.ffmpeg.createDir(path)
+    if (!ok) {
+      throw new Error(`FFmpeg failed to create dir: ${path}`)
     }
-    return dir
+    return new ShDir({ path })
   }
 
-  async getFileOrThrow(path: string): Promise<ShFile> {
-    if (!path) {
-      throw new Error('Path is required')
+  async getAssetOrThrow(path: string): Promise<ShFile | ShDir> {
+    if (path === '/') {
+      return this.root
     }
-    const normalizedPath = resolvePath(this.context.path, path)
-    const name = normalizedPath.split('/').pop()
-    const parentPath = resolvePath(normalizedPath, '..')
+    const name = path.split('/').pop()
+    const parentPath = resolvePath(path, '..')
     const siblings = (await this.ffmpeg.listDir(parentPath)).filter(
       (f) => f.name !== '.' && f.name !== '..'
     )
@@ -149,39 +170,24 @@ export class FFmpegFileSystem extends ShFileSystem {
       throw new Error(`No such file or directory: ${path}`)
     }
     if (assetInfo.isDir) {
+      return new ShDir({ path: path })
+    }
+    return new ShFile({ path: path })
+  }
+
+  async getFileOrThrow(path: string): Promise<ShFile> {
+    const asset = await this.getAssetOrThrow(path)
+    if (!ShFile.isFile(asset)) {
       throw new Error(`Path is a directory: ${path}`)
     }
-    return this.router.generate('[*file]', {
-      type: 'file',
-      path,
-      ctx: this,
-    })
+    return asset
   }
 
   async getDirOrThrow(path: string): Promise<ShDir> {
-    if (!path) {
-      path = '.'
-    }
-    const normalizedPath = resolvePath(this.context.path, path)
-    const name = normalizedPath.split('/').pop()
-    if (!name) {
-      return this.root
-    }
-    const parentPath = resolvePath(normalizedPath, '..')
-    const siblings = (await this.ffmpeg.listDir(parentPath)).filter(
-      (f) => f.name !== '.' && f.name !== '..'
-    )
-    const assetInfo = siblings.find((f) => f.name === name)
-    if (!assetInfo) {
-      throw new Error(`No such file or directory: ${path}`)
-    }
-    if (!assetInfo.isDir) {
+    const asset = await this.getAssetOrThrow(path)
+    if (!ShDir.isDir(asset)) {
       throw new Error(`Path is a file: ${path}`)
     }
-    return this.router.generate('[*dir]', {
-      type: 'dir',
-      path,
-      ctx: this,
-    })
+    return asset
   }
 }

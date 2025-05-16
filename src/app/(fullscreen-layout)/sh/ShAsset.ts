@@ -2,26 +2,14 @@ import { DELIMITER, resolvePath } from './utils/path'
 
 export interface ShAssetProps {
   path: string
-  type?: string
-  ctime?: number
-  mtime?: number
+  type?: 'file' | 'dir'
 }
 
 export class ShAsset {
-  _isFile = false
+  private __IMPOSSIBLE__DUPLICATE__IS_SH_ASSET__ = true
 
-  static isAsset(asset?: unknown): asset is ShAsset {
-    if (!asset) {
-      return false
-    }
-    const _asset = asset as ShFile | ShDir
-    // 目前就只有 ShFile 和 ShDir
-    return (
-      typeof _asset._isFile === 'boolean' &&
-      typeof _asset.path === 'string' &&
-      _asset.getParent instanceof Function &&
-      _asset.getSize instanceof Function
-    )
+  static isAsset(asset: unknown): asset is ShAsset {
+    return !!(asset as ShAsset)?.__IMPOSSIBLE__DUPLICATE__IS_SH_ASSET__
   }
 
   private _path = '/'
@@ -37,99 +25,41 @@ export class ShAsset {
     this._path = resolvePath(value)
   }
 
+  /**
+   * 可能为空
+   */
   get name() {
     return this.path.slice(this.path.lastIndexOf(DELIMITER) + 1)
   }
 
   type?: string
 
-  /**
-   * 创建时间
-   */
-  ctime?: number
-
-  /**
-   * 修改时间
-   */
-  mtime?: number
-
   constructor(props: ShAssetProps) {
     this.path = props.path
     this.type = props.type
-    this.ctime = props.ctime
-    this.mtime = props.mtime
   }
-}
-
-export interface ShFileProps extends ShAssetProps {
-  getSize: () => Promise<number>
-  getParent: () => Promise<ShDir | null>
-  getContent: () => Promise<Uint8Array | string>
-  setContent: (content: Uint8Array | string) => Promise<void>
 }
 
 export class ShFile extends ShAsset {
-  _isFile = true
+  private __IMPOSSIBLE__DUPLICATE__IS_SH_FILE__ = true
 
-  static isFile(asset?: unknown): asset is ShFile {
-    if (!ShAsset.isAsset(asset)) {
-      return false
-    }
-    return (asset as ShFile)._isFile
+  static isFile(asset: unknown): asset is ShFile {
+    return !!(asset as ShFile)?.__IMPOSSIBLE__DUPLICATE__IS_SH_FILE__
   }
 
-  getSize: ShFileProps['getSize']
-
-  getParent: ShFileProps['getParent']
-
-  getChildren() {
-    return Promise.resolve<never[]>([])
+  constructor(props: Omit<ShAssetProps, 'type'>) {
+    super({ ...props, type: 'file' })
   }
-
-  getContent: ShFileProps['getContent']
-
-  setContent: ShFileProps['setContent']
-
-  constructor(props: ShFileProps) {
-    super(props)
-    this.getSize = props.getSize
-    this.getParent = props.getParent
-    this.getContent = props.getContent
-    this.setContent = props.setContent
-  }
-}
-
-export interface ShDirProps extends ShAssetProps {
-  getParent: () => Promise<ShDir | null>
-  getChildren: () => Promise<(ShFile | ShDir)[]>
 }
 
 export class ShDir extends ShAsset {
-  _isFile = false
+  private __IMPOSSIBLE__DUPLICATE__IS_SH_DIR__ = true
 
-  static isDir(asset?: unknown): asset is ShDir {
-    if (!ShAsset.isAsset(asset)) {
-      return false
-    }
-    return !(asset as ShFile)._isFile
+  static isDir(asset: unknown): asset is ShDir {
+    return !!(asset as ShDir)?.__IMPOSSIBLE__DUPLICATE__IS_SH_DIR__
   }
 
-  getParent: () => Promise<ShDir | null>
-
-  getChildren: () => Promise<(ShFile | ShDir)[]>
-
-  async getSize() {
-    const children = await this.getChildren()
-    let size = 0
-    for (const child of children) {
-      size += await child.getSize()
-    }
-    return size
-  }
-
-  constructor(props: ShDirProps) {
-    super(props)
-    this.getParent = props.getParent
-    this.getChildren = props.getChildren
+  constructor(props: Omit<ShAssetProps, 'type'>) {
+    super({ ...props, type: 'dir' })
   }
 }

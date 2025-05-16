@@ -22,8 +22,8 @@ export class Ls extends ShSimpleCallableCommand {
       withSimpleHelp: true,
     })
     const { fileSystem } = this.vt
-    const dir = await fileSystem.getDirOrThrow(this.args[0])
-    const children = await dir.getChildren()
+    const [path] = this.pathsRequired(this.args[0] || '.')
+    const children = await fileSystem.listDir(path)
     this.vt.log(...children)
   }
 

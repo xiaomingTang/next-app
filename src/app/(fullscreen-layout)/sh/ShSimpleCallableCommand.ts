@@ -1,4 +1,5 @@
 import { ShCallableCommand } from './ShCallableCommand'
+import { resolvePath } from './utils/path'
 
 import { SilentError } from '@/errors/SilentError'
 
@@ -39,6 +40,8 @@ function toNum(value: string) {
   }
   return numValue
 }
+
+type StringOrFalsy = string | undefined | void | null | false
 
 export class ShSimpleCallableCommand extends ShCallableCommand {
   options: ShSimpleCallableCommandOptions[] = []
@@ -125,5 +128,35 @@ export class ShSimpleCallableCommand extends ShCallableCommand {
     this.vt.log(optionDescs.join(''))
 
     throw new SilentError('help finished')
+  }
+
+  pathsRequired(...args: [StringOrFalsy]): [string]
+  pathsRequired(...args: [StringOrFalsy, StringOrFalsy]): [string, string]
+  pathsRequired(
+    ...args: [StringOrFalsy, StringOrFalsy, StringOrFalsy]
+  ): [string, string, string]
+  pathsRequired(
+    ...args: [StringOrFalsy, StringOrFalsy, StringOrFalsy, StringOrFalsy]
+  ): [string, string, string, string]
+  pathsRequired(
+    ...args: [
+      StringOrFalsy,
+      StringOrFalsy,
+      StringOrFalsy,
+      StringOrFalsy,
+      StringOrFalsy,
+    ]
+  ): [string, string, string, string, string]
+  pathsRequired<T extends StringOrFalsy[]>(...args: T): string[] {
+    return args.map((arg, i) => {
+      if (!arg) {
+        throw new Error(`path ${i} is required`)
+      }
+      const trimedArg = arg.trim()
+      if (!trimedArg) {
+        throw new Error(`path ${i} is empty`)
+      }
+      return resolvePath(this.vt.fileSystem.context.path, trimedArg)
+    })
   }
 }

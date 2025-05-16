@@ -22,7 +22,8 @@ export class Vi extends ShSimpleCallableCommand {
       withSimpleHelp: true,
     })
     const { fileSystem } = this.vt
-    const f = await fileSystem.getFileOrThrow(this.args[0])
+    const [path] = this.pathsRequired(this.args[0])
+    const f = await fileSystem.getFileOrThrow(path)
     // TODO: 用编辑器打开文件
     this.vt.log(`TODO: Open file: ${f.name}, path: ${f.path}`)
   }

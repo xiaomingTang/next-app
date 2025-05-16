@@ -15,20 +15,32 @@ export class Cat extends ShSimpleCallableCommand {
       description: 'Show help message',
       type: 'boolean',
     },
+    {
+      shortName: '',
+      longName: 'encoding',
+      description: 'Specify the encoding of the file',
+      type: 'string',
+    },
   ]
 
   override async execute() {
     this.normalizeOptionsAndArgs({
       withSimpleHelp: true,
     })
-    const f = await this.vt.fileSystem.getFileOrThrow(this.args[0])
-    const content = await f.getContent()
-    this.vt.debug('cat content: ', content)
+    const { vt } = this
+    const { fileSystem } = vt
+    const [path] = this.pathsRequired(this.args[0])
+    // TODO: 传入 encoding
+    // const encoding = this.options.find(
+    //   (option) => option.longName === 'encoding'
+    // )
+    const content = await fileSystem.getFileContent(path)
+    vt.debug('cat content: ', content)
     if (typeof content === 'string') {
-      this.vt.log(content)
+      vt.log(content)
     } else {
       const uint8 = new Uint8Array(content)
-      this.vt.log(new TextDecoder().decode(uint8))
+      vt.log(new TextDecoder().decode(uint8))
     }
   }
 

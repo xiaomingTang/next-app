@@ -1,54 +1,30 @@
-import { ShDir } from './ShAsset'
+import type { ShDir, ShFile } from './ShAsset'
 
-import type { ShFile } from './ShAsset'
-import type { ShRouter } from './ShRouter'
+interface RecursiveOptions {
+  /**
+   * @default false
+   */
+  recursive?: boolean
+}
 
-export class ShFileSystem {
-  root: ShDir
+export abstract class ShFileSystem {
+  abstract root: ShDir
 
-  context: ShDir
+  abstract context: ShDir
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  router: ShRouter<any>
+  constructor() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  constructor(props: { router: ShRouter<any> }) {
-    this.router = props.router
-    this.context = new ShDir({
-      path: '/',
-      getParent: async () => this.root,
-      getChildren: async () => [],
-    })
-    this.root = this.context
-    this.root = this.router.generate('[*dir]', {
-      type: 'dir',
-      path: '/',
-      ctx: this,
-    })
-    this.context = this.root
-  }
-
-  async deleteAsset(_asset: ShFile | ShDir) {
-    throw new Error('Not implemented')
-  }
-
-  async moveAsset(_oldPath: string, _newPath: string): Promise<void> {
-    throw new Error('Not implemented')
-  }
-
-  async createFile(_path: string, _content: string): Promise<ShFile> {
-    throw new Error('Not implemented')
-  }
-
-  async createDir(_path: string): Promise<ShDir> {
-    throw new Error('Not implemented')
-  }
-
-  async getFileOrThrow(_path: string): Promise<ShFile> {
-    throw new Error('Not implemented')
-  }
-
-  async getDirOrThrow(_path: string): Promise<ShDir> {
-    throw new Error('Not implemented')
-  }
+  abstract copy(
+    _oldPath: string,
+    _newPath: string,
+    _options?: RecursiveOptions
+  ): Promise<void>
+  abstract delete(_path: string, _options?: RecursiveOptions): Promise<void>
+  abstract move(_oldPath: string, _newPath: string): Promise<void>
+  abstract listDir(_path: string): Promise<(ShDir | ShFile)[]>
+  abstract getFileContent(_path: string): Promise<string | Uint8Array>
+  abstract createFile(_path: string, _content: string): Promise<ShFile>
+  abstract createDir(_path: string): Promise<ShDir>
+  abstract getFileOrThrow(_path: string): Promise<ShFile>
+  abstract getDirOrThrow(_path: string): Promise<ShDir>
 }

@@ -22,13 +22,9 @@ export class Touch extends ShSimpleCallableCommand {
       withSimpleHelp: true,
     })
     const { fileSystem } = this.vt
-    const filename = this.args[0]
-    if (!filename) {
-      this.vt.log('Error: No file name provided')
-      return
-    }
-    const f = await fileSystem.createFile(filename, '')
-    this.vt.log(`Created:`, f)
+    const [path] = this.pathsRequired(this.args[0])
+    // TODO: 支持传入内容
+    await fileSystem.createFile(path, '')
   }
 
   constructor(props: ShCallableCommandProps) {

@@ -1,4 +1,3 @@
-import { resolvePath } from '../utils/path'
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
 
 import type { ShSimpleCallableCommandOptions } from '../ShSimpleCallableCommand'
@@ -23,10 +22,8 @@ export class Mkdir extends ShSimpleCallableCommand {
       withSimpleHelp: true,
     })
     const { fileSystem } = this.vt
-    const { context } = fileSystem
-    const targetPath = resolvePath(context.path, this.args[0])
-    const dir = await fileSystem.createDir(targetPath)
-    this.vt.log(`Created:`, dir)
+    const [path] = this.pathsRequired(this.args[0])
+    await fileSystem.createDir(path)
   }
 
   constructor(props: ShCallableCommandProps) {
