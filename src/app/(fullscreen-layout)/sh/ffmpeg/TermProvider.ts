@@ -1,21 +1,8 @@
 import { FFmpegFileSystem } from './FFmpegFileSystem'
+import { TERMINAL_INPUT_MAP } from './constants'
 
 import { ShTerminal } from '../ShTerminal'
 import { FFMPEG_SOURCES, getFFmpeg, loadFFmpeg } from '../../to-gif/getFFmpeg'
-import { Ls } from '../commands/ls'
-import { Cd } from '../commands/cd'
-import { Pwd } from '../commands/pwd'
-import { Cat } from '../commands/cat'
-import { Mkdir } from '../commands/mkdir'
-import { Touch } from '../commands/touch'
-import { Echo } from '../commands/echo'
-import { Rm } from '../commands/rm'
-import { Vi } from '../commands/vi'
-import { Vim } from '../commands/vim'
-import { Edit } from '../commands/edit'
-import { Help } from '../commands/help'
-import { FFmpegCmd } from '../commands/ffmpeg'
-import { Clear } from '../commands/clear'
 import {
   linkAddon,
   XT_CMD_PREFIX,
@@ -23,14 +10,13 @@ import {
   XT_FILE_PREFIX,
 } from '../utils/link'
 import { TerminalSpinner } from '../utils/loading'
-import { Upload } from '../commands/upload'
+import { commands } from '../commands'
 
 import { toError } from '@/errors/utils'
 import { SilentError } from '@/errors/SilentError'
 
 import { Terminal } from '@xterm/xterm'
 import { noop } from 'lodash-es'
-import stringWidth from 'string-width'
 
 import type { ITerminal } from '@xterm/xterm/src/browser/Types'
 
@@ -73,21 +59,9 @@ export class TermProvider {
       })
       const { xterm } = this
       const _vt = new ShTerminal({ fileSystem, xterm })
-      _vt.registerCommand('cat', Cat)
-      _vt.registerCommand('cd', Cd)
-      _vt.registerCommand('clear', Clear)
-      _vt.registerCommand('echo', Echo)
-      _vt.registerCommand('help', Help)
-      _vt.registerCommand('edit', Edit)
-      _vt.registerCommand('ffmpeg', FFmpegCmd)
-      _vt.registerCommand('ls', Ls)
-      _vt.registerCommand('mkdir', Mkdir)
-      _vt.registerCommand('pwd', Pwd)
-      _vt.registerCommand('rm', Rm)
-      _vt.registerCommand('touch', Touch)
-      _vt.registerCommand('upload', Upload)
-      _vt.registerCommand('vi', Vi)
-      _vt.registerCommand('vim', Vim)
+      commands.forEach(([name, Command]) => {
+        _vt.registerCommand(name, Command)
+      })
       this._vt = _vt
       ffmpeg.on('log', (data) => {
         this.xterm.write(`[ffmpeg] ${data.message}\r\n`)
@@ -152,39 +126,40 @@ export class TermProvider {
       if (termSpinner.loading) {
         return
       }
-      // Ctrl+C
-      if (e === '\u0003') {
-        xterm.write('^C')
-        vt.prompt()
-        return
-      }
-      // Backspace (DEL)
-      if (e === '\u007F') {
-        // Do not delete the prompt
-        const commandStrArr = Array.from(vt.command)
-        const lastChar = commandStrArr[commandStrArr.length - 1]
-        if (lastChar === undefined) {
+      const namedInput = TERMINAL_INPUT_MAP[e]
+      switch (namedInput) {
+        case 'ctrl+c':
+          xterm.write('^C')
+          vt.prompt()
+          return
+        case 'backspace':
+          vt.backspace()
+          return
+        case 'ctrl+backspace':
+        case 'alt+backspace': {
+          vt.backspaceWord()
           return
         }
-        vt.command = commandStrArr.slice(0, commandStrArr.length - 1).join('')
-
-        if (lastChar !== '\n') {
-          xterm.write('\b \b'.repeat(stringWidth(lastChar)))
-        } else {
-          const lines = vt.command.split(/\r\n|\r|\n/g)
-          let offset = stringWidth(lines[lines.length - 1])
-          if (lines.length <= 1) {
-            offset += stringWidth(vt.prefix)
-          }
-          // 上移一行
-          xterm.write('\x1b[1A')
-          // 向右移动到行尾
-          xterm.write(`\x1b[${offset}C`)
-        }
-
-        return
+        default:
+          break
       }
-      // Enter
+      // TAB(命令补全)
+      if (e === '\t') {
+        const curTrimedCommand = vt.command.trim()
+        if (!curTrimedCommand) {
+          return
+        }
+        const commandStrArr = commands.map(([name]) => name)
+        const matchedCommand = commandStrArr.find((command) =>
+          command.startsWith(curTrimedCommand)
+        )
+        if (!matchedCommand) {
+          return
+        }
+        const rest = matchedCommand.slice(curTrimedCommand.length)
+        xterm.input(`${rest} `)
+      }
+      // Enter(执行命令)
       if (e === '\r') {
         termSpinner.start()
         xterm.write(`\r\n`)
@@ -208,6 +183,7 @@ export class TermProvider {
           })
         return
       }
+      // 以下是文本写入
       const lines = e.split(/\r\n|\r|\n/g)
       if (lines.length > 1) {
         for (let i = 0; i < lines.length; i += 1) {

@@ -6,6 +6,7 @@ import { toError } from '@/errors/utils'
 import { SilentError } from '@/errors/SilentError'
 
 import ansiStyles from 'ansi-styles'
+import stringWidth from 'string-width'
 
 import type { Terminal } from '@xterm/xterm'
 import type { ShFileSystem } from './ShFileSystem'
@@ -88,5 +89,61 @@ export class ShTerminal {
       err.message = `[sh error] [${commandInstance.name}]: ${err.message}`
       throw err
     }
+  }
+
+  /**
+   * 删除最后一个字符
+   */
+  backspace() {
+    const commandStrArr = Array.from(this.command)
+    const lastChar = commandStrArr[commandStrArr.length - 1]
+    if (lastChar === undefined) {
+      return
+    }
+    this.command = commandStrArr.slice(0, commandStrArr.length - 1).join('')
+
+    if (lastChar !== '\n') {
+      this.xterm.write('\b \b'.repeat(stringWidth(lastChar)))
+    } else {
+      const lines = this.command.split(/\r\n|\r|\n/g)
+      // 新的最后一行的长度
+      let offset = stringWidth(lines[lines.length - 1])
+      if (lines.length <= 1) {
+        offset += stringWidth(this.prefix)
+      }
+      // 上移一行
+      this.xterm.write('\x1b[1A')
+      // 向右移动到行尾
+      this.xterm.write(`\x1b[${offset}C`)
+    }
+  }
+
+  /**
+   * 删除最后一个单词，
+   * 如果最后有若干个空格，则删除这些空格
+   */
+  backspaceWord() {
+    const endSpaceCount = this.command.match(/\s*$/)?.[0].length ?? 0
+    if (endSpaceCount > 0) {
+      for (let i = 0; i < endSpaceCount; i += 1) {
+        this.backspace()
+      }
+      return
+    }
+    const commandStrArr = Array.from(this.command)
+    const lastSpaceReversedIndex = commandStrArr
+      .reverse()
+      .findIndex((c) => c === ' ')
+    const lastWord = commandStrArr.slice(
+      lastSpaceReversedIndex === -1
+        ? 0
+        : commandStrArr.length - lastSpaceReversedIndex
+    )
+    if (lastWord.length === 0) {
+      return
+    }
+    Array.from(lastWord).forEach(() => {
+      this.backspace()
+    })
   }
 }
