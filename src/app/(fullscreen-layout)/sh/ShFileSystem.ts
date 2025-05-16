@@ -23,7 +23,10 @@ export abstract class ShFileSystem {
   abstract move(_oldPath: string, _newPath: string): Promise<void>
   abstract listDir(_path: string): Promise<(ShDir | ShFile)[]>
   abstract getFileContent(_path: string): Promise<string | Uint8Array>
-  abstract createFile(_path: string, _content: string): Promise<ShFile>
+  abstract writeFile(
+    _path: string,
+    _content: string | Uint8Array
+  ): Promise<void>
   abstract createDir(_path: string): Promise<ShDir>
   abstract getFileOrThrow(_path: string): Promise<ShFile>
   abstract getDirOrThrow(_path: string): Promise<ShDir>

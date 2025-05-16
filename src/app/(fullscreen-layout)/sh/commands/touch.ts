@@ -23,8 +23,7 @@ export class Touch extends ShSimpleCallableCommand {
     })
     const { fileSystem } = this.vt
     const [path] = this.pathsRequired(this.args[0])
-    // TODO: 支持传入内容
-    await fileSystem.createFile(path, '')
+    await fileSystem.writeFile(path, '')
   }
 
   constructor(props: ShCallableCommandProps) {
