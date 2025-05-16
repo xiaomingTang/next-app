@@ -220,7 +220,7 @@ export class TermProvider {
     const spinner = new TerminalSpinner(xterm)
     for (let i = 0; i < FFMPEG_SOURCES.length; i += 1) {
       const source = FFMPEG_SOURCES[i]
-      xterm.write(`正在加载 ffmpeg [源 ${i + 1}]...\r\n`)
+      xterm.write(`正在加载 ffmpeg [${source.name} 源]...\r\n`)
       spinner.start()
       try {
         await loadFFmpeg(source)
