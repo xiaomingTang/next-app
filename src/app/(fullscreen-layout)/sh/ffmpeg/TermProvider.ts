@@ -23,6 +23,7 @@ import {
   XT_FILE_PREFIX,
 } from '../utils/link'
 import { TerminalSpinner } from '../utils/loading'
+import { Upload } from '../commands/upload'
 
 import { toError } from '@/errors/utils'
 import { SilentError } from '@/errors/SilentError'
@@ -84,6 +85,7 @@ export class TermProvider {
       _vt.registerCommand('pwd', Pwd)
       _vt.registerCommand('rm', Rm)
       _vt.registerCommand('touch', Touch)
+      _vt.registerCommand('upload', Upload)
       _vt.registerCommand('vi', Vi)
       _vt.registerCommand('vim', Vim)
       this._vt = _vt
@@ -251,6 +253,9 @@ export class TermProvider {
         spinner.end()
         xterm.write(`ffmpeg 加载已完成\r\n`)
         xterm.write('欢迎使用 FFmpeg 命令行工具\r\n')
+        xterm.write(
+          `载入本地文件可以直接拖拽到页面，也可以调用 ${linkAddon.cmd('upload')} 命令上传\r\n`
+        )
         xterm.write(`输入 help ${linkAddon.cmd('查看帮助', 'help')}\r\n`)
         xterm.write(`\r\n${prefix}`)
         break

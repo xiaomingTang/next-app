@@ -18,6 +18,7 @@ export class Help extends ShSimpleCallableCommand {
       '- cat: Print the content of a file to the terminal',
       '- mkdir: Create a new directory',
       '- touch: Create a new file',
+      '- upload: Upload files to local',
       '- rm: Remove a file or empty directory',
       '- ls: List files and directories in the current directory',
       '- vi/vim/edit: edit a file',
