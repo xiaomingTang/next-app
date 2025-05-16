@@ -25,7 +25,7 @@ export class Cd extends ShSimpleCallableCommand {
     const { fileSystem } = this.terminal
     fileSystem.context = await fileSystem.getDirOrThrow(this.args[0])
     const { name, path } = fileSystem.context
-    this.terminal.log(`Changed directory to`, linkAddon.dir(name, path))
+    this.terminal.log(`Changed directory to`, linkAddon.dir(name || path, path))
   }
 
   constructor(props: ShCallableCommandProps) {

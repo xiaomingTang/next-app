@@ -32,7 +32,7 @@ export function FFmpegRoot() {
             padding: '8px',
           },
           [`& .xterm-underline-5`]: {
-            textDecorationStyle: 'solid',
+            textDecoration: 'none',
             [`&:hover`]: {
               color: 'primary.main',
             },

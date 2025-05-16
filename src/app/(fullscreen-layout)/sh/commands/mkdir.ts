@@ -27,7 +27,7 @@ export class Mkdir extends ShSimpleCallableCommand {
     const { context } = fileSystem
     const targetPath = resolvePath(context.path, this.args[0])
     const { name, path } = await fileSystem.createDir(targetPath)
-    this.terminal.log(`Created:`, linkAddon.dir(name, path))
+    this.terminal.log(`Created:`, linkAddon.dir(name || path, path))
   }
 
   constructor(props: ShCallableCommandProps) {

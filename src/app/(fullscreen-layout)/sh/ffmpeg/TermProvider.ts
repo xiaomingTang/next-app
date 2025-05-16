@@ -44,6 +44,8 @@ export class TermProvider {
     if (!this._term) {
       this._term = new Terminal({
         cursorBlink: true,
+        fontSize: 14,
+        fontFamily: `Menlo, Monaco, Consolas, 'Andale Mono', 'Ubuntu Mono', 'Courier New', monospace`,
       }) as TerminalWithCore
       // prefetch
       void import('@xterm/addon-fit')
@@ -88,7 +90,7 @@ export class TermProvider {
       ffmpeg.on('log', (data) => {
         _vt.xterm.write(`[ffmpeg] ${data.message}\r\n`)
       })
-      void TermProvider.loadFFmpegAndLog(term)
+      void TermProvider.loadFFmpegAndLog(_vt)
     }
     return this._vt
   }
@@ -237,25 +239,26 @@ export class TermProvider {
     }
   }
 
-  static async loadFFmpegAndLog(terminal: TerminalWithCore) {
-    const spinner = new TerminalSpinner(terminal)
+  static async loadFFmpegAndLog(vt: ShTerminal) {
+    const { xterm, prefix } = vt
+    const spinner = new TerminalSpinner(xterm)
     for (let i = 0; i < FFMPEG_SOURCES.length; i += 1) {
       const source = FFMPEG_SOURCES[i]
-      terminal.write(`正在加载 ffmpeg [源 ${i + 1}]...\r\n`)
+      xterm.write(`正在加载 ffmpeg [源 ${i + 1}]...\r\n`)
       spinner.start()
       try {
         await loadFFmpeg(source)
         spinner.end()
-        terminal.write(`ffmpeg 加载已完成\r\n`)
-        terminal.write('欢迎使用 FFmpeg 命令行工具\r\n')
-        terminal.write(`输入 help ${linkAddon.cmd('查看帮助', 'help')}\r\n`)
-        terminal.write('\r\n/ > ')
+        xterm.write(`ffmpeg 加载已完成\r\n`)
+        xterm.write('欢迎使用 FFmpeg 命令行工具\r\n')
+        xterm.write(`输入 help ${linkAddon.cmd('查看帮助', 'help')}\r\n`)
+        xterm.write(`\r\n${prefix}`)
         break
       } catch (_) {
         spinner.end()
-        terminal.write(`ffmpeg 加载失败\r\n`)
+        xterm.write(`ffmpeg 加载失败\r\n`)
         if (i === FFMPEG_SOURCES.length - 1) {
-          terminal.write('所有源加载失败，请检查网络连接\r\n')
+          xterm.write('所有源加载失败，请检查网络连接\r\n')
         }
       }
     }
