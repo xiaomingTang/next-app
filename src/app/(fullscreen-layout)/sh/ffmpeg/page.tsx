@@ -1,4 +1,4 @@
-import { FFmpegRoot } from './components/FFmpegRoot'
+import { FFmpegRoot } from './FFmpegRoot'
 
 import { seo } from '@/utils/seo'
 

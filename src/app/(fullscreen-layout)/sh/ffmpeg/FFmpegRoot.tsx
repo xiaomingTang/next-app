@@ -2,7 +2,7 @@
 
 import '@xterm/xterm/css/xterm.css'
 
-import { sharedTerm } from '../TermProvider'
+import { sharedTerm } from './TermProvider'
 
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 
