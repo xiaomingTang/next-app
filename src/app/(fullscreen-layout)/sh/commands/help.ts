@@ -30,6 +30,6 @@ export class Help extends ShSimpleCallableCommand {
 
   constructor(props: ShCallableCommandProps) {
     super(props)
-    this.name = 'echo'
+    this.name = 'help'
   }
 }

@@ -27,6 +27,6 @@ export class Clear extends ShSimpleCallableCommand {
 
   constructor(props: ShCallableCommandProps) {
     super(props)
-    this.name = 'ls'
+    this.name = 'clear'
   }
 }
