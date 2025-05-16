@@ -12,8 +12,13 @@ import CloseIcon from '@mui/icons-material/Close'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
-import IconButton from '@mui/material/IconButton'
-import { Box, TextField, Typography, useColorScheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  TextField,
+  Typography,
+  useColorScheme,
+} from '@mui/material'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import Editor from '@monaco-editor/react'
 import { useState } from 'react'
@@ -55,17 +60,19 @@ const TextEditorModal = NiceModal.create(
     const header = (
       <AppBar sx={{ mb: 1 }}>
         <Toolbar>
-          <IconButton
-            edge='start'
+          <Button
             aria-label='取消编辑'
+            color='inherit'
             onClick={() => {
               modal.reject(new SilentError('操作已取消'))
               void modal.hide()
             }}
           >
             <CloseIcon />
-            <Typography component='span'>{title}</Typography>
-          </IconButton>
+            <Typography component='span' sx={{ ml: 1 }}>
+              {title}
+            </Typography>
+          </Button>
           <Box sx={{ flexGrow: 1 }} />
           <CustomLoadingButton
             color='inherit'
