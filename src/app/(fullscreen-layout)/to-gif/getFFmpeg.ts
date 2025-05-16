@@ -1,5 +1,6 @@
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { toBlobURL } from '@ffmpeg/util'
+import { sleepMs } from '@zimi/utils'
 
 let storedFFmpeg: FFmpeg | null = null
 
@@ -43,13 +44,20 @@ export const FFMPEG_SOURCES: FFmpegSource[] = [
   },
 ]
 
-export async function loadFFmpeg(source: FFmpegSource) {
+export async function loadFFmpeg(
+  source: FFmpegSource,
+  // 默认 1 分钟超时
+  timeoutMs = 1 * 60 * 1000
+) {
   const ffmpeg = getFFmpeg()
   if (ffmpeg.loaded) {
     return
   }
-  await ffmpeg.load({
-    coreURL: await toBlobURL(source.coreURL, 'text/javascript'),
-    wasmURL: await toBlobURL(source.wasmURL, 'application/wasm'),
-  })
+  await Promise.race([
+    ffmpeg.load({
+      coreURL: await toBlobURL(source.coreURL, 'text/javascript'),
+      wasmURL: await toBlobURL(source.wasmURL, 'application/wasm'),
+    }),
+    sleepMs(timeoutMs),
+  ])
 }
