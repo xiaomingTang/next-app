@@ -120,6 +120,9 @@ export class TermProvider {
         if (!isValidLink) {
           return
         }
+        if (vt.command.trim()) {
+          vt.prompt()
+        }
         switch (prefix) {
           case XT_FILE_PREFIX:
             xterm.input(`edit ${uri.slice(XT_FILE_PREFIX.length)}`)
