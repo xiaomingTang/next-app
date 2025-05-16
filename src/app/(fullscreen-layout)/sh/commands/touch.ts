@@ -1,5 +1,4 @@
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
-import { linkAddon } from '../utils/link'
 
 import type { ShSimpleCallableCommandOptions } from '../ShSimpleCallableCommand'
 import type { ShCallableCommandProps } from '../ShCallableCommand'
@@ -28,8 +27,8 @@ export class Touch extends ShSimpleCallableCommand {
       this.vt.log('Error: No file name provided')
       return
     }
-    const { name, path } = await fileSystem.createFile(filename, '')
-    this.vt.log(`Created:`, linkAddon.file(name, path))
+    const f = await fileSystem.createFile(filename, '')
+    this.vt.log(`Created:`, f)
   }
 
   constructor(props: ShCallableCommandProps) {

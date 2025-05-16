@@ -1,6 +1,5 @@
 import { resolvePath } from '../utils/path'
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
-import { linkAddon } from '../utils/link'
 
 import type { ShSimpleCallableCommandOptions } from '../ShSimpleCallableCommand'
 import type { ShCallableCommandProps } from '../ShCallableCommand'
@@ -26,8 +25,8 @@ export class Mkdir extends ShSimpleCallableCommand {
     const { fileSystem } = this.vt
     const { context } = fileSystem
     const targetPath = resolvePath(context.path, this.args[0])
-    const { name, path } = await fileSystem.createDir(targetPath)
-    this.vt.log(`Created:`, linkAddon.dir(name || path, path))
+    const dir = await fileSystem.createDir(targetPath)
+    this.vt.log(`Created:`, dir)
   }
 
   constructor(props: ShCallableCommandProps) {
