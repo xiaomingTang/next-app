@@ -15,6 +15,7 @@ export class Help extends ShSimpleCallableCommand {
       '- cd: Change the current directory',
       '- clear: Clear the terminal screen',
       '- cp: Copy a file or directory',
+      '- download: Download a file from the terminal',
       '- pwd: Print the current working directory',
       '- cat: Print the content of a file to the terminal',
       '- mkdir: Create a new directory',

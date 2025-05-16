@@ -15,6 +15,7 @@ import { Clear } from './clear'
 import { Upload } from './upload'
 import { Mv } from './mv'
 import { Cp } from './cp'
+import { Download } from './download'
 
 import type { ShCallableCommand } from '../ShCallableCommand'
 
@@ -23,6 +24,7 @@ export const commands: [string, typeof ShCallableCommand][] = [
   ['cd', Cd],
   ['clear', Clear],
   ['cp', Cp],
+  ['download', Download],
   ['echo', Echo],
   ['help', Help],
   ['edit', Edit],
