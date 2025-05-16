@@ -23,14 +23,14 @@ export function FFmpegRoot() {
   }, [])
 
   useEffect(() => {
-    const { term, virtualTerminal } = sharedTerm
+    const { term, virtualTerminal, termSpinner } = sharedTerm
     term.onData((e) => {
       // 必须要放到 onData 里
-      const { command, isLoading, ffmpeg, termPrefix } = sharedTerm
+      const { command, ffmpeg } = sharedTerm
       if (!ffmpeg.loaded) {
         return
       }
-      if (isLoading) {
+      if (termSpinner.loading) {
         return
       }
       // Ctrl+C
@@ -62,7 +62,7 @@ export function FFmpegRoot() {
           const lines = sharedTerm.command.split(/\r\n|\r|\n/g)
           let offset = stringWidth(lines[lines.length - 1])
           if (lines.length <= 1) {
-            offset += stringWidth(termPrefix)
+            offset += stringWidth(virtualTerminal.prefix)
           }
           // 上移一行
           term.write('\x1b[1A')
@@ -74,14 +74,16 @@ export function FFmpegRoot() {
       }
       // Enter
       if (e === '\r') {
-        const loaded = sharedTerm.loading()
+        termSpinner.start()
         term.write(`\r\n`)
         void virtualTerminal
           .executeCommand(command)
           .then(() => {
+            termSpinner.end()
             term.write(`\r\n`)
           })
           .catch((e) => {
+            termSpinner.end()
             const err = toError(e)
             if (SilentError.isSilentError(err)) {
               return
@@ -90,7 +92,6 @@ export function FFmpegRoot() {
             term.write(`\r\n`)
           })
           .finally(() => {
-            loaded()
             sharedTerm.prompt()
           })
         return

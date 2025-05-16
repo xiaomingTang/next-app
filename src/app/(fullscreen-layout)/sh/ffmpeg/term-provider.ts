@@ -17,6 +17,7 @@ import { Help } from '../commands/help'
 import { FFmpegCmd } from '../commands/ffmpeg'
 import { Clear } from '../commands/clear'
 import { XT_DIR_PREFIX, XT_FILE_PREFIX } from '../utils/link'
+import { TerminalSpinner } from '../utils/loading'
 
 import { Terminal } from '@xterm/xterm'
 import { noop } from 'lodash-es'
@@ -28,17 +29,21 @@ type TerminalWithCore = Terminal & {
 }
 
 async function loadFFmpegAndLog(terminal: TerminalWithCore) {
+  const spinner = new TerminalSpinner(terminal)
   for (let i = 0; i < FFMPEG_SOURCES.length; i += 1) {
     const source = FFMPEG_SOURCES[i]
     terminal.write(`正在加载 ffmpeg [源 ${i + 1}]...\r\n`)
+    spinner.start()
     try {
       await loadFFmpeg(source)
+      spinner.end()
       terminal.write(`ffmpeg 加载已完成\r\n`)
       terminal.write('欢迎使用 FFmpeg 命令行工具\r\n')
       terminal.write('输入 help 查看帮助\r\n')
       terminal.write('\r\n/ > ')
       break
     } catch (_) {
+      spinner.end()
       terminal.write(`ffmpeg 加载失败\r\n`)
       if (i === FFMPEG_SOURCES.length - 1) {
         terminal.write('所有源加载失败，请检查网络连接\r\n')
@@ -48,10 +53,10 @@ async function loadFFmpegAndLog(terminal: TerminalWithCore) {
 }
 
 function geneTerm() {
-  let loadingFlag = 0
   let storedTerm: TerminalWithCore | null = null
   let command = ''
   let storedVirtualTerminal: ShTerminal | null = null
+  let termSpinner: TerminalSpinner | null = null
 
   const getTerm = () => {
     if (!storedTerm) {
@@ -60,6 +65,13 @@ function geneTerm() {
       }) as TerminalWithCore
     }
     return storedTerm
+  }
+
+  const getTermSpinner = () => {
+    if (!termSpinner) {
+      termSpinner = new TerminalSpinner(getTerm())
+    }
+    return termSpinner
   }
 
   const initTerm = async (container: HTMLElement) => {
@@ -124,21 +136,14 @@ function geneTerm() {
     return storedVirtualTerminal
   }
 
-  const getTermPrefix = () => {
-    const vt = getVirtualTerminal()
-    return `${vt.fileSystem.context.path} > `
-  }
-
   const prompt = () => {
     const term = getTerm()
     command = ''
-    term.write(`\r\n${getTermPrefix()}`)
+    const vt = getVirtualTerminal()
+    term.write(`\r\n${vt.prefix}`)
   }
 
   return {
-    get isLoading() {
-      return loadingFlag > 0
-    },
     get virtualTerminal() {
       return getVirtualTerminal()
     },
@@ -154,17 +159,11 @@ function geneTerm() {
     get ffmpeg() {
       return getFFmpeg()
     },
-    get termPrefix() {
-      return getTermPrefix()
+    get termSpinner() {
+      return getTermSpinner()
     },
     initTerm,
     prompt,
-    loading: () => {
-      loadingFlag += 1
-      return () => {
-        loadingFlag -= 1
-      }
-    },
   }
 }
 

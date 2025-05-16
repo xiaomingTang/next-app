@@ -10,6 +10,10 @@ import type { ShFileSystem } from './ShFileSystem'
 import type { ShCallableCommandConstructor } from './ShCallableCommand'
 
 export class ShTerminal {
+  get prefix() {
+    return `${this.fileSystem.context.path} > `
+  }
+
   xterm: Terminal
 
   commands: Record<string, ShCallableCommandConstructor> = {}
