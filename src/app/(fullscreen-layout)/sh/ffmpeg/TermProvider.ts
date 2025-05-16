@@ -254,7 +254,7 @@ export class TermProvider {
         xterm.write(`ffmpeg 加载已完成\r\n`)
         xterm.write('欢迎使用 FFmpeg 命令行工具\r\n')
         xterm.write(
-          `载入本地文件可以直接拖拽到页面，也可以调用 ${linkAddon.cmd('upload')} 命令上传\r\n`
+          `载入本地文件可以直接拖拽到页面，也可以调用 ${linkAddon.cmd('upload')} 命令\r\n`
         )
         xterm.write(`输入 help ${linkAddon.cmd('查看帮助', 'help')}\r\n`)
         xterm.write(`\r\n${prefix}`)

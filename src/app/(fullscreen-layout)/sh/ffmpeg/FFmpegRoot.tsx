@@ -44,7 +44,7 @@ export function FFmpegRoot() {
       } finally {
         sharedTerm.termSpinner.end()
         if (succeed) {
-          sharedTerm.xterm.write(`\r\n成功载入 ${dedupedCount} 个文件`)
+          sharedTerm.xterm.write(`\r\n完成载入 ${dedupedCount} 个文件`)
           if (files.length > dedupedCount) {
             sharedTerm.xterm.write(
               `（${files.length - dedupedCount} 个${applyAnsiStyle('同名文件', ansiStyles.bold)}被忽略）`
