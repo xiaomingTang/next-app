@@ -22,7 +22,7 @@ export class Pwd extends ShSimpleCallableCommand {
       withSimpleHelp: true,
     })
     const { fileSystem } = this.vt
-    this.vt.log(fileSystem.context)
+    this.vt.log(fileSystem.context.path)
   }
 
   constructor(props: ShCallableCommandProps) {
