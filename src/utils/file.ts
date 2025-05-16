@@ -55,3 +55,52 @@ export function useFile2URL(f?: Blob) {
 
   return url
 }
+
+export function pickFiles(props?: {
+  accept?: string
+  multiple?: boolean
+}): Promise<File[]> {
+  const { accept, multiple = true } = props ?? {}
+  return new Promise((resolve) => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.style.display = 'none'
+
+    if (accept) {
+      input.accept = accept
+    }
+    input.multiple = multiple
+
+    const dispose = () => {
+      input.onchange = null
+      input.onabort = null
+      input.oncancel = null
+      input.onerror = null
+      document.body.removeChild(input)
+    }
+
+    input.onchange = () => {
+      resolve(Array.from(input.files ?? []))
+      dispose()
+    }
+
+    input.onabort = () => {
+      resolve([])
+      dispose()
+    }
+
+    input.oncancel = () => {
+      resolve([])
+      dispose()
+    }
+
+    input.onerror = () => {
+      resolve([])
+      dispose()
+    }
+
+    document.body.appendChild(input)
+    // 触发上传弹窗
+    input.click()
+  })
+}
