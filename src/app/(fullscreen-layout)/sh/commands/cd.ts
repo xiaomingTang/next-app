@@ -1,5 +1,4 @@
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
-import { linkAddon } from '../utils/link'
 
 import type { ShSimpleCallableCommandOptions } from '../ShSimpleCallableCommand'
 import type { ShCallableCommandProps } from '../ShCallableCommand'
@@ -24,8 +23,6 @@ export class Cd extends ShSimpleCallableCommand {
     })
     const { fileSystem } = this.vt
     fileSystem.context = await fileSystem.getDirOrThrow(this.args[0])
-    const { name, path } = fileSystem.context
-    this.vt.log(`Changed directory to`, linkAddon.dir(name || path, path))
   }
 
   constructor(props: ShCallableCommandProps) {
