@@ -1,6 +1,6 @@
-import { ShFile, ShDir } from './ShAsset'
-import { resolvePath } from './utils/path'
+import { ShDir } from './ShAsset'
 
+import type { ShFile } from './ShAsset'
 import type { ShRouter } from './ShRouter'
 
 export class ShFileSystem {
@@ -10,9 +10,6 @@ export class ShFileSystem {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   router: ShRouter<any>
-
-  // TODO: 自己管理个毛线，全部从 remote 拿
-  assets: Record<string, ShFile | ShDir> = {}
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   constructor(props: { router: ShRouter<any> }) {
@@ -29,26 +26,14 @@ export class ShFileSystem {
       ctx: this,
     })
     this.context = this.root
-    void this.createAsset(this.root)
   }
 
-  async createAsset(asset: ShFile | ShDir) {
-    if (this.assets[asset.path]) {
-      throw new Error(`Asset already exists: ${asset.path}`)
-    }
-    if (!asset.path.startsWith(this.root.path)) {
-      throw new Error(`Cannot create asset outside root: ${this.root.path}`)
-    }
-    this.assets[asset.path] = asset
+  async deleteAsset(_asset: ShFile | ShDir) {
+    throw new Error('Not implemented')
   }
 
-  async deleteAsset(asset: ShFile | ShDir) {
-    delete this.assets[asset.path]
-  }
-
-  getAsset(path: string): ShFile | ShDir | null {
-    const np = resolvePath(this.context.path, path)
-    return this.assets[np] ?? null
+  async moveAsset(_oldPath: string, _newPath: string): Promise<void> {
+    throw new Error('Not implemented')
   }
 
   async createFile(_path: string, _content: string): Promise<ShFile> {
@@ -59,25 +44,11 @@ export class ShFileSystem {
     throw new Error('Not implemented')
   }
 
-  async getFileOrThrow(path: string): Promise<ShFile> {
-    const asset = this.getAsset(path)
-    if (!asset) {
-      throw new Error(`No such file or directory: ${path}`)
-    }
-    if (!ShFile.isFile(asset)) {
-      throw new Error(`Not a file: ${path}`)
-    }
-    return asset
+  async getFileOrThrow(_path: string): Promise<ShFile> {
+    throw new Error('Not implemented')
   }
 
-  async getDirOrThrow(path: string): Promise<ShDir> {
-    const asset = this.getAsset(path)
-    if (!asset) {
-      throw new Error(`No such file or directory: ${path}`)
-    }
-    if (!ShDir.isDir(asset)) {
-      throw new Error(`Not a directory: ${path}`)
-    }
-    return asset
+  async getDirOrThrow(_path: string): Promise<ShDir> {
+    throw new Error('Not implemented')
   }
 }

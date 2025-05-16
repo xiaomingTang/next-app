@@ -89,6 +89,10 @@ export class FFmpegFileSystem extends ShFileSystem {
     await super.deleteAsset(asset)
   }
 
+  async moveAsset(oldPath: string, newPath: string): Promise<void> {
+    await this.ffmpeg.rename(oldPath, newPath)
+  }
+
   async createFile(
     input: string,
     content: Uint8Array | string
@@ -99,7 +103,6 @@ export class FFmpegFileSystem extends ShFileSystem {
       path,
       ctx: this,
     })
-    await this.createAsset(file)
     try {
       const ok = await this.ffmpeg.writeFile(path, content)
       if (!ok) {
@@ -119,7 +122,6 @@ export class FFmpegFileSystem extends ShFileSystem {
       path,
       ctx: this,
     })
-    await this.createAsset(dir)
     try {
       const ok = await this.ffmpeg.createDir(path)
       if (!ok) {
