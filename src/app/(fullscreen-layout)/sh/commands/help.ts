@@ -1,4 +1,5 @@
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
+import { linkAddon } from '../utils/link'
 
 import type { ShCallableCommandProps } from '../ShCallableCommand'
 
@@ -22,7 +23,7 @@ export class Help extends ShSimpleCallableCommand {
       '- vi/vim/edit: edit a file',
       '- help: Display this help information',
       '',
-      '- ffmpeg: 自己看文档吧',
+      `- ffmpeg: ${linkAddon.link('查看文档', 'https://ffmpeg.org/documentation.html')}`,
     ].join('\r\n')
     this.terminal.log(msg)
   }

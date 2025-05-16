@@ -1,6 +1,6 @@
 import { parseCommand } from './utils/command'
 import { ShDir, ShFile } from './ShAsset'
-import { xtDir, xtFile, xtLink } from './utils/link'
+import { linkAddon } from './utils/link'
 
 import { toError } from '@/errors/utils'
 import { SilentError } from '@/errors/SilentError'
@@ -11,7 +11,7 @@ import type { ShCallableCommandConstructor } from './ShCallableCommand'
 
 export class ShTerminal {
   get prefix() {
-    return `${this.fileSystem.context.path} > `
+    return `${linkAddon.dir(this.fileSystem.context.path)} > `
   }
 
   command = ''
@@ -40,11 +40,11 @@ export class ShTerminal {
         return
       }
       if (ShFile.isFile(arg)) {
-        xterm.write(`${xtLink(arg.name, xtFile(arg.path))}\t`)
+        xterm.write(`${linkAddon.file(arg.name, arg.path)}\t`)
         return
       }
       if (ShDir.isDir(arg)) {
-        xterm.write(`${xtLink(arg.name, xtDir(arg.path))}/\t`)
+        xterm.write(`${linkAddon.dir(arg.name, arg.path)}/\t`)
         return
       }
     })

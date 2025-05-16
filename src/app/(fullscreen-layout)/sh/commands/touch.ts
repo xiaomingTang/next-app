@@ -1,5 +1,5 @@
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
-import { xtFile, xtLink } from '../utils/link'
+import { linkAddon } from '../utils/link'
 
 import type { ShSimpleCallableCommandOptions } from '../ShSimpleCallableCommand'
 import type { ShCallableCommandProps } from '../ShCallableCommand'
@@ -29,7 +29,7 @@ export class Touch extends ShSimpleCallableCommand {
       return
     }
     const { name, path } = await fileSystem.createFile(filename, '')
-    this.terminal.log(`Created:`, xtLink(`${name}`, xtFile(path)))
+    this.terminal.log(`Created:`, linkAddon.file(name, path))
   }
 
   constructor(props: ShCallableCommandProps) {

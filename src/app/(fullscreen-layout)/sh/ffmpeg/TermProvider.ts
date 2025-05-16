@@ -16,7 +16,12 @@ import { Edit } from '../commands/edit'
 import { Help } from '../commands/help'
 import { FFmpegCmd } from '../commands/ffmpeg'
 import { Clear } from '../commands/clear'
-import { XT_DIR_PREFIX, XT_FILE_PREFIX } from '../utils/link'
+import {
+  linkAddon,
+  XT_CMD_PREFIX,
+  XT_DIR_PREFIX,
+  XT_FILE_PREFIX,
+} from '../utils/link'
 import { TerminalSpinner } from '../utils/loading'
 
 import { toError } from '@/errors/utils'
@@ -98,20 +103,32 @@ export class TermProvider {
 
     term.options.linkHandler = {
       activate: (_e, uri) => {
-        if (uri.startsWith(XT_FILE_PREFIX)) {
-          if (vt.command.trim().length > 0) {
-            vt.prompt()
-          }
-          term.input(`edit ${uri.slice(XT_FILE_PREFIX.length)}`)
-          term.input('\r')
+        const prefix = uri.slice(0, uri.indexOf('://')) + '://'
+        if (prefix === 'http://' || prefix === 'https://') {
+          window.open(uri, '_blank')
           return
         }
-        if (uri.startsWith(XT_DIR_PREFIX)) {
-          if (vt.command.trim().length > 0) {
-            vt.prompt()
-          }
-          term.input(`cd ${uri.slice(XT_DIR_PREFIX.length)}`)
-          term.input('\r')
+        const isValidLink = [
+          XT_FILE_PREFIX,
+          XT_DIR_PREFIX,
+          XT_CMD_PREFIX,
+        ].includes(prefix)
+        if (!isValidLink) {
+          return
+        }
+        switch (prefix) {
+          case XT_FILE_PREFIX:
+            term.input(`edit ${uri.slice(XT_FILE_PREFIX.length)}`)
+            term.input('\r')
+            break
+          case XT_DIR_PREFIX:
+            term.input(`cd ${uri.slice(XT_DIR_PREFIX.length)}`)
+            term.input('\r')
+            break
+          case XT_CMD_PREFIX:
+            term.input(uri.slice(XT_CMD_PREFIX.length))
+            term.input('\r')
+            break
         }
       },
       hover: noop,
@@ -231,7 +248,7 @@ export class TermProvider {
         spinner.end()
         terminal.write(`ffmpeg 加载已完成\r\n`)
         terminal.write('欢迎使用 FFmpeg 命令行工具\r\n')
-        terminal.write('输入 help 查看帮助\r\n')
+        terminal.write(`输入 help ${linkAddon.cmd('查看帮助', 'help')}\r\n`)
         terminal.write('\r\n/ > ')
         break
       } catch (_) {
