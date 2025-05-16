@@ -1,6 +1,8 @@
 import { ShDir, ShFile } from '../ShAsset'
 import { resolvePath } from '../utils/path'
 
+import { noop } from 'lodash-es'
+
 import type { ShFileSystem } from '../ShFileSystem'
 import type { FFmpeg } from '@ffmpeg/ffmpeg'
 
@@ -31,16 +33,13 @@ export class FFmpegFileSystem implements ShFileSystem {
     options?: { recursive?: boolean }
   ) {
     const recursive = options?.recursive ?? false
-    const children = await this.ffmpeg.listDir(oldPath)
+    const children = await this.listDir(oldPath)
     if (!recursive && children.length > 0) {
       throw new Error(`Directory is not empty: ${oldPath}`)
     }
-    const ok = await this.ffmpeg.createDir(newPath)
-    if (!ok) {
-      throw new Error(`FFmpeg failed to create dir: ${newPath}`)
-    }
+    await this.createDir(newPath, { recursive })
     for (const child of children) {
-      if (!child.isDir) {
+      if (!ShDir.isDir(child)) {
         await this.copyFile(
           resolvePath(oldPath, child.name),
           resolvePath(newPath, child.name)
@@ -84,7 +83,7 @@ export class FFmpegFileSystem implements ShFileSystem {
     options?: { recursive?: boolean }
   ): Promise<void> {
     const recursive = options?.recursive ?? false
-    const children = await this.ffmpeg.listDir(path)
+    const children = await this.listDir(path)
     if (children.length === 0) {
       const ok = await this.ffmpeg.deleteDir(path)
       if (!ok) {
@@ -96,7 +95,7 @@ export class FFmpegFileSystem implements ShFileSystem {
       throw new Error(`Directory is not empty: ${path}`)
     }
     for (const child of children) {
-      if (!child.isDir) {
+      if (!ShDir.isDir(child)) {
         await this.deleteFile(resolvePath(path, child.name))
       } else {
         await this.deleteDir(resolvePath(path, child.name), options)
@@ -149,17 +148,29 @@ export class FFmpegFileSystem implements ShFileSystem {
     options?: { recursive?: boolean }
   ): Promise<ShDir> {
     const recursive = options?.recursive ?? false
-    if (recursive) {
+    const result = new ShDir({ path })
+    try {
+      const ok = await this.ffmpeg.createDir(path)
+      if (!ok) {
+        throw new Error(`FFmpeg failed to create dir: ${path}`)
+      }
+      return result
+    } catch (error) {
+      if (!recursive) {
+        throw error
+      }
+      // 递归创建父级
       const parentPath = resolvePath(path, '..')
       if (parentPath !== path && parentPath !== '/') {
-        await this.createDir(parentPath, options)
+        await this.createDir(parentPath, options).catch(noop)
       }
+      // 创建当前目录
+      const ok = await this.ffmpeg.createDir(path)
+      if (!ok) {
+        throw new Error(`FFmpeg failed to create dir: ${path}`)
+      }
+      return result
     }
-    const ok = await this.ffmpeg.createDir(path)
-    if (!ok) {
-      throw new Error(`FFmpeg failed to create dir: ${path}`)
-    }
-    return new ShDir({ path })
   }
 
   async getAssetOrThrow(path: string): Promise<ShFile | ShDir> {
@@ -168,17 +179,12 @@ export class FFmpegFileSystem implements ShFileSystem {
     }
     const name = path.split('/').pop()
     const parentPath = resolvePath(path, '..')
-    const siblings = (await this.ffmpeg.listDir(parentPath)).filter(
-      (f) => f.name !== '.' && f.name !== '..'
-    )
+    const siblings = await this.listDir(parentPath)
     const assetInfo = siblings.find((f) => f.name === name)
     if (!assetInfo) {
       throw new Error(`No such file or directory: ${path}`)
     }
-    if (assetInfo.isDir) {
-      return new ShDir({ path: path })
-    }
-    return new ShFile({ path: path })
+    return assetInfo
   }
 
   async getFileOrThrow(path: string): Promise<ShFile> {
