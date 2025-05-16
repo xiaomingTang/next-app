@@ -31,7 +31,6 @@ export class Mkdir extends ShSimpleCallableCommand {
 
     const { fileSystem } = this.vt
     const [path] = this.pathsRequired(args._[0])
-    console.log(args)
     await fileSystem.createDir(path, {
       recursive: args['--recursive'],
     })
