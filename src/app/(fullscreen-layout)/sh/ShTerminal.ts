@@ -75,7 +75,7 @@ export class ShTerminal {
       name,
       args,
       env,
-      terminal: this,
+      vt: this,
     })
     try {
       await commandInstance.execute()

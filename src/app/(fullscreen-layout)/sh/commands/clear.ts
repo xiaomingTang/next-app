@@ -21,8 +21,8 @@ export class Clear extends ShSimpleCallableCommand {
     this.normalizeOptionsAndArgs({
       withSimpleHelp: true,
     })
-    this.terminal.xterm.clear()
-    this.terminal.log('')
+    this.vt.xterm.clear()
+    this.vt.log('')
   }
 
   constructor(props: ShCallableCommandProps) {

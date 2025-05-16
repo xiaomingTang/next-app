@@ -8,7 +8,7 @@ export class Echo extends ShSimpleCallableCommand {
   description = 'Print the message to the terminal'
 
   override async execute() {
-    this.terminal.log(this.rawCommand.slice(5).trim())
+    this.vt.log(this.rawCommand.slice(5).trim())
   }
 
   constructor(props: ShCallableCommandProps) {

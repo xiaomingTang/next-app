@@ -25,7 +25,7 @@ export class Help extends ShSimpleCallableCommand {
       '',
       `- ffmpeg: ${linkAddon.link('查看文档', 'https://ffmpeg.org/documentation.html')}`,
     ].join('\r\n')
-    this.terminal.log(msg)
+    this.vt.log(msg)
   }
 
   constructor(props: ShCallableCommandProps) {

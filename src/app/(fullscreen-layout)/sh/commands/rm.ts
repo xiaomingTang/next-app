@@ -21,22 +21,22 @@ export class Rm extends ShSimpleCallableCommand {
     this.normalizeOptionsAndArgs({
       withSimpleHelp: true,
     })
-    const { fileSystem } = this.terminal
+    const { fileSystem } = this.vt
     const [fRes, dRes] = await Promise.allSettled([
       fileSystem.getFileOrThrow(this.args[0]),
       fileSystem.getDirOrThrow(this.args[0]),
     ])
     if (fRes.status === 'rejected' && dRes.status === 'rejected') {
-      this.terminal.log(`No such file or directory: ${this.args[0]}`)
+      this.vt.log(`No such file or directory: ${this.args[0]}`)
       return
     }
     if (fRes.status === 'fulfilled') {
       await fileSystem.deleteAsset(fRes.value)
-      this.terminal.log(`Removed: ${fRes.value.path}`)
+      this.vt.log(`Removed: ${fRes.value.path}`)
     }
     if (dRes.status === 'fulfilled') {
       await fileSystem.deleteAsset(dRes.value)
-      this.terminal.log(`Removed: ${dRes.value.path}/`)
+      this.vt.log(`Removed: ${dRes.value.path}/`)
     }
   }
 

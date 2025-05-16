@@ -21,10 +21,10 @@ export class Ls extends ShSimpleCallableCommand {
     this.normalizeOptionsAndArgs({
       withSimpleHelp: true,
     })
-    const { fileSystem } = this.terminal
+    const { fileSystem } = this.vt
     const dir = await fileSystem.getDirOrThrow(this.args[0])
     const children = await dir.getChildren()
-    this.terminal.log(...children)
+    this.vt.log(...children)
   }
 
   constructor(props: ShCallableCommandProps) {

@@ -21,14 +21,14 @@ export class Cat extends ShSimpleCallableCommand {
     this.normalizeOptionsAndArgs({
       withSimpleHelp: true,
     })
-    const f = await this.terminal.fileSystem.getFileOrThrow(this.args[0])
+    const f = await this.vt.fileSystem.getFileOrThrow(this.args[0])
     const content = await f.getContent()
-    this.terminal.debug('cat content: ', content)
+    this.vt.debug('cat content: ', content)
     if (typeof content === 'string') {
-      this.terminal.log(content)
+      this.vt.log(content)
     } else {
       const uint8 = new Uint8Array(content)
-      this.terminal.log(new TextDecoder().decode(uint8))
+      this.vt.log(new TextDecoder().decode(uint8))
     }
   }
 

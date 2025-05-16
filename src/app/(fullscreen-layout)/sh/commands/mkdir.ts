@@ -23,11 +23,11 @@ export class Mkdir extends ShSimpleCallableCommand {
     this.normalizeOptionsAndArgs({
       withSimpleHelp: true,
     })
-    const { fileSystem } = this.terminal
+    const { fileSystem } = this.vt
     const { context } = fileSystem
     const targetPath = resolvePath(context.path, this.args[0])
     const { name, path } = await fileSystem.createDir(targetPath)
-    this.terminal.log(`Created:`, linkAddon.dir(name || path, path))
+    this.vt.log(`Created:`, linkAddon.dir(name || path, path))
   }
 
   constructor(props: ShCallableCommandProps) {

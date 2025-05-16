@@ -8,7 +8,7 @@ export interface ShCallableCommandProps {
   name: string
   args: string[]
   env: Record<string, string>
-  terminal: ShTerminal
+  vt: ShTerminal
 }
 
 export class ShCallableCommand implements ShCallableCommandProps {
@@ -30,7 +30,7 @@ export class ShCallableCommand implements ShCallableCommandProps {
 
   env: Record<string, string>
 
-  terminal: ShTerminal
+  vt: ShTerminal
 
   async execute() {
     // This method should be overridden by subclasses
@@ -42,7 +42,7 @@ export class ShCallableCommand implements ShCallableCommandProps {
     this.name = props.name
     this.args = props.args
     this.env = props.env
-    this.terminal = props.terminal
+    this.vt = props.vt
   }
 }
 

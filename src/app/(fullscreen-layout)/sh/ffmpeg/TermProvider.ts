@@ -38,11 +38,11 @@ type TerminalWithCore = Terminal & {
 }
 
 export class TermProvider {
-  private _term: TerminalWithCore | null = null
+  private _xterm: TerminalWithCore | null = null
 
-  get term() {
-    if (!this._term) {
-      this._term = new Terminal({
+  get xterm() {
+    if (!this._xterm) {
+      this._xterm = new Terminal({
         cursorBlink: true,
         fontSize: 14,
         fontFamily: `Menlo, Monaco, Consolas, 'Andale Mono', 'Ubuntu Mono', 'Courier New', monospace`,
@@ -50,14 +50,14 @@ export class TermProvider {
       // prefetch
       void import('@xterm/addon-fit')
     }
-    return this._term
+    return this._xterm
   }
 
   private _termSpinner: TerminalSpinner | null = null
 
   get termSpinner() {
     if (!this._termSpinner) {
-      this._termSpinner = new TerminalSpinner(this.term)
+      this._termSpinner = new TerminalSpinner(this.xterm)
     }
     return this._termSpinner
   }
@@ -70,8 +70,8 @@ export class TermProvider {
       const fileSystem = new FFmpegFileSystem({
         ffmpeg,
       })
-      const { term } = this
-      const _vt = new ShTerminal({ fileSystem, xterm: term })
+      const { xterm } = this
+      const _vt = new ShTerminal({ fileSystem, xterm })
       _vt.registerCommand('cat', Cat)
       _vt.registerCommand('cd', Cd)
       _vt.registerCommand('clear', Clear)
@@ -88,7 +88,7 @@ export class TermProvider {
       _vt.registerCommand('vim', Vim)
       this._vt = _vt
       ffmpeg.on('log', (data) => {
-        _vt.xterm.write(`[ffmpeg] ${data.message}\r\n`)
+        this.xterm.write(`[ffmpeg] ${data.message}\r\n`)
       })
       void TermProvider.loadFFmpegAndLog(_vt)
     }
@@ -99,11 +99,11 @@ export class TermProvider {
     if (!container) {
       return noop
     }
-    const { term, vt, termSpinner } = this
-    term.open(container)
-    void TermProvider.toUseFitAddon(term)
+    const { xterm, vt, termSpinner } = this
+    xterm.open(container)
+    void TermProvider.toUseFitAddon(xterm)
 
-    term.options.linkHandler = {
+    xterm.options.linkHandler = {
       activate: (_e, uri) => {
         const prefix = uri.slice(0, uri.indexOf('://')) + '://'
         if (prefix === 'http://' || prefix === 'https://') {
@@ -120,16 +120,16 @@ export class TermProvider {
         }
         switch (prefix) {
           case XT_FILE_PREFIX:
-            term.input(`edit ${uri.slice(XT_FILE_PREFIX.length)}`)
-            term.input('\r')
+            xterm.input(`edit ${uri.slice(XT_FILE_PREFIX.length)}`)
+            xterm.input('\r')
             break
           case XT_DIR_PREFIX:
-            term.input(`cd ${uri.slice(XT_DIR_PREFIX.length)}`)
-            term.input('\r')
+            xterm.input(`cd ${uri.slice(XT_DIR_PREFIX.length)}`)
+            xterm.input('\r')
             break
           case XT_CMD_PREFIX:
-            term.input(uri.slice(XT_CMD_PREFIX.length))
-            term.input('\r')
+            xterm.input(uri.slice(XT_CMD_PREFIX.length))
+            xterm.input('\r')
             break
         }
       },
@@ -140,7 +140,7 @@ export class TermProvider {
 
     const ffmpeg = getFFmpeg()
 
-    term.onData((e) => {
+    xterm.onData((e) => {
       if (!ffmpeg.loaded) {
         return
       }
@@ -149,7 +149,7 @@ export class TermProvider {
       }
       // Ctrl+C
       if (e === '\u0003') {
-        term.write('^C')
+        xterm.write('^C')
         vt.prompt()
         return
       }
@@ -167,7 +167,7 @@ export class TermProvider {
           let offset = stringWidth(lastChar)
           while (offset > 0) {
             // 光标退格
-            term.write('\b \b')
+            xterm.write('\b \b')
             offset -= 1
           }
         } else {
@@ -177,9 +177,9 @@ export class TermProvider {
             offset += stringWidth(vt.prefix)
           }
           // 上移一行
-          term.write('\x1b[1A')
+          xterm.write('\x1b[1A')
           // 向右移动到行尾
-          term.write(`\x1b[${offset}C`)
+          xterm.write(`\x1b[${offset}C`)
         }
 
         return
@@ -187,12 +187,12 @@ export class TermProvider {
       // Enter
       if (e === '\r') {
         termSpinner.start()
-        term.write(`\r\n`)
+        xterm.write(`\r\n`)
         void vt
           .executeCommand(vt.command)
           .then(() => {
             termSpinner.end()
-            term.write(`\r\n`)
+            xterm.write(`\r\n`)
           })
           .catch((e) => {
             termSpinner.end()
@@ -200,8 +200,8 @@ export class TermProvider {
             if (SilentError.isSilentError(err)) {
               return
             }
-            term.write(err.message)
-            term.write(`\r\n`)
+            xterm.write(err.message)
+            xterm.write(`\r\n`)
           })
           .finally(() => {
             vt.prompt()
@@ -213,14 +213,14 @@ export class TermProvider {
         for (let i = 0; i < lines.length; i += 1) {
           const line = lines[i]
           if (i === 0) {
-            term.write(`${line}\r\n`)
+            xterm.write(`${line}\r\n`)
             vt.command += `${line}\n`
           } else if (i === lines.length - 1) {
             // 最后一行不需要换行
-            term.write(`${line}`)
+            xterm.write(`${line}`)
             vt.command += `${line}`
           } else {
-            term.write(`${line}\r\n`)
+            xterm.write(`${line}\r\n`)
             vt.command += `${line}\n`
           }
         }
@@ -231,7 +231,7 @@ export class TermProvider {
         e >= '\u00a0'
       ) {
         vt.command += e
-        term.write(e)
+        xterm.write(e)
       }
     })
     return () => {
@@ -264,11 +264,11 @@ export class TermProvider {
     }
   }
 
-  static async toUseFitAddon(term: TerminalWithCore) {
+  static async toUseFitAddon(xterm: TerminalWithCore) {
     // @xterm/addon-fit ssr 下有问题
     const { FitAddon } = await import('@xterm/addon-fit')
     const fitAddon = new FitAddon()
-    term.loadAddon(fitAddon)
+    xterm.loadAddon(fitAddon)
     fitAddon.fit()
   }
 }

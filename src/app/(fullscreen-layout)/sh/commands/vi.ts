@@ -21,10 +21,10 @@ export class Vi extends ShSimpleCallableCommand {
     this.normalizeOptionsAndArgs({
       withSimpleHelp: true,
     })
-    const { fileSystem } = this.terminal
+    const { fileSystem } = this.vt
     const f = await fileSystem.getFileOrThrow(this.args[0])
     // TODO: 用编辑器打开文件
-    this.terminal.log(`TODO: Open file: ${f.name}, path: ${f.path}`)
+    this.vt.log(`TODO: Open file: ${f.name}, path: ${f.path}`)
   }
 
   constructor(props: ShCallableCommandProps) {

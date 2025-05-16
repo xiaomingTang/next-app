@@ -107,10 +107,10 @@ export class ShSimpleCallableCommand extends ShCallableCommand {
       return this
     }
     if (this.usage) {
-      this.terminal.log(`${this.usage}\r\n`)
+      this.vt.log(`${this.usage}\r\n`)
     }
     if (this.description) {
-      this.terminal.log(`${this.description}\r\n`)
+      this.vt.log(`${this.description}\r\n`)
     }
     const optionDescs = this.options.map((option) =>
       [
@@ -122,7 +122,7 @@ export class ShSimpleCallableCommand extends ShCallableCommand {
         .filter(Boolean)
         .join(' ')
     )
-    this.terminal.log(optionDescs.join(''))
+    this.vt.log(optionDescs.join(''))
 
     throw new SilentError('help finished')
   }

@@ -31,14 +31,14 @@ export class TerminalSpinner {
       this.n = 0
       this.lastFlagIndex = -1
       this.loadingStartTime = 0
-      this.term.write('\b \b')
+      this.xterm.write('\b \b')
     }
   }
 
-  term: Terminal
+  xterm: Terminal
 
-  constructor(term: Terminal) {
-    this.term = term
+  constructor(xterm: Terminal) {
+    this.xterm = xterm
   }
 
   async showLoadingUi() {
@@ -55,9 +55,9 @@ export class TerminalSpinner {
     this.lastFlagIndex = index
     const loadingFlagStr = this.flags[index]
     if (this.lastFlagIndex < 0) {
-      this.term.write(loadingFlagStr)
+      this.xterm.write(loadingFlagStr)
     } else {
-      this.term.write(`\b${loadingFlagStr}`)
+      this.xterm.write(`\b${loadingFlagStr}`)
     }
     await this.showLoadingUi()
   }
