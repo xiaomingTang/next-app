@@ -1,9 +1,11 @@
 import { parseCommand } from './utils/command'
 import { ShDir, ShFile } from './ShAsset'
-import { linkAddon } from './utils/link'
+import { applyAnsiStyle, linkAddon } from './utils/link'
 
 import { toError } from '@/errors/utils'
 import { SilentError } from '@/errors/SilentError'
+
+import ansiStyles from 'ansi-styles'
 
 import type { Terminal } from '@xterm/xterm'
 import type { ShFileSystem } from './ShFileSystem'
@@ -11,7 +13,8 @@ import type { ShCallableCommandConstructor } from './ShCallableCommand'
 
 export class ShTerminal {
   get prefix() {
-    return `${linkAddon.dir(this.fileSystem.context.path)} > `
+    const prefixStr = ` ${linkAddon.dir(this.fileSystem.context.path)} > `
+    return applyAnsiStyle(prefixStr, ansiStyles.bgBlack) + ' '
   }
 
   command = ''
