@@ -166,12 +166,7 @@ export class TermProvider {
         vt.command = commandStrArr.slice(0, commandStrArr.length - 1).join('')
 
         if (lastChar !== '\n') {
-          let offset = stringWidth(lastChar)
-          while (offset > 0) {
-            // 光标退格
-            xterm.write('\b \b')
-            offset -= 1
-          }
+          xterm.write('\b \b'.repeat(stringWidth(lastChar)))
         } else {
           const lines = vt.command.split(/\r\n|\r|\n/g)
           let offset = stringWidth(lines[lines.length - 1])
@@ -256,7 +251,7 @@ export class TermProvider {
         xterm.write(
           `载入本地文件可以直接拖拽到页面，也可以调用 ${linkAddon.cmd('upload')} 命令\r\n`
         )
-        xterm.write(`输入 help ${linkAddon.cmd('查看帮助', 'help')}\r\n`)
+        xterm.write(`输入 ${linkAddon.cmd('help')} 查看帮助\r\n`)
         xterm.write(`\r\n${prefix}`)
         break
       } catch (_) {
