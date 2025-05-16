@@ -4,10 +4,6 @@ import { linkAddon } from '../utils/link'
 import type { ShCallableCommandProps } from '../ShCallableCommand'
 
 export class Help extends ShSimpleCallableCommand {
-  usage = 'help'
-
-  description = 'Display help information'
-
   override async execute() {
     const msg = [
       'Available commands:',

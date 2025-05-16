@@ -27,7 +27,7 @@ export abstract class ShFileSystem {
     _path: string,
     _content: string | Uint8Array
   ): Promise<void>
-  abstract createDir(_path: string): Promise<ShDir>
+  abstract createDir(_path: string, _options?: RecursiveOptions): Promise<ShDir>
   abstract getFileOrThrow(_path: string): Promise<ShFile>
   abstract getDirOrThrow(_path: string): Promise<ShDir>
 }

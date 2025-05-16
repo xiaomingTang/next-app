@@ -144,7 +144,17 @@ export class FFmpegFileSystem implements ShFileSystem {
     }
   }
 
-  async createDir(path: string): Promise<ShDir> {
+  async createDir(
+    path: string,
+    options?: { recursive?: boolean }
+  ): Promise<ShDir> {
+    const recursive = options?.recursive ?? false
+    if (recursive) {
+      const parentPath = resolvePath(path, '..')
+      if (parentPath !== path && parentPath !== '/') {
+        await this.createDir(parentPath, options)
+      }
+    }
     const ok = await this.ffmpeg.createDir(path)
     if (!ok) {
       throw new Error(`FFmpeg failed to create dir: ${path}`)

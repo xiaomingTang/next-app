@@ -12,15 +12,7 @@ export interface ShCallableCommandProps {
 }
 
 export class ShCallableCommand implements ShCallableCommandProps {
-  /**
-   * 用法描述（如 `usage: ls [OPTION]... [FILE]`）
-   */
-  usage = ''
-
-  /**
-   * 命令描述（如 `List information about the FILEs`）
-   */
-  description = ''
+  descriptions: string[] = []
 
   rawCommand: string
 
