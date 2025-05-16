@@ -107,10 +107,10 @@ export class ShSimpleCallableCommand extends ShCallableCommand {
       return this
     }
     if (this.usage) {
-      this.vt.log(`${this.usage}\r\n`)
+      this.vt.log(`用法: ${this.usage}\r\n`)
     }
     if (this.description) {
-      this.vt.log(`${this.description}\r\n`)
+      this.vt.log(`功能描述: ${this.description}\r\n`)
     }
     const optionDescs = this.options.map((option) =>
       [
