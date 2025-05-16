@@ -14,6 +14,8 @@ export class ShTerminal {
     return `${this.fileSystem.context.path} > `
   }
 
+  command = ''
+
   xterm: Terminal
 
   commands: Record<string, ShCallableCommandConstructor> = {}
@@ -23,6 +25,11 @@ export class ShTerminal {
   constructor(props: { fileSystem: ShFileSystem; xterm: Terminal }) {
     this.xterm = props.xterm
     this.fileSystem = props.fileSystem
+  }
+
+  prompt = () => {
+    this.command = ''
+    this.xterm.write(`\r\n${this.prefix}`)
   }
 
   log(...args: (ShFile | ShDir | string)[]) {

@@ -1,0 +1,256 @@
+import { FFmpegFileSystem } from './FFmpegFileSystem'
+
+import { ShTerminal } from '../ShTerminal'
+import { FFMPEG_SOURCES, getFFmpeg, loadFFmpeg } from '../../to-gif/getFFmpeg'
+import { Ls } from '../commands/ls'
+import { Cd } from '../commands/cd'
+import { Pwd } from '../commands/pwd'
+import { Cat } from '../commands/cat'
+import { Mkdir } from '../commands/mkdir'
+import { Touch } from '../commands/touch'
+import { Echo } from '../commands/echo'
+import { Rm } from '../commands/rm'
+import { Vi } from '../commands/vi'
+import { Vim } from '../commands/vim'
+import { Edit } from '../commands/edit'
+import { Help } from '../commands/help'
+import { FFmpegCmd } from '../commands/ffmpeg'
+import { Clear } from '../commands/clear'
+import { XT_DIR_PREFIX, XT_FILE_PREFIX } from '../utils/link'
+import { TerminalSpinner } from '../utils/loading'
+
+import { toError } from '@/errors/utils'
+import { SilentError } from '@/errors/SilentError'
+
+import { Terminal } from '@xterm/xterm'
+import { noop } from 'lodash-es'
+import stringWidth from 'string-width'
+
+import type { ITerminal } from '@xterm/xterm/src/browser/Types'
+
+type TerminalWithCore = Terminal & {
+  _core: ITerminal
+}
+
+export class TermProvider {
+  private _term: TerminalWithCore | null = null
+
+  get term() {
+    if (!this._term) {
+      this._term = new Terminal({
+        cursorBlink: true,
+      }) as TerminalWithCore
+      // prefetch
+      void import('@xterm/addon-fit')
+    }
+    return this._term
+  }
+
+  private _termSpinner: TerminalSpinner | null = null
+
+  get termSpinner() {
+    if (!this._termSpinner) {
+      this._termSpinner = new TerminalSpinner(this.term)
+    }
+    return this._termSpinner
+  }
+
+  private _vt: ShTerminal | null = null
+
+  get vt() {
+    if (!this._vt) {
+      const ffmpeg = getFFmpeg()
+      const fileSystem = new FFmpegFileSystem({
+        ffmpeg,
+      })
+      const { term } = this
+      const _vt = new ShTerminal({ fileSystem, xterm: term })
+      _vt.registerCommand('cat', Cat)
+      _vt.registerCommand('cd', Cd)
+      _vt.registerCommand('clear', Clear)
+      _vt.registerCommand('echo', Echo)
+      _vt.registerCommand('help', Help)
+      _vt.registerCommand('edit', Edit)
+      _vt.registerCommand('ffmpeg', FFmpegCmd)
+      _vt.registerCommand('ls', Ls)
+      _vt.registerCommand('mkdir', Mkdir)
+      _vt.registerCommand('pwd', Pwd)
+      _vt.registerCommand('rm', Rm)
+      _vt.registerCommand('touch', Touch)
+      _vt.registerCommand('vi', Vi)
+      _vt.registerCommand('vim', Vim)
+      this._vt = _vt
+      ffmpeg.on('log', (data) => {
+        _vt.xterm.write(`[ffmpeg] ${data.message}\r\n`)
+      })
+      void TermProvider.loadFFmpegAndLog(term)
+    }
+    return this._vt
+  }
+
+  initTerm(container?: HTMLElement | null) {
+    if (!container) {
+      return noop
+    }
+    const { term, vt, termSpinner } = this
+    term.open(container)
+    void TermProvider.toUseFitAddon(term)
+
+    term.options.linkHandler = {
+      activate: (_e, uri) => {
+        if (uri.startsWith(XT_FILE_PREFIX)) {
+          if (vt.command.trim().length > 0) {
+            vt.prompt()
+          }
+          term.input(`edit ${uri.slice(XT_FILE_PREFIX.length)}`)
+          term.input('\r')
+          return
+        }
+        if (uri.startsWith(XT_DIR_PREFIX)) {
+          if (vt.command.trim().length > 0) {
+            vt.prompt()
+          }
+          term.input(`cd ${uri.slice(XT_DIR_PREFIX.length)}`)
+          term.input('\r')
+        }
+      },
+      hover: noop,
+      leave: noop,
+      allowNonHttpProtocols: true,
+    }
+
+    const ffmpeg = getFFmpeg()
+
+    term.onData((e) => {
+      if (!ffmpeg.loaded) {
+        return
+      }
+      if (termSpinner.loading) {
+        return
+      }
+      // Ctrl+C
+      if (e === '\u0003') {
+        term.write('^C')
+        vt.prompt()
+        return
+      }
+      // Backspace (DEL)
+      if (e === '\u007F') {
+        // Do not delete the prompt
+        const commandStrArr = Array.from(vt.command)
+        const lastChar = commandStrArr[commandStrArr.length - 1]
+        if (lastChar === undefined) {
+          return
+        }
+        vt.command = commandStrArr.slice(0, commandStrArr.length - 1).join('')
+
+        if (lastChar !== '\n') {
+          let offset = stringWidth(lastChar)
+          while (offset > 0) {
+            // 光标退格
+            term.write('\b \b')
+            offset -= 1
+          }
+        } else {
+          const lines = vt.command.split(/\r\n|\r|\n/g)
+          let offset = stringWidth(lines[lines.length - 1])
+          if (lines.length <= 1) {
+            offset += stringWidth(vt.prefix)
+          }
+          // 上移一行
+          term.write('\x1b[1A')
+          // 向右移动到行尾
+          term.write(`\x1b[${offset}C`)
+        }
+
+        return
+      }
+      // Enter
+      if (e === '\r') {
+        termSpinner.start()
+        term.write(`\r\n`)
+        void vt
+          .executeCommand(vt.command)
+          .then(() => {
+            termSpinner.end()
+            term.write(`\r\n`)
+          })
+          .catch((e) => {
+            termSpinner.end()
+            const err = toError(e)
+            if (SilentError.isSilentError(err)) {
+              return
+            }
+            term.write(err.message)
+            term.write(`\r\n`)
+          })
+          .finally(() => {
+            vt.prompt()
+          })
+        return
+      }
+      const lines = e.split(/\r\n|\r|\n/g)
+      if (lines.length > 1) {
+        for (let i = 0; i < lines.length; i += 1) {
+          const line = lines[i]
+          if (i === 0) {
+            term.write(`${line}\r\n`)
+            vt.command += `${line}\n`
+          } else if (i === lines.length - 1) {
+            // 最后一行不需要换行
+            term.write(`${line}`)
+            vt.command += `${line}`
+          } else {
+            term.write(`${line}\r\n`)
+            vt.command += `${line}\n`
+          }
+        }
+        return
+      }
+      if (
+        (e >= String.fromCharCode(0x20) && e <= String.fromCharCode(0x7e)) ||
+        e >= '\u00a0'
+      ) {
+        vt.command += e
+        term.write(e)
+      }
+    })
+    return () => {
+      this.vt.prompt()
+    }
+  }
+
+  static async loadFFmpegAndLog(terminal: TerminalWithCore) {
+    const spinner = new TerminalSpinner(terminal)
+    for (let i = 0; i < FFMPEG_SOURCES.length; i += 1) {
+      const source = FFMPEG_SOURCES[i]
+      terminal.write(`正在加载 ffmpeg [源 ${i + 1}]...\r\n`)
+      spinner.start()
+      try {
+        await loadFFmpeg(source)
+        spinner.end()
+        terminal.write(`ffmpeg 加载已完成\r\n`)
+        terminal.write('欢迎使用 FFmpeg 命令行工具\r\n')
+        terminal.write('输入 help 查看帮助\r\n')
+        terminal.write('\r\n/ > ')
+        break
+      } catch (_) {
+        spinner.end()
+        terminal.write(`ffmpeg 加载失败\r\n`)
+        if (i === FFMPEG_SOURCES.length - 1) {
+          terminal.write('所有源加载失败，请检查网络连接\r\n')
+        }
+      }
+    }
+  }
+
+  static async toUseFitAddon(term: TerminalWithCore) {
+    // @xterm/addon-fit ssr 下有问题
+    const { FitAddon } = await import('@xterm/addon-fit')
+    const fitAddon = new FitAddon()
+    term.loadAddon(fitAddon)
+    fitAddon.fit()
+  }
+}
+
+export const sharedTerm = new TermProvider()
