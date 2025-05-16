@@ -47,7 +47,8 @@ export class ShTerminal {
         return
       }
       if (ShDir.isDir(arg)) {
-        xterm.write(`${linkAddon.dir(arg.name || arg.path, arg.path)}/\t`)
+        const txt = arg.name ? `${arg.name}/` : arg.path
+        xterm.write(`${linkAddon.dir(txt, arg.path)}\t`)
         return
       }
     })
