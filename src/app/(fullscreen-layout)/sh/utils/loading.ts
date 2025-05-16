@@ -50,6 +50,15 @@ export class TerminalSpinner {
     }
   }
 
+  async withLoading(fn: () => Promise<void> | void) {
+    this.start()
+    try {
+      await fn()
+    } finally {
+      this.end()
+    }
+  }
+
   xterm: Terminal
 
   constructor(xterm: Terminal) {
