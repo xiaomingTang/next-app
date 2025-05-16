@@ -211,7 +211,7 @@ export class TermProvider {
       }
     })
     return () => {
-      this.vt.prompt()
+      this.dispose()
     }
   }
 
@@ -249,6 +249,12 @@ export class TermProvider {
     const fitAddon = new FitAddon()
     xterm.loadAddon(fitAddon)
     fitAddon.fit()
+  }
+
+  dispose() {
+    this._xterm = null
+    this._vt = null
+    this._termSpinner = null
   }
 }
 
