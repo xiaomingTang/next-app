@@ -1,7 +1,9 @@
 import { useEventCallback } from '@mui/material'
 import { useEffect } from 'react'
 
-export function useKeyDown(callback: (e: KeyboardEvent) => void) {
+export function useKeyDown(
+  callback: (e: KeyboardEvent) => void | Promise<void>
+) {
   const callbackRef = useEventCallback(callback)
 
   useEffect(() => {
@@ -12,7 +14,7 @@ export function useKeyDown(callback: (e: KeyboardEvent) => void) {
   }, [callbackRef])
 }
 
-export function useKeyUp(callback: (e: KeyboardEvent) => void) {
+export function useKeyUp(callback: (e: KeyboardEvent) => void | Promise<void>) {
   const callbackRef = useEventCallback(callback)
 
   useEffect(() => {
@@ -23,7 +25,9 @@ export function useKeyUp(callback: (e: KeyboardEvent) => void) {
   }, [callbackRef])
 }
 
-export function useKeyPress(callback: (e: KeyboardEvent) => void) {
+export function useKeyPress(
+  callback: (e: KeyboardEvent) => void | Promise<void>
+) {
   const callbackRef = useEventCallback(callback)
 
   useEffect(() => {
