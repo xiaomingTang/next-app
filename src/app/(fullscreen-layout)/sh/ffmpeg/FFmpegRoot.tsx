@@ -6,7 +6,7 @@ import { sharedTerm } from './TermProvider'
 
 import { getFFmpeg } from '../../to-gif/getFFmpeg'
 import { resolvePath } from '../utils/path'
-import { applyAnsiStyle } from '../utils/link'
+import { ansi } from '../utils/link'
 
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCatcherHandler'
@@ -14,7 +14,6 @@ import { cat } from '@/errors/catchAndToast'
 import { dedup } from '@/utils/array'
 
 import { Box } from '@mui/material'
-import ansiStyles from 'ansi-styles'
 
 export function FFmpegRoot() {
   useGlobalFileCatcherHandler.useUpdateHintText('载入文件')
@@ -47,7 +46,7 @@ export function FFmpegRoot() {
           sharedTerm.xterm.write(`\r\n完成载入 ${dedupedCount} 个文件`)
           if (files.length > dedupedCount) {
             sharedTerm.xterm.write(
-              `（${files.length - dedupedCount} 个${applyAnsiStyle('同名文件', ansiStyles.bold)}被忽略）`
+              `（${files.length - dedupedCount} 个${ansi.bold('同名文件')}被忽略）`
             )
           }
         } else {

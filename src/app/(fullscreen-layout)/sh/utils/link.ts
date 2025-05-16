@@ -1,40 +1,40 @@
-import ansiStyles, { type CSPair } from 'ansi-styles'
+import ansiStyles from 'ansi-styles'
+
+import type { BackgroundColor, ForegroundColor, Modifier } from 'ansi-styles'
 
 export const XT_FILE_PREFIX = 'sh_file://'
 export const XT_DIR_PREFIX = 'sh_dir://'
 export const XT_CMD_PREFIX = 'sh_cmd://'
 
+type CsPairKey = keyof (Modifier & ForegroundColor & BackgroundColor)
+
+type AnsiMap = Record<CsPairKey, (input: string) => string>
+
+export const ansi = new Proxy<AnsiMap>({} as AnsiMap, {
+  get: (_, k) => (input: string) => {
+    const csPair = ansiStyles[k as CsPairKey]
+    if (!csPair) {
+      return input
+    }
+    return `${csPair.open}${input}${csPair.close}`
+  },
+})
+
 function rawLink(text: string, url = text) {
   return `\x1b]8;;${url}\x07${text}\x1b]8;;\x07`
 }
 
-export function applyAnsiStyle(text: string, ...styles: CSPair[]) {
-  return styles.reduce((acc, style) => {
-    const { open, close } = style
-    return `${open}${acc}${close}`
-  }, text)
-}
-
 export const linkAddon = {
   link(text: string, url = text) {
-    return applyAnsiStyle(rawLink(text, url), ansiStyles.italic)
+    return ansi.italic(rawLink(text, url))
   },
   file(text: string, url = text) {
-    return applyAnsiStyle(
-      rawLink(text, XT_FILE_PREFIX + url),
-      ansiStyles.blueBright
-    )
+    return ansi.blueBright(rawLink(text, XT_FILE_PREFIX + url))
   },
   dir(text: string, url = text) {
-    return applyAnsiStyle(
-      rawLink(text, XT_DIR_PREFIX + url),
-      ansiStyles.cyanBright
-    )
+    return ansi.cyanBright(rawLink(text, XT_DIR_PREFIX + url))
   },
   cmd(text: string, url = text) {
-    return applyAnsiStyle(
-      rawLink(text, XT_CMD_PREFIX + url),
-      ansiStyles.magentaBright
-    )
+    return ansi.magentaBright(rawLink(text, XT_CMD_PREFIX + url))
   },
 }
