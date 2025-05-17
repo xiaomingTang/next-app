@@ -1,4 +1,4 @@
-import { TERMINAL_INPUT_NAME_MAP } from '../ffmpeg/constants'
+import { TERMINAL_INPUT_NAME_MAP } from '../constants'
 
 import type { ShTerminal } from '../ShTerminal'
 

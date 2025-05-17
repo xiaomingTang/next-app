@@ -6,7 +6,7 @@ import { clamp } from 'lodash-es'
 
 import type { Terminal } from '@xterm/xterm'
 
-export class TerminalSpinner {
+export class XtermSpinner {
   n = 0
 
   fps = 10

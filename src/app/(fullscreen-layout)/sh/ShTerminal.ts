@@ -1,6 +1,6 @@
 import { ShDir, ShFile } from './ShAsset'
-import { ansi, linkAddon } from './utils/link'
-import { TerminalSpinner } from './utils/loading'
+import { ansi, linkAddon } from './utils/ansi'
+import { XtermSpinner } from './XtermSpinner'
 
 import type { Terminal } from '@xterm/xterm'
 import type { ShFileSystem } from './ShFileSystem'
@@ -14,18 +14,39 @@ export class ShTerminal {
 
   command = ''
 
-  xterm: Terminal
-
-  spinner: TerminalSpinner
+  spinner: XtermSpinner
 
   commands: Record<string, ShCallableCommandConstructor> = {}
 
-  fileSystem: ShFileSystem
+  private _xtermBuilder: () => Terminal
 
-  constructor(props: { fileSystem: ShFileSystem; xterm: Terminal }) {
-    this.xterm = props.xterm
-    this.fileSystem = props.fileSystem
-    this.spinner = new TerminalSpinner(this.xterm)
+  private _xterm: Terminal | null = null
+
+  get xterm() {
+    if (!this._xterm) {
+      this._xterm = this._xtermBuilder()
+    }
+    return this._xterm
+  }
+
+  private _fileSystemBuilder: () => ShFileSystem
+
+  private _fileSystem: ShFileSystem | null = null
+
+  get fileSystem() {
+    if (!this._fileSystem) {
+      this._fileSystem = this._fileSystemBuilder()
+    }
+    return this._fileSystem
+  }
+
+  constructor(props: {
+    xtermBuilder: () => Terminal
+    fileSystemBuilder: () => ShFileSystem
+  }) {
+    this._xtermBuilder = props.xtermBuilder
+    this._fileSystemBuilder = props.fileSystemBuilder
+    this.spinner = new XtermSpinner(this.xterm)
   }
 
   prompt = () => {
@@ -56,7 +77,7 @@ export class ShTerminal {
     console.debug('[sh]: ', ...args)
   }
 
-  registerCommand(name: string, c: ShCallableCommandConstructor) {
-    this.commands[name] = c
+  dispose() {
+    this._xterm = null
   }
 }

@@ -2,11 +2,11 @@
 
 import '@xterm/xterm/css/xterm.css'
 
-import { sharedTerm } from './TermProvider'
+import { sharedTerm } from './FFmpegTerminal'
 
 import { getFFmpeg } from '../../to-gif/getFFmpeg'
 import { resolvePath } from '../utils/path'
-import { ansi } from '../utils/link'
+import { ansi } from '../utils/ansi'
 
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCatcherHandler'
@@ -25,13 +25,13 @@ export function FFmpegRoot() {
         throw new Error('稍等片刻，FFmpeg 正在加载中...')
       }
       sharedTerm.xterm.write(`\r\n正在载入文件...`)
-      sharedTerm.vt.spinner.start()
+      sharedTerm.spinner.start()
       let dedupedCount = files.length
       let succeed = false
       try {
         const dedupedFiles = dedup(files, (f) => f.name)
         dedupedCount = dedupedFiles.length
-        const contextPath = sharedTerm.vt.fileSystem.context.path
+        const contextPath = sharedTerm.fileSystem.context.path
         await Promise.all(
           dedupedFiles.map(async (f) => {
             const uint8Array = new Uint8Array(await f.arrayBuffer())
@@ -41,7 +41,7 @@ export function FFmpegRoot() {
         )
         succeed = true
       } finally {
-        sharedTerm.vt.spinner.end()
+        sharedTerm.spinner.end()
         if (succeed) {
           sharedTerm.xterm.write(`\r\n完成载入 ${dedupedCount} 个文件`)
           if (files.length > dedupedCount) {
@@ -52,7 +52,7 @@ export function FFmpegRoot() {
         } else {
           sharedTerm.xterm.write(`\r\n载入失败`)
         }
-        sharedTerm.vt.prompt()
+        sharedTerm.prompt()
       }
     })
   )

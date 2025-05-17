@@ -1,5 +1,5 @@
 import { ShSimpleCallableCommand } from '../ShSimpleCallableCommand'
-import { ansi, linkAddon } from '../utils/link'
+import { ansi, linkAddon } from '../utils/ansi'
 
 import type { ShCallableCommandProps } from '../ShCallableCommand'
 
