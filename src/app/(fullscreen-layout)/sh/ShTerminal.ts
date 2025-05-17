@@ -2,11 +2,15 @@ import { ShDir, ShFile } from './ShAsset'
 import { ansi, linkAddon } from './utils/ansi'
 import { XtermSpinner } from './XtermSpinner'
 
+import { EventEmitter } from 'eventemitter3'
+
 import type { Terminal } from '@xterm/xterm'
 import type { ShFileSystem } from './ShFileSystem'
 import type { ShCallableCommandConstructor } from './ShCallableCommand'
 
-export class ShTerminal {
+export class ShTerminal extends EventEmitter<{
+  terminated: void
+}> {
   get prefix() {
     const prefixStr = ` ${linkAddon.dir(this.fileSystem.context.path)} > `
     return ansi.bgBlack(prefixStr) + ' '
@@ -44,6 +48,7 @@ export class ShTerminal {
     xtermBuilder: () => Terminal
     fileSystemBuilder: () => ShFileSystem
   }) {
+    super()
     this._xtermBuilder = props.xtermBuilder
     this._fileSystemBuilder = props.fileSystemBuilder
     this.spinner = new XtermSpinner(this.xterm)

@@ -3,6 +3,7 @@ import { FFmpegFileSystem } from './FFmpegFileSystem'
 import { ShTerminal } from '../ShTerminal'
 import { FFMPEG_SOURCES, getFFmpeg, loadFFmpeg } from '../../to-gif/getFFmpeg'
 import {
+  ansi,
   linkAddon,
   XT_CMD_PREFIX,
   XT_DIR_PREFIX,
@@ -40,15 +41,18 @@ async function loadFFmpegAndLog(vt: FFmpegTerminal) {
           .catch(() => false),
       0
     )
-    xterm.write(`正在加载 ffmpeg [${source.name} 源]...\r\n`)
+    xterm.write(`正在加载 ffmpeg ${ansi.gray(`[${source.name} 源]`)}...\r\n`)
     const res = await fn()
     if (res) {
       xterm.write(`ffmpeg 加载已完成\r\n`)
-      xterm.write('欢迎使用 FFmpeg 命令行工具\r\n')
+      xterm.write('欢迎使用 ffmpeg 命令行工具\r\n')
+      xterm.write(
+        `你可以在 ffmpeg 命令执行期间按 ${ansi.yellowBright('Ctrl + C')} 中止，但其内的文件会全部${ansi.yellowBright('还原')}\r\n`
+      )
       xterm.write(
         `载入本地文件可以直接拖拽到页面，也可以调用 ${linkAddon.cmd('upload')} 命令\r\n`
       )
-      xterm.write(`输入 ${linkAddon.cmd('help')} 查看帮助\r\n`)
+      xterm.write(`输入 ${linkAddon.cmd('help')} 查看更多帮助\r\n`)
       xterm.write(`\r\n${prefix}`)
       return
     } else {
