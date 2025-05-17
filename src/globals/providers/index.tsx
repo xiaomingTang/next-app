@@ -84,6 +84,7 @@ const muiTheme = createTheme({
     },
     MuiTypography: {
       defaultProps: {
+        fontFamily: 'inherit',
         fontSize: 'inherit',
         fontWeight: 'normal',
       },

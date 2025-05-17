@@ -1,3 +1,9 @@
+import { resolveCDN } from '@/utils/url'
+
+function font(p: string) {
+  return resolveCDN(`/public/static/fonts/${p}`)
+}
+
 /**
  * 部分样式，为了强制使用 style-loader，所以放在这里
  */
@@ -21,6 +27,38 @@ export function GlobalStyles() {
 :root[data-dark] {
   --custom-fg: #bdbdbd;
   --custom-bg: #29323d;
+}
+
+@font-face {
+  font-family: SourceCodePro;
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('${font('SourceCodePro/SourceCodePro-Medium.ttf')}') format('truetype');
+}
+
+@font-face {
+  font-family: SourceCodePro;
+  font-style: italic;
+  font-weight: 500;
+  font-display: swap;
+  src: url('${font('SourceCodePro/SourceCodePro-MediumItalic.ttf')}') format('truetype');
+}
+
+@font-face {
+  font-family: SourceCodePro;
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('${font('SourceCodePro/SourceCodePro-Bold.ttf')}') format('truetype');
+}
+
+@font-face {
+  font-family: SourceCodePro;
+  font-style: italic;
+  font-weight: 700;
+  font-display: swap;
+  src: url('${font('SourceCodePro/SourceCodePro-BoldItalic.ttf')}') format('truetype');
 }
 
 html, body {
