@@ -2,11 +2,13 @@ export interface ParsedCommandLine {
   name: string
   args: string[]
   env: Record<string, string>
+  errors: Error[]
 }
 
 export function parseCommand(input: string): ParsedCommandLine {
   const env: Record<string, string> = {}
   const args: string[] = []
+  const errors: Error[] = []
 
   let current = ''
   let inSingleQuote = false
@@ -53,7 +55,7 @@ export function parseCommand(input: string): ParsedCommandLine {
   }
 
   if (escaping || inSingleQuote || inDoubleQuote) {
-    throw new Error('Unclosed quote or unfinished escape in command')
+    errors.push(new Error('Unclosed quote or unfinished escape in command'))
   }
 
   flush()
@@ -76,11 +78,11 @@ export function parseCommand(input: string): ParsedCommandLine {
   }
 
   if (realArgs.length === 0) {
-    throw new Error('Command not found')
+    errors.push(new Error('Command not found'))
   }
 
-  const name = realArgs[0]
+  const name = realArgs[0] ?? ''
   const finalArgs = realArgs.slice(1)
 
-  return { name, args: finalArgs, env }
+  return { name, args: finalArgs, env, errors }
 }

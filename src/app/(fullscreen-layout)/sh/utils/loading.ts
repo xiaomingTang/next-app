@@ -1,5 +1,8 @@
+import { InfiniteTimeout } from '@/constants'
+
 import { sleepMs } from '@zimi/utils'
 import stringWidth from 'string-width'
+import { clamp } from 'lodash-es'
 
 import type { Terminal } from '@xterm/xterm'
 
@@ -8,20 +11,7 @@ export class TerminalSpinner {
 
   fps = 10
 
-  flags = [
-    '\\',
-    '|',
-    '/.',
-    '-.',
-    '\\..',
-    '|..',
-    '/...',
-    '-...',
-    '\\..',
-    '|..',
-    '/.',
-    '-.',
-  ]
+  flags = ['\\', '|', '/', '-']
 
   lastFlagIndex = -1
 
@@ -46,17 +36,42 @@ export class TerminalSpinner {
       this.n = 0
       this.loadingStartTime = 0
       const w = stringWidth(this.flags[this.lastFlagIndex] ?? '')
-      this.xterm.write('\b \b'.repeat(w))
+      this.xterm.write(' \b'.repeat(w))
     }
   }
 
-  async withLoading(fn: () => Promise<void> | void) {
-    this.start()
-    try {
-      await fn()
-    } finally {
-      this.end()
+  withLoading<Arg extends unknown[], Res>(
+    fn: (...args: Arg) => Res | Promise<Res>,
+    delayMs = 300
+  ) {
+    return async (...args: Arg) => {
+      let timer = -1
+      if (delayMs > 0) {
+        timer = +setTimeout(
+          () => {
+            timer = -1
+            this.start()
+          },
+          clamp(delayMs, 0, InfiniteTimeout)
+        )
+      } else {
+        this.start()
+      }
+      try {
+        return await fn(...args)
+      } finally {
+        if (timer < 0) {
+          this.end()
+        } else {
+          clearTimeout(timer)
+          timer = -1
+        }
+      }
     }
+  }
+
+  async runWithLoading<Res>(fn: () => Res | Promise<Res>, delayMs = 300) {
+    return await this.withLoading(fn, delayMs)()
   }
 
   xterm: Terminal
@@ -66,20 +81,18 @@ export class TerminalSpinner {
   }
 
   async showLoadingUi() {
-    await sleepMs(20)
     if (this.n <= 0) {
       return
     }
     const diff = Date.now() - this.loadingStartTime
     const curIndex = Math.floor((diff / 1000) * this.fps) % this.flags.length
-    if (curIndex === this.lastFlagIndex) {
-      await this.showLoadingUi()
-      return
+    if (curIndex !== this.lastFlagIndex) {
+      const curFlagStr = this.flags[curIndex]
+      const w = stringWidth(curFlagStr ?? '')
+      this.xterm.write(`${curFlagStr}${'\b'.repeat(w)}`)
+      this.lastFlagIndex = curIndex
     }
-    const curFlagStr = this.flags[curIndex]
-    const w = stringWidth(this.flags[this.lastFlagIndex] ?? '')
-    this.xterm.write(`${'\b \b'.repeat(w)}${curFlagStr}`)
-    this.lastFlagIndex = curIndex
+    await sleepMs(20)
     await this.showLoadingUi()
   }
 }

@@ -1,5 +1,4 @@
 import { FFmpegFileSystem } from './FFmpegFileSystem'
-import { TERMINAL_INPUT_MAP } from './constants'
 
 import { ShTerminal } from '../ShTerminal'
 import { FFMPEG_SOURCES, getFFmpeg, loadFFmpeg } from '../../to-gif/getFFmpeg'
@@ -9,11 +8,13 @@ import {
   XT_DIR_PREFIX,
   XT_FILE_PREFIX,
 } from '../utils/link'
-import { TerminalSpinner } from '../utils/loading'
 import { commands } from '../commands'
-
-import { toError } from '@/errors/utils'
-import { SilentError } from '@/errors/SilentError'
+import { commandCompletion, pathCompletion } from '../plugins/completion'
+import { backspace, backspaceWord } from '../plugins/backspace'
+import { terminate } from '../plugins/terminate'
+import { history } from '../plugins/history'
+import { textInput } from '../plugins/textInput'
+import { excute } from '../plugins/excute'
 
 import { Terminal } from '@xterm/xterm'
 import { noop } from 'lodash-es'
@@ -38,15 +39,6 @@ export class TermProvider {
       void import('@xterm/addon-fit')
     }
     return this._xterm
-  }
-
-  private _termSpinner: TerminalSpinner | null = null
-
-  get termSpinner() {
-    if (!this._termSpinner) {
-      this._termSpinner = new TerminalSpinner(this.xterm)
-    }
-    return this._termSpinner
   }
 
   private _vt: ShTerminal | null = null
@@ -75,7 +67,8 @@ export class TermProvider {
     if (!container) {
       return noop
     }
-    const { xterm, vt, termSpinner } = this
+    const { xterm, vt } = this
+    const { spinner } = vt
     xterm.open(container)
     void TermProvider.toUseFitAddon(xterm)
 
@@ -119,96 +112,21 @@ export class TermProvider {
 
     const ffmpeg = getFFmpeg()
 
-    xterm.onData((e) => {
+    xterm.onData(async (e) => {
       if (!ffmpeg.loaded) {
         return
       }
-      if (termSpinner.loading) {
+      terminate(e, vt)
+      if (spinner.loading) {
         return
       }
-      const namedInput = TERMINAL_INPUT_MAP[e]
-      switch (namedInput) {
-        case 'ctrl+c':
-          xterm.write('^C')
-          vt.prompt()
-          return
-        case 'backspace':
-          vt.backspace()
-          return
-        case 'ctrl+backspace':
-        case 'alt+backspace': {
-          vt.backspaceWord()
-          return
-        }
-        default:
-          break
-      }
-      // TAB(命令补全)
-      if (e === '\t') {
-        const curTrimedCommand = vt.command.trim()
-        if (!curTrimedCommand) {
-          return
-        }
-        const commandStrArr = commands.map(([name]) => name)
-        const matchedCommand = commandStrArr.find((command) =>
-          command.startsWith(curTrimedCommand)
-        )
-        if (!matchedCommand) {
-          return
-        }
-        const rest = matchedCommand.slice(curTrimedCommand.length)
-        xterm.input(`${rest} `)
-      }
-      // Enter(执行命令)
-      if (e === '\r') {
-        termSpinner.start()
-        xterm.write(`\r\n`)
-        void vt
-          .executeCommand(vt.command)
-          .then(() => {
-            termSpinner.end()
-            xterm.write(`\r\n`)
-          })
-          .catch((e) => {
-            termSpinner.end()
-            const err = toError(e)
-            if (SilentError.isSilentError(err)) {
-              return
-            }
-            xterm.write(err.message)
-            xterm.write(`\r\n`)
-          })
-          .finally(() => {
-            vt.prompt()
-          })
-        return
-      }
-      // 以下是文本写入
-      const lines = e.split(/\r\n|\r|\n/g)
-      if (lines.length > 1) {
-        for (let i = 0; i < lines.length; i += 1) {
-          const line = lines[i]
-          if (i === 0) {
-            xterm.write(`${line}\r\n`)
-            vt.command += `${line}\n`
-          } else if (i === lines.length - 1) {
-            // 最后一行不需要换行
-            xterm.write(`${line}`)
-            vt.command += `${line}`
-          } else {
-            xterm.write(`${line}\r\n`)
-            vt.command += `${line}\n`
-          }
-        }
-        return
-      }
-      if (
-        (e >= String.fromCharCode(0x20) && e <= String.fromCharCode(0x7e)) ||
-        e >= '\u00a0'
-      ) {
-        vt.command += e
-        xterm.write(e)
-      }
+      backspace(e, vt)
+      backspaceWord(e, vt)
+      commandCompletion(e, vt)
+      await pathCompletion(e, vt)
+      history(e, vt)
+      textInput(e, vt)
+      await excute(e, vt)
     })
     return () => {
       this.dispose()
@@ -216,15 +134,19 @@ export class TermProvider {
   }
 
   static async loadFFmpegAndLog(vt: ShTerminal) {
-    const { xterm, prefix } = vt
-    const spinner = new TerminalSpinner(xterm)
+    const { xterm, prefix, spinner } = vt
     for (let i = 0; i < FFMPEG_SOURCES.length; i += 1) {
       const source = FFMPEG_SOURCES[i]
+      const fn = spinner.withLoading(
+        async () =>
+          loadFFmpeg(source)
+            .then(() => true)
+            .catch(() => false),
+        0
+      )
       xterm.write(`正在加载 ffmpeg [${source.name} 源]...\r\n`)
-      spinner.start()
-      try {
-        await loadFFmpeg(source)
-        spinner.end()
+      const res = await fn()
+      if (res) {
         xterm.write(`ffmpeg 加载已完成\r\n`)
         xterm.write('欢迎使用 FFmpeg 命令行工具\r\n')
         xterm.write(
@@ -232,12 +154,12 @@ export class TermProvider {
         )
         xterm.write(`输入 ${linkAddon.cmd('help')} 查看帮助\r\n`)
         xterm.write(`\r\n${prefix}`)
-        break
-      } catch (_) {
-        spinner.end()
-        xterm.write(`ffmpeg 加载失败\r\n`)
+        return
+      } else {
+        xterm.write(`加载失败\r\n`)
         if (i === FFMPEG_SOURCES.length - 1) {
           xterm.write('所有源加载失败，请检查网络连接\r\n')
+          xterm.write(`\r\n${prefix}`)
         }
       }
     }
@@ -254,7 +176,6 @@ export class TermProvider {
   dispose() {
     this._xterm = null
     this._vt = null
-    this._termSpinner = null
   }
 }
 

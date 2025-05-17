@@ -25,7 +25,7 @@ export function FFmpegRoot() {
         throw new Error('稍等片刻，FFmpeg 正在加载中...')
       }
       sharedTerm.xterm.write(`\r\n正在载入文件...`)
-      sharedTerm.termSpinner.start()
+      sharedTerm.vt.spinner.start()
       let dedupedCount = files.length
       let succeed = false
       try {
@@ -41,7 +41,7 @@ export function FFmpegRoot() {
         )
         succeed = true
       } finally {
-        sharedTerm.termSpinner.end()
+        sharedTerm.vt.spinner.end()
         if (succeed) {
           sharedTerm.xterm.write(`\r\n完成载入 ${dedupedCount} 个文件`)
           if (files.length > dedupedCount) {
