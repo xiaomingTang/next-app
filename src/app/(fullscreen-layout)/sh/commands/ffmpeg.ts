@@ -19,6 +19,8 @@ export class FFmpegCmd extends ShSimpleCallableCommand {
 
   onTerminated = () => {
     const ffmpeg = getFFmpeg()
+    // 经过实测，abortController signal 中断不了 ffmpeg 的 exec
+    // 只能使用 terminate 了
     ffmpeg.terminate()
     void ffmpeg.load()
   }
