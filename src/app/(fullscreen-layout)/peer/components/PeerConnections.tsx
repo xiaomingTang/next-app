@@ -68,35 +68,21 @@ export function PeerConnections() {
   })
 
   const onSubmit = useMemo(
-    () =>
-      handleSubmit(
-        cat(async (e) => {
-          const { peerId } = e
-          if (typeof peerId === 'string' && peerId) {
-            usePeer.connect(peerId)
-            // 发起连接后立即移除 url 上的 searchParam
-            const url = new URL(window.location.href)
-            url.searchParams.delete(TARGET_PID_SEARCH_PARAM)
-            window.history.replaceState(null, '', url)
-          }
-        })
-      ),
+    () => handleSubmit(cat((e) => usePeer.connect(e.peerId))),
     [handleSubmit]
   )
 
   // 从 url 上获取 target peer id, 并填充到输入框中
   useEffect(() => {
-    let timer = -1
     const url = new URL(window.location.href)
     const target = url.searchParams.get(TARGET_PID_SEARCH_PARAM)
     if (target) {
       setValue('peerId', target)
-      timer = window.setTimeout(() => {
-        void onSubmit()
-      }, 0)
-    }
-    return () => {
-      window.clearTimeout(timer)
+      usePeer.connect(target)
+      // 发起连接后立即移除 url 上的 searchParam
+      const url = new URL(window.location.href)
+      url.searchParams.delete(TARGET_PID_SEARCH_PARAM)
+      window.history.replaceState(null, '', url)
     }
   }, [onSubmit, setValue])
 
@@ -180,6 +166,12 @@ export function PeerConnections() {
             />
           </FormControl>
         )}
+        rules={{
+          required: {
+            value: true,
+            message: '必填项',
+          },
+        }}
       />
       <Button
         type='submit'
