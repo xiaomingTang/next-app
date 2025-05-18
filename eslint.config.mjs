@@ -21,7 +21,7 @@ export default [
       '**/out/',
       '**/public/',
       '**/node_modules/',
-      'src/generated-prisma-client'
+      'src/generated-prisma-client',
     ],
   },
   ...compat.extends(
@@ -38,21 +38,6 @@ export default [
 
       parserOptions: {
         project: './tsconfig.json',
-      },
-    },
-
-    settings: {
-      'import/resolver': {
-        node: {
-          extensions: ['.ts', '.tsx'],
-        },
-
-        alias: {
-          map: [
-            ['@', './src'],
-            ['@ROOT', '.'],
-          ],
-        },
       },
     },
 
