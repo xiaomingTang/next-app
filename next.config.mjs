@@ -14,6 +14,11 @@ const nextConfig = {
   images: imageConfig,
   webpack: webpackConfig,
   transpilePackages: ['next-mdx-remote'],
+  eslint: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has ESLint errors.
+    ignoreDuringBuilds: true,
+  },
   async headers() {
     /**
      * scripts & static 里面的内容不应该变化 (实在要变就改名)

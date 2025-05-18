@@ -81,11 +81,21 @@ export function hsl2Rgb(
   // 辅助函数，用于计算对应的 RGB 值
   function hueToRgb(p: number, q: number, t: number): number {
     let rt = t
-    if (rt < 0) rt += 1
-    if (rt > 1) rt -= 1
-    if (rt < 1 / 6) return p + (q - p) * 6 * rt
-    if (rt < 1 / 2) return q
-    if (rt < 2 / 3) return p + (q - p) * (2 / 3 - rt) * 6
+    if (rt < 0) {
+      rt += 1
+    }
+    if (rt > 1) {
+      rt -= 1
+    }
+    if (rt < 1 / 6) {
+      return p + (q - p) * 6 * rt
+    }
+    if (rt < 1 / 2) {
+      return q
+    }
+    if (rt < 2 / 3) {
+      return p + (q - p) * (2 / 3 - rt) * 6
+    }
     return p
   }
 

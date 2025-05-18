@@ -8,6 +8,9 @@ const compat = new FlatCompat({
   allConfig: js.configs.all,
 })
 
+/**
+ * @type {import('@eslint/eslintrc').FlatCompat[]} eslint.config.mjs
+ */
 export default [
   {
     ignores: [
@@ -35,12 +38,10 @@ export default [
       parser: tsParser,
       ecmaVersion: 5,
       sourceType: 'script',
-
       parserOptions: {
         project: './tsconfig.json',
       },
     },
-
     rules: {
       // 'deprecation/deprecation': 'warn',
       'no-console': 'off',
@@ -49,17 +50,13 @@ export default [
       'no-dupe-class-members': 'off',
       'no-param-reassign': 'off',
       'import/prefer-default-export': 'off',
-
       '@typescript-eslint/no-empty-object-type': 'off',
-
       '@typescript-eslint/consistent-type-imports': 'error',
       'no-multiple-empty-lines': 'error',
-
       'import/order': [
         'warn',
         {
           'newlines-between': 'always',
-
           groups: [
             'index',
             'sibling',
@@ -72,9 +69,8 @@ export default [
           ],
         },
       ],
-
       'no-underscore-dangle': 'off',
-
+      'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         {
@@ -85,7 +81,6 @@ export default [
           destructuredArrayIgnorePattern: '^_',
         },
       ],
-
       '@typescript-eslint/naming-convention': [
         'error',
         {
@@ -94,15 +89,15 @@ export default [
           leadingUnderscore: 'allowSingleOrDouble',
         },
       ],
-
       '@typescript-eslint/no-floating-promises': 'error',
-
       'no-void': [
         'error',
         {
           allowAsStatement: true,
         },
       ],
+      'no-plusplus': ['warn', { allowForLoopAfterthoughts: true }],
+      curly: ['error', 'all'],
     },
   },
 ]
