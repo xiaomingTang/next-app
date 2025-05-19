@@ -9,7 +9,6 @@
     "postinstall": "npx prisma generate",
     "prepare": "husky || true",
     "dev": "concurrently -n next.js,peerjs-server \"next dev\" \"peerjs --port 4000 --key peerjs --path /peer-server\"",
-    "dev:ssl": "concurrently -n next.js,peerjs-server,ssl-client,ssl-server \"next dev\" \"peerjs --port 4000 --key peerjs --path /peer-server\" \"local-ssl-proxy --source 3001 --target 3000\" \"local-ssl-proxy --source 4001 --target 4000\"",
     "build": "next build",
     "server": "concurrently -n next.js,peerjs-server \"node server.js\" \"peerjs --port 4000 --key peerjs --path /peer-server\"",
     "test": "eslint && tsc --noEmit",
