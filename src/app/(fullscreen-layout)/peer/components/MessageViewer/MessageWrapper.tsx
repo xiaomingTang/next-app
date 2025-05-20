@@ -4,8 +4,8 @@ import { formatTime } from '@/utils/transformer'
 import { Box, alpha } from '@mui/material'
 import { common } from '@mui/material/colors'
 
+import type { Message } from '../../type'
 import type { BoxProps } from '@mui/material'
-import type { MessageIns } from '../../type'
 
 const clearBoth = (
   <Box
@@ -33,7 +33,7 @@ export function MessageWrapperWithRole({
   ...restProps
 }: BoxProps & {
   role: 'master' | 'guest'
-  message: Pick<MessageIns, 'date'>
+  message: Pick<Message, 'timestamp'>
 }) {
   if (role === 'guest') {
     return (
@@ -50,7 +50,7 @@ export function MessageWrapperWithRole({
             },
           }}
         >
-          {formatTime(message.date)}
+          {formatTime(message.timestamp)}
         </Box>
         <Box
           sx={{
@@ -82,7 +82,7 @@ export function MessageWrapperWithRole({
           },
         }}
       >
-        {formatTime(message.date)}
+        {formatTime(message.timestamp)}
       </Box>
       {clearBoth}
       <Box

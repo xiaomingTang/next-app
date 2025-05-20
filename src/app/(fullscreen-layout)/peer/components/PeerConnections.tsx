@@ -1,4 +1,4 @@
-import { usePeer } from '../store/usePeer'
+import { usePeer } from '../store'
 import { useConnectionState } from '../hooks/usePeerState'
 import {
   CONNECTION_STATE_MAP,
@@ -50,8 +50,9 @@ function useMediaConnectionHandler(connection?: MediaConnection | null) {
 }
 
 export function PeerConnections() {
-  const { activeConnectionInfo, connectionInfos } = usePeer()
-  const connection = activeConnectionInfo?.dc.out ?? null
+  const connectionInfos = Object.values(usePeer((state) => state.members))
+  const activeConnectionInfo = usePeer.useActiveMember()
+  const connection = activeConnectionInfo?.dc ?? null
   const state = useConnectionState(connection)
   const { handleSubmit, control, setValue } = useForm<{
     peerId: string
@@ -78,11 +79,12 @@ export function PeerConnections() {
     const target = url.searchParams.get(TARGET_PID_SEARCH_PARAM)
     if (target) {
       setValue('peerId', target)
-      usePeer.connect(target)
-      // 发起连接后立即移除 url 上的 searchParam
-      const url = new URL(window.location.href)
-      url.searchParams.delete(TARGET_PID_SEARCH_PARAM)
-      window.history.replaceState(null, '', url)
+      void usePeer.connect(target).then(() => {
+        // 发起连接后立即移除 url 上的 searchParam
+        const url = new URL(window.location.href)
+        url.searchParams.delete(TARGET_PID_SEARCH_PARAM)
+        window.history.replaceState(null, '', url)
+      })
     }
   }, [onSubmit, setValue])
 
@@ -138,23 +140,18 @@ export function PeerConnections() {
                         >
                           {connectionInfos.map((item) => (
                             <MenuItem
-                              key={item.targetPeerId}
+                              key={item.peerId}
                               selected={
-                                item.targetPeerId ===
-                                activeConnectionInfo?.targetPeerId
+                                item.peerId === activeConnectionInfo?.peerId
                               }
                               onClick={() => {
-                                usePeer.setState((prev) => ({
-                                  activeConnectionInfo:
-                                    prev.connectionInfos.find(
-                                      (c) =>
-                                        c.targetPeerId === item.targetPeerId
-                                    ) ?? null,
-                                }))
+                                usePeer.setState({
+                                  activeMemberId: item.peerId,
+                                })
                                 setAnchorEl(null)
                               }}
                             >
-                              {item.targetPeerId}
+                              {item.peerId}
                             </MenuItem>
                           ))}
                         </Menu>

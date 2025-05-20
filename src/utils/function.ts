@@ -2,6 +2,8 @@ import { sleepMs } from './time'
 
 import { ENV_CONFIG } from '@/config'
 
+import type EventEmitter from 'eventemitter3'
+
 export type Func<Args extends unknown[] = unknown[], T = unknown> = (
   ...args: Args
 ) => T
@@ -40,4 +42,28 @@ export function uniqueFunc<Args extends unknown[], Ret>(
   func: Func<Args, Ret>
 ): Func<Args, Ret> {
   return (...args: Args) => func(...args)
+}
+
+export function exclusiveCallbacks<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  EE extends EventEmitter<any, any>,
+  Tuple = Parameters<EE['on']>,
+>(emitter: EE, callbackMap: Tuple[]) {
+  const storedCallbackMap = [] as Tuple[]
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  callbackMap.forEach(([event, callback]) => {
+    const onEvent = (...args: unknown[]) => {
+      callback(...args)
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      storedCallbackMap.forEach(([e, c]) => {
+        emitter.off(e, c)
+      })
+      storedCallbackMap.length = 0
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    storedCallbackMap.push([event, onEvent] as any)
+    emitter.on(event, onEvent)
+  })
 }

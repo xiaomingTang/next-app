@@ -1,5 +1,5 @@
 import { usePeerError, usePeerState } from '../hooks/usePeerState'
-import { usePeer } from '../store/usePeer'
+import { usePeer } from '../store'
 import { PEER_ERROR_MAP, TARGET_PID_SEARCH_PARAM } from '../constants'
 
 import { useIsOnline } from '@/hooks/useIsOnline'
@@ -11,29 +11,30 @@ import { copyToClipboard } from '@/utils/copyToClipboard'
 import QrCode2Icon from '@mui/icons-material/QrCode2'
 import { Button, Stack, Typography } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
-import toast from 'react-hot-toast'
 import { QRCodeSVG } from 'qrcode.react'
 import { noop } from 'lodash-es'
+import { useMemo } from 'react'
 
 export function SelfPeer() {
   const isOnline = useIsOnline()
   const isVisible = useVisibilityState()
-  const { peer, peerId } = usePeer()
+  const { peer } = usePeer()
+  const peerId = peer.id
   const { disconnected: peerDisconnected } = usePeerState(peer)
   const peerError = usePeerError(peer)
+  const localUrl = useMemo(() => {
+    const url = new URL(window.location.href)
+    url.searchParams.set(TARGET_PID_SEARCH_PARAM, peerId)
+    return url
+  }, [peerId])
 
-  useListen(isOnline, () => {
-    if (isOnline && peerError?.type === 'network') {
+  useListen(`${isOnline}-${isVisible}-${peerError?.type === 'network'}`, () => {
+    if (isOnline && isVisible && peerError?.type === 'network') {
       peer.reconnect()
     }
   })
 
-  useListen(isVisible, () => {
-    if (isVisible && peerError?.type === 'network') {
-      peer.reconnect()
-    }
-  })
-
+  // TODO: 万一 ws 连接延迟导致 peerId 生成有问题，需要提供重试
   return (
     <Stack
       direction='row'
@@ -51,11 +52,9 @@ export function SelfPeer() {
           width: '100%',
         }}
         onClick={() => {
-          if (!peerId) {
-            toast.error('未连接到 peer 服务器')
-            return
-          }
-          void copyToClipboard(peerId)
+          void copyToClipboard(
+            localUrl.searchParams.get(TARGET_PID_SEARCH_PARAM) ?? ''
+          )
         }}
       >
         我的 ID:
@@ -75,17 +74,11 @@ export function SelfPeer() {
         color={peerDisconnected ? 'error' : 'primary'}
         aria-label='分享当前页面连接二维码'
         onClick={() => {
-          if (!peerId) {
-            toast.error('未连接到 peer 服务器')
-            return
-          }
-          const url = new URL(window.location.href)
-          url.searchParams.set(TARGET_PID_SEARCH_PARAM, peerId)
           openSimpleModal({
             title: '扫码连接',
             content: (
               <Stack sx={{ justifyContent: 'center', alignItems: 'center' }}>
-                <QRCodeSVG value={url.href} size={148} />
+                <QRCodeSVG value={localUrl.href} size={148} />
               </Stack>
             ),
           }).catch(noop)

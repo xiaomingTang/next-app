@@ -1,4 +1,4 @@
-import { usePeer } from '../../store/usePeer'
+import { usePeer } from '../../store'
 import { useMediaConnectionState } from '../../hooks/usePeerState'
 
 import { StreamVideo } from '@D/blog/components/StreamVideo'
@@ -72,8 +72,7 @@ function geneSx(size: Size): SxProps<Theme> {
 }
 
 export function VideoCallElem() {
-  const { activeConnectionInfo } = usePeer()
-  const connection = activeConnectionInfo?.mc ?? null
+  const connection = usePeer.useActiveMember()?.mc || null
   const state = useMediaConnectionState(connection)
   const [size, setSize] = useState<Size>('full')
 

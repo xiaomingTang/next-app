@@ -1,128 +1,84 @@
-import type {
-  BaseConnectionErrorType,
-  DataConnection,
-  DataConnectionErrorType,
-  MediaConnection,
-  PeerError,
-} from 'peerjs'
+import type { DataConnection, MediaConnection } from 'peerjs'
+import type Peer from 'peerjs'
 
-export interface InOutConnection {
-  /**
-   * 对方 peer id
-   */
-  targetPeerId: string
-  /**
-   * DataConnection
-   */
-  dc: {
-    in: DataConnection | null
-    out: DataConnection | null
+/**
+ * 消息状态
+ */
+export type MessageStatus =
+  | 'pending' // 已创建，待发送
+  | 'sent' // 已发送(但未收到回执)
+  | 'received' // 对端已收到
+  | 'failed' // 发送失败
+
+export type ConnectionStatus =
+  | 'disconnected'
+  | 'connecting'
+  | 'connected'
+  | 'reconnecting'
+
+export interface PayloadMap {
+  text: string
+  image: File
+  audio: File
+  video: File
+  file: File
+  system: {
+    type: string
+    content: unknown
   }
-  /**
-   * MediaConnection
-   */
-  mc: MediaConnection | null
+  /** 回执消息，仅用于更新消息状态，不应添加到消息列表 */
+  receipt: {
+    receiptForId: string
+    value: 'received'
+  }
+  /** 心跳消息，仅用于保持连接，不应添加到消息列表 */
+  ping: null
 }
 
-export interface BaseMessageIns {
+export type MessageType = keyof PayloadMap
+
+export interface BaseMessage<K extends keyof PayloadMap, P = PayloadMap[K]> {
   id: string
-  date: Date
-  src: string
-  dest: string
+  timestamp: number
+  from: string
+  to: string
+  status?: MessageStatus
+  type: K
+  payload: P
 }
 
-export interface BaseFileMessageIns extends BaseMessageIns {
-  value: Blob
-  /**
-   * mime type (可能是空字符串)
-   */
-  contentType: string
-  size: number
-  /**
-   * 文件名, 可能是空字符串
-   */
-  name: string
+export type TextMessage = BaseMessage<'text'>
+export type ImageMessage = BaseMessage<'image'>
+export type AudioMessage = BaseMessage<'audio'>
+export type VideoMessage = BaseMessage<'video'>
+export type FileMessage = BaseMessage<'file'>
+export type SystemMessage = BaseMessage<'system'>
+export type ReceiptMessage = BaseMessage<'receipt'>
+export type PingMessage = BaseMessage<'ping'>
+
+export type Message =
+  | TextMessage
+  | ImageMessage
+  | AudioMessage
+  | VideoMessage
+  | FileMessage
+  | SystemMessage
+  | ReceiptMessage
+  | PingMessage
+
+export interface PeerMember {
+  peerId: string
+  messages: Message[]
+  status: ConnectionStatus
+  dc: DataConnection | null
+  mc: MediaConnection | null
+  stream: MediaStream | null
 }
 
-export interface TextMessageIns extends BaseMessageIns {
-  type: 'text'
-  value: string
-}
-
-export interface ImageMessageIns extends BaseFileMessageIns {
-  type: 'image'
-}
-
-export interface AudioMessageIns extends BaseFileMessageIns {
-  type: 'audio'
-}
-
-export interface VideoMessageIns extends BaseFileMessageIns {
-  type: 'video'
-}
-
-export interface FileMessageIns extends BaseFileMessageIns {
-  type: 'file'
-}
-
-export type FileLikeMessageIns =
-  | ImageMessageIns
-  | AudioMessageIns
-  | VideoMessageIns
-  | FileMessageIns
-
-export type MessageIns = TextMessageIns | FileLikeMessageIns
-
-interface EventsWithError<ErrorType extends string> {
-  error: (error: PeerError<`${ErrorType}`>) => void
-}
-
-interface BaseConnectionEvents<
-  ErrorType extends string = BaseConnectionErrorType,
-> extends EventsWithError<ErrorType> {
-  /**
-   * Emitted when either you or the remote peer closes the connection.
-   *
-   * ```ts
-   * connection.on('close', () => { ... });
-   * ```
-   */
-  close: () => void
-  /**
-   * ```ts
-   * connection.on('error', (error) => { ... });
-   * ```
-   */
-  error: (error: PeerError<`${ErrorType}`>) => void
-  iceStateChanged: (state: RTCIceConnectionState) => void
-}
-
-export interface DataConnectionEvents
-  extends EventsWithError<DataConnectionErrorType | BaseConnectionErrorType>,
-    BaseConnectionEvents<DataConnectionErrorType | BaseConnectionErrorType> {
-  /**
-   * Emitted when data is received from the remote peer.
-   */
-  data: (data: unknown) => void
-  /**
-   * Emitted when the connection is established and ready-to-use.
-   */
-  open: () => void
-}
-
-export interface MediaConnectionEvents extends BaseConnectionEvents<never> {
-  /**
-   * Emitted when a connection to the PeerServer is established.
-   *
-   * ```ts
-   * mediaConnection.on('stream', (stream) => { ... });
-   * ```
-   */
-  stream: (stream: MediaStream) => void
-  /**
-   * Emitted when the auxiliary data channel is established.
-   * After this event, hanging up will close the connection cleanly on the remote peer.
-   * @beta
-   */
-  willCloseOnRemote: () => void
+export interface PeerState {
+  peer: Peer
+  members: {
+    [peerId: string]: PeerMember
+  }
+  activeMemberId: string | null
 }

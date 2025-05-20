@@ -6,8 +6,7 @@ import { MediaMessageElem } from './MediaMessageElem'
 import { FileMessageElem } from './FileMessageElem'
 import { VideoCallElem } from './VideoCallElem'
 
-import { usePeerMessage } from '../../store/useMessage'
-import { usePeer } from '../../store/usePeer'
+import { usePeer } from '../../store'
 
 import { dark } from '@/utils/theme'
 import { useListen } from '@/hooks/useListen'
@@ -21,9 +20,7 @@ import { PhotoProvider } from 'react-photo-view'
 import { noop } from 'lodash-es'
 
 export function MessageViewer() {
-  const { peer, activeConnectionInfo } = usePeer()
-  const { messages } = usePeerMessage()
-  const messageList = messages[activeConnectionInfo?.targetPeerId ?? ''] ?? []
+  const messageList = usePeer.useActiveMember()?.messages ?? []
   const containerRef = useRef<HTMLElement>(null)
   const [previewVisible, setPreviewVisible] = useState(false)
   const closeRef = useRef(noop)
@@ -31,8 +28,6 @@ export function MessageViewer() {
   useInjectHistory(previewVisible, () => {
     closeRef.current()
   })
-
-  usePeerMessage.useInit(peer)
 
   useListen(messageList, () => {
     const container = containerRef.current
@@ -83,6 +78,11 @@ export function MessageViewer() {
               return <MediaMessageElem key={item.id} {...item} />
             case 'file':
               return <FileMessageElem key={item.id} {...item} />
+            // 暂不处理 system 消息
+            case 'system':
+            case 'receipt':
+            case 'ping':
+              break
             default:
               assertNever(item)
               return <></>

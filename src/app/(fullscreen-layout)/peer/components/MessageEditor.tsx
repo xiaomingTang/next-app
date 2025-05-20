@@ -1,8 +1,7 @@
-import { usePeer } from '../store/usePeer'
 import { ALL_MESSAGE_TYPES } from '../constants'
+import { usePeer } from '../store'
 
 import { cat } from '@/errors/catchAndToast'
-import { toError } from '@/errors/utils'
 import { useGlobalFileCatcherHandler } from '@/layout/components/useGlobalFileCatcherHandler'
 import { restrictPick } from '@/utils/array'
 import { AnchorProvider } from '@/components/AnchorProvider'
@@ -18,13 +17,11 @@ import MicIcon from '@mui/icons-material/Mic'
 import VideocamIcon from '@mui/icons-material/Videocam'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 
-import type { BaseMessageIns, FileLikeMessageIns } from '../type'
-
 const MAX_PREVIEW_ABLE_SIZE = 100 * MB_SIZE
 const MAX_FILE_SIZE = 10000 * MB_SIZE
 
 export function MessageEditor() {
-  const { activeConnectionInfo } = usePeer()
+  const activeConnectionInfo = usePeer.useActiveMember()
   const { handleSubmit, control, setValue } = useForm<{
     inputText: string
   }>({
@@ -52,14 +49,16 @@ export function MessageEditor() {
         if (f.size > MAX_FILE_SIZE) {
           throw new Error('暂不支持发送大于 100M 的文件')
         }
-        const fileMessage: Omit<FileLikeMessageIns, keyof BaseMessageIns> = {
-          type: f.size > MAX_PREVIEW_ABLE_SIZE ? 'file' : type,
-          value: f,
-          contentType: f.type,
-          size: f.size,
-          name: f.name,
+        if (f.size > MAX_PREVIEW_ABLE_SIZE) {
+          return usePeer.send({
+            type: 'file',
+            payload: f,
+          })
         }
-        return usePeer.send(fileMessage)
+        return usePeer.send({
+          type,
+          payload: f,
+        })
       })
     )
 
@@ -81,16 +80,12 @@ export function MessageEditor() {
             toast.error('请输入一些内容')
             return
           }
-          try {
-            // @TODO: 最好能跟踪消息发送状态 (loading / success / error)
-            await usePeer.send({
-              type: 'text',
-              value: trimmedText,
-            })
-            setValue('inputText', '')
-          } catch (error) {
-            toast.error(toError(error).message)
-          }
+          // @TODO: 最好能跟踪消息发送状态 (loading / success / error)
+          await usePeer.send({
+            type: 'text',
+            payload: trimmedText,
+          })
+          setValue('inputText', '')
         })
       ),
     [handleSubmit, setValue]
@@ -193,17 +188,14 @@ export function MessageEditor() {
                         key='语音通话'
                         disabled
                         onClick={cat(async () => {
-                          if (!activeConnectionInfo?.mc?.open) {
-                            throw new Error('当前连接不可用')
-                          }
                           setAnchorEl(null)
                           const stream = await getUserMedia({
                             audio: {
                               echoCancellation: true,
                             },
                           })
-                          usePeer.callPeer(
-                            activeConnectionInfo?.targetPeerId ?? '',
+                          await usePeer.callPeer(
+                            activeConnectionInfo?.peerId ?? '',
                             stream
                           )
                         })}
@@ -212,10 +204,8 @@ export function MessageEditor() {
                       </MenuItem>
                       <MenuItem
                         key='视频通话'
+                        disabled
                         onClick={cat(async () => {
-                          if (!activeConnectionInfo?.mc?.open) {
-                            throw new Error('当前连接不可用')
-                          }
                           setAnchorEl(null)
                           const stream = await getUserMedia({
                             video: {
@@ -225,13 +215,13 @@ export function MessageEditor() {
                               echoCancellation: true,
                             },
                           })
-                          usePeer.callPeer(
-                            activeConnectionInfo?.targetPeerId ?? '',
+                          await usePeer.callPeer(
+                            activeConnectionInfo?.peerId ?? '',
                             stream
                           )
                         })}
                       >
-                        <VideocamIcon sx={{ mr: 1 }} /> 视频通话
+                        <VideocamIcon sx={{ mr: 1 }} /> 视频通话 (开发中)
                       </MenuItem>
                     </Menu>
                   </>
