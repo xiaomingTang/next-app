@@ -82,6 +82,7 @@ function MessageStatus({
       </Delay>
     )
   }
+  return <></>
 }
 
 export function MessageWrapperWithRole({

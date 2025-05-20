@@ -82,7 +82,7 @@ export function MessageViewer() {
             case 'system':
             case 'receipt':
             case 'ping':
-              break
+              return <></>
             default:
               assertNever(item)
               return <></>

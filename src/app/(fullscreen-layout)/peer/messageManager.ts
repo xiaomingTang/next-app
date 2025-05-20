@@ -1,5 +1,7 @@
 import { usePeer } from './store'
 
+import { assertNever } from '@/utils/function'
+
 import type { BaseMessage, Message } from './type'
 
 export interface FileLike {
@@ -51,8 +53,13 @@ export const messageManager = {
       case 'receipt':
       case 'ping':
         return data
-      default:
+      case 'image':
+      case 'audio':
+      case 'video':
+      case 'file':
         break
+      default:
+        assertNever(data)
     }
     const { payload } = data
     const newPayload: FileLike = {
@@ -77,8 +84,13 @@ export const messageManager = {
       case 'receipt':
       case 'ping':
         return data
-      default:
+      case 'image':
+      case 'audio':
+      case 'video':
+      case 'file':
         break
+      default:
+        assertNever(data)
     }
     const newPayload = new File([data.payload.bytes], data.payload.name, {
       type: data.payload.type,

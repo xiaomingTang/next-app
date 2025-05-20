@@ -29,7 +29,7 @@ interface GetRandomNameProps {
 const NAME_MAP = {
   male: [boy1, boy2],
   female: [girl1, girl2],
-}
+} as const
 
 export const generateRandomName = SA.encode(
   async (props?: GetRandomNameProps) => {
