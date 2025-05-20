@@ -1,4 +1,3 @@
-import { ALL_MESSAGE_TYPES } from '../constants'
 import { usePeer } from '../store'
 
 import { cat } from '@/errors/catchAndToast'
@@ -37,14 +36,13 @@ export function MessageEditor() {
 
     const promises = files.map(
       cat(async (f) => {
-        const type = restrictPick(
-          f.type.split('/')[0] ?? '',
-          ALL_MESSAGE_TYPES,
-          'file'
-        )
-        if (type === 'text') {
-          throw new Error('不支持的文件类型')
-        }
+        const fileTypes = [
+          'image' as const,
+          'audio' as const,
+          'video' as const,
+          'file' as const,
+        ]
+        const type = restrictPick(f.type.split('/')[0] ?? '', fileTypes, 'file')
         // TODO: 超大文件支持流式收发下载 (当前是 DataURL, 总是静默失败)
         if (f.size > MAX_FILE_SIZE) {
           throw new Error('暂不支持发送大于 100M 的文件')
