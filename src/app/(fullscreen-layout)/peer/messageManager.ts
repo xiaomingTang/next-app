@@ -89,7 +89,6 @@ export const messageManager = {
     }
   },
   async handler(e: unknown) {
-    console.log('messageManager.handler', e)
     if (!isMessageLike(e)) {
       console.error('Invalid message format', e)
       return

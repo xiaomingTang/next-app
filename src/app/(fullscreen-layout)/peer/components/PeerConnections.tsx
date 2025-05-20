@@ -1,15 +1,11 @@
 import { usePeer } from '../store'
 import { useConnectionState } from '../hooks/usePeerState'
-import {
-  CONNECTION_STATE_MAP,
-  CONNECTION_STATE_STATUS_MAP,
-  TARGET_PID_SEARCH_PARAM,
-} from '../constants'
+import { CONNECTION_STATE_MAP, TARGET_PID_SEARCH_PARAM } from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { useListen } from '@/hooks/useListen'
 import { AnchorProvider } from '@/components/AnchorProvider'
-import { openSimpleModal } from '@/components/SimpleModal'
+import { isValidUrl } from '@/utils/url'
 
 import {
   Button,
@@ -25,7 +21,6 @@ import {
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useMemo } from 'react'
-import { noop } from 'lodash-es'
 import toast from 'react-hot-toast'
 
 import type { MediaConnection } from 'peerjs'
@@ -69,7 +64,21 @@ export function PeerConnections() {
   })
 
   const onSubmit = useMemo(
-    () => handleSubmit(cat((e) => usePeer.connect(e.peerId))),
+    () =>
+      handleSubmit(
+        cat((e) => {
+          let peerId = e.peerId
+          if (!isValidUrl(e.peerId)) {
+            peerId = e.peerId
+          } else {
+            const url = new URL(e.peerId)
+            peerId = url.searchParams.get(TARGET_PID_SEARCH_PARAM) ?? ''
+          }
+          if (peerId) {
+            return usePeer.connect(peerId)
+          }
+        })
+      ),
     [handleSubmit]
   )
 
@@ -174,19 +183,6 @@ export function PeerConnections() {
         type='submit'
         variant='outlined'
         color={connection ? CONNECTION_STATE_MAP[state].color : 'primary'}
-        onClick={() => {
-          if (CONNECTION_STATE_STATUS_MAP[state] === 'failed') {
-            openSimpleModal({
-              title: '提示',
-              content: (
-                <ol style={{ listStyle: 'disc' }}>
-                  <li>请检查连接 ID 是否正确 以及 确认对方连接是否可用；</li>
-                  <li>如果使用了 VPN, 请关闭 VPN 后重试；</li>
-                </ol>
-              ),
-            }).catch(noop)
-          }
-        }}
       >
         {!connection && '连接'}
         {connection && CONNECTION_STATE_MAP[state].text}

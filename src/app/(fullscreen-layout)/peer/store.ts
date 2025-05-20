@@ -44,7 +44,6 @@ const useRawPeer = create<PeerState>(() => {
 
 export const usePeer = withStatic(useRawPeer, {
   async connect(peerId: string) {
-    console.log('connect', peerId)
     const { peer } = useRawPeer.getState()
     await peerWaitUntil.peerOpen(peer)
     const { members: prevMembers } = useRawPeer.getState()
@@ -81,10 +80,15 @@ export const usePeer = withStatic(useRawPeer, {
     peerId,
     type,
     payload,
+    messageId,
   }: {
     peerId?: string
     type: K
     payload: PayloadMap[K]
+    /**
+     * 如果指定了 messageId，则表示是重发该消息
+     */
+    messageId?: string
   }) {
     peerId = peerId || usePeer.getState().activeMemberId || ''
     if (!peerId) {
@@ -113,16 +117,37 @@ export const usePeer = withStatic(useRawPeer, {
     }
     const message = {
       ...messageWithoutId,
-      id: peerIds.messageId(messageWithoutId),
+      id: messageId ?? peerIds.messageId(messageWithoutId),
       status: 'pending',
     } as Message
-    usePeer.pushMessage(peerId, message)
+    if (messageId) {
+      usePeer.updateMessage(member, message)
+    } else {
+      usePeer.pushMessage(peerId, message)
+    }
     await peerWaitUntil.connectionOpen(member.dc)
-    console.log('send message', message)
     await member.dc.send(await messageManager.encode(message))
     usePeer.updateMessage(peerId, {
       id: message.id,
       status: 'sent',
+    })
+  },
+  async resend({ peerId, messageId }: { peerId?: string; messageId: string }) {
+    peerId = peerId || usePeer.getState().activeMemberId || ''
+    const { members } = useRawPeer.getState()
+    const member = members[peerId]
+    if (!member) {
+      throw new Error('没有可用的连接')
+    }
+    const message = member.messages.find((m) => m.id === messageId)
+    if (!message) {
+      throw new Error('没有找到消息')
+    }
+    await usePeer.send({
+      peerId,
+      type: message.type,
+      payload: message.payload,
+      messageId,
     })
   },
   async callPeer(peerId: string, stream: MediaStream) {
@@ -296,13 +321,26 @@ export const usePeer = withStatic(useRawPeer, {
         console.error('没有找到成员', member)
         return prev
       }
+      const messageIndex = memberInfo.messages.findIndex(
+        (m) => m.id === message.id
+      )
+      let newMessages = [...memberInfo.messages]
+      if (messageIndex === -1) {
+        newMessages = [...newMessages, message]
+      } else {
+        newMessages = [
+          ...newMessages.slice(0, messageIndex),
+          message,
+          ...newMessages.slice(messageIndex + 1),
+        ]
+      }
       return {
         ...prev,
         members: {
           ...members,
           [peerId]: {
             ...memberInfo,
-            messages: [...memberInfo.messages, message],
+            messages: newMessages,
           },
         },
       }

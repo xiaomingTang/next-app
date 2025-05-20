@@ -75,7 +75,7 @@ export function useDataConnectionState(
     window.clearTimeout(timer)
     if (state === 'checking') {
       timer = window.setTimeout(() => {
-        console.log('connection timeout')
+        console.error('connection timeout')
         setState('failed')
       }, CONNECTION_TIMEOUT)
     }
@@ -109,7 +109,7 @@ export function useMediaConnectionState(
     window.clearTimeout(timer)
     if (state === 'checking') {
       timer = window.setTimeout(() => {
-        console.log('connection timeout')
+        console.error('connection timeout')
         setState('failed')
       }, CONNECTION_TIMEOUT)
     }

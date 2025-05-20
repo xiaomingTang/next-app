@@ -52,9 +52,7 @@ export function SelfPeer() {
           width: '100%',
         }}
         onClick={() => {
-          void copyToClipboard(
-            localUrl.searchParams.get(TARGET_PID_SEARCH_PARAM) ?? ''
-          )
+          void copyToClipboard(localUrl.href)
         }}
       >
         我的 ID:

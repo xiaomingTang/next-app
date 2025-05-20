@@ -80,7 +80,6 @@ export function MessageEditor() {
             toast.error('请输入一些内容')
             return
           }
-          // @TODO: 最好能跟踪消息发送状态 (loading / success / error)
           await usePeer.send({
             type: 'text',
             payload: trimmedText,
