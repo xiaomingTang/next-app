@@ -64,7 +64,7 @@ export function MessageViewer() {
         }}
         toolbarRender={({ onClose }) => {
           closeRef.current = onClose
-          return <></>
+          return null
         }}
       >
         {messageList.map((item) => {
@@ -82,10 +82,10 @@ export function MessageViewer() {
             case 'system':
             case 'receipt':
             case 'ping':
-              return <></>
+              return null
             default:
               assertNever(item)
-              return <></>
+              return null
           }
         })}
       </PhotoProvider>
