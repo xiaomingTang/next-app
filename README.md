@@ -45,12 +45,15 @@
 ### acme 配置
 
 - 配置好 `Tencent_SecretId` 和 `Tencent_SecretKey`
-- `acme.sh --issue -d domain.com -d "\*.domain.com" --dns dns_tencent`
-- install-cert:
+- 申请证书
   ```
-  acme.sh --install-cert -d domain \
+  acme.sh --issue -d domain.com -d "*.domain.com" --dns dns_tencent --reloadcmd "/var/reload_services.sh" --debug
+  ```
+- 安装证书
+  ```
+  acme.sh --install-cert -d domain.com -d "*.domain.com" \
       --key-file /path/to/your/customized/dir/domain.key \
       --fullchain-file /path/to/your/customized/dir/fullchain.cer \
-      --reloadcmd "sudo nginx -s reload"
+      --reloadcmd "/var/reload_services.sh"
   ```
 - 配置 nginx `ssl_certificate` & `ssl_certificate_key`
