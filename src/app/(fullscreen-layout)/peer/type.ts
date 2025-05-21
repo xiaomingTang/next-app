@@ -76,7 +76,7 @@ export interface PeerMember {
 }
 
 export interface PeerState {
-  peer: Peer
+  peer: Peer | null
   members: {
     [peerId: string]: PeerMember
   }

@@ -10,7 +10,7 @@ import type { ImageMessage } from '../../type'
 export function ImageMessageElem(message: ImageMessage) {
   const { payload: file, from: src } = message
   const dataUrl = useFile2URL(file)
-  const peerId = usePeer((state) => state.peer.id)
+  const peerId = usePeer((state) => state.peer?.id)
   const role = src === peerId ? 'master' : 'guest'
 
   return (

@@ -16,7 +16,7 @@ export function FileMessageElem(message: FileMessage) {
   const { payload: file, from: src } = message
   const { name, size } = file
   const dataUrl = useFile2URL(file)
-  const peerId = usePeer((state) => state.peer.id)
+  const peerId = usePeer((state) => state.peer?.id)
   const role = src === peerId ? 'master' : 'guest'
 
   return (

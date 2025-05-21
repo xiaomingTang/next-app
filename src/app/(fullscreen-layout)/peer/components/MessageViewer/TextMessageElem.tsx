@@ -15,7 +15,7 @@ type Props = Omit<TextMessage, 'payload'> & {
 
 export function TextMessageInnerElem(message: Props) {
   const { payload: text, from: src } = message
-  const peerId = usePeer((state) => state.peer.id)
+  const peerId = usePeer((state) => state.peer?.id)
   const role = src === peerId ? 'master' : 'guest'
 
   if (role === 'guest') {
@@ -67,7 +67,7 @@ export function TextMessageInnerElem(message: Props) {
 
 export function TextMessageElem(message: Props) {
   const { from: src } = message
-  const peerId = usePeer((state) => state.peer.id)
+  const peerId = usePeer((state) => state.peer?.id)
   const role = src === peerId ? 'master' : 'guest'
 
   return (

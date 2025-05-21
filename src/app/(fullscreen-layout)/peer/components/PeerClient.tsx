@@ -6,12 +6,19 @@ import { RequestConnectionHandler } from './RequestConnectionHandler'
 import { MessageEditor } from './MessageEditor'
 import { MessageViewer } from './MessageViewer'
 
+import { usePeer } from '../store'
+
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { STYLE } from '@/config'
 
 import { Stack } from '@mui/material'
+import { useEffect } from 'react'
 
 export function PeerClient() {
+  useEffect(() => {
+    void usePeer.init()
+  }, [])
+
   return (
     <Stack
       direction='column'

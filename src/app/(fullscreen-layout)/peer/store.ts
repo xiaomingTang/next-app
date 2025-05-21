@@ -1,13 +1,14 @@
 import { peerWaitUntil } from './utils'
 import { peerIds } from './utils'
 import { messageManager } from './messageManager'
+import { getStunCredentials } from './server'
 
 import { numberFormat } from '@/utils/numberFormat'
+import { SA } from '@/errors/utils'
 
 import { create } from 'zustand'
 import Peer, { util as peerUtil } from 'peerjs'
-import toast from 'react-hot-toast'
-import { withStatic } from '@zimi/utils'
+import { genePromiseOnce, withStatic } from '@zimi/utils'
 
 import type { MediaConnection } from 'peerjs'
 import type {
@@ -18,33 +19,58 @@ import type {
   PeerState,
 } from './type'
 
-const useRawPeer = create<PeerState>(() => {
-  const url = new URL(process.env.NEXT_PUBLIC_PEER_SERVER)
-  const secure = url.protocol === 'https:'
-  const port = numberFormat(url.port) || (secure ? 443 : 80)
-  const peerId = peerIds.peerId()
-  const peer = new Peer(peerId, {
-    // debug: 3,
-    host: url.hostname,
-    port,
-    secure,
-    path: url.pathname,
-  })
-
-  if (!peerUtil.supports.audioVideo && !peerUtil.supports.data) {
-    toast.error('你的浏览器不支持 WebRTC')
-  }
-
-  return {
-    peer,
-    members: {},
-    activeMemberId: null,
-  } as PeerState
-})
+const useRawPeer = create<PeerState>(() => ({
+  peer: null,
+  members: {},
+  activeMemberId: null,
+}))
 
 export const usePeer = withStatic(useRawPeer, {
-  async connect(peerId: string) {
+  init: genePromiseOnce(async () => {
     const { peer } = useRawPeer.getState()
+    if (peer) {
+      return peer
+    }
+    if (!peerUtil.supports.audioVideo && !peerUtil.supports.data) {
+      throw new Error('你的浏览器不支持 WebRTC')
+    }
+    console.log('peer init')
+    const res = await getStunCredentials().then(SA.decode)
+    console.log('stun: ', res)
+    console.log(
+      `turnutils_uclient -u ${res.username} -w ${res.password} -r 16px.cc 16px.cc`
+    )
+    const peerUrl = new URL(process.env.NEXT_PUBLIC_PEER_SERVER)
+    const secure = peerUrl.protocol === 'https:'
+    const port = numberFormat(peerUrl.port) || (secure ? 443 : 80)
+    const peerId = peerIds.peerId()
+    const newPeer = new Peer(peerId, {
+      // debug: 3,
+      host: peerUrl.hostname,
+      port,
+      secure,
+      path: peerUrl.pathname,
+      config: {
+        iceServers: [
+          {
+            urls: res.stun,
+          },
+          {
+            urls: res.turn,
+            username: res.username,
+            credential: res.password,
+          },
+        ],
+      },
+    })
+    await peerWaitUntil.peerOpen(newPeer)
+    useRawPeer.setState({
+      peer: newPeer,
+    })
+    return newPeer
+  }),
+  async connect(peerId: string) {
+    const peer = await usePeer.init()
     await peerWaitUntil.peerOpen(peer)
     const { members: prevMembers } = useRawPeer.getState()
     const newMembers = {
@@ -94,8 +120,12 @@ export const usePeer = withStatic(useRawPeer, {
     if (!peerId) {
       throw new Error('没有可用的连接')
     }
-    const { members, peer } = useRawPeer.getState()
+    const peer = await usePeer.init()
+    const { members } = useRawPeer.getState()
     const member = members[peerId]
+    if (!peer) {
+      throw new Error('连接尚未初始化')
+    }
     if (!member) {
       throw new Error('没有可用的连接')
     }
@@ -152,6 +182,9 @@ export const usePeer = withStatic(useRawPeer, {
   },
   async callPeer(peerId: string, stream: MediaStream) {
     const { members, peer } = useRawPeer.getState()
+    if (!peer) {
+      throw new Error('连接尚未初始化')
+    }
     if (!members[peerId]) {
       members[peerId] = {
         peerId,

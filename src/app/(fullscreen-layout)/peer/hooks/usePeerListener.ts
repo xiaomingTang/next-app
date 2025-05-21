@@ -67,17 +67,17 @@ export interface MediaConnectionEvents extends BaseConnectionEvents<never> {
 }
 
 export function usePeerListener<K extends keyof PeerEvents>(
-  instance: Peer,
+  instance: Peer | null,
   event: K,
   callback: EventEmitter.EventListener<PeerEvents, K>
 ) {
   const finalCallback = useEventCallback(callback)
 
   useEffect(() => {
-    instance.addListener(event, finalCallback)
+    instance?.addListener(event, finalCallback)
 
     return () => {
-      instance.removeListener(event, finalCallback)
+      instance?.removeListener(event, finalCallback)
     }
   }, [event, finalCallback, instance])
 }

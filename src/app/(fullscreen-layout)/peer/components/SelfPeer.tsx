@@ -9,7 +9,7 @@ import { openSimpleModal } from '@/components/SimpleModal'
 import { copyToClipboard } from '@/utils/copyToClipboard'
 
 import QrCode2Icon from '@mui/icons-material/QrCode2'
-import { Button, Stack, Typography } from '@mui/material'
+import { Button, CircularProgress, Stack, Typography } from '@mui/material'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import { QRCodeSVG } from 'qrcode.react'
 import { noop } from 'lodash-es'
@@ -19,10 +19,13 @@ export function SelfPeer() {
   const isOnline = useIsOnline()
   const isVisible = useVisibilityState()
   const { peer } = usePeer()
-  const peerId = peer.id
+  const peerId = peer?.id
   const { disconnected: peerDisconnected } = usePeerState(peer)
   const peerError = usePeerError(peer)
   const localUrl = useMemo(() => {
+    if (!peerId) {
+      return null
+    }
     const url = new URL(window.location.href)
     url.searchParams.set(TARGET_PID_SEARCH_PARAM, peerId)
     return url
@@ -30,7 +33,7 @@ export function SelfPeer() {
 
   useListen(`${isOnline}-${isVisible}-${peerError?.type === 'network'}`, () => {
     if (isOnline && isVisible && peerError?.type === 'network') {
-      peer.reconnect()
+      peer?.reconnect()
     }
   })
 
@@ -46,16 +49,20 @@ export function SelfPeer() {
     >
       <Button
         variant='outlined'
-        color={peerDisconnected ? 'error' : 'primary'}
+        disabled={!localUrl}
         title={peerError?.type && PEER_ERROR_MAP[peerError.type]}
         sx={{
           width: '100%',
         }}
         onClick={() => {
+          if (!localUrl) {
+            return
+          }
           void copyToClipboard(localUrl.href)
         }}
       >
         我的 ID:
+        {!peerId && <CircularProgress size='0.8em' sx={{ ml: 1 }} />}
         <Typography
           sx={{
             mx: 1,
@@ -65,13 +72,17 @@ export function SelfPeer() {
         >
           {peerId}
         </Typography>
-        {peerId && <ContentCopyIcon fontSize='inherit' />}
+        {localUrl && <ContentCopyIcon fontSize='inherit' />}
       </Button>
       <Button
         variant='outlined'
         color={peerDisconnected ? 'error' : 'primary'}
+        disabled={!localUrl}
         aria-label='分享当前页面连接二维码'
         onClick={() => {
+          if (!localUrl) {
+            return
+          }
           openSimpleModal({
             title: '扫码连接',
             content: (

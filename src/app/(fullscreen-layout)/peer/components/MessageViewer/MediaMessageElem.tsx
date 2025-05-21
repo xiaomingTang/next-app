@@ -9,7 +9,7 @@ import type { AudioMessage, VideoMessage } from '../../type'
 export function MediaMessageElem(message: AudioMessage | VideoMessage) {
   const { payload: file, from: src } = message
   const dataUrl = useFile2URL(file)
-  const peerId = usePeer((state) => state.peer.id)
+  const peerId = usePeer((state) => state.peer?.id)
   const role = src === peerId ? 'master' : 'guest'
   const height = message.type === 'video' ? 120 : 60
 
