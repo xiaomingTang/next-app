@@ -1,21 +1,21 @@
 import { MessageWrapperWithRole } from './MessageWrapper'
 
-import { usePeer } from '../../store/usePeer'
+import { usePeer } from '../../store'
 
 import { dark } from '@/utils/theme'
 
 import { Typography, alpha } from '@mui/material'
 import { common, blue } from '@mui/material/colors'
 
-import type { TextMessageIns } from '../../type'
+import type { TextMessage } from '../../type'
 
-type Props = Omit<TextMessageIns, 'value'> & {
-  value: React.ReactNode
+type Props = Omit<TextMessage, 'payload'> & {
+  payload: React.ReactNode
 }
 
 export function TextMessageInnerElem(message: Props) {
-  const { value: text, src } = message
-  const { peerId } = usePeer()
+  const { payload: text, from: src } = message
+  const peerId = usePeer((state) => state.peer?.id)
   const role = src === peerId ? 'master' : 'guest'
 
   if (role === 'guest') {
@@ -66,8 +66,8 @@ export function TextMessageInnerElem(message: Props) {
 }
 
 export function TextMessageElem(message: Props) {
-  const { src } = message
-  const { peerId } = usePeer()
+  const { from: src } = message
+  const peerId = usePeer((state) => state.peer?.id)
   const role = src === peerId ? 'master' : 'guest'
 
   return (

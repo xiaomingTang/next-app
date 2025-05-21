@@ -1,5 +1,5 @@
+import type { MessageType } from './type'
 import type { ButtonOwnProps } from '@mui/material'
-import type { MessageIns } from './type'
 import type { PeerErrorType } from 'peerjs'
 
 export const PEER_ERROR_MAP: Record<PeerErrorType, string> = {
@@ -59,12 +59,15 @@ export const PEER_ERROR_MAP: Record<PeerErrorType, string> = {
   webrtc: 'webrtc 错误',
 }
 
-export const ALL_MESSAGE_TYPES: MessageIns['type'][] = [
+export const ALL_MESSAGE_TYPES: MessageType[] = [
   'text',
   'image',
   'audio',
   'video',
   'file',
+  'system',
+  'ping',
+  'receipt',
 ]
 
 export const TARGET_PID_SEARCH_PARAM = 'target-pid'

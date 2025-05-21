@@ -1,7 +1,9 @@
-import { ALL_MESSAGE_TYPES } from './constants'
+import { exclusiveCallbacks } from '@/utils/function'
 
-import type { MessageIns } from './type'
-import type { DataConnection, MediaConnection } from 'peerjs'
+import { customAlphabet } from 'nanoid'
+
+import type { DataConnection, MediaConnection, Peer } from 'peerjs'
+import type { Message } from './type'
 
 /**
  * isDataConnection
@@ -21,9 +23,41 @@ export function isMC(
   return connection.type === 'media'
 }
 
-/**
- * @TODO: 判断需要更严格, 如添加唯一标识
- */
-export function isMessageIns(msg: unknown): msg is MessageIns {
-  return !!msg && ALL_MESSAGE_TYPES.includes((msg as MessageIns).type)
+const alphabet =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+const random = customAlphabet(alphabet, 12)
+
+export const peerIds = {
+  peerId: () => random(),
+  messageId: (_message: Omit<Message, 'id'>) => random(),
+}
+
+export const peerWaitUntil = {
+  peerOpen(peer: Peer) {
+    return new Promise<void>((resolve, reject) => {
+      if (peer.open) {
+        resolve()
+        return
+      }
+      exclusiveCallbacks(peer, [
+        ['open', () => resolve()],
+        ['error', (err: Error) => reject(err)],
+        ['disconnected', () => reject(new Error('peer disconnected'))],
+        ['close', () => reject(new Error('peer closed'))],
+      ])
+    })
+  },
+  connectionOpen(connection: DataConnection) {
+    return new Promise<void>((resolve, reject) => {
+      if (connection.open) {
+        resolve()
+        return
+      }
+      exclusiveCallbacks(connection, [
+        ['open', () => resolve()],
+        ['error', (err: Error) => reject(err)],
+        ['close', () => reject(new Error('peer closed'))],
+      ])
+    })
+  },
 }

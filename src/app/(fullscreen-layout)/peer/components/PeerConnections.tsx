@@ -1,15 +1,11 @@
-import { usePeer } from '../store/usePeer'
+import { usePeer } from '../store'
 import { useConnectionState } from '../hooks/usePeerState'
-import {
-  CONNECTION_STATE_MAP,
-  CONNECTION_STATE_STATUS_MAP,
-  TARGET_PID_SEARCH_PARAM,
-} from '../constants'
+import { CONNECTION_STATE_MAP, TARGET_PID_SEARCH_PARAM } from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
 import { useListen } from '@/hooks/useListen'
 import { AnchorProvider } from '@/components/AnchorProvider'
-import { openSimpleModal } from '@/components/SimpleModal'
+import { isValidUrl } from '@/utils/url'
 
 import {
   Button,
@@ -25,7 +21,6 @@ import {
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useMemo } from 'react'
-import { noop } from 'lodash-es'
 import toast from 'react-hot-toast'
 
 import type { MediaConnection } from 'peerjs'
@@ -50,8 +45,9 @@ function useMediaConnectionHandler(connection?: MediaConnection | null) {
 }
 
 export function PeerConnections() {
-  const { activeConnectionInfo, connectionInfos } = usePeer()
-  const connection = activeConnectionInfo?.dc.out ?? null
+  const connectionInfos = Object.values(usePeer((state) => state.members))
+  const activeConnectionInfo = usePeer.useActiveMember()
+  const connection = activeConnectionInfo?.dc ?? null
   const state = useConnectionState(connection)
   const { handleSubmit, control, setValue } = useForm<{
     peerId: string
@@ -70,14 +66,16 @@ export function PeerConnections() {
   const onSubmit = useMemo(
     () =>
       handleSubmit(
-        cat(async (e) => {
-          const { peerId } = e
-          if (typeof peerId === 'string' && peerId) {
-            usePeer.connect(peerId)
-            // 发起连接后立即移除 url 上的 searchParam
-            const url = new URL(window.location.href)
-            url.searchParams.delete(TARGET_PID_SEARCH_PARAM)
-            window.history.replaceState(null, '', url)
+        cat((e) => {
+          let peerId = e.peerId
+          if (!isValidUrl(e.peerId)) {
+            peerId = e.peerId
+          } else {
+            const url = new URL(e.peerId)
+            peerId = url.searchParams.get(TARGET_PID_SEARCH_PARAM) ?? ''
+          }
+          if (peerId) {
+            return usePeer.connect(peerId)
           }
         })
       ),
@@ -86,17 +84,16 @@ export function PeerConnections() {
 
   // 从 url 上获取 target peer id, 并填充到输入框中
   useEffect(() => {
-    let timer = -1
     const url = new URL(window.location.href)
     const target = url.searchParams.get(TARGET_PID_SEARCH_PARAM)
     if (target) {
       setValue('peerId', target)
-      timer = window.setTimeout(() => {
-        void onSubmit()
-      }, 0)
-    }
-    return () => {
-      window.clearTimeout(timer)
+      void usePeer.connect(target).then(() => {
+        // 发起连接后立即移除 url 上的 searchParam
+        const url = new URL(window.location.href)
+        url.searchParams.delete(TARGET_PID_SEARCH_PARAM)
+        window.history.replaceState(null, '', url)
+      })
     }
   }, [onSubmit, setValue])
 
@@ -152,23 +149,18 @@ export function PeerConnections() {
                         >
                           {connectionInfos.map((item) => (
                             <MenuItem
-                              key={item.targetPeerId}
+                              key={item.peerId}
                               selected={
-                                item.targetPeerId ===
-                                activeConnectionInfo?.targetPeerId
+                                item.peerId === activeConnectionInfo?.peerId
                               }
                               onClick={() => {
-                                usePeer.setState((prev) => ({
-                                  activeConnectionInfo:
-                                    prev.connectionInfos.find(
-                                      (c) =>
-                                        c.targetPeerId === item.targetPeerId
-                                    ) ?? null,
-                                }))
+                                usePeer.setState({
+                                  activeMemberId: item.peerId,
+                                })
                                 setAnchorEl(null)
                               }}
                             >
-                              {item.targetPeerId}
+                              {item.peerId}
                             </MenuItem>
                           ))}
                         </Menu>
@@ -180,24 +172,17 @@ export function PeerConnections() {
             />
           </FormControl>
         )}
+        rules={{
+          required: {
+            value: true,
+            message: '必填项',
+          },
+        }}
       />
       <Button
         type='submit'
         variant='outlined'
         color={connection ? CONNECTION_STATE_MAP[state].color : 'primary'}
-        onClick={() => {
-          if (CONNECTION_STATE_STATUS_MAP[state] === 'failed') {
-            openSimpleModal({
-              title: '提示',
-              content: (
-                <ol style={{ listStyle: 'disc' }}>
-                  <li>请检查连接 ID 是否正确 以及 确认对方连接是否可用；</li>
-                  <li>如果使用了 VPN, 请关闭 VPN 后重试；</li>
-                </ol>
-              ),
-            }).catch(noop)
-          }
-        }}
       >
         {!connection && '连接'}
         {connection && CONNECTION_STATE_MAP[state].text}

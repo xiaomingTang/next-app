@@ -1,0 +1,17 @@
+[
+  {
+    "// cmd": "在 host 设备上执行 npx @zimi/ssl-proxy --config /path/to/ssl-proxy-config.json",
+    "source": "https://0.0.0.0:3001",
+    "target": "http://localhost:3000",
+    "name": "main",
+    "ws": true,
+    "agent": false
+  },
+  {
+    "source": "https://0.0.0.0:4001",
+    "target": "http://localhost:4000",
+    "name": "peer",
+    "ws": true,
+    "agent": false
+  }
+]

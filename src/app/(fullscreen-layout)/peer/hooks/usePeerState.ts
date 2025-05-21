@@ -18,8 +18,14 @@ import type {
   PeerErrorType,
 } from 'peerjs'
 
-export function usePeerState(peer: Peer) {
-  const [disconnected, setDisconnected] = useState(peer.disconnected)
+export function usePeerState(peer: Peer | null) {
+  const [disconnected, setDisconnected] = useState(peer?.disconnected ?? true)
+
+  useListen(peer, () => {
+    if (peer) {
+      setDisconnected(peer.disconnected)
+    }
+  })
 
   usePeerListener(peer, 'open', () => {
     setDisconnected(false)
@@ -46,7 +52,7 @@ export function usePeerState(peer: Peer) {
   }
 }
 
-export function usePeerError(peer: Peer) {
+export function usePeerError(peer: Peer | null) {
   const { disconnected } = usePeerState(peer)
   const [error, setError] = useState<PeerError<`${PeerErrorType}`> | null>(null)
 
@@ -75,7 +81,7 @@ export function useDataConnectionState(
     window.clearTimeout(timer)
     if (state === 'checking') {
       timer = window.setTimeout(() => {
-        console.log('connection timeout')
+        console.error('connection timeout')
         setState('failed')
       }, CONNECTION_TIMEOUT)
     }
@@ -109,7 +115,7 @@ export function useMediaConnectionState(
     window.clearTimeout(timer)
     if (state === 'checking') {
       timer = window.setTimeout(() => {
-        console.log('connection timeout')
+        console.error('connection timeout')
         setState('failed')
       }, CONNECTION_TIMEOUT)
     }

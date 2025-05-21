@@ -1,7 +1,7 @@
 import { MessageWrapperWithRole } from './MessageWrapper'
 import { TextMessageInnerElem } from './TextMessageElem'
 
-import { usePeer } from '../../store/usePeer'
+import { usePeer } from '../../store'
 
 import Anchor from '@/components/Anchor'
 import { useFile2URL } from '@/utils/file'
@@ -10,12 +10,13 @@ import { friendlySize } from '@/utils/transformer'
 import { Typography } from '@mui/material'
 import FileDownloadIcon from '@mui/icons-material/FileDownload'
 
-import type { FileMessageIns } from '../../type'
+import type { FileMessage } from '../../type'
 
-export function FileMessageElem(message: FileMessageIns) {
-  const { value: file, size, name, src } = message
+export function FileMessageElem(message: FileMessage) {
+  const { payload: file, from: src } = message
+  const { name, size } = file
   const dataUrl = useFile2URL(file)
-  const { peerId } = usePeer()
+  const peerId = usePeer((state) => state.peer?.id)
   const role = src === peerId ? 'master' : 'guest'
 
   return (
@@ -23,7 +24,7 @@ export function FileMessageElem(message: FileMessageIns) {
       <TextMessageInnerElem
         {...message}
         type='text'
-        value={
+        payload={
           <Anchor
             download={name}
             href={dataUrl}

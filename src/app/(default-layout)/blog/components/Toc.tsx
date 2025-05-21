@@ -48,6 +48,9 @@ function toTree(infos: HeadingTree[]) {
   while (i < infos.length) {
     const curInfo = infos[i]
     const stackTop = stack[stack.length - 1]
+    if (!curInfo || !stackTop) {
+      break
+    }
     if (curInfo.depth > stackTop.depth) {
       stackTop.children.push(curInfo)
       stack.push(curInfo)
