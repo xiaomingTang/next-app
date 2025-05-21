@@ -7,9 +7,11 @@ import CheckIcon from '@mui/icons-material/Check'
 import IconButton from '@mui/material/IconButton'
 import Box from '@mui/material/Box'
 
+import type { HTMLAttributes } from 'react'
+
 const COPY_RESET_DELAY = 3000
 
-export function MdPre({ children }: { children: React.ReactNode }) {
+export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
   const preRef = useRef<HTMLPreElement>(null)
   const [copied, setCopied] = useState(false)
   const lastTimerRef = useRef(-1)
@@ -27,9 +29,7 @@ export function MdPre({ children }: { children: React.ReactNode }) {
 
   return (
     <Box sx={{ position: 'relative' }}>
-      <pre ref={preRef} style={{ margin: 0 }}>
-        {children}
-      </pre>
+      <pre {...props} ref={preRef} />
       <IconButton
         size='medium'
         onClick={handleCopy}
