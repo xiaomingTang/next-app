@@ -1,6 +1,6 @@
 import { exclusiveCallbacks } from '@/utils/function'
 
-import { nanoid } from 'nanoid'
+import { customAlphabet } from 'nanoid'
 
 import type { DataConnection, MediaConnection, Peer } from 'peerjs'
 import type { Message } from './type'
@@ -23,9 +23,13 @@ export function isMC(
   return connection.type === 'media'
 }
 
+const alphabet =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+const random = customAlphabet(alphabet, 12)
+
 export const peerIds = {
-  peerId: () => nanoid(),
-  messageId: (_message: Omit<Message, 'id'>) => nanoid(),
+  peerId: () => random(),
+  messageId: (_message: Omit<Message, 'id'>) => random(),
 }
 
 export const peerWaitUntil = {
