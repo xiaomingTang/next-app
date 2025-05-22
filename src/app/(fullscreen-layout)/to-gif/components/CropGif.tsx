@@ -100,6 +100,7 @@ export function CropGif({
               此处是模拟 gif, 仅用于裁切
             </Alert>
             <Box
+              key={`${realSize.width}:${realSize.height}`}
               ref={setElement}
               sx={{
                 position: 'relative',

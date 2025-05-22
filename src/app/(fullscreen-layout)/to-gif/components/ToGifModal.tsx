@@ -101,10 +101,13 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
     }),
     [preferredSize]
   )
-  const { handleSubmit, control, setValue, getValues, clearErrors, trigger } =
+  const { handleSubmit, control, setValue, getValues, trigger, watch } =
     useForm<GifConfig>({
       defaultValues: defaultConfig,
     })
+  const keepR = watch('keepOriginalRatio')
+  const curSize = watch('size')
+
   const onSubmit = handleSubmit(
     withLoading(
       cat(async (e) => {
@@ -393,19 +396,35 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                     helperText={error?.message ?? ' '}
                     sx={{ width: '100%' }}
                     {...field}
-                    onBlur={(e) => {
-                      const nextValue = numberFormat(e.target.value)
-                      if (getValues('keepOriginalRatio')) {
-                        const { width, height } = preferredSize
-                        const ratio = width / height
-                        setValue('size.height', Math.round(nextValue / ratio))
+                    onChange={cat(async (e) => {
+                      // MD getValues 返回的引用值竟然会被后面的 setValue 修改
+                      // 也太离谱了，这是为了压榨性能还是 bug?
+                      // 这里只能用 rest operator 来解决
+                      const prevSize = { ...getValues('size') }
+                      const newWidth = numberFormat(e.target.value)
+                      setValue(field.name, newWidth, {
+                        shouldValidate: true,
+                      })
+                      if (!keepR) {
+                        setValue('cropParams', {
+                          ...getValues('cropParams'),
+                          x: 0,
+                          w: newWidth,
+                        })
+                        return
                       }
-                    }}
-                    onChange={(e) => {
-                      const newValue = numberFormat(e.target.value)
-                      setValue(field.name, newValue)
-                      void trigger(field.name)
-                    }}
+                      const { width, height } = prevSize
+                      const newHeight = Math.round(newWidth * (height / width))
+                      setValue('cropParams', {
+                        x: 0,
+                        y: 0,
+                        w: newWidth,
+                        h: newHeight,
+                      })
+                      setValue('size.height', newHeight, {
+                        shouldValidate: true,
+                      })
+                    })}
                   />
                 )}
                 rules={{
@@ -437,19 +456,32 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                     helperText={error?.message ?? ' '}
                     sx={{ width: '100%' }}
                     {...field}
-                    onBlur={(e) => {
-                      const nextValue = numberFormat(e.target.value)
-                      if (getValues('keepOriginalRatio')) {
-                        const { width, height } = preferredSize
-                        const ratio = width / height
-                        setValue('size.width', Math.round(nextValue * ratio))
+                    onChange={cat(async (e) => {
+                      const prevSize = { ...getValues('size') }
+                      const newHeight = numberFormat(e.target.value)
+                      setValue(field.name, newHeight, {
+                        shouldValidate: true,
+                      })
+                      if (!keepR) {
+                        setValue('cropParams', {
+                          ...getValues('cropParams'),
+                          y: 0,
+                          h: newHeight,
+                        })
+                        return
                       }
-                    }}
-                    onChange={(e) => {
-                      const newValue = numberFormat(e.target.value)
-                      setValue(field.name, newValue)
-                      void trigger(field.name)
-                    }}
+                      const { width, height } = prevSize
+                      const newWidth = Math.round(newHeight * (width / height))
+                      setValue('cropParams', {
+                        x: 0,
+                        y: 0,
+                        w: newWidth,
+                        h: newHeight,
+                      })
+                      setValue('size.width', newWidth, {
+                        shouldValidate: true,
+                      })
+                    })}
                   />
                 )}
                 rules={{
@@ -491,11 +523,23 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                 color='primary'
                 sx={{ textDecoration: 'underline', fontWeight: 'bold' }}
                 onClick={() => {
-                  clearErrors(['size.width', 'size.height'])
                   const { width, height } = preferredSize
-                  setValue('size.width', width)
-                  setValue('size.height', height)
-                  void trigger(['size.width', 'size.height'])
+                  setValue(
+                    'size',
+                    {
+                      width,
+                      height,
+                    },
+                    {
+                      shouldValidate: true,
+                    }
+                  )
+                  setValue('cropParams', {
+                    x: 0,
+                    y: 0,
+                    w: width,
+                    h: height,
+                  })
                 }}
               >
                 使用原图尺寸
@@ -555,7 +599,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                 control={control}
                 render={({ field }) => (
                   <CropGif
-                    realSize={preferredSize}
+                    realSize={curSize}
                     images={images}
                     cropParams={field.value}
                     onChange={(value) => {
