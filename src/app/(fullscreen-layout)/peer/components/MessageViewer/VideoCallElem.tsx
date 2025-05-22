@@ -1,11 +1,12 @@
 import { usePeer } from '../../store'
-import { useMediaConnectionState } from '../../hooks/usePeerState'
 
 import { StreamVideo } from '@D/blog/components/StreamVideo'
 import { assertNever } from '@/utils/function'
+import { useListen } from '@/hooks/useListen'
 
 import { Box } from '@mui/material'
 import { useMemo, useState } from 'react'
+import toast from 'react-hot-toast'
 
 import type { SxProps, Theme } from '@mui/material'
 
@@ -14,6 +15,7 @@ type Size = 'none' | 'small' | 'medium' | 'large' | 'full'
 function geneSx(size: Size): SxProps<Theme> {
   const commonSx: SxProps<Theme> = {
     position: 'absolute',
+    zIndex: 1,
     transition: 'all .5s',
   }
 
@@ -72,19 +74,26 @@ function geneSx(size: Size): SxProps<Theme> {
 }
 
 export function VideoCallElem() {
-  const connection = usePeer.useActiveMember()?.mc || null
-  const state = useMediaConnectionState(connection)
+  const member = usePeer.useActiveMember()
+  const connection = member?.mc || null
+  const status = member?.status || null
   const [size, setSize] = useState<Size>('full')
 
+  useListen(status, (next, prev) => {
+    if (prev === 'connected' && next === 'disconnected') {
+      toast('视频已断开')
+    }
+  })
+
   const containerSx: SxProps<Theme> = useMemo(() => {
-    if (state !== 'connected') {
+    if (status !== 'connected') {
       return geneSx('none')
     }
     if (size === 'full') {
       return geneSx('full')
     }
     return geneSx('small')
-  }, [size, state])
+  }, [size, status])
 
   return (
     <>
@@ -102,12 +111,12 @@ export function VideoCallElem() {
         />
         <Box
           sx={geneSx(
-            size === 'full' && state === 'connected' ? 'small' : 'none'
+            size === 'full' && status === 'connected' ? 'small' : 'none'
           )}
         >
           <StreamVideo
-            // localStream react state should be updated when remoteStream state updated
-            key={`remoteStream active state: ${connection?.remoteStream?.active}`}
+            // localStream react state should updates when remoteStream state updated and/or size changed
+            key={`${status}-${size}`}
             mirror
             fit='contain'
             muted
@@ -115,7 +124,7 @@ export function VideoCallElem() {
           />
         </Box>
       </Box>
-      {size !== 'full' && state === 'connected' && (
+      {size !== 'full' && status === 'connected' && (
         <Box
           sx={{
             ...geneSx('small'),

@@ -183,7 +183,6 @@ export function MessageEditor() {
                       </MenuItem>
                       <MenuItem
                         key='语音通话'
-                        disabled
                         onClick={cat(async () => {
                           setAnchorEl(null)
                           const stream = await getUserMedia({
@@ -197,11 +196,10 @@ export function MessageEditor() {
                           )
                         })}
                       >
-                        <MicIcon sx={{ mr: 1 }} /> 语音通话 (开发中)
+                        <MicIcon sx={{ mr: 1 }} /> 语音通话
                       </MenuItem>
                       <MenuItem
                         key='视频通话'
-                        disabled
                         onClick={cat(async () => {
                           setAnchorEl(null)
                           const stream = await getUserMedia({
@@ -218,7 +216,7 @@ export function MessageEditor() {
                           )
                         })}
                       >
-                        <VideocamIcon sx={{ mr: 1 }} /> 视频通话 (开发中)
+                        <VideocamIcon sx={{ mr: 1 }} /> 视频通话
                       </MenuItem>
                     </Menu>
                   </>

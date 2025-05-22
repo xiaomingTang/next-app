@@ -72,7 +72,6 @@ export interface PeerMember {
   status: ConnectionStatus
   dc: DataConnection | null
   mc: MediaConnection | null
-  stream: MediaStream | null
 }
 
 export interface PeerState {

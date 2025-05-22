@@ -48,7 +48,7 @@ export function RequestConnectionHandler() {
         echoCancellation: true,
       },
     })
-    usePeer.answer(requestConnection, stream)
+    await usePeer.answer(requestConnection, stream)
   })
 
   useInjectHistory(!!requestConnection, closeDialog)

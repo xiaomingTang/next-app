@@ -83,7 +83,6 @@ export const usePeer = withStatic(useRawPeer, {
         status: 'disconnected',
         dc: null,
         mc: null,
-        stream: null,
       }
     }
     const prevMember = newMembers[peerId]
@@ -181,88 +180,71 @@ export const usePeer = withStatic(useRawPeer, {
     })
   },
   async callPeer(peerId: string, stream: MediaStream) {
-    const { members, peer } = useRawPeer.getState()
-    if (!peer) {
-      throw new Error('连接尚未初始化')
+    const peer = await usePeer.init()
+    const { members: prevMembers } = useRawPeer.getState()
+    if (!prevMembers[peerId]) {
+      throw new Error('没有找到对方的连接')
     }
-    if (!members[peerId]) {
-      members[peerId] = {
+    const mc = peer.call(peerId, stream)
+    usePeer.updateMember({
+      peerId,
+      mc,
+      status: 'connecting',
+    })
+    mc.once('stream', () => {
+      usePeer.updateMember({
         peerId,
-        messages: [],
-        status: 'disconnected',
-        dc: null,
+        status: 'connected',
+      })
+    })
+    mc.once('close', () => {
+      usePeer.updateMember({
+        peerId,
         mc: null,
-        stream: null,
-      }
-    }
-    const member = members[peerId]
-    if (!member.mc?.open) {
-      let errMsg = '连接已关闭'
-      if (member.status === 'disconnected') {
-        errMsg = '连接已断开'
-      } else if (member.status === 'connecting') {
-        errMsg = '正在连接中'
-      }
-      throw new Error(errMsg)
-    }
-    member.status = 'connecting'
-    await peerWaitUntil.peerOpen(peer)
-    member.mc = peer.call(peerId, stream)
-    member.mc.once('stream', (stream) => {
-      member.stream = stream
-      member.status = 'connected'
+        status: 'disconnected',
+      })
     })
-    member.mc.once('close', () => {
-      member.status = 'disconnected'
-      member.mc = null
-      member.stream = null
-    })
-    member.mc.once('error', (err) => {
-      member.status = 'disconnected'
-      member.mc = null
-      member.stream = null
+    mc.once('error', (err) => {
+      usePeer.updateMember({
+        peerId,
+        mc: null,
+        status: 'disconnected',
+      })
       console.error('peer call error', err)
     })
   },
-  answer(connection: MediaConnection, stream: MediaStream) {
-    const { members } = useRawPeer.getState()
-    const peerId = connection.peer
-    if (!members[peerId]) {
-      members[peerId] = {
+  async answer(mc: MediaConnection, stream: MediaStream) {
+    await usePeer.init()
+    const peerId = mc.peer
+    const { members: prevMembers } = useRawPeer.getState()
+    if (!prevMembers[peerId]) {
+      throw new Error('没有找到对方的连接')
+    }
+    usePeer.updateMember({
+      peerId,
+      mc,
+      status: 'connecting',
+    })
+    mc.answer(stream)
+    mc.once('stream', () => {
+      usePeer.updateMember({
         peerId,
-        messages: [],
-        status: 'disconnected',
-        dc: null,
+        status: 'connected',
+      })
+    })
+    mc.once('close', () => {
+      usePeer.updateMember({
+        peerId,
         mc: null,
-        stream: null,
-      }
-    }
-    const member = members[peerId]
-    if (!member.mc?.open) {
-      let errMsg = '连接已关闭'
-      if (member.status === 'disconnected') {
-        errMsg = '连接已断开'
-      } else if (member.status === 'connecting') {
-        errMsg = '正在连接中'
-      }
-      throw new Error(errMsg)
-    }
-    member.status = 'connecting'
-    member.mc = connection
-    member.mc.answer(stream)
-    member.mc.once('stream', (stream) => {
-      member.stream = stream
-      member.status = 'connected'
+        status: 'disconnected',
+      })
     })
-    member.mc.once('close', () => {
-      member.status = 'disconnected'
-      member.mc = null
-      member.stream = null
-    })
-    member.mc.once('error', (err) => {
-      member.status = 'disconnected'
-      member.mc = null
-      member.stream = null
+    mc.once('error', (err) => {
+      usePeer.updateMember({
+        peerId,
+        mc: null,
+        status: 'disconnected',
+      })
       console.error('peer call error', err)
     })
   },
