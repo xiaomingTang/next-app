@@ -105,6 +105,8 @@ export function VideoCallElem() {
       >
         <StreamVideo
           mirror
+          // should updates when remoteStream state updated and/or size changed
+          key={`${status}-${size}`}
           fit='contain'
           muted={false}
           mediaStream={connection?.remoteStream}
@@ -115,7 +117,7 @@ export function VideoCallElem() {
           )}
         >
           <StreamVideo
-            // localStream react state should updates when remoteStream state updated and/or size changed
+            // should updates when remoteStream state updated and/or size changed
             key={`${status}-${size}`}
             mirror
             fit='contain'
