@@ -47,10 +47,10 @@ interface ToGifModalProps {
 
 interface GifConfig {
   /**
-   * 是否保持原图比例
+   * 是否保持比例
    * @default true
    */
-  keepOriginalRatio: boolean
+  keepRatio: boolean
   size: {
     width: number
     height: number
@@ -87,7 +87,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
   const [gif, setGif] = useState<GifInfo | null>(null)
   const defaultConfig: GifConfig = useMemo(
     () => ({
-      keepOriginalRatio: true,
+      keepRatio: true,
       size: preferredSize,
       duration: 0.5,
       loop: 0,
@@ -105,7 +105,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
     useForm<GifConfig>({
       defaultValues: defaultConfig,
     })
-  const keepR = watch('keepOriginalRatio')
+  const keepR = watch('keepRatio')
   const curSize = watch('size')
 
   const onSubmit = handleSubmit(
@@ -507,14 +507,14 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
               <FormControlLabel
                 control={
                   <Controller
-                    name='keepOriginalRatio'
+                    name='keepRatio'
                     control={control}
                     render={({ field }) => (
                       <Checkbox checked={field.value} {...field} />
                     )}
                   />
                 }
-                label='保持原图比例'
+                label='保持比例'
                 value='end'
                 labelPlacement='end'
               />
