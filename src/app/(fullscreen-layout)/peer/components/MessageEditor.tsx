@@ -20,7 +20,7 @@ const MAX_PREVIEW_ABLE_SIZE = 100 * MB_SIZE
 const MAX_FILE_SIZE = 10000 * MB_SIZE
 
 export function MessageEditor() {
-  const activeConnectionInfo = usePeer.useActiveMember()
+  const targetPeedId = usePeer.useActiveMember()?.peerId
   const { handleSubmit, control, setValue } = useForm<{
     inputText: string
   }>({
@@ -174,26 +174,29 @@ export function MessageEditor() {
                           }}
                           autoFocus
                           multiple
-                          onInput={(e) => {
+                          onInput={cat(async (e) => {
+                            if (!targetPeedId) {
+                              throw new Error('连接不存在')
+                            }
                             setAnchorEl(null)
                             const target = e.target as HTMLInputElement
-                            void uploadFiles(Array.from(target.files ?? []))
-                          }}
+                            await uploadFiles(Array.from(target.files ?? []))
+                          })}
                         />
                       </MenuItem>
                       <MenuItem
                         key='语音通话'
                         onClick={cat(async () => {
+                          if (!targetPeedId) {
+                            throw new Error('连接不存在')
+                          }
                           setAnchorEl(null)
                           const stream = await getUserMedia({
                             audio: {
                               echoCancellation: true,
                             },
                           })
-                          await usePeer.callPeer(
-                            activeConnectionInfo?.peerId ?? '',
-                            stream
-                          )
+                          await usePeer.callPeer(targetPeedId, stream)
                         })}
                       >
                         <MicIcon sx={{ mr: 1 }} /> 语音通话
@@ -201,6 +204,9 @@ export function MessageEditor() {
                       <MenuItem
                         key='视频通话'
                         onClick={cat(async () => {
+                          if (!targetPeedId) {
+                            throw new Error('连接不存在')
+                          }
                           setAnchorEl(null)
                           const stream = await getUserMedia({
                             video: {
@@ -210,10 +216,7 @@ export function MessageEditor() {
                               echoCancellation: true,
                             },
                           })
-                          await usePeer.callPeer(
-                            activeConnectionInfo?.peerId ?? '',
-                            stream
-                          )
+                          await usePeer.callPeer(targetPeedId, stream)
                         })}
                       >
                         <VideocamIcon sx={{ mr: 1 }} /> 视频通话

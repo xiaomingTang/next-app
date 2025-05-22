@@ -4,7 +4,8 @@ import { messageManager } from './messageManager'
 import { getStunCredentials } from './server'
 
 import { numberFormat } from '@/utils/numberFormat'
-import { SA } from '@/errors/utils'
+import { SA, toError } from '@/errors/utils'
+import { exclusiveCallbacks } from '@/utils/function'
 
 import { create } from 'zustand'
 import Peer, { util as peerUtil } from 'peerjs'
@@ -89,17 +90,44 @@ export const usePeer = withStatic(useRawPeer, {
     const newMember = {
       ...prevMember,
     }
-    if (newMember.status === 'connected') {
+    if (newMember.dc?.open) {
+      usePeer.updateMember({
+        peerId,
+        status: 'connected',
+      })
       return
     }
     newMember.status = 'connecting'
-    newMember.dc = peer.connect(peerId)
+    const dc = peer.connect(peerId)
+    newMember.dc = dc
     newMembers[peerId] = newMember
     usePeer.setState((prev) => ({
       ...prev,
       members: newMembers,
       activeMemberId: peerId,
     }))
+    return new Promise<void>((resolve, reject) => {
+      exclusiveCallbacks(dc, [
+        [
+          'open',
+          () => {
+            resolve()
+          },
+        ],
+        [
+          'error',
+          (err: Error) => {
+            reject(toError(err))
+          },
+        ],
+        [
+          'close',
+          () => {
+            reject(new Error('连接已关闭'))
+          },
+        ],
+      ])
+    })
   },
   async send<K extends MessageType>({
     peerId,
@@ -361,7 +389,7 @@ export const usePeer = withStatic(useRawPeer, {
       }
     })
   },
-  useActiveMember() {
+  useActiveMember(): PeerMember | undefined {
     return useRawPeer((state) => state.members[state.activeMemberId ?? ''])
   },
 })
