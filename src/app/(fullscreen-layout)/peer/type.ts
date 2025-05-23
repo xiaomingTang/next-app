@@ -69,9 +69,10 @@ export type Message =
 export interface PeerMember {
   peerId: string
   messages: Message[]
-  status: ConnectionStatus
   dc: DataConnection | null
+  dcStatus: ConnectionStatus
   mc: MediaConnection | null
+  mcStatus: ConnectionStatus
 }
 
 export interface PeerState {

@@ -5,7 +5,6 @@ import { getStunCredentials } from './server'
 
 import { numberFormat } from '@/utils/numberFormat'
 import { SA, toError } from '@/errors/utils'
-import { exclusiveCallbacks } from '@/utils/function'
 
 import { create } from 'zustand'
 import Peer, { util as peerUtil } from 'peerjs'
@@ -70,7 +69,7 @@ export const usePeer = withStatic(useRawPeer, {
     })
     return newPeer
   }),
-  async connect(peerId: string) {
+  async connect(peerId: string, timeoutMs = 60 * 1000) {
     const peer = await usePeer.init()
     await peerWaitUntil.peerOpen(peer)
     const { members: prevMembers } = useRawPeer.getState()
@@ -81,9 +80,10 @@ export const usePeer = withStatic(useRawPeer, {
       newMembers[peerId] = {
         peerId,
         messages: [],
-        status: 'disconnected',
         dc: null,
+        dcStatus: 'disconnected',
         mc: null,
+        mcStatus: 'disconnected',
       }
     }
     const prevMember = newMembers[peerId]
@@ -93,13 +93,13 @@ export const usePeer = withStatic(useRawPeer, {
     if (newMember.dc?.open) {
       usePeer.updateMember({
         peerId,
-        status: 'connected',
+        dcStatus: 'connected',
       })
       return
     }
-    newMember.status = 'connecting'
     const dc = peer.connect(peerId)
     newMember.dc = dc
+    newMember.dcStatus = 'connecting'
     newMembers[peerId] = newMember
     usePeer.setState((prev) => ({
       ...prev,
@@ -107,26 +107,45 @@ export const usePeer = withStatic(useRawPeer, {
       activeMemberId: peerId,
     }))
     return new Promise<void>((resolve, reject) => {
-      exclusiveCallbacks(dc, [
-        [
-          'open',
-          () => {
-            resolve()
-          },
-        ],
-        [
-          'error',
-          (err: Error) => {
-            reject(toError(err))
-          },
-        ],
-        [
-          'close',
-          () => {
-            reject(new Error('连接已关闭'))
-          },
-        ],
-      ])
+      const timer = window.setTimeout(() => {
+        const dc = usePeer.getState().members[peerId]?.dc
+        if (!dc?.open) {
+          dc?.close()
+          usePeer.updateMember({
+            peerId,
+            dc: null,
+            dcStatus: 'disconnected',
+          })
+        }
+        reject(new Error('连接超时'))
+      }, timeoutMs)
+      dc.once('open', () => {
+        window.clearTimeout(timer)
+        usePeer.updateMember({
+          peerId,
+          dcStatus: 'connected',
+        })
+        resolve()
+      })
+      dc.once('error', (err) => {
+        window.clearTimeout(timer)
+        usePeer.updateMember({
+          peerId,
+          dc: null,
+          dcStatus: 'disconnected',
+        })
+        console.error('peer call error', err)
+        reject(toError(err))
+      })
+      dc.once('close', () => {
+        window.clearTimeout(timer)
+        usePeer.updateMember({
+          peerId,
+          dc: null,
+          dcStatus: 'disconnected',
+        })
+        reject(new Error('连接已关闭'))
+      })
     })
   },
   async send<K extends MessageType>({
@@ -165,9 +184,9 @@ export const usePeer = withStatic(useRawPeer, {
     }
     if (!member?.dc?.open) {
       let errMsg = '连接已关闭'
-      if (member.status === 'disconnected') {
+      if (member.dcStatus === 'disconnected') {
         errMsg = '连接已断开'
-      } else if (member.status === 'connecting') {
+      } else if (member.dcStatus === 'connecting') {
         errMsg = '正在连接中'
       }
       throw new Error(errMsg)
@@ -207,38 +226,65 @@ export const usePeer = withStatic(useRawPeer, {
       messageId,
     })
   },
-  async callPeer(peerId: string, stream: MediaStream) {
+  async callPeer(peerId: string, stream: MediaStream, timeoutMs = 60 * 1000) {
     const peer = await usePeer.init()
     const { members: prevMembers } = useRawPeer.getState()
     if (!prevMembers[peerId]) {
       throw new Error('没有找到对方的连接')
     }
-    const mc = peer.call(peerId, stream)
+    const isVideo = stream.getVideoTracks().length > 0
+    const mc = peer.call(peerId, stream, {
+      metadata: {
+        type: isVideo ? 'video' : 'audio',
+      },
+    })
     usePeer.updateMember({
       peerId,
       mc,
-      status: 'connecting',
+      mcStatus: 'connecting',
     })
-    mc.once('stream', () => {
-      usePeer.updateMember({
-        peerId,
-        status: 'connected',
+    return new Promise<void>((resolve, reject) => {
+      const timer = window.setTimeout(() => {
+        if (mc.localStream?.active && !mc.remoteStream?.active) {
+          stream.getTracks().forEach((track) => track.stop())
+          mc.close()
+          usePeer.updateMember({
+            peerId,
+            mc: null,
+            mcStatus: 'disconnected',
+          })
+        }
+        reject(new Error('音视频连接超时'))
+      }, timeoutMs)
+      mc.once('stream', () => {
+        window.clearTimeout(timer)
+        usePeer.updateMember({
+          peerId,
+          mcStatus: 'connected',
+        })
+        resolve()
       })
-    })
-    mc.once('close', () => {
-      usePeer.updateMember({
-        peerId,
-        mc: null,
-        status: 'disconnected',
+      mc.once('close', () => {
+        window.clearTimeout(timer)
+        stream.getTracks().forEach((track) => track.stop())
+        usePeer.updateMember({
+          peerId,
+          mc: null,
+          mcStatus: 'disconnected',
+        })
+        reject(new Error('音视频连接已关闭'))
       })
-    })
-    mc.once('error', (err) => {
-      usePeer.updateMember({
-        peerId,
-        mc: null,
-        status: 'disconnected',
+      mc.once('error', (err) => {
+        window.clearTimeout(timer)
+        stream.getTracks().forEach((track) => track.stop())
+        usePeer.updateMember({
+          peerId,
+          mc: null,
+          mcStatus: 'disconnected',
+        })
+        console.error('peer call error', err)
+        reject(toError(err))
       })
-      console.error('peer call error', err)
     })
   },
   async answer(mc: MediaConnection, stream: MediaStream) {
@@ -251,27 +297,29 @@ export const usePeer = withStatic(useRawPeer, {
     usePeer.updateMember({
       peerId,
       mc,
-      status: 'connecting',
+      mcStatus: 'connecting',
     })
     mc.answer(stream)
     mc.once('stream', () => {
       usePeer.updateMember({
         peerId,
-        status: 'connected',
+        mcStatus: 'connected',
       })
     })
     mc.once('close', () => {
+      stream.getTracks().forEach((track) => track.stop())
       usePeer.updateMember({
         peerId,
         mc: null,
-        status: 'disconnected',
+        mcStatus: 'disconnected',
       })
     })
     mc.once('error', (err) => {
+      stream.getTracks().forEach((track) => track.stop())
       usePeer.updateMember({
         peerId,
         mc: null,
-        status: 'disconnected',
+        mcStatus: 'disconnected',
       })
       console.error('peer call error', err)
     })

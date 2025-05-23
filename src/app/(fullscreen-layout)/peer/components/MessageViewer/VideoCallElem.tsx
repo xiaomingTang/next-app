@@ -76,7 +76,7 @@ function geneSx(size: Size): SxProps<Theme> {
 export function VideoCallElem() {
   const member = usePeer.useActiveMember()
   const connection = member?.mc || null
-  const status = member?.status || null
+  const status = member?.mcStatus || null
   const [size, setSize] = useState<Size>('full')
 
   useListen(status, (next, prev) => {

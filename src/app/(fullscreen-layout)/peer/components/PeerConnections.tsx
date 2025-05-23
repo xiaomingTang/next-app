@@ -3,9 +3,10 @@ import { useConnectionState } from '../hooks/usePeerState'
 import { CONNECTION_STATE_MAP, TARGET_PID_SEARCH_PARAM } from '../constants'
 
 import { cat } from '@/errors/catchAndToast'
-import { useListen } from '@/hooks/useListen'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { isValidUrl } from '@/utils/url'
+import { toError } from '@/errors/utils'
+import { useListen } from '@/hooks/useListen'
 
 import {
   Button,
@@ -23,27 +24,6 @@ import { Controller, useForm } from 'react-hook-form'
 import { useEffect, useMemo } from 'react'
 import toast from 'react-hot-toast'
 
-import type { MediaConnection } from 'peerjs'
-
-function useMediaConnectionHandler(connection?: MediaConnection | null) {
-  useEffect(() => {
-    const timer = window.setTimeout(() => {
-      if (
-        connection &&
-        connection.localStream?.active &&
-        !connection.remoteStream?.active
-      ) {
-        connection.close()
-        toast.error('连接超时')
-      }
-    }, 30 * 1000)
-
-    return () => {
-      window.clearTimeout(timer)
-    }
-  }, [connection])
-}
-
 export function PeerConnections() {
   const connectionInfos = Object.values(usePeer((state) => state.members))
   const activeConnectionInfo = usePeer.useActiveMember()
@@ -57,8 +37,6 @@ export function PeerConnections() {
     },
   })
 
-  useMediaConnectionHandler(activeConnectionInfo?.mc)
-
   useListen(connection?.peer, (peerId) => {
     setValue('peerId', peerId ?? '')
   })
@@ -68,18 +46,19 @@ export function PeerConnections() {
       handleSubmit(
         cat((e) => {
           let peerId = e.peerId
-          if (!isValidUrl(e.peerId)) {
-            peerId = e.peerId
-          } else {
+          if (isValidUrl(e.peerId)) {
+            // 如果用户输入的是一个 url, 那么就从 url 中获取 peerId
+            // 并更新输入框中的内容
             const url = new URL(e.peerId)
             peerId = url.searchParams.get(TARGET_PID_SEARCH_PARAM) ?? ''
+            setValue('peerId', peerId)
           }
           if (peerId) {
             return usePeer.connect(peerId)
           }
         })
       ),
-    [handleSubmit]
+    [handleSubmit, setValue]
   )
 
   // 从 url 上获取 target peer id, 并填充到输入框中
@@ -88,14 +67,19 @@ export function PeerConnections() {
     const target = url.searchParams.get(TARGET_PID_SEARCH_PARAM)
     if (target) {
       setValue('peerId', target)
-      void usePeer.connect(target).then(() => {
-        // 发起连接后立即移除 url 上的 searchParam
-        const url = new URL(window.location.href)
-        url.searchParams.delete(TARGET_PID_SEARCH_PARAM)
-        window.history.replaceState(null, '', url)
-      })
+      void usePeer
+        .connect(target)
+        .then(() => {
+          // 发起连接后立即移除 url 上的 searchParam
+          const url = new URL(window.location.href)
+          url.searchParams.delete(TARGET_PID_SEARCH_PARAM)
+          window.history.replaceState(null, '', url)
+        })
+        .catch((e) => {
+          toast.error(toError(e).message)
+        })
     }
-  }, [onSubmit, setValue])
+  }, [setValue])
 
   return (
     <Stack

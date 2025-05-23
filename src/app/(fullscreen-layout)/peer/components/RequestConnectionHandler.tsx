@@ -20,11 +20,24 @@ import {
 
 import type { DataConnection, MediaConnection } from 'peerjs'
 
+function getConnectionType(
+  connection: DataConnection | MediaConnection | null
+) {
+  if (!connection) {
+    return 'unknown'
+  }
+  if (isDC(connection)) {
+    return 'data'
+  }
+  return connection.metadata?.type === 'video' ? 'video' : 'audio'
+}
+
 export function RequestConnectionHandler() {
   const { peer } = usePeer()
   const [requestConnection, setRequestConnection] = useState<
     DataConnection | MediaConnection | null
   >(null)
+  const connectionType = getConnectionType(requestConnection)
 
   const closeDialog = () => setRequestConnection(null)
 
@@ -35,9 +48,7 @@ export function RequestConnectionHandler() {
     if (isDC(requestConnection)) {
       return
     }
-    // 语音通话判定有误, 待修复
-    // const isVideo = requestConnection.remoteStream?.getVideoTracks().length > 0
-    const isVideo = true
+    const isVideo = getConnectionType(requestConnection) === 'video'
     const stream = await getUserMedia({
       video: isVideo
         ? {
@@ -91,7 +102,10 @@ export function RequestConnectionHandler() {
     >
       <DialogTitle>
         <Typography fontWeight='bold' fontSize='1.2em'>
-          {requestConnection?.type === 'data' ? '收到连接请求' : '收到视频请求'}
+          {connectionType === 'unknown' && '未知连接请求'}
+          {connectionType === 'data' && '收到连接请求'}
+          {connectionType === 'audio' && '语音通话请求'}
+          {connectionType === 'video' && '视频通话请求'}
         </Typography>
       </DialogTitle>
       <DialogContent>
