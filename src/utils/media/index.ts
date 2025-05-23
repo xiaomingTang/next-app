@@ -1,6 +1,9 @@
 'use client'
 
+import { toError } from '@/errors/utils'
 import { sleepMs } from '@/utils/time'
+
+import { useEffect, useRef, useState } from 'react'
 
 const defaultMediaStreamConstraints: MediaStreamConstraints = {
   video: {
@@ -30,6 +33,47 @@ export async function getUserMedia(
     throw new Error('相机权限访问超时')
   }
   return stream
+}
+
+export function useUserMedia(
+  constraints: MediaStreamConstraints = defaultMediaStreamConstraints,
+  timeoutMs = 30000
+) {
+  const constraintsRef = useRef(constraints)
+  const [stream, setStream] = useState<MediaStream | null>(null)
+  const [error, setError] = useState<Error | null>(null)
+  const flagRef = useRef('')
+
+  useEffect(() => {
+    flagRef.current = Math.random().toString(36).slice(2)
+    const flag = flagRef.current
+    let stream: MediaStream | null = null
+    getUserMedia(constraintsRef.current, timeoutMs)
+      .then((s) => {
+        if (flag !== flagRef.current) {
+          return
+        }
+        stream = s
+        setStream(s)
+      })
+      .catch((e) => {
+        if (flag !== flagRef.current) {
+          return
+        }
+        const err = toError(e)
+        err.message = `获取摄像头失败: ${err.message}`
+        setError(err)
+        setStream(null)
+      })
+    return () => {
+      stream?.getTracks().forEach((track) => {
+        console.log(track)
+        track.stop()
+      })
+    }
+  }, [constraintsRef, timeoutMs])
+
+  return { stream, error }
 }
 
 /**

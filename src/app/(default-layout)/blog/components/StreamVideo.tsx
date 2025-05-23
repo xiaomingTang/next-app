@@ -20,6 +20,7 @@ interface Props {
   mediaStream?: MediaStream | null
   fit?: 'cover' | 'contain'
   onTick?: (e: StreamVideoContext) => void
+  stopTrackOnUnmount?: boolean
 }
 
 export function StreamVideo({
@@ -29,6 +30,7 @@ export function StreamVideo({
   onTick,
   controls = false,
   muted = true,
+  stopTrackOnUnmount = false,
 }: Props) {
   let rafFlag = -1
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -41,11 +43,17 @@ export function StreamVideo({
     if (!video || !mediaStream) {
       return
     }
-    setMedia(video)
     video.srcObject = mediaStream
-
+    setMedia(video)
     void video.play()
-  }, [mediaStream, setMedia])
+
+    return () => {
+      if (stopTrackOnUnmount) {
+        mediaStream?.getTracks().forEach((track) => track.stop())
+        video.srcObject = null
+      }
+    }
+  }, [mediaStream, setMedia, stopTrackOnUnmount])
 
   useListen(`${[playing, windowSize.width, windowSize.height]}`, () => {
     window.cancelAnimationFrame(rafFlag)

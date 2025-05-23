@@ -3,12 +3,11 @@
 import { QrcodeDisplayItem } from './QrcodeDisplayItem'
 import { useQrcodeHandler } from './QrcodeHandlers'
 
-import { toPlainError } from '@/errors/utils'
-import { getUserMedia } from '@/utils/media'
+import { useUserMedia } from '@/utils/media'
 import { StreamVideo } from '@D/blog/components/StreamVideo'
 
 import useSWR from 'swr'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { Box, CircularProgress } from '@mui/material'
 import { throttle } from 'lodash-es'
@@ -22,13 +21,13 @@ export function QrcodeScanner({
   fit?: 'cover' | 'contain'
 }) {
   const readerTimeoutFlagRef = useRef(-1)
-  const { data: mediaStream = null } = useSWR('getUserVideo', () =>
-    getUserMedia().catch((err) => {
-      toast.error(
-        `获取摄像头权限失败，请刷新页面以重试：${toPlainError(err).message}`
-      )
-    })
-  )
+  const { stream: mediaStream, error: mediaError } = useUserMedia()
+
+  useEffect(() => {
+    if (mediaError) {
+      toast.error(mediaError.message)
+    }
+  }, [mediaError])
 
   const [QRContent, setQRContent] = useState<QRCode | null>(null)
   const [savedCanvasSize, setSavedCanvasSize] = useState({
@@ -80,7 +79,12 @@ export function QrcodeScanner({
         overflow: 'hidden',
       }}
     >
-      <StreamVideo fit={fit} mediaStream={mediaStream} onTick={onTick} />
+      <StreamVideo
+        fit={fit}
+        mediaStream={mediaStream}
+        onTick={onTick}
+        stopTrackOnUnmount
+      />
       {QRContent && (
         <QrcodeDisplayItem qrcode={QRContent} canvasSize={savedCanvasSize} />
       )}
