@@ -100,19 +100,12 @@ function TransitionCollapse(props: TransitionProps) {
     <Collapse
       sx={{
         paddingLeft: '16px',
-        opacity: props.in ? 1 : 0,
-        transform: `translate3d(0,${props.in ? 0 : 20}px,0)`,
-        transition: 'opacity 0.2s, transform 0.2s',
       }}
+      timeout={100}
       {...props}
     />
   )
 }
-
-const StyledTreeItemLabelText = styled(Typography)({
-  color: 'inherit',
-  fontWeight: 'normal',
-})
 
 interface CustomLabelProps {
   children: React.ReactNode
@@ -138,9 +131,9 @@ function CustomLabel({ icon: Icon, children, ...other }: CustomLabelProps) {
         />
       )}
 
-      <StyledTreeItemLabelText variant='body2'>
+      <Typography variant='body2' color='inherit' fontWeight='normal'>
         {children}
-      </StyledTreeItemLabelText>
+      </Typography>
     </TreeItemLabel>
   )
 }
@@ -149,7 +142,7 @@ type FileExplorerTreeItemProps = UseTreeItemParameters &
   Omit<React.HTMLAttributes<HTMLLIElement>, 'onFocus'>
 
 export function FileExplorerTreeItem(props: FileExplorerTreeItemProps) {
-  const { id, itemId, label, disabled, children, rootRef, ...other } = props
+  const { id, itemId, children, ...other } = props
 
   const {
     getRootProps,
@@ -162,7 +155,7 @@ export function FileExplorerTreeItem(props: FileExplorerTreeItemProps) {
     getDragAndDropOverlayProps,
     publicAPI,
     status: rawStatus,
-  } = useTreeItem({ id, itemId, children, label, disabled, rootRef })
+  } = useTreeItem(props)
 
   const item: TreeViewBaseItem<SimpleProjectItem> = publicAPI.getItem(itemId)
 
@@ -187,14 +180,9 @@ export function FileExplorerTreeItem(props: FileExplorerTreeItemProps) {
               'Mui-disabled': status.disabled,
             }),
             status,
-            onClick: (event) => {
-              if (status.expandable && !status.disabled && !status.editing) {
-                publicAPI.setItemExpansion({
-                  event,
-                  itemId,
-                  shouldBeExpanded: !status.expanded,
-                })
-              }
+            sx: {
+              mt: 0,
+              mb: '4px',
             },
           })}
         >
