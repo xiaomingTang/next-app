@@ -71,6 +71,9 @@ importers:
       '@zimi/interact':
         specifier: ^0.17.3
         version: 0.17.3
+      '@zimi/remote':
+        specifier: ^0.2.1
+        version: 0.2.1
       '@zimi/utils':
         specifier: ^0.18.3
         version: 0.18.3(@types/react@19.1.5)(immer@10.1.1)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
@@ -1995,9 +1998,6 @@ packages:
   '@types/ms@2.1.0':
     resolution: {integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==}
 
-  '@types/node@22.15.18':
-    resolution: {integrity: sha512-v1DKRfUdyW+jJhZNEI1PYy29S2YRxMV5AOO/x/SjKmW0acCIOqmbj6Haf9eHAhsPmrhlHSxEhv/1WszcLWV4cg==}
-
   '@types/node@22.15.21':
     resolution: {integrity: sha512-EV/37Td6c+MgKAbkcLG6vqZ2zEYHD7bvSrzqqs2RIhbA6w3x+Dqz8MZM3sP6kGTeLrdoOgKZe+Xja7tUB2DNkQ==}
 
@@ -2289,6 +2289,9 @@ packages:
 
   '@zimi/interact@0.17.3':
     resolution: {integrity: sha512-wZmRN3MHQF4DBM6ioHKOX/ojO6Z751jHdxeOt/wzhNfhyTaYc5TQ17Pjm2IEIgY2NeZV0ZwtDaGIVcpOBMDE+w==}
+
+  '@zimi/remote@0.2.1':
+    resolution: {integrity: sha512-qj2BQjFmr3O6QA7/dX+X8yXtCqkhfrPuE5UaSiM3x3oyWHyFkxAoyLpnE5wbRQE1uiAZmmG4Xm8KlJryZwUXpQ==}
 
   '@zimi/type-utils@0.17.3':
     resolution: {integrity: sha512-RByP+uoEA997kvRCL/snO/8Kz4aaIYuM7YX16XuElA7x87KyD2joE8GAin3/C+FWqsM/kSGtxNrDGSb0sxRk9A==}
@@ -7584,10 +7587,6 @@ snapshots:
 
   '@types/ms@2.1.0': {}
 
-  '@types/node@22.15.18':
-    dependencies:
-      undici-types: 6.21.0
-
   '@types/node@22.15.21':
     dependencies:
       undici-types: 6.21.0
@@ -7901,6 +7900,10 @@ snapshots:
       '@zimi/event-emitter': 0.17.3
       '@zimi/input-device-capabilities-polyfill': 0.17.2
       lodash: 4.17.21
+
+  '@zimi/remote@0.2.1':
+    dependencies:
+      eventemitter3: 5.0.1
 
   '@zimi/type-utils@0.17.3': {}
 
@@ -9714,7 +9717,7 @@ snapshots:
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 22.15.18
+      '@types/node': 22.15.21
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
