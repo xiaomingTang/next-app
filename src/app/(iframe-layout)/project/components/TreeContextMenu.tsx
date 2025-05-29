@@ -72,6 +72,7 @@ export function TreeContextMenu({
   const childrenLen = item.children?.length ?? 0
   const isRoot = item.hash === root.hash
   const isDir = item.type === 'DIR'
+  const isText = item.type === 'TEXT'
   const deleteItem = withClose(
     cat(async () => {
       if (isRoot) {
@@ -137,138 +138,152 @@ export function TreeContextMenu({
       router.refresh()
     })
   )
-  const clipboardMenuItems = (
-    <>
-      <MenuItem
-        onClick={withClose(() => {
-          useProjectClipboardAction.cut({ type: item.type, hash: item.hash })
-        })}
-        disabled={isRoot}
-      >
-        <ListItemIcon>
-          <ContentCut fontSize='small' />
-        </ListItemIcon>
-        <ListItemText>剪切</ListItemText>
-      </MenuItem>
-      <MenuItem
-        onClick={withClose(() => {
-          useProjectClipboardAction.copy({ type: item.type, hash: item.hash })
-        })}
-        disabled={isRoot || item.type !== 'TEXT'}
-      >
-        <ListItemIcon>
-          <ContentCopy fontSize='small' />
-        </ListItemIcon>
-        <ListItemText>复制</ListItemText>
-      </MenuItem>
-      {!!clipboardData && isDir && (
-        <MenuItem
-          onClick={withClose(
-            cat(async () => {
-              await projectClipboardAction({
-                action: clipboardAction,
-                hash: clipboardData.hash,
-                parentHash: item.hash,
-              }).then(SA.decode)
-              useProjectClipboardAction.clear()
-              router.refresh()
-            })
-          )}
-        >
-          <ListItemIcon>
-            <ContentPaste fontSize='small' />
-          </ListItemIcon>
-          <ListItemText>粘贴</ListItemText>
-        </MenuItem>
-      )}
-    </>
+  const m剪切 = (
+    <MenuItem
+      key='剪切'
+      onClick={withClose(() => {
+        useProjectClipboardAction.cut({ type: item.type, hash: item.hash })
+      })}
+      disabled={isRoot}
+    >
+      <ListItemIcon>
+        <ContentCut fontSize='small' />
+      </ListItemIcon>
+      <ListItemText>剪切</ListItemText>
+    </MenuItem>
   )
-  const editMenuItems = (
-    <>
-      <MenuItem onClick={rename}>重命名</MenuItem>
-      <MenuItem sx={{ color: theme.palette.error.main }} onClick={deleteItem}>
-        删除
-      </MenuItem>
-    </>
+
+  const m复制 = (
+    <MenuItem
+      key='复制'
+      onClick={withClose(() => {
+        useProjectClipboardAction.copy({ type: item.type, hash: item.hash })
+      })}
+      disabled={isRoot || item.type !== 'TEXT'}
+    >
+      <ListItemIcon>
+        <ContentCopy fontSize='small' />
+      </ListItemIcon>
+      <ListItemText>复制</ListItemText>
+    </MenuItem>
   )
-  const copyPathMenuItems = (
-    <>
-      <MenuItem onClick={withClose(() => copyToClipboard(relPath))}>
-        复制相对路径
-      </MenuItem>
-      <MenuItem onClick={withClose(() => copyToClipboard(absPath))}>
-        复制完整 URL
-      </MenuItem>
-    </>
+  const m粘贴 = (
+    <MenuItem
+      key='粘贴'
+      onClick={withClose(
+        cat(async () => {
+          if (!clipboardData) {
+            throw new Error('剪贴板为空')
+          }
+          await projectClipboardAction({
+            action: clipboardAction,
+            hash: clipboardData.hash,
+            parentHash: item.hash,
+          }).then(SA.decode)
+          useProjectClipboardAction.clear()
+          router.refresh()
+        })
+      )}
+    >
+      <ListItemIcon>
+        <ContentPaste fontSize='small' />
+      </ListItemIcon>
+      <ListItemText>粘贴</ListItemText>
+    </MenuItem>
   )
-  const createOrEditMenuItems = (
-    <>
-      {isDir && (
-        <>
-          <MenuItem onClick={createTextFile}>
-            <ListItemIcon>
-              <TextSnippetIcon fontSize='small' />
-            </ListItemIcon>
-            <ListItemText>新建文本文件</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={createNetworkFile}>
-            <ListItemIcon>
-              <InsertLinkIcon fontSize='small' />
-            </ListItemIcon>
-            <ListItemText>新建网络文件</ListItemText>
-          </MenuItem>
-          <MenuItem onClick={createDir}>
-            <ListItemIcon>
-              <FolderIcon fontSize='small' />
-            </ListItemIcon>
-            <ListItemText>新建文件夹</ListItemText>
-          </MenuItem>
-        </>
+  const m重命名 = (
+    <MenuItem key='重命名' onClick={rename}>
+      重命名
+    </MenuItem>
+  )
+  const m删除 = (
+    <MenuItem
+      key='删除'
+      sx={{ color: theme.palette.error.main }}
+      onClick={deleteItem}
+    >
+      删除
+    </MenuItem>
+  )
+  const m复制相对路径 = (
+    <MenuItem
+      key='复制相对路径'
+      onClick={withClose(() => copyToClipboard(relPath))}
+    >
+      复制相对路径
+    </MenuItem>
+  )
+  const m复制完整URL = (
+    <MenuItem
+      key='复制完整 URL'
+      onClick={withClose(() => copyToClipboard(absPath))}
+    >
+      复制完整 URL
+    </MenuItem>
+  )
+  const m新建 = [
+    <MenuItem key='新建文本文件' onClick={createTextFile}>
+      <ListItemIcon>
+        <TextSnippetIcon fontSize='small' />
+      </ListItemIcon>
+      <ListItemText>新建文本文件</ListItemText>
+    </MenuItem>,
+    <MenuItem key='新建网络文件' onClick={createNetworkFile}>
+      <ListItemIcon>
+        <InsertLinkIcon fontSize='small' />
+      </ListItemIcon>
+      <ListItemText>新建网络文件</ListItemText>
+    </MenuItem>,
+    <MenuItem key='新建文件夹' onClick={createDir}>
+      <ListItemIcon>
+        <FolderIcon fontSize='small' />
+      </ListItemIcon>
+      <ListItemText>新建文件夹</ListItemText>
+    </MenuItem>,
+  ]
+  const m编辑该网络文件 = (
+    <MenuItem
+      onClick={withClose(
+        cat(async () => {
+          const content = await getProjectContent({
+            hash: item.hash,
+          }).then(SA.decode)
+          const newProject = await editNetworkFile({
+            project: {
+              ...item,
+              content: content || '',
+            },
+          })
+          await onUpdate(item.hash, {
+            ...item,
+            ...newProject,
+          })
+        })
       )}
-      {!isDir && item.type !== 'TEXT' && (
-        <>
-          <MenuItem
-            onClick={withClose(
-              cat(async () => {
-                const content = await getProjectContent({
-                  hash: item.hash,
-                }).then(SA.decode)
-                const newProject = await editNetworkFile({
-                  project: {
-                    ...item,
-                    content: content || '',
-                  },
-                })
-                await onUpdate(item.hash, {
-                  ...item,
-                  ...newProject,
-                })
-              })
-            )}
-          >
-            <ListItemIcon>
-              <InsertLinkIcon fontSize='small' />
-            </ListItemIcon>
-            <ListItemText>编辑该网络文件</ListItemText>
-          </MenuItem>
-        </>
-      )}
-    </>
+    >
+      <ListItemIcon>
+        <InsertLinkIcon fontSize='small' />
+      </ListItemIcon>
+      <ListItemText>编辑该网络文件</ListItemText>
+    </MenuItem>
   )
 
   return (
     <Menu open anchorEl={target} onClose={withClose()}>
-      {mode === 'edit' && (
-        <>
-          {createOrEditMenuItems}
-          <Divider />
-          {clipboardMenuItems}
-          <Divider />
-          {editMenuItems}
-          <Divider />
-        </>
-      )}
-      {copyPathMenuItems}
+      {mode === 'edit' && [
+        isDir && m新建,
+        m重命名,
+        m删除,
+        <Divider key='d1' />,
+        m剪切,
+        m复制,
+        isDir && !!clipboardData && m粘贴,
+        <Divider key='d2' />,
+        !isDir && !isText && m编辑该网络文件,
+        !isDir && !isText && <Divider key='d3' />,
+      ]}
+      {m复制相对路径}
+      {m复制完整URL}
     </Menu>
   )
 }
