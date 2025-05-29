@@ -46,8 +46,10 @@ export function AdminLoggedButton() {
         open={open}
         autoFocus
         onClose={handleClose}
-        MenuListProps={{
-          'aria-labelledby': '退出登录',
+        slotProps={{
+          list: {
+            'aria-labelledby': '退出登录',
+          },
         }}
       >
         <MenuItem disabled divider>

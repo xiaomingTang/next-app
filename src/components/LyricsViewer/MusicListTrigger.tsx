@@ -33,8 +33,10 @@ export function MusicListTrigger() {
               horizontal: 'left',
             }}
             onClose={() => setAnchorEl(null)}
-            MenuListProps={{
-              'aria-labelledby': '关闭歌曲目录',
+            slotProps={{
+              list: {
+                'aria-labelledby': '关闭歌曲目录',
+              },
             }}
           >
             {mp3s.map((mp3) => (

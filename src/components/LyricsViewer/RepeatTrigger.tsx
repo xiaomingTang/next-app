@@ -78,8 +78,10 @@ export function RepeatTrigger() {
               horizontal: 'left',
             }}
             onClose={() => setAnchorEl(null)}
-            MenuListProps={{
-              'aria-labelledby': '关闭设置菜单',
+            slotProps={{
+              list: {
+                'aria-labelledby': '关闭设置菜单',
+              },
             }}
           >
             {RepeatModeList.map((k) => (

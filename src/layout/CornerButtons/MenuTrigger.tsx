@@ -45,8 +45,10 @@ export function MenuTrigger() {
             open={!!anchorEl}
             autoFocus
             onClose={() => setAnchorEl(null)}
-            MenuListProps={{
-              'aria-labelledby': '关闭更多菜单',
+            slotProps={{
+              list: {
+                'aria-labelledby': '关闭更多菜单',
+              },
             }}
           >
             {menuList.map((item, i) => {

@@ -52,8 +52,10 @@ export function ToolsTrigger() {
             open={!!anchorEl}
             autoFocus
             onClose={() => setAnchorEl(null)}
-            MenuListProps={{
-              'aria-labelledby': '关闭列表',
+            slotProps={{
+              list: {
+                'aria-labelledby': '关闭列表',
+              },
             }}
           >
             {toolList.map(({ pathname, title }) => (

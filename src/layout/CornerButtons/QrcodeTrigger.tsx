@@ -48,8 +48,10 @@ export function QrcodeTrigger() {
             open={!!anchorEl}
             autoFocus
             onClose={() => setAnchorEl(null)}
-            MenuListProps={{
-              'aria-labelledby': '关闭二维码功能列表',
+            slotProps={{
+              list: {
+                'aria-labelledby': '关闭二维码功能列表',
+              },
             }}
           >
             <MenuItem

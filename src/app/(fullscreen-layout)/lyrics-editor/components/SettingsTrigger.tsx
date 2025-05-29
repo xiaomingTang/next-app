@@ -57,8 +57,10 @@ export function SettingsTrigger() {
             open={!!anchorEl}
             autoFocus
             onClose={() => setAnchorEl(null)}
-            MenuListProps={{
-              'aria-labelledby': '关闭编辑器设置菜单',
+            slotProps={{
+              list: {
+                'aria-labelledby': '关闭编辑器设置菜单',
+              },
             }}
           >
             <MenuItem
