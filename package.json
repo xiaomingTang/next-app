@@ -21,14 +21,7 @@
     "docker:deploy": "dotenv -e .env.deploy -c -v DOCKER_IMAGE_NAME=16px_cc -v ZIP_PATH=/app/app.zip -- /bin/bash deploy.sh"
   },
   "lint-staged": {
-    "*.{md,json}": [
-      "prettier --write"
-    ],
-    "*.{js,jsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{css,less,sass,scss}": [
+    "*.{md,json,svg,js,jsx,css,less,sass,scss}": [
       "prettier --write"
     ],
     "*.{ts,tsx}": [
