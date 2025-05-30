@@ -42,8 +42,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const tagRoutes: MetadataRoute.Sitemap = tags.map((tag) => ({
     url: resolvePath(`/tag/${tag.hash}`).href,
-    // 拿到的是 string...
-    lastModified: tag.updatedAt,
     changeFrequency: 'monthly',
     priority: 0.6,
   }))
@@ -51,12 +49,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     {
       url: resolvePath('/').href,
-      lastModified: new Date(
-        Math.max(
-          ...blogs.map((b) => new Date(b.updatedAt).getTime()),
-          ...tags.map((b) => new Date(b.updatedAt).getTime())
-        )
-      ),
       changeFrequency: 'weekly',
       priority: 1,
     },
@@ -64,73 +56,61 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...tagRoutes,
     {
       url: resolvePath('/sh/ffmpeg').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.6,
     },
     {
       url: resolvePath('/to-gif').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.6,
     },
     {
       url: resolvePath('/clock').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.6,
     },
     {
       url: resolvePath('/wallpaper').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.6,
     },
     {
       url: resolvePath('/color').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.6,
     },
     {
       url: resolvePath('/cid').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.6,
     },
     {
       url: resolvePath('/level').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.6,
     },
     {
       url: resolvePath('/peer').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.6,
     },
     {
       url: resolvePath('/pano').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.6,
     },
     {
       url: resolvePath('/lyrics-editor').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.6,
     },
     {
       url: resolvePath('/qrcode/generate').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.2,
     },
     {
       url: resolvePath('/qrcode/scan').href,
-      lastModified: new Date(),
       changeFrequency: 'yearly',
       priority: 0.2,
     },
