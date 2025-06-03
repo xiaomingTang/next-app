@@ -7,6 +7,7 @@ export const toolList: PathItem[] = [
   { pathname: '/sh/ffmpeg', title: '在线 ffmpeg' },
   { pathname: '/to-gif', title: '图片转 gif' },
   { pathname: '/lyrics-editor', title: '歌词编辑器' },
+  { pathname: '/tts', title: 'tts 文本转语音' },
   { pathname: '/pano', title: '全景看看' },
   { pathname: '/clock', title: '时钟橱窗' },
   { pathname: '/level', title: '在线水平仪' },
