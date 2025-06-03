@@ -40,7 +40,7 @@ export default function ViewTtsTaskPage() {
     data: task,
     error: rawError,
     isValidating: loading,
-  } = useSWR(`getTtsTask`, async () =>
+  } = useSWR(`getTtsTask-${hash}`, async () =>
     !hash
       ? null
       : getTtsTask({ hash, deviceId: await getDeviceId() }).then(SA.decode)
