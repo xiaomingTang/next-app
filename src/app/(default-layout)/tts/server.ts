@@ -12,6 +12,7 @@ import { z } from 'zod'
 import { nanoid } from 'nanoid'
 import { noop } from 'lodash-es'
 import Boom from '@hapi/boom'
+import { redirect } from 'next/navigation'
 
 import type { TtsStatus } from '@/generated-prisma-client'
 import type { TtsMergeOption } from './utils/tts'
@@ -48,27 +49,43 @@ async function tryStartTtsTask(task: TryStartTtsTaskProps): Promise<TtsStatus> {
   const key = `${hash}.mp3`
 
   const user = await getSelf().catch(noop)
-  const curTask = await prisma.ttsTask.findFirst({
-    where: {
-      status: {
-        in: ['PENDING', 'PROCESSING'],
-      },
-    },
-  })
 
-  if (!user && curTask) {
-    await prisma.ttsTask.upsert({
-      where: { hash },
-      update: {},
-      create: {
-        hash,
-        status: 'PENDING',
-        options: JSON.stringify(options),
+  if (!user) {
+    const theUserTask = await prisma.ttsTask.findFirst({
+      where: {
         deviceId,
+        status: {
+          in: ['PENDING', 'PROCESSING'],
+        },
       },
     })
-    return 'PENDING'
+    if (theUserTask) {
+      redirect(`/tts/task/${theUserTask.hash}`)
+    }
+
+    const curTask = await prisma.ttsTask.findFirst({
+      where: {
+        status: {
+          in: ['PENDING', 'PROCESSING'],
+        },
+      },
+    })
+
+    if (curTask) {
+      await prisma.ttsTask.upsert({
+        where: { hash },
+        update: {},
+        create: {
+          hash,
+          status: 'PENDING',
+          options: JSON.stringify(options),
+          deviceId,
+        },
+      })
+      return 'PENDING'
+    }
   }
+
   await prisma.ttsTask.upsert({
     where: { hash },
     update: {},
@@ -159,15 +176,9 @@ export const checkTtsTask = SA.encode(
       }
     }
 
-    if (
-      task.status === 'FAILED' ||
-      task.status === 'SUCCESS' ||
-      task.status === 'PROCESSING'
-    ) {
-      return {
-        status: task.status,
-        error: task.error || null,
-      }
+    return {
+      status: task.status,
+      error: task.error || null,
     }
   })
 )
