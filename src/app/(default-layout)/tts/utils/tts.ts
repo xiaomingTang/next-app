@@ -70,7 +70,7 @@ export async function rawTts(option: TtsOption) {
     throw new Error(`Failed to create output directory: ${dirname}`)
   }
 
-  const res = spawn('/home/xiaoming/ai/tts-env/bin/edge-tts', cmds, {
+  const res = spawn('edge-tts', cmds, {
     signal: abortController?.signal,
   })
 
