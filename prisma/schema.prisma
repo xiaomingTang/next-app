@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output = "../src/generated-prisma-client"
+  output   = "../src/generated-prisma-client"
 }
 
 datasource db {
@@ -35,6 +35,7 @@ model User {
   uploads       Upload[]
   homepageLinks HomepageLinks[]
   projects      Project[]
+  ttsTasks      TtsTask[]
 }
 
 model QrcodeLoginToken {
@@ -167,4 +168,24 @@ model Project {
   // 文本类项目此字段存储的是文本内容，其他类型项目此字段存储的是文件的 url
   content    String?     @db.Text()
   deleted    Boolean     @default(false)
+}
+
+enum TtsStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  FAILED
+}
+
+model TtsTask {
+  hash      String    @id
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  status    TtsStatus
+  deviceId  String
+  // JSON 字符串，存储 TTS 任务的参数
+  options   String    @db.Text()
+  error     String?   @db.Text()
+  userId    Int?
+  user      User?     @relation(fields: [userId], references: [id])
 }

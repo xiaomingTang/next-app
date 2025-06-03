@@ -65,6 +65,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
+      url: resolvePath('/ttf').href,
+      changeFrequency: 'yearly',
+      priority: 0.6,
+    },
+    {
       url: resolvePath('/clock').href,
       changeFrequency: 'yearly',
       priority: 0.6,
