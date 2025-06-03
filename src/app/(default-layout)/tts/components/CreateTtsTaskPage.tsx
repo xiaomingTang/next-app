@@ -117,10 +117,13 @@ function AudioPlayerButton({
 
   useEffect(() => {
     const elem = audioRef.current
+    if (elem) {
+      setMedia(elem)
+    }
     return () => {
       elem?.pause()
     }
-  }, [audioRef])
+  }, [audioRef, setMedia])
 
   useEffect(() => {
     if (activeSrc !== src) {
@@ -138,20 +141,19 @@ function AudioPlayerButton({
       onClick={async (e) => {
         e.preventDefault()
         e.stopPropagation()
-        const elem = audioRef.current
         onClickStart?.()
         setPaused((prev) => !prev)
         // 没事，这儿的 paused 还是旧的值，不会立即被上面的 setPaused 修改
         if (paused) {
-          setMedia(elem)
+          setMedia(audioRef.current)
           // 确保音频 url 已准备好
           await sleepMs(100)
-          void elem?.play()
+          void audioRef.current?.play()
+          if (audioRef.current) {
+            audioRef.current.currentTime = 0
+          }
         } else {
-          elem?.pause()
-        }
-        if (elem) {
-          elem.currentTime = 0
+          audioRef.current?.pause()
         }
       }}
     >
