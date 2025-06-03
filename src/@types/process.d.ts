@@ -23,6 +23,9 @@ declare namespace NodeJS {
     NEXT_PUBLIC_TC_COS_BUCKET: string
     NEXT_PUBLIC_TC_COS_REGION: string
 
+    DINGTALK_ACCESS_TOKEN: string
+    DINGTALK_SECRET: string
+
     STUN_SERVER: string
     TURN_SERVER: string
     TURN_SECRET: string

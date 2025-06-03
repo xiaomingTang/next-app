@@ -17,12 +17,13 @@ import {
   voicePersonalitiesMap,
   voices,
 } from '../constants'
-import { tts } from '../server'
+import { getTtsConfig, tts, updateTtsConfig } from '../server'
 
 import { cat } from '@/errors/catchAndToast'
 import { getDeviceId } from '@/utils/device-id'
 import { SA } from '@/errors/utils'
 import Anchor from '@/components/Anchor'
+import { useUser } from '@/user'
 
 import { useLoading } from '@zimi/hooks'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
@@ -45,6 +46,7 @@ import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useRouter } from 'next/navigation'
 import { noop } from 'lodash-es'
+import useSWR from 'swr'
 
 /*
  * 默认配置类型
@@ -88,6 +90,16 @@ interface FormValues {
 }
 
 export default function TtsTaskCreatePage() {
+  const user = useUser()
+  const { data: ttsConfig, mutate } = useSWR(
+    `getTtsConfig-${user.role}`,
+    async () => {
+      if (user.role === 'ADMIN') {
+        return getTtsConfig().then(SA.decode)
+      }
+      return null
+    }
+  )
   const router = useRouter()
   const { control, handleSubmit } = useForm<FormValues>({
     defaultValues: {
@@ -316,6 +328,43 @@ export default function TtsTaskCreatePage() {
           </Button>
         </Anchor>
       </Box>
+      {ttsConfig && (
+        <>
+          <Divider sx={{ my: 2 }} />
+
+          <Box>
+            <Button
+              variant='outlined'
+              color='secondary'
+              onClick={cat(() =>
+                updateTtsConfig({
+                  ...ttsConfig,
+                  enableUser: !ttsConfig.enableUser,
+                })
+                  .then(SA.decode)
+                  .then(() => mutate())
+              )}
+            >
+              {ttsConfig.enableUser ? '禁止普通用户使用' : '允许普通用户使用'}
+            </Button>
+            <Button
+              variant='outlined'
+              color='secondary'
+              onClick={cat(() =>
+                updateTtsConfig({
+                  ...ttsConfig,
+                  enableVisitor: !ttsConfig.enableVisitor,
+                })
+                  .then(SA.decode)
+                  .then(() => mutate())
+              )}
+              sx={{ ml: 1 }}
+            >
+              {ttsConfig.enableVisitor ? '禁止游客使用' : '允许游客使用'}
+            </Button>
+          </Box>
+        </>
+      )}
     </form>
   )
 }

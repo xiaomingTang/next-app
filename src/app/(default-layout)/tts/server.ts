@@ -7,7 +7,10 @@ import { SA, toError } from '@/errors/utils'
 import { zf } from '@/request/validator'
 import { getSelf } from '@/user/server'
 import { prisma } from '@/request/prisma'
+import { ensureUser } from '@/user/validate'
+import { resolvePath } from '@/utils/url'
 
+import { sendDingGroupMessage } from '@zimi/utils'
 import { z } from 'zod'
 import { nanoid } from 'nanoid'
 import { noop } from 'lodash-es'
@@ -17,6 +20,30 @@ import { redirect } from 'next/navigation'
 import type { SA_RES } from '@/errors/utils'
 import type { TtsStatus, TtsTask } from '@/generated-prisma-client'
 import type { TtsMergeOption } from './utils/tts'
+
+const globalTtsConfig = {
+  enableVisitor: false,
+  enableUser: true,
+}
+
+export const getTtsConfig = SA.encode(async () => {
+  await getSelf()
+  return globalTtsConfig
+})
+
+const updateTtsConfigDto = z.object({
+  enableVisitor: z.boolean(),
+  enableUser: z.boolean(),
+})
+
+export const updateTtsConfig = SA.encode(
+  zf(updateTtsConfigDto, async (props) => {
+    ensureUser(await getSelf(), { roles: ['ADMIN'] })
+    globalTtsConfig.enableVisitor = props.enableVisitor
+    globalTtsConfig.enableUser = props.enableUser
+    return globalTtsConfig
+  })
+)
 
 const ttsDto = z.object({
   voice: z.string().min(1, '请选择一个语音'),
@@ -57,6 +84,13 @@ async function tryStartTtsTask(task: TryStartTtsTaskProps): Promise<TtsStatus> {
 
   const user = await getSelf().catch(noop)
 
+  if (!user && !globalTtsConfig.enableVisitor) {
+    throw Boom.forbidden('访客不允许使用TTS服务')
+  }
+  if (user && !globalTtsConfig.enableUser) {
+    throw Boom.forbidden('普通用户不允许使用TTS服务')
+  }
+
   if (!user) {
     const theUserTask = await prisma.ttsTask.findFirst({
       where: {
@@ -78,6 +112,21 @@ async function tryStartTtsTask(task: TryStartTtsTaskProps): Promise<TtsStatus> {
       },
     })
 
+    void sendDingGroupMessage({
+      accessToken: process.env.DINGTALK_ACCESS_TOKEN,
+      secret: process.env.DINGTALK_SECRET,
+      data: {
+        msgtype: 'actionCard',
+        actionCard: {
+          title: 'tts 任务已创建',
+          text: `tts 任务哈希: ${hash}\n设备ID: ${deviceId}`,
+          btnOrientation: '1',
+          singleTitle: '修改 tts 权限',
+          singleURL: resolvePath('/tts').href,
+        },
+      },
+    })
+
     if (curTask) {
       await prisma.ttsTask.upsert({
         where: { hash },
@@ -95,7 +144,9 @@ async function tryStartTtsTask(task: TryStartTtsTaskProps): Promise<TtsStatus> {
 
   await prisma.ttsTask.upsert({
     where: { hash },
-    update: {},
+    update: {
+      status: 'PROCESSING',
+    },
     create: {
       hash,
       status: 'PROCESSING',
