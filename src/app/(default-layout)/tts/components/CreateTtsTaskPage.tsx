@@ -139,9 +139,6 @@ function AudioPlayerButton({
         e.preventDefault()
         e.stopPropagation()
         const elem = audioRef.current
-        if (!elem) {
-          return
-        }
         onClickStart?.()
         setPaused((prev) => !prev)
         // 没事，这儿的 paused 还是旧的值，不会立即被上面的 setPaused 修改
@@ -149,10 +146,12 @@ function AudioPlayerButton({
           setMedia(elem)
           // 确保音频 url 已准备好
           await sleepMs(100)
-          void elem.play()
-          elem.currentTime = 0
+          void elem?.play()
         } else {
-          elem.pause()
+          elem?.pause()
+        }
+        if (elem) {
+          elem.currentTime = 0
         }
       }}
     >
