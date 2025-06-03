@@ -2,6 +2,7 @@ import 'server-only'
 
 import { spawn } from 'child_process'
 import fs from 'fs/promises'
+import path from 'path'
 
 import type { ChildProcessWithoutNullStreams } from 'child_process'
 
@@ -60,6 +61,13 @@ export async function rawTts(option: TtsOption) {
   }
   if (pitch) {
     cmds.push(`--pitch=${pitch}`)
+  }
+
+  const dirname = path.dirname(output)
+  try {
+    await fs.mkdir(dirname, { recursive: true })
+  } catch (_err) {
+    throw new Error(`Failed to create output directory: ${dirname}`)
   }
 
   const res = spawn('/home/xiaoming/ai/tts-env/bin/edge-tts', cmds, {

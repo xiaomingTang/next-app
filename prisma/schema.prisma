@@ -184,7 +184,7 @@ model TtsTask {
   status    TtsStatus
   deviceId  String
   // JSON 字符串，存储 TTS 任务的参数
-  options   String
+  options   String    @db.Text()
   error     String?   @db.Text()
   userId    Int?
   user      User?     @relation(fields: [userId], references: [id])

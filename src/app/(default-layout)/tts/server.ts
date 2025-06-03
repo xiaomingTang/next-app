@@ -14,10 +14,12 @@ import { noop } from 'lodash-es'
 import Boom from '@hapi/boom'
 import { redirect } from 'next/navigation'
 
-import type { TtsStatus } from '@/generated-prisma-client'
+import type { SA_RES } from '@/errors/utils'
+import type { TtsStatus, TtsTask } from '@/generated-prisma-client'
 import type { TtsMergeOption } from './utils/tts'
 
 const ttsDto = z.object({
+  voice: z.string().min(1, '请选择一个语音'),
   rate: z.string(),
   volume: z.string(),
   pitch: z.string(),
@@ -27,8 +29,8 @@ const ttsDto = z.object({
       text: z
         .string()
         .min(1, '文本不能为空')
-        .max(300, '单句话长度不能超过300个字符'),
-      voice: z.string(),
+        .max(1000, '单句话长度不能超过1000个字符'),
+      voice: z.string().optional(),
       rate: z.string().optional(),
       volume: z.string().optional(),
       pitch: z.string().optional(),
@@ -44,9 +46,14 @@ interface TryStartTtsTaskProps {
   options: TtsMergeOption
 }
 
+const ttsOption = {
+  encode: (arg: TtsMergeOption) => JSON.stringify(arg),
+  decode: (arg: { options: string }) =>
+    JSON.parse(arg.options) as TtsMergeOption,
+}
+
 async function tryStartTtsTask(task: TryStartTtsTaskProps): Promise<TtsStatus> {
   const { hash, deviceId, options } = task
-  const key = `${hash}.mp3`
 
   const user = await getSelf().catch(noop)
 
@@ -78,7 +85,7 @@ async function tryStartTtsTask(task: TryStartTtsTaskProps): Promise<TtsStatus> {
         create: {
           hash,
           status: 'PENDING',
-          options: JSON.stringify(options),
+          options: ttsOption.encode(options),
           deviceId,
         },
       })
@@ -92,7 +99,7 @@ async function tryStartTtsTask(task: TryStartTtsTaskProps): Promise<TtsStatus> {
     create: {
       hash,
       status: 'PROCESSING',
-      options: JSON.stringify(options),
+      options: ttsOption.encode(options),
       deviceId,
       userId: user?.id || null,
     },
@@ -100,6 +107,7 @@ async function tryStartTtsTask(task: TryStartTtsTaskProps): Promise<TtsStatus> {
 
   void rawTtsMerge(options)
     .then(async () => {
+      const key = `${hash}.mp3`
       await uploadToCos(`./tmp/${key}`, `/tmp/${key}`)
       await prisma.ttsTask.update({
         where: { hash },
@@ -123,14 +131,18 @@ async function tryStartTtsTask(task: TryStartTtsTaskProps): Promise<TtsStatus> {
 
 export const tts = SA.encode(
   zf(ttsDto, async (props) => {
+    /**
+     * 任务的唯一标识
+     */
     const hash = nanoid(12)
-    const key = `${hash}.mp3`
+    const voice = props.voice.trim()
     const rate = props.rate.trim()
     const volume = props.volume.trim()
     const pitch = props.pitch.trim()
 
     const texts = props.texts.map((text) => ({
       ...text,
+      voice: text.voice?.trim() || voice,
       rate: text.rate?.trim() || rate,
       volume: text.volume?.trim() || volume,
       pitch: text.pitch?.trim() || pitch,
@@ -141,12 +153,12 @@ export const tts = SA.encode(
       deviceId: props.deviceId,
       options: {
         options: texts,
-        output: `./tmp/${key}`,
+        output: `./tmp/${hash}.mp3`,
         timeoutMs: 1000 * 60 * 5,
       },
     })
 
-    return { key, status }
+    return { hash, status }
   })
 )
 
@@ -168,7 +180,7 @@ export const checkTtsTask = SA.encode(
       const status = await tryStartTtsTask({
         hash: props.hash,
         deviceId: task.deviceId,
-        options: JSON.parse(task.options) as TtsMergeOption,
+        options: ttsOption.decode(task),
       })
       return {
         status,
@@ -180,5 +192,73 @@ export const checkTtsTask = SA.encode(
       status: task.status,
       error: task.error || null,
     }
+  })
+)
+
+const getTtsTaskDto = z.object({
+  hash: z.string().min(1, '任务哈希不能为空'),
+  deviceId: z.string().optional(),
+})
+
+export const getTtsTask = SA.encode(
+  zf(getTtsTaskDto, async (props) => {
+    const user = await getSelf().catch(noop)
+    let task: TtsTask | null = null
+    if (user) {
+      task = await prisma.ttsTask.findFirst({
+        where: {
+          hash: props.hash,
+          userId: user.id,
+        },
+      })
+    } else {
+      task = await prisma.ttsTask.findFirst({
+        where: {
+          hash: props.hash,
+          deviceId: props.deviceId || '',
+        },
+      })
+    }
+    if (!task) {
+      throw Boom.notFound('任务不存在')
+    }
+    if (task.status === 'PENDING') {
+      const status = await tryStartTtsTask({
+        hash: props.hash,
+        deviceId: task.deviceId,
+        options: ttsOption.decode(task),
+      })
+      task.status = status
+    }
+    return task
+  })
+)
+
+export type TtsTaskItem = SA_RES<typeof getTtsTask>
+
+const getAllTtsTasksDto = z.object({
+  deviceId: z.string(),
+})
+
+export const getAllTtsTasks = SA.encode(
+  zf(getAllTtsTasksDto, async (props) => {
+    const user = await getSelf().catch(noop)
+    const allTasks = await prisma.ttsTask.findMany({
+      where: {
+        userId: user?.id || null,
+        deviceId: props.deviceId,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    })
+    return allTasks.map((task) => ({
+      ...task,
+      options: null,
+      desc: ttsOption
+        .decode(task)
+        .options.map((item) => item.text.slice(0, 30))
+        .join('...'),
+    }))
   })
 )
