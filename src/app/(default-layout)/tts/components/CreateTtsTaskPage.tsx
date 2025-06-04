@@ -17,8 +17,9 @@ import {
   voicePersonalitiesMap,
   voices,
 } from '../constants'
-import { getTtsConfig, tts, updateTtsConfig } from '../server'
+import { tts } from '../server'
 import { getCdnUrl } from '../../upload/utils/getCdnUrl'
+import { getTtsConfig, updateTtsConfig } from '../server/ttsConfig'
 
 import { cat } from '@/errors/catchAndToast'
 import { getDeviceId } from '@/utils/device-id'

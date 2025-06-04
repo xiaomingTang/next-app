@@ -23,3 +23,9 @@ export function emptyToUndefined<Obj extends Record<string, any>>(
   })
   return result
 }
+
+export function OR<const T extends {}>(
+  ...args: (T | false | undefined | null | void | 0 | '')[]
+) {
+  return args.filter((item) => !!item) as T[]
+}
