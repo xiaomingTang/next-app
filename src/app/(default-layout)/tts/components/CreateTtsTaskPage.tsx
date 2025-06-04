@@ -46,6 +46,7 @@ import {
   Divider,
   Stack,
   Chip,
+  Paper,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import DeleteIcon from '@mui/icons-material/Delete'
@@ -229,241 +230,251 @@ export default function TtsTaskCreatePage() {
       >
         新建“文本转语音”任务
       </Typography>
-      <Typography variant='subtitle1' sx={{ mb: 1, fontWeight: 'bold' }}>
-        默认配置
-      </Typography>
-      <Stack direction='row' spacing={2} mb={2} useFlexGap flexWrap='wrap'>
-        <FormControl sx={{ minWidth: 120, flexGrow: 1 }}>
-          <InputLabel>发声人</InputLabel>
+      <Paper sx={{ p: 2 }}>
+        <Typography variant='subtitle1' sx={{ mb: 1, fontWeight: 'bold' }}>
+          默认配置
+        </Typography>
+        <Stack direction='row' spacing={2} mb={2} useFlexGap flexWrap='wrap'>
+          <FormControl sx={{ minWidth: 120, flexGrow: 1 }}>
+            <InputLabel>发声人</InputLabel>
+            <Controller
+              name='defaultConfig.voice'
+              control={control}
+              render={({ field }) => (
+                <Select {...field} label='发声人' size='small'>
+                  {voicesWithDemo.map((v) => (
+                    <MenuItem key={v.voice} value={v.voice}>
+                      <AudioPlayerButton
+                        src={v.demoSrc}
+                        activeSrc={curAudioSrc}
+                        audioRef={audioRef}
+                        onClickStart={() => {
+                          setCurAudioSrc(v.demoSrc)
+                        }}
+                      />
+                      {v.name}
+                      {v.contentCategories.map((c) => (
+                        <Chip
+                          key={c}
+                          size='small'
+                          color='success'
+                          label={contentCategoriesMap[c]}
+                          sx={{ ml: 1 }}
+                          onClick={noop}
+                        />
+                      ))}
+                      {v.voicePersonalities.map((p) => (
+                        <Chip
+                          key={p}
+                          size='small'
+                          color='info'
+                          label={voicePersonalitiesMap[p]}
+                          sx={{ ml: 1 }}
+                          onClick={noop}
+                        />
+                      ))}
+                    </MenuItem>
+                  ))}
+                </Select>
+              )}
+            />
+          </FormControl>
           <Controller
-            name='defaultConfig.voice'
+            name='defaultConfig.volume'
             control={control}
-            render={({ field }) => (
-              <Select {...field} label='发声人' size='small'>
-                {voicesWithDemo.map((v) => (
-                  <MenuItem key={v.voice} value={v.voice}>
-                    <AudioPlayerButton
-                      src={v.demoSrc}
-                      activeSrc={curAudioSrc}
-                      audioRef={audioRef}
-                      onClickStart={() => {
-                        setCurAudioSrc(v.demoSrc)
-                      }}
-                    />
-                    {v.name}
-                    {v.contentCategories.map((c) => (
-                      <Chip
-                        key={c}
-                        size='small'
-                        color='success'
-                        label={contentCategoriesMap[c]}
-                        sx={{ ml: 1 }}
-                        onClick={noop}
-                      />
-                    ))}
-                    {v.voicePersonalities.map((p) => (
-                      <Chip
-                        key={p}
-                        size='small'
-                        color='info'
-                        label={voicePersonalitiesMap[p]}
-                        sx={{ ml: 1 }}
-                        onClick={noop}
-                      />
-                    ))}
-                  </MenuItem>
-                ))}
-              </Select>
-            )}
+            render={({ field }) => <ButtonSlider {...field} {...volumeProps} />}
           />
-        </FormControl>
-        <Controller
-          name='defaultConfig.volume'
-          control={control}
-          render={({ field }) => <ButtonSlider {...field} {...volumeProps} />}
-        />
-        <Controller
-          name='defaultConfig.rate'
-          control={control}
-          render={({ field }) => <ButtonSlider {...field} {...rateProps} />}
-        />
-        <Controller
-          name='defaultConfig.pitch'
-          control={control}
-          render={({ field }) => <ButtonSlider {...field} {...pitchProps} />}
-        />
-      </Stack>
-      <Divider sx={{ my: 2 }} />
-      <Typography variant='subtitle1' sx={{ mb: 1, fontWeight: 'bold' }}>
-        发言列表
-      </Typography>
-      {fields.map((item, idx) => (
-        <Box key={item.id} mb={2}>
-          <Stack direction='row' spacing={2} mb={1} useFlexGap flexWrap='wrap'>
-            <FormControl sx={{ minWidth: 120, flexGrow: 1 }}>
-              <InputLabel>发声人</InputLabel>
+          <Controller
+            name='defaultConfig.rate'
+            control={control}
+            render={({ field }) => <ButtonSlider {...field} {...rateProps} />}
+          />
+          <Controller
+            name='defaultConfig.pitch'
+            control={control}
+            render={({ field }) => <ButtonSlider {...field} {...pitchProps} />}
+          />
+        </Stack>
+        <Divider sx={{ my: 2 }} />
+        <Typography variant='subtitle1' sx={{ mb: 1, fontWeight: 'bold' }}>
+          发言列表
+        </Typography>
+        {fields.map((item, idx) => (
+          <Box key={item.id} mb={2}>
+            <Stack
+              direction='row'
+              spacing={2}
+              mb={1}
+              useFlexGap
+              flexWrap='wrap'
+            >
+              <FormControl sx={{ minWidth: 120, flexGrow: 1 }}>
+                <InputLabel>发声人</InputLabel>
+                <Controller
+                  name={`speeches.${idx}.voice`}
+                  control={control}
+                  render={({ field }) => (
+                    <Select {...field} label='发声人' size='small'>
+                      <MenuItem value=''>未选择</MenuItem>
+                      {voicesWithDemo.map((v) => (
+                        <MenuItem key={v.voice} value={v.voice}>
+                          <AudioPlayerButton
+                            src={v.demoSrc}
+                            activeSrc={curAudioSrc}
+                            audioRef={audioRef}
+                            onClickStart={() => {
+                              setCurAudioSrc(v.demoSrc)
+                            }}
+                          />
+                          {v.name}
+                          {v.contentCategories.map((c) => (
+                            <Chip
+                              key={c}
+                              size='small'
+                              color='success'
+                              label={contentCategoriesMap[c]}
+                              sx={{ ml: 1 }}
+                              onClick={noop}
+                            />
+                          ))}
+                          {v.voicePersonalities.map((p) => (
+                            <Chip
+                              key={p}
+                              size='small'
+                              color='info'
+                              label={voicePersonalitiesMap[p]}
+                              sx={{ ml: 1 }}
+                              onClick={noop}
+                            />
+                          ))}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  )}
+                />
+              </FormControl>
               <Controller
-                name={`speeches.${idx}.voice`}
+                name={`speeches.${idx}.volume`}
                 control={control}
                 render={({ field }) => (
-                  <Select {...field} label='发声人' size='small'>
-                    <MenuItem value=''>未选择</MenuItem>
-                    {voicesWithDemo.map((v) => (
-                      <MenuItem key={v.voice} value={v.voice}>
-                        <AudioPlayerButton
-                          src={v.demoSrc}
-                          activeSrc={curAudioSrc}
-                          audioRef={audioRef}
-                          onClickStart={() => {
-                            setCurAudioSrc(v.demoSrc)
-                          }}
-                        />
-                        {v.name}
-                        {v.contentCategories.map((c) => (
-                          <Chip
-                            key={c}
-                            size='small'
-                            color='success'
-                            label={contentCategoriesMap[c]}
-                            sx={{ ml: 1 }}
-                            onClick={noop}
-                          />
-                        ))}
-                        {v.voicePersonalities.map((p) => (
-                          <Chip
-                            key={p}
-                            size='small'
-                            color='info'
-                            label={voicePersonalitiesMap[p]}
-                            sx={{ ml: 1 }}
-                            onClick={noop}
-                          />
-                        ))}
-                      </MenuItem>
-                    ))}
-                  </Select>
+                  <ButtonSlider {...field} {...volumeProps} />
                 )}
               />
-            </FormControl>
-            <Controller
-              name={`speeches.${idx}.volume`}
-              control={control}
-              render={({ field }) => (
-                <ButtonSlider {...field} {...volumeProps} />
-              )}
-            />
-            <Controller
-              name={`speeches.${idx}.rate`}
-              control={control}
-              render={({ field }) => <ButtonSlider {...field} {...rateProps} />}
-            />
-            <Controller
-              name={`speeches.${idx}.pitch`}
-              control={control}
-              render={({ field }) => (
-                <ButtonSlider {...field} {...pitchProps} />
-              )}
-            />
-            <IconButton
-              onClick={() => remove(idx)}
-              disabled={fields.length <= 1}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </Stack>
-          <Controller
-            name={`speeches.${idx}.text`}
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <TextField
-                label='文本'
-                error={!!error}
-                helperText={error ? error.message : ' '}
-                fullWidth
-                multiline
-                minRows={3}
-                maxRows={10}
-                {...field}
+              <Controller
+                name={`speeches.${idx}.rate`}
+                control={control}
+                render={({ field }) => (
+                  <ButtonSlider {...field} {...rateProps} />
+                )}
               />
-            )}
-            rules={{
-              required: '文本不能为空',
-              validate: (value) => value.trim() !== '' || '文本不能为空',
-            }}
-          />
-        </Box>
-      ))}
-      <Button
-        startIcon={<AddIcon />}
-        onClick={() => {
-          append({
-            text: '',
-            voice: '',
-          })
-        }}
-        sx={{ mb: 2 }}
-      >
-        添加发言
-      </Button>
-      <Box mt={2}>
-        <Button
-          type='submit'
-          variant='contained'
-          color='primary'
-          disabled={loading}
-        >
-          提交任务
-        </Button>
-        <Anchor href='/tts/tasks' tabIndex={-1}>
-          <Button variant='text' color='primary' sx={{ ml: 1 }}>
-            查看任务列表
-          </Button>
-        </Anchor>
-      </Box>
-      {ttsConfig && (
-        <>
-          <Divider sx={{ my: 2 }} />
-
-          <Box>
-            <Button
-              variant='outlined'
-              color='secondary'
-              onClick={cat(() =>
-                updateTtsConfig({
-                  ...ttsConfig,
-                  enableUser: !ttsConfig.enableUser,
-                })
-                  .then(SA.decode)
-                  .then(() => mutate())
+              <Controller
+                name={`speeches.${idx}.pitch`}
+                control={control}
+                render={({ field }) => (
+                  <ButtonSlider {...field} {...pitchProps} />
+                )}
+              />
+              <IconButton
+                onClick={() => remove(idx)}
+                disabled={fields.length <= 1}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Stack>
+            <Controller
+              name={`speeches.${idx}.text`}
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <TextField
+                  label='文本'
+                  error={!!error}
+                  helperText={error ? error.message : ' '}
+                  fullWidth
+                  multiline
+                  minRows={3}
+                  maxRows={10}
+                  {...field}
+                />
               )}
-            >
-              {ttsConfig.enableUser ? '禁止普通用户使用' : '允许普通用户使用'}
-            </Button>
-            <Button
-              variant='outlined'
-              color='secondary'
-              onClick={cat(() =>
-                updateTtsConfig({
-                  ...ttsConfig,
-                  enableGuest: !ttsConfig.enableGuest,
-                })
-                  .then(SA.decode)
-                  .then(() => mutate())
-              )}
-              sx={{ ml: 1 }}
-            >
-              {ttsConfig.enableGuest ? '禁止游客使用' : '允许游客使用'}
-            </Button>
+              rules={{
+                required: '文本不能为空',
+                validate: (value) => value.trim() !== '' || '文本不能为空',
+              }}
+            />
           </Box>
-        </>
-      )}
-      {curAudioSrc && (
-        <audio
-          ref={audioRef}
-          src={curAudioSrc}
-          className='w-0 h-0 hidden overflow-hidden opacity-0'
-        />
-      )}
+        ))}
+        <Button
+          startIcon={<AddIcon />}
+          onClick={() => {
+            append({
+              text: '',
+              voice: '',
+            })
+          }}
+          sx={{ mb: 2 }}
+        >
+          添加发言
+        </Button>
+        <Box mt={2}>
+          <Button
+            type='submit'
+            variant='contained'
+            color='primary'
+            disabled={loading}
+          >
+            提交任务
+          </Button>
+          <Anchor href='/tts/tasks' tabIndex={-1}>
+            <Button variant='text' color='primary' sx={{ ml: 1 }}>
+              查看任务列表
+            </Button>
+          </Anchor>
+        </Box>
+        {ttsConfig && (
+          <>
+            <Divider sx={{ my: 2 }} />
+
+            <Box>
+              <Button
+                variant='outlined'
+                color='secondary'
+                onClick={cat(() =>
+                  updateTtsConfig({
+                    ...ttsConfig,
+                    enableUser: !ttsConfig.enableUser,
+                  })
+                    .then(SA.decode)
+                    .then(() => mutate())
+                )}
+              >
+                {ttsConfig.enableUser ? '禁止普通用户使用' : '允许普通用户使用'}
+              </Button>
+              <Button
+                variant='outlined'
+                color='secondary'
+                onClick={cat(() =>
+                  updateTtsConfig({
+                    ...ttsConfig,
+                    enableGuest: !ttsConfig.enableGuest,
+                  })
+                    .then(SA.decode)
+                    .then(() => mutate())
+                )}
+                sx={{ ml: 1 }}
+              >
+                {ttsConfig.enableGuest ? '禁止游客使用' : '允许游客使用'}
+              </Button>
+            </Box>
+          </>
+        )}
+        {curAudioSrc && (
+          <audio
+            ref={audioRef}
+            src={curAudioSrc}
+            className='w-0 h-0 hidden overflow-hidden opacity-0'
+          />
+        )}
+      </Paper>
     </form>
   )
 }
