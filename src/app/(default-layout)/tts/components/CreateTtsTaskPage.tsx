@@ -444,14 +444,14 @@ export default function TtsTaskCreatePage() {
               onClick={cat(() =>
                 updateTtsConfig({
                   ...ttsConfig,
-                  enableVisitor: !ttsConfig.enableVisitor,
+                  enableGuest: !ttsConfig.enableGuest,
                 })
                   .then(SA.decode)
                   .then(() => mutate())
               )}
               sx={{ ml: 1 }}
             >
-              {ttsConfig.enableVisitor ? '禁止游客使用' : '允许游客使用'}
+              {ttsConfig.enableGuest ? '禁止游客使用' : '允许游客使用'}
             </Button>
           </Box>
         </>

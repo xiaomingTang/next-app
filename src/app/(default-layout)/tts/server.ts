@@ -22,8 +22,8 @@ import type { TtsStatus, TtsTask } from '@/generated-prisma-client'
 import type { TtsMergeOption } from './utils/tts'
 
 const globalTtsConfig = {
-  enableVisitor: false,
-  enableUser: true,
+  enableGuest: process.env.TTS_ENABLE_GUEST,
+  enableUser: process.env.TTS_ENABLE_USER,
 }
 
 export const getTtsConfig = SA.encode(async () => {
@@ -32,14 +32,14 @@ export const getTtsConfig = SA.encode(async () => {
 })
 
 const updateTtsConfigDto = z.object({
-  enableVisitor: z.boolean(),
+  enableGuest: z.boolean(),
   enableUser: z.boolean(),
 })
 
 export const updateTtsConfig = SA.encode(
   zf(updateTtsConfigDto, async (props) => {
     ensureUser(await getSelf(), { roles: ['ADMIN'] })
-    globalTtsConfig.enableVisitor = props.enableVisitor
+    globalTtsConfig.enableGuest = props.enableGuest
     globalTtsConfig.enableUser = props.enableUser
     return globalTtsConfig
   })
@@ -84,7 +84,7 @@ async function tryStartTtsTask(task: TryStartTtsTaskProps): Promise<TtsStatus> {
 
   const user = await getSelf().catch(noop)
 
-  if (!user && !globalTtsConfig.enableVisitor) {
+  if (!user && !globalTtsConfig.enableGuest) {
     throw Boom.forbidden('访客不允许使用TTS服务')
   }
   if (user && !globalTtsConfig.enableUser) {

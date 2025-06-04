@@ -8,6 +8,9 @@ declare namespace NodeJS {
 
     SYSTEM_CONFIG_PEER_AUTH_REQUIRED: string
 
+    TTS_ENABLE_USER: boolean
+    TTS_ENABLE_GUEST: boolean
+
     ADMIN_EMAIL: string
     ADMIN_PASSWORD: string
     JWT_SECRET: string
