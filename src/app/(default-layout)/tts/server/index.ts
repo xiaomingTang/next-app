@@ -131,7 +131,10 @@ export const getTtsTask = SA.encode(
     if (!task) {
       throw Boom.notFound('任务不存在')
     }
-    return task
+    return {
+      ...task,
+      options: ttsOptionParser.decode(task),
+    }
   })
 )
 
