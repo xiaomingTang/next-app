@@ -1,8 +1,3 @@
-/*
- * 新建TTS任务页面
- * 支持默认配置和多个发言，每个发言可单独配置发声人、音量、语速、声调
- * 使用MUI组件，server action提交
- */
 'use client'
 
 import {
@@ -26,13 +21,12 @@ import { getDeviceId } from '@/utils/device-id'
 import { SA } from '@/errors/utils'
 import Anchor from '@/components/Anchor'
 import { useUser } from '@/user'
-import { useMediaLoading } from '@/hooks/useMediaLoading'
+import { useAudioPlayer } from '@/hooks/useAudio'
 
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import StopIcon from '@mui/icons-material/Stop'
 import { useLoading } from '@zimi/hooks'
 import { useForm, useFieldArray, Controller } from 'react-hook-form'
-import React, { useEffect, useRef, useState } from 'react'
 import {
   Box,
   Button,
@@ -53,7 +47,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { useRouter } from 'next/navigation'
 import { noop } from 'lodash-es'
 import useSWR from 'swr'
-import { sleepMs } from '@zimi/utils'
+import toast from 'react-hot-toast'
 
 const voicesWithDemo = voices.map((v) => ({
   ...v,
@@ -103,63 +97,23 @@ interface FormValues {
   speeches: SpeechItem[]
 }
 
-function AudioPlayerButton({
-  audioRef,
-  activeSrc,
-  src,
-  onClickStart,
-}: {
-  audioRef: React.RefObject<HTMLAudioElement | null>
-  activeSrc: string | null
-  src: string
-  onClickStart?: () => void
-}) {
-  const { loading, setMedia } = useMediaLoading()
-  const [paused, setPaused] = useState(true)
-
-  useEffect(() => {
-    const elem = audioRef.current
-    if (elem) {
-      setMedia(elem)
-    }
-    return () => {
-      elem?.pause()
-    }
-  }, [audioRef, setMedia])
-
-  useEffect(() => {
-    if (activeSrc !== src) {
-      return
-    }
-    return () => {
-      setPaused(true)
-    }
-  }, [activeSrc, src])
+function AudioPlayerButton({ src }: { src: string }) {
+  const { src: curSrc, paused, loading } = useAudioPlayer()
+  const isActive = curSrc === src
 
   return (
     <IconButton
       size='small'
-      loading={loading && activeSrc === src}
+      loading={isActive && loading}
       onClick={async (e) => {
         e.preventDefault()
         e.stopPropagation()
-        onClickStart?.()
-        setPaused((prev) => !prev)
-        // 没事，这儿的 paused 还是旧的值，不会立即被上面的 setPaused 修改
-        if (paused) {
-          setMedia(audioRef.current)
-          // 确保音频 url 已准备好
-          await sleepMs(100)
-          void audioRef.current?.play()
-          if (audioRef.current) {
-            audioRef.current.currentTime = 0
-          }
-        } else {
-          audioRef.current?.pause()
-        }
+        void useAudioPlayer.play(src).catch(() => {
+          toast.error('播放失败，请稍后重试')
+        })
       }}
     >
-      {paused ? <PlayArrowIcon /> : <StopIcon />}
+      {isActive && !paused ? <StopIcon /> : <PlayArrowIcon />}
     </IconButton>
   )
 }
@@ -193,8 +147,6 @@ export default function TtsTaskCreatePage() {
   })
   /* loading hook */
   const [loading, withLoading] = useLoading()
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  const [curAudioSrc, setCurAudioSrc] = useState<string | null>(null)
 
   /* 提交表单 */
   const onSubmit = handleSubmit(
@@ -244,14 +196,7 @@ export default function TtsTaskCreatePage() {
                 <Select {...field} label='发声人' size='small'>
                   {voicesWithDemo.map((v) => (
                     <MenuItem key={v.voice} value={v.voice}>
-                      <AudioPlayerButton
-                        src={v.demoSrc}
-                        activeSrc={curAudioSrc}
-                        audioRef={audioRef}
-                        onClickStart={() => {
-                          setCurAudioSrc(v.demoSrc)
-                        }}
-                      />
+                      <AudioPlayerButton src={v.demoSrc} />
                       {v.name}
                       {v.contentCategories.map((c) => (
                         <Chip
@@ -318,14 +263,7 @@ export default function TtsTaskCreatePage() {
                       <MenuItem value=''>未选择</MenuItem>
                       {voicesWithDemo.map((v) => (
                         <MenuItem key={v.voice} value={v.voice}>
-                          <AudioPlayerButton
-                            src={v.demoSrc}
-                            activeSrc={curAudioSrc}
-                            audioRef={audioRef}
-                            onClickStart={() => {
-                              setCurAudioSrc(v.demoSrc)
-                            }}
-                          />
+                          <AudioPlayerButton src={v.demoSrc} />
                           {v.name}
                           {v.contentCategories.map((c) => (
                             <Chip
@@ -466,13 +404,6 @@ export default function TtsTaskCreatePage() {
               </Button>
             </Box>
           </>
-        )}
-        {curAudioSrc && (
-          <audio
-            ref={audioRef}
-            src={curAudioSrc}
-            className='w-0 h-0 hidden overflow-hidden opacity-0'
-          />
         )}
       </Paper>
     </form>
