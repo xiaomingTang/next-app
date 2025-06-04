@@ -13,13 +13,8 @@ import { useRouter } from 'next/navigation'
 import {
   Box,
   Typography,
-  Table,
-  TableBody,
   TableCell,
-  TableContainer,
-  TableHead,
   TableRow,
-  Paper,
   Button,
   CircularProgress,
 } from '@mui/material'
@@ -41,66 +36,64 @@ export default function ListTtsTaskPage() {
 
   if (loading) {
     return (
-      <Box
-        display='flex'
-        justifyContent='center'
-        alignItems='center'
-        minHeight={200}
-      >
-        <CircularProgress />
-      </Box>
+      <TableRow>
+        <TableCell colSpan={3} align='center'>
+          <Box display='flex' justifyContent='center' alignItems='center'>
+            <CircularProgress />
+          </Box>
+        </TableCell>
+      </TableRow>
     )
   }
 
   if (error) {
-    return <Typography color='error'>{error.message}</Typography>
+    return (
+      <TableRow>
+        <TableCell colSpan={3} align='center'>
+          <Typography color='error'>
+            加载 TTS 任务失败: {error.message}
+          </Typography>
+          <Typography sx={{ mt: 1 }}>
+            <Anchor href='/tts'>点此新建</Anchor>
+          </Typography>
+        </TableCell>
+      </TableRow>
+    )
   }
 
-  return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>简介</TableCell>
-            <TableCell>状态</TableCell>
-            <TableCell>操作</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {(!tasks || tasks.length === 0) && (
-            <TableRow>
-              <TableCell colSpan={3} align='center'>
-                <Typography color='textSecondary'>
-                  <Span sx={{ mr: 1 }}>暂无 TTS 任务</Span>
-                  <Anchor href='/tts'>点此新建</Anchor>
-                </Typography>
-              </TableCell>
-            </TableRow>
-          )}
-          {tasks?.map((task) => (
-            <TableRow key={task.hash} hover>
-              <TableCell
-                sx={{
-                  width: `min(60vw,500px)`,
-                }}
-              >
-                {task.desc}
-              </TableCell>
-              <TableCell>
-                <StatusElem status={task.status} />
-              </TableCell>
-              <TableCell>
-                <Button
-                  size='small'
-                  onClick={() => router.push(`/tts/task/${task.hash}`)}
-                >
-                  查看详情
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  )
+  if (!tasks || tasks.length === 0) {
+    return (
+      <TableRow>
+        <TableCell colSpan={3} align='center'>
+          <Typography color='textSecondary'>
+            <Span sx={{ mr: 1 }}>暂无 TTS 任务</Span>
+            <Anchor href='/tts'>点此新建</Anchor>
+          </Typography>
+        </TableCell>
+      </TableRow>
+    )
+  }
+
+  return tasks?.map((task) => (
+    <TableRow key={task.hash} hover>
+      <TableCell
+        sx={{
+          width: `min(60vw,500px)`,
+        }}
+      >
+        {task.desc}
+      </TableCell>
+      <TableCell>
+        <StatusElem status={task.status} />
+      </TableCell>
+      <TableCell>
+        <Button
+          size='small'
+          onClick={() => router.push(`/tts/task/${task.hash}`)}
+        >
+          查看详情
+        </Button>
+      </TableCell>
+    </TableRow>
+  ))
 }
