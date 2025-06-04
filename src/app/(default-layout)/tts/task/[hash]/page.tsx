@@ -2,11 +2,11 @@ import { TtsStatusIndicator } from './TtsStatusIndicator'
 import { TtsStoreInitor } from './TtsStoreInitor'
 import { TtsAudioArea } from './TtsAudioArea'
 import { TtsConversation } from './TtsConversation'
+import ErrorPage from './error'
 
 import { getTtsTask } from '../../server'
 
 import { seo } from '@/utils/seo'
-import { SA } from '@/errors/utils'
 import Anchor from '@/components/Anchor'
 import Span from '@/components/Span'
 
@@ -30,7 +30,11 @@ export default async function Index(props: Props) {
 
   const { hash } = params
 
-  const task = await getTtsTask({ hash }).then(SA.decode)
+  const { data: task, error } = await getTtsTask({ hash })
+
+  if (error) {
+    return <ErrorPage error={error} />
+  }
 
   return (
     <Stack direction='column' spacing={2}>
