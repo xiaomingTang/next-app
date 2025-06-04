@@ -1,7 +1,7 @@
 import { copyToClipboard } from '@/utils/copyToClipboard'
 import { cat } from '@/errors/catchAndToast'
 
-import React, { useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
 import CheckIcon from '@mui/icons-material/Check'
 import IconButton from '@mui/material/IconButton'
