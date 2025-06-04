@@ -100,6 +100,7 @@ export function ColorIndex() {
               alt={item.title}
               width={100}
               height={50}
+              unoptimized
               crossOrigin='anonymous'
               onLoad={(e) => {
                 const img = e.target as HTMLImageElement
