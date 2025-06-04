@@ -12,7 +12,6 @@ import { voices } from '../constants'
 import { getCdnUrl } from '../../upload/utils/getCdnUrl'
 
 import { SA, toError } from '@/errors/utils'
-import { getDeviceId } from '@/utils/device-id'
 import { Delay } from '@/components/Delay'
 import { dark } from '@/utils/theme'
 import Anchor from '@/components/Anchor'
@@ -41,9 +40,7 @@ export default function ViewTtsTaskPage() {
     error: rawError,
     isValidating: loading,
   } = useSWR(`getTtsTask-${hash}`, async () =>
-    !hash
-      ? null
-      : getTtsTask({ hash, deviceId: await getDeviceId() }).then(SA.decode)
+    !hash ? null : getTtsTask({ hash }).then(SA.decode)
   )
   const error = useMemo(() => {
     if (rawError) {

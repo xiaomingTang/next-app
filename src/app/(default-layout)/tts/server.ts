@@ -18,7 +18,7 @@ import Boom from '@hapi/boom'
 import { redirect } from 'next/navigation'
 
 import type { SA_RES } from '@/errors/utils'
-import type { TtsStatus, TtsTask } from '@/generated-prisma-client'
+import type { TtsStatus } from '@/generated-prisma-client'
 import type { TtsMergeOption } from './utils/tts'
 
 const globalTtsConfig = {
@@ -248,28 +248,19 @@ export const checkTtsTask = SA.encode(
 
 const getTtsTaskDto = z.object({
   hash: z.string().min(1, '任务哈希不能为空'),
-  deviceId: z.string().optional(),
 })
+
+function OR<const T extends {}>(...args: (T | false | undefined | null)[]) {
+  return args.filter((item) => !!item) as T[]
+}
 
 export const getTtsTask = SA.encode(
   zf(getTtsTaskDto, async (props) => {
-    const user = await getSelf().catch(noop)
-    let task: TtsTask | null = null
-    if (user) {
-      task = await prisma.ttsTask.findFirst({
-        where: {
-          hash: props.hash,
-          userId: user.id,
-        },
-      })
-    } else {
-      task = await prisma.ttsTask.findFirst({
-        where: {
-          hash: props.hash,
-          deviceId: props.deviceId || '',
-        },
-      })
-    }
+    const task = await prisma.ttsTask.findUnique({
+      where: {
+        hash: props.hash,
+      },
+    })
     if (!task) {
       throw Boom.notFound('任务不存在')
     }
@@ -296,8 +287,14 @@ export const getAllTtsTasks = SA.encode(
     const user = await getSelf().catch(noop)
     const allTasks = await prisma.ttsTask.findMany({
       where: {
-        userId: user?.id || null,
-        deviceId: props.deviceId,
+        OR: OR(
+          {
+            deviceId: props.deviceId,
+          },
+          user && {
+            userId: user.id,
+          }
+        ),
       },
       orderBy: {
         createdAt: 'desc',
