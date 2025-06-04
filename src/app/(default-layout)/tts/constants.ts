@@ -73,6 +73,14 @@ export interface VoiceItem {
  */
 export const voices = [
   {
+    voice: 'zh-CN-YunyangNeural',
+    gender: 'male',
+    locale: 'zh-CN',
+    contentCategories: ['News'],
+    voicePersonalities: ['Professional', 'Reliable'],
+    name: '普通话男声·云阳',
+  },
+  {
     voice: 'zh-CN-YunjianNeural',
     gender: 'male',
     locale: 'zh-CN',
@@ -95,14 +103,6 @@ export const voices = [
     contentCategories: ['Cartoon', 'Novel'],
     voicePersonalities: ['Cute'],
     name: '普通话男声·云夏',
-  },
-  {
-    voice: 'zh-CN-YunyangNeural',
-    gender: 'male',
-    locale: 'zh-CN',
-    contentCategories: ['News'],
-    voicePersonalities: ['Professional', 'Reliable'],
-    name: '普通话男声·云阳',
   },
   {
     voice: 'zh-CN-XiaoxiaoNeural',
@@ -129,20 +129,20 @@ export const voices = [
     name: '粤语男声·云龙',
   },
   {
-    voice: 'zh-HK-HiuGaaiNeural',
-    gender: 'female',
-    locale: 'zh-HK',
-    contentCategories: ['General'],
-    voicePersonalities: ['Friendly', 'Positive'],
-    name: '粤语女声·晓佳',
-  },
-  {
     voice: 'zh-HK-HiuMaanNeural',
     gender: 'female',
     locale: 'zh-HK',
     contentCategories: ['General'],
     voicePersonalities: ['Friendly', 'Positive'],
     name: '粤语女声·晓雯',
+  },
+  {
+    voice: 'zh-HK-HiuGaaiNeural',
+    gender: 'female',
+    locale: 'zh-HK',
+    contentCategories: ['General'],
+    voicePersonalities: ['Friendly', 'Positive'],
+    name: '粤语女声·晓佳',
   },
   {
     voice: 'zh-CN-liaoning-XiaobeiNeural',
