@@ -25,7 +25,7 @@ export default function Page() {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>简介</TableCell>
+            <TableCell>内容</TableCell>
             <TableCell>状态</TableCell>
             <TableCell>操作</TableCell>
           </TableRow>
