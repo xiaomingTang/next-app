@@ -1,4 +1,4 @@
-import ListTtsTaskPage from '../components/ListTtsTaskPage'
+import ListTtsTaskPage from './ListTtsTaskPage'
 
 import { seo } from '@/utils/seo'
 
