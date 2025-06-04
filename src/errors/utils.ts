@@ -42,7 +42,7 @@ export function toPlainError(inputError: unknown): PlainError {
   }
   return {
     code: err.code ?? 500,
-    message: err.message || '服务器错误, 请稍后再试',
+    message: err.message || '未知错误, 请稍后再试',
   }
 }
 
