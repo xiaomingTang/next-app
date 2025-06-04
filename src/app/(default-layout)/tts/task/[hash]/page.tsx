@@ -35,9 +35,6 @@ export default async function Index(props: Props) {
   return (
     <Stack direction='column' spacing={2}>
       <TtsStoreInitor task={task} />
-      <Typography variant='h5' sx={{ textAlign: 'center', fontWeight: 'bold' }}>
-        TTS任务详情
-      </Typography>
       <Typography>
         <TtsStatusIndicator task={task} />
       </Typography>
