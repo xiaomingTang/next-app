@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import { Paper, Typography } from '@mui/material'
 
 export default function Index({ children }: { children: React.ReactNode }) {
   return (
@@ -9,7 +9,7 @@ export default function Index({ children }: { children: React.ReactNode }) {
       >
         TTS 任务列表
       </Typography>
-      {children}
+      <Paper sx={{ p: 2 }}>{children}</Paper>
     </>
   )
 }
