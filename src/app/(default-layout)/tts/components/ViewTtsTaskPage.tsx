@@ -62,8 +62,11 @@ export default function ViewTtsTaskPage() {
     if (!task?.hash) {
       return null
     }
+    if (task.status !== 'SUCCESS') {
+      return null
+    }
     return getCdnUrl({ key: `/tmp/${task.hash}.mp3` }).href
-  }, [task?.hash])
+  }, [task?.hash, task?.status])
 
   const moreActionElem = (
     <Typography component='span' sx={{ color: 'text.secondary' }}>
@@ -146,7 +149,7 @@ export default function ViewTtsTaskPage() {
           })}
           {audioUrl && (
             // 延迟一点时间，立即就去取的话，貌似取不到
-            <Delay delayMs={500}>
+            <Delay delayMs={1000}>
               <audio src={audioUrl} controls style={{ width: '100%' }} />
             </Delay>
           )}
