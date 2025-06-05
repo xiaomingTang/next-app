@@ -30,3 +30,4 @@ Dockerfile_base
 README.md
 .gitignore
 .git
+/tmp
