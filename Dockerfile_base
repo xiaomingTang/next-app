@@ -1,7 +1,7 @@
 # 使用 uname -u 查看系统架构 (需要保证 docker 架构和云服务器架构一致)
-# docker build -f Dockerfile_base -t ubuntu_with_node_22 --progress plain .
+# docker build -f Dockerfile_base -t ubuntu_with_node_22 --progress plain --platform=linux/amd64 .
 
-FROM --platform=linux/amd64 ubuntu:22.04 AS base
+FROM ubuntu:22.04 AS base
 WORKDIR /app
 
 RUN echo deb http://mirrors.aliyun.com/ubuntu/ jammy main restricted universe multiverse > /etc/apt/sources.list
