@@ -55,6 +55,47 @@ export const tts = SA.encode(
       throw Boom.forbidden('普通用户不允许使用TTS服务')
     }
 
+    // 单用户限流
+    const processingCount = await prisma.ttsTask.count({
+      where: {
+        OR: OR(
+          {
+            deviceId: props.deviceId,
+          },
+          user && {
+            userId: user.id,
+          }
+        ),
+        status: {
+          in: ['PENDING', 'PROCESSING'],
+        },
+      },
+    })
+
+    const msg = `当前你有 ${processingCount} 个任务正在进行中，请等待前面的任务完成后再提交新的任务`
+
+    if (!user && processingCount >= 2) {
+      throw Boom.forbidden(msg)
+    }
+
+    if (user?.role === 'USER' && processingCount >= 6) {
+      throw Boom.forbidden(msg)
+    }
+
+    // 接口限流
+    const recentTaskCount = await prisma.ttsTask.count({
+      where: {
+        createdAt: {
+          // 1 分钟内
+          gte: new Date(Date.now() - 1000 * 60 * 1),
+        },
+      },
+    })
+
+    if (recentTaskCount >= 60) {
+      throw Boom.tooManyRequests('当前请求过于频繁，请稍后再试')
+    }
+
     /**
      * 任务的唯一标识
      */
