@@ -160,6 +160,7 @@
       "@prisma/engines",
       "@tailwindcss/oxide",
       "core-js",
+      "cos-js-sdk-v5",
       "esbuild",
       "prisma",
       "sharp"
