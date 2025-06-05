@@ -25,6 +25,7 @@ export default function Page() {
       <Table>
         <TableHead>
           <TableRow>
+            <TableCell>创建时间</TableCell>
             <TableCell>内容</TableCell>
             <TableCell>状态</TableCell>
             <TableCell>操作</TableCell>

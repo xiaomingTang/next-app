@@ -7,6 +7,7 @@ import { getDeviceId } from '@/utils/device-id'
 import { SA, toError } from '@/errors/utils'
 import Span from '@/components/Span'
 import Anchor from '@/components/Anchor'
+import { formatTime } from '@/utils/transformer'
 
 import { useMemo } from 'react'
 import { useRouter } from 'next/navigation'
@@ -37,7 +38,7 @@ export default function ListTtsTaskPage() {
   if (loading) {
     return (
       <TableRow>
-        <TableCell colSpan={3} align='center'>
+        <TableCell colSpan={4} align='center'>
           <Box display='flex' justifyContent='center' alignItems='center'>
             <CircularProgress />
           </Box>
@@ -49,7 +50,7 @@ export default function ListTtsTaskPage() {
   if (error) {
     return (
       <TableRow>
-        <TableCell colSpan={3} align='center'>
+        <TableCell colSpan={4} align='center'>
           <Typography color='error'>
             加载 TTS 任务失败: {error.message}
           </Typography>
@@ -64,7 +65,7 @@ export default function ListTtsTaskPage() {
   if (!tasks || tasks.length === 0) {
     return (
       <TableRow>
-        <TableCell colSpan={3} align='center'>
+        <TableCell colSpan={4} align='center'>
           <Typography color='textSecondary'>
             <Span sx={{ mr: 1 }}>暂无 TTS 任务</Span>
             <Anchor href='/tts'>点此新建</Anchor>
@@ -76,9 +77,14 @@ export default function ListTtsTaskPage() {
 
   return tasks?.map((task) => (
     <TableRow key={task.hash} hover>
+      <TableCell>
+        <Typography variant='body2' color='textSecondary'>
+          {formatTime(task.createdAt)}
+        </Typography>
+      </TableCell>
       <TableCell
         sx={{
-          width: `min(60vw,500px)`,
+          width: `min(40vw,500px)`,
         }}
       >
         {task.desc}
