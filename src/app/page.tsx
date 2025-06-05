@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   ...seo.defaults(),
   title: `${seo.title('博客列表页')} | ${hostname} | web技术心得分享`,
   alternates: {
-    canonical: ROOT_URL,
+    canonical: ROOT_URL.href,
     types: {
       // https://taoshu.in/webfeed/lets-webfeed.html
       'application/rss+xml': [{ url: 'rss.xml', title: 'RSS' }],

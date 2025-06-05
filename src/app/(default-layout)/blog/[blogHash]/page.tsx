@@ -41,19 +41,27 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       : `/blog/${blogHash}`
 
   // 由于可能涉及到未发布博客，因此不能缓存
-  const { data: blog } = await getBlog({
+  const { data: blog, error } = await getBlog({
     hash: blogHash,
   })
 
+  if (!blog) {
+    return seo.defaults({
+      title: error.message,
+    })
+  }
+
   return seo.defaults({
-    title: blog?.title,
-    description: blog?.description,
+    title: blog.title,
+    description: blog.description,
     keywords: [
-      ...(blog?.tags.map((tag) => tag.name) ?? []),
-      ...(blog?.tags.map((tag) => tag.description) ?? []),
+      ...(blog.tags.map((tag) => tag.name) ?? []),
+      ...(blog.tags.map((tag) => tag.description) ?? []),
     ].join(','),
     alternates: {
-      canonical: resolvePath(canonicalPath),
+      // 不能使用 URL, 貌似会导致 canonical 路径不正确，
+      // 可能是被其他的 [blogHash] 路径覆盖了
+      canonical: resolvePath(canonicalPath).href,
     },
   })
 }

@@ -20,7 +20,7 @@ import Divider from '@mui/material/Divider'
 export const metadata = seo.defaults({
   title: '友链',
   alternates: {
-    canonical: resolvePath('/links'),
+    canonical: resolvePath('/links').href,
   },
 })
 

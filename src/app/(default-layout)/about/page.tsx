@@ -8,7 +8,7 @@ import { redirect } from 'next/navigation'
 export const metadata = seo.defaults({
   title: '关于我: 一个前端',
   alternates: {
-    canonical: resolvePath('/about'),
+    canonical: resolvePath('/about').href,
   },
 })
 
