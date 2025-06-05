@@ -9,8 +9,10 @@ import { ServerComponent } from '@/components/ServerComponent'
 import { SA } from '@/errors/utils'
 import { FESEO } from '@/components/FESEO'
 import { DefaultAside } from '@/layout/DefaultAside'
-import { getBlog, getRecommendBlogs } from '@ADMIN/blog/server'
 import { Delay } from '@/components/Delay'
+import { getBlog, getRecommendBlogs } from '@ADMIN/blog/server'
+import { resolvePath } from '@/utils/url'
+import { ABOUT_PAGE_BLOG_HASH } from '@D/about/constants'
 
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
@@ -38,6 +40,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     hash: blogHash,
   })
 
+  const canonicalPath =
+    blogHash === ABOUT_PAGE_BLOG_HASH ? '/about' : `/blog/${blogHash}`
+
   return seo.defaults({
     title: blog?.title,
     description: blog?.description,
@@ -45,6 +50,9 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       ...(blog?.tags.map((tag) => tag.name) ?? []),
       ...(blog?.tags.map((tag) => tag.description) ?? []),
     ].join(','),
+    alternates: {
+      canonical: resolvePath(canonicalPath),
+    },
   })
 }
 

@@ -1,0 +1,1 @@
+export const ABOUT_PAGE_BLOG_HASH = '3EpPJTM2LwB_'
