@@ -1,6 +1,7 @@
 'use server'
 
 import { getTtsConfig } from './ttsConfig'
+import { ttsEnvConfig } from './constants'
 
 import { ttsQueue } from '../utils/ttsQueue'
 import { ttsOptionParser } from '../utils/ttsOptionParser'
@@ -74,11 +75,14 @@ export const tts = SA.encode(
 
     const msg = `当前你有 ${processingCount} 个任务正在进行中，请等待前面的任务完成后再提交新的任务`
 
-    if (!user && processingCount >= 2) {
+    if (!user && processingCount >= ttsEnvConfig.guestConcurrency) {
       throw Boom.forbidden(msg)
     }
 
-    if (user?.role === 'USER' && processingCount >= 6) {
+    if (
+      user?.role === 'USER' &&
+      processingCount >= ttsEnvConfig.userConcurrency
+    ) {
       throw Boom.forbidden(msg)
     }
 
@@ -92,7 +96,7 @@ export const tts = SA.encode(
       },
     })
 
-    if (recentTaskCount >= 60) {
+    if (recentTaskCount >= ttsEnvConfig.secondlyConcurrency) {
       throw Boom.tooManyRequests('当前请求过于频繁，请稍后再试')
     }
 

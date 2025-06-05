@@ -1,5 +1,7 @@
 'use server'
 
+import { ttsEnvConfig } from './constants'
+
 import { SA } from '@/errors/utils'
 import { zf } from '@/request/validator'
 import { getSelf } from '@/user/server'
@@ -8,8 +10,8 @@ import { ensureUser } from '@/user/validate'
 import { z } from 'zod'
 
 const globalTtsConfig = {
-  enableGuest: process.env.TTS_ENABLE_GUEST,
-  enableUser: process.env.TTS_ENABLE_USER,
+  enableGuest: ttsEnvConfig.enableGuest,
+  enableUser: ttsEnvConfig.enableUser,
 }
 
 export const getTtsConfig = SA.encode(async () => {

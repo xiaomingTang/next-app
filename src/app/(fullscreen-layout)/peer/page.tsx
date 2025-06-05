@@ -2,6 +2,7 @@ import { PeerClient } from './components/PeerClient'
 
 import { AuthRequired } from '@/components/AuthRequired'
 import { Forbidden } from '@/components/Forbidden'
+import { b } from '@/config/formatter'
 import { seo } from '@/utils/seo'
 
 import { unstable_noStore as noStore } from 'next/cache'
@@ -15,7 +16,7 @@ export default function Index() {
   noStore()
   return (
     <AuthRequired
-      disabled={process.env.SYSTEM_CONFIG_PEER_AUTH_REQUIRED === 'false'}
+      disabled={b(process.env.SYSTEM_CONFIG_PEER_AUTH_REQUIRED)}
       fallback={<Forbidden />}
     >
       <PeerClient />

@@ -1,4 +1,14 @@
-export function numberFormat(val?: number | string | null, defaultValue = 0) {
+type MaybeNum = number | string | null | undefined | void
+
+export function numberFormat(
+  val?: MaybeNum,
+  defaultValue?: number | undefined
+): number
+export function numberFormat(val: MaybeNum, defaultValue: null): number | null
+export function numberFormat(
+  val?: MaybeNum,
+  defaultValue: number | null | undefined = 0
+) {
   // +null 为 0, 需要提前在此判断
   if (val === null || val === undefined) {
     return defaultValue

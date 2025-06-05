@@ -8,13 +8,16 @@ declare namespace NodeJS {
 
     SYSTEM_CONFIG_PEER_AUTH_REQUIRED: string
 
-    TTS_ENABLE_USER: boolean
-    TTS_ENABLE_GUEST: boolean
+    TTS_ENABLE_USER: string
+    TTS_ENABLE_GUEST: string
+    TTS_GUEST_CONCURRENCY: string
+    TTS_USER_CONCURRENCY: string
+    TTS_SECONDLY_CONCURRENCY: string
 
-    ADMIN_EMAIL: string
-    ADMIN_PASSWORD: string
     JWT_SECRET: string
     PASSWORD_SALT: string
+    ADMIN_EMAIL: string
+    ADMIN_PASSWORD: string
 
     MYSQLDB_URI: string
 
