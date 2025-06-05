@@ -19,12 +19,15 @@ import dynamic from 'next/dynamic'
 
 import type { Metadata } from 'next'
 
-const { hostname } = resolvePath('/')
+const ROOT_URL = resolvePath('/')
+
+const { hostname } = ROOT_URL
 
 export const metadata: Metadata = {
   ...seo.defaults(),
   title: `${seo.title('博客列表页')} | ${hostname} | web技术心得分享`,
   alternates: {
+    canonical: ROOT_URL,
     types: {
       // https://taoshu.in/webfeed/lets-webfeed.html
       'application/rss+xml': [{ url: 'rss.xml', title: 'RSS' }],

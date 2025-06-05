@@ -6,7 +6,8 @@ import type { Metadata } from 'next'
 
 const { manifest } = ENV_CONFIG
 
-interface SeoProps {
+interface SeoProps
+  extends Omit<Metadata, 'title' | 'description' | 'keywords'> {
   title?: string
   description?: string
   keywords?: string
@@ -80,5 +81,6 @@ export const seo = {
         creator: '@xiaomin58135718',
         images: resolvePath('/pwa/android-chrome-192x192.png'),
       },
+      ...props,
     }) satisfies Metadata,
 }

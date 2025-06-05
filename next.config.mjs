@@ -54,6 +54,32 @@ const nextConfig = {
           },
         ],
       },
+      // 对爬虫屏蔽含 _rsc 参数的请求
+      {
+        source: '/:path*',
+        has: [
+          {
+            type: 'query',
+            key: '_rsc',
+          },
+        ],
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
+      // 对爬虫屏蔽 /api 路由
+      {
+        source: '/api/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow',
+          },
+        ],
+      },
     ]
   },
   experimental: {

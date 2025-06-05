@@ -11,6 +11,7 @@ import { getFriendsLinks } from './server'
 import { seo } from '@/utils/seo'
 import { ServerComponent } from '@/components/ServerComponent'
 import { AlertError } from '@/components/Error'
+import { resolvePath } from '@/utils/url'
 
 import { Suspense } from 'react'
 import { unstable_cache } from 'next/cache'
@@ -18,6 +19,9 @@ import Divider from '@mui/material/Divider'
 
 export const metadata = seo.defaults({
   title: '友链',
+  alternates: {
+    canonical: resolvePath('/links'),
+  },
 })
 
 export default async function Index() {
