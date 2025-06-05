@@ -33,7 +33,9 @@ export const metadata: Metadata = {
 }
 
 const DefaultClock = dynamic(() =>
-  import('@D/clock/components/DefaultClock').then((res) => res.DefaultClock)
+  import('@/app/(default-layout)/clock/components/DefaultClock').then(
+    (res) => res.DefaultClock
+  )
 )
 
 export default async function Index() {
