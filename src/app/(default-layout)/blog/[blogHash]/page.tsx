@@ -35,13 +35,15 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   const { blogHash } = params
 
+  const canonicalPath =
+    blogHash.toLowerCase() === ABOUT_PAGE_BLOG_HASH.toLowerCase()
+      ? '/about'
+      : `/blog/${blogHash}`
+
   // 由于可能涉及到未发布博客，因此不能缓存
   const { data: blog } = await getBlog({
     hash: blogHash,
   })
-
-  const canonicalPath =
-    blogHash === ABOUT_PAGE_BLOG_HASH ? '/about' : `/blog/${blogHash}`
 
   return seo.defaults({
     title: blog?.title,
