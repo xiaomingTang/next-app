@@ -4,7 +4,7 @@ import { Toc, useTocList } from '../Toc'
 
 import Anchor from '@/components/Anchor'
 import { AnchorProvider } from '@/components/AnchorProvider'
-import { useDefaultAsideDetail } from '@/layout/utils'
+import { useAsideVisible } from '@/layout/utils'
 import { onAnchorClick } from '@/components/Anchor/utils'
 
 import {
@@ -43,7 +43,7 @@ function EscListener({ onEsc }: { onEsc: (e: KeyboardEvent) => void }) {
 
 export function geneHeading(tag: `h${number}`) {
   return function Heading(props: HeadingProps) {
-    const { visible: asideVisible } = useDefaultAsideDetail()
+    const asideVisible = useAsideVisible()
     const tocList = useTocList()
     const propsWithDefault: HeadingProps = {
       ...props,

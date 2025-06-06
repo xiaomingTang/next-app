@@ -4,15 +4,16 @@ import {
   ASIDE_MARGIN,
   ASIDE_WIDTH,
   SCROLL_BAR_WIDTH,
-  useDefaultAsideDetail,
+  useAsideVisible,
 } from './utils'
+import { useHeaderState } from './DefaultHeader'
 
 import { STYLE } from '@/config'
 import { obj } from '@/utils/tiny'
 import { useDelayedValue } from '@/hooks/useDelayedValue'
 import { sleepMs } from '@/utils/time'
 
-import { Box, useScrollTrigger } from '@mui/material'
+import { Box } from '@mui/material'
 
 import type { BoxProps } from '@mui/material'
 
@@ -26,8 +27,8 @@ export function DefaultAside({
   sx,
   ...props
 }: DefaultAsideProps) {
-  const trigger = useScrollTrigger()
-  const { hasHeader, visible } = useDefaultAsideDetail()
+  const visible = useAsideVisible()
+  const { visualHeight: top } = useHeaderState()
   const visibility =
     useDelayedValue(async () => {
       if (visible) {
@@ -37,8 +38,6 @@ export function DefaultAside({
       await sleepMs(300)
       return 'hidden'
     }, [visible]) ?? 'visible'
-
-  const top = hasHeader && !trigger ? 56 : 0
 
   /**
    * 50% 基准是不含滚动条的;
