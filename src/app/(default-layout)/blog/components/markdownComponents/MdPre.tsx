@@ -1,5 +1,8 @@
 import { copyToClipboard } from '@/utils/copyToClipboard'
 import { cat } from '@/errors/catchAndToast'
+import { useHover } from '@/hooks/useHover'
+import { Sticky } from '@/components/Sticky'
+import { useHeaderState } from '@/layout/DefaultHeader'
 
 import { useRef, useState } from 'react'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
@@ -15,6 +18,8 @@ export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
   const preRef = useRef<HTMLPreElement>(null)
   const [copied, setCopied] = useState(false)
   const lastTimerRef = useRef(-1)
+  const [hovered, setHoverElem] = useHover()
+  const { visualHeight } = useHeaderState()
 
   const handleCopy = cat(async () => {
     const text = preRef.current?.textContent ?? ''
@@ -28,28 +33,46 @@ export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
   })
 
   return (
-    <Box sx={{ position: 'relative' }}>
+    <Box
+      ref={setHoverElem}
+      sx={{
+        position: 'relative',
+      }}
+    >
       <pre {...props} ref={preRef} />
-      <IconButton
-        size='medium'
-        onClick={handleCopy}
+      <Sticky
         sx={{
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          zIndex: 1,
-          boxShadow: 1,
-          color: copied ? 'success.main' : 'grey.600',
-          fontSize: '1.2em',
+          height: '40px',
+          pointerEvents: 'none',
+          transition: 'top 0.3s ease',
         }}
-        aria-label={copied ? '已复制' : '复制'}
+        style={{
+          top: `${visualHeight}px`,
+        }}
       >
-        {copied ? (
-          <CheckIcon fontSize='inherit' />
-        ) : (
-          <ContentCopyIcon fontSize='inherit' />
-        )}
-      </IconButton>
+        <IconButton
+          size='medium'
+          onClick={handleCopy}
+          sx={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            boxShadow: 1,
+            color: copied ? 'success.main' : 'grey.600',
+            fontSize: '1.2em',
+            opacity: hovered ? 1 : 0,
+            transition: 'opacity 0.3s ease',
+            pointerEvents: 'auto',
+          }}
+          aria-label={copied ? '已复制' : '复制'}
+        >
+          {copied ? (
+            <CheckIcon fontSize='inherit' />
+          ) : (
+            <ContentCopyIcon fontSize='inherit' />
+          )}
+        </IconButton>
+      </Sticky>
     </Box>
   )
 }

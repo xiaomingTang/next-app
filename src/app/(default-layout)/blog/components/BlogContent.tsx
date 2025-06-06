@@ -159,7 +159,6 @@ export function BlogContent({ mode = 'production', ref, ...blog }: DraftProps) {
         sx={{
           p: 2,
           borderRadius: 1,
-          overflow: 'auto',
         }}
         ref={ref}
       >
