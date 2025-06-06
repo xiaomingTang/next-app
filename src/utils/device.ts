@@ -60,8 +60,6 @@ function matchUa(regex: RegExp): boolean {
   return regex.test(navigator.userAgent)
 }
 
-export const touchable = isBrowser() && !!window.ontouchstart
-
 export function isWebView() {
   if (!isBrowser()) {
     return false
@@ -204,8 +202,10 @@ export function getTouchable() {
   if (typeof window === 'undefined') {
     return false
   }
-  return !!window.ontouchstart
+  return 'ontouchstart' in window || navigator.maxTouchPoints > 0
 }
+
+export const touchable = getTouchable()
 
 export function useTouchable() {
   useWindowSize('inner')
