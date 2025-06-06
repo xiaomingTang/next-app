@@ -6,6 +6,7 @@ import { customConfirm } from '@/utils/customConfirm'
 import { SilentError } from '@/errors/SilentError'
 import { cat } from '@/errors/catchAndToast'
 import { useKeyDown } from '@/hooks/useKey'
+import Span from '@/components/Span'
 
 import {
   Box,
@@ -222,8 +223,7 @@ export function LyricItemDom({
             <code className='text-grey-500'>]</code>
           </span>
           <span> </span>
-          <Typography
-            component='span'
+          <Span
             sx={{
               ml: 1,
               [`&:before`]: {
@@ -234,7 +234,7 @@ export function LyricItemDom({
             }}
           >
             {text}
-          </Typography>
+          </Span>
         </>
       )}
       <IconButton

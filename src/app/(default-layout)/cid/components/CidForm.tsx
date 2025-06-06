@@ -14,6 +14,7 @@ import Anchor from '@/components/Anchor'
 import { triggerMenuItemEvents } from '@/utils/triggerMenuItemEvents'
 import { useUser } from '@/user'
 import { Delay } from '@/components/Delay'
+import Span from '@/components/Span'
 
 import { useState } from 'react'
 import {
@@ -69,12 +70,9 @@ function RandomName({ gender }: { gender?: Gender }) {
       })}
       bold={false}
     >
-      <Typography
-        component='span'
-        sx={{ userSelect: 'none', color: 'primary' }}
-      >
+      <Span sx={{ userSelect: 'none', color: 'primary' }}>
         [点击重新随机]{` `}
-      </Typography>
+      </Span>
       {name}
       {error && ` - ${toPlainError(error).message}`}
       {isValidating && <Delay delayMs={500}> - 加载中</Delay>}

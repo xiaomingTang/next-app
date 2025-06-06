@@ -11,6 +11,7 @@ import { numberFormat } from '@/utils/numberFormat'
 import Anchor from '@/components/Anchor'
 import { AnchorProvider } from '@/components/AnchorProvider'
 import { friendlySize } from '@/utils/transformer'
+import Span from '@/components/Span'
 
 import {
   Alert,
@@ -560,7 +561,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
                       fontFamily: 'inherit',
                     }}
                   >
-                    <Typography component='span'>背景色</Typography>
+                    <Span>背景色</Span>
                     <PaletteIcon
                       sx={{
                         color: `#${field.value}`,

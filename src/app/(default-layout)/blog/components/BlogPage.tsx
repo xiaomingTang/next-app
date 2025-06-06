@@ -7,6 +7,7 @@ import { formatTime, friendlyFormatTime } from '@/utils/transformer'
 import { ScrollToTop } from '@/components/ScrollToTop'
 import { TagItem } from '@D/tag/components/TagItem'
 import { shuffledArray7 } from '@/constants'
+import Span from '@/components/Span'
 
 import { Box, Skeleton, Stack, Typography } from '@mui/material'
 import { useState } from 'react'
@@ -89,15 +90,14 @@ export function BlogPage(blog: BlogContentProps) {
           <Time blog={blog} />
         )}
         {wordCount > 0 && (
-          <Typography
-            component='span'
+          <Span
             aria-label={spendTimeStr}
             sx={{
               display: 'inline-block',
             }}
           >
             {spendTimeStr}
-          </Typography>
+          </Span>
         )}
       </Stack>
       <Box sx={{ mb: 1 }}>

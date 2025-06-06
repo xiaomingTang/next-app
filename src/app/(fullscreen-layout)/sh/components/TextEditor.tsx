@@ -7,18 +7,13 @@ import { useInjectHistory } from '@/hooks/useInjectHistory'
 import { SilentError } from '@/errors/SilentError'
 import { isCtrlAnd, useKeyDown } from '@/hooks/useKey'
 import { useRawPlatform } from '@/utils/device'
+import Span from '@/components/Span'
 
 import CloseIcon from '@mui/icons-material/Close'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
-import {
-  Box,
-  Button,
-  TextField,
-  Typography,
-  useColorScheme,
-} from '@mui/material'
+import { Box, Button, TextField, useColorScheme } from '@mui/material'
 import NiceModal, { muiDialogV5, useModal } from '@ebay/nice-modal-react'
 import Editor from '@monaco-editor/react'
 import { useState } from 'react'
@@ -69,9 +64,7 @@ const TextEditorModal = NiceModal.create(
             }}
           >
             <CloseIcon />
-            <Typography component='span' sx={{ ml: 1 }}>
-              {title}
-            </Typography>
+            <Span sx={{ ml: 1 }}>{title}</Span>
           </Button>
           <Box sx={{ flexGrow: 1 }} />
           <CustomLoadingButton

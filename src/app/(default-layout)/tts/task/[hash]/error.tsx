@@ -4,6 +4,7 @@
 
 import Anchor from '@/components/Anchor'
 import { toPlainError } from '@/errors/utils'
+import Span from '@/components/Span'
 
 import { Alert, Typography } from '@mui/material'
 
@@ -20,7 +21,7 @@ export default function ErrorPage({
     <Alert severity='error'>
       <Typography sx={{ mb: 1 }}>{error.message}</Typography>
       <Typography>
-        <Typography component='span'>{'你还可以 '}</Typography>
+        <Span>{'你还可以 '}</Span>
         <Anchor href='/tts/tasks'>返回任务列表</Anchor>
         {' 或者 '}
         <Anchor href='/tts'>再新建一个任务</Anchor>

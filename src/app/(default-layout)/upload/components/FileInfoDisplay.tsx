@@ -6,6 +6,7 @@ import { CustomLoadingButton } from '@/components/CustomLoadingButton'
 import { obj } from '@/utils/tiny'
 import { MB_SIZE, friendlySize } from '@/utils/transformer'
 import { copyToClipboard } from '@/utils/copyToClipboard'
+import Span from '@/components/Span'
 
 import WarningIcon from '@mui/icons-material/Warning'
 import HourglassBottomIcon from '@mui/icons-material/HourglassBottom'
@@ -155,8 +156,7 @@ export function FileInfoDisplay({
             noWrap
             color={info.status === 'failed' ? 'error' : undefined}
           >
-            <Typography
-              component='span'
+            <Span
               sx={{
                 fontWeight: 'bold',
                 color: 'primary.main',
@@ -165,7 +165,7 @@ export function FileInfoDisplay({
               }}
             >
               [{friendlySize(info.file.size)}]
-            </Typography>
+            </Span>
             {info.file.name}
           </Typography>
           {info.url && (

@@ -19,6 +19,7 @@ import { SilentError } from '@/errors/SilentError'
 import { isCtrlAnd, useKeyDown } from '@/hooks/useKey'
 import { useRawPlatform } from '@/utils/device'
 import { dark } from '@/utils/theme'
+import Span from '@/components/Span'
 
 import { useRouter } from 'next/navigation'
 import PreviewIcon from '@mui/icons-material/Preview'
@@ -133,15 +134,14 @@ export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
         <Box sx={{ flex: 1 }}>
           {blog.hash && blog.updatedAt ? (
             <Tooltip title={`上次编辑于 ${formatTime(blog.updatedAt)}`}>
-              <Typography
-                component='span'
+              <Span
                 aria-label={`上次编辑于 ${friendlyFormatTime(blog.updatedAt)}`}
               >
                 上次编辑于 {friendlyFormatTime(blog.updatedAt)}
-              </Typography>
+              </Span>
             </Tooltip>
           ) : (
-            <Typography component='span'>新建</Typography>
+            <Span>新建</Span>
           )}
         </Box>
         <UploadTrigger />

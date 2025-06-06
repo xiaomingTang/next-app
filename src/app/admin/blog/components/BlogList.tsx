@@ -11,6 +11,7 @@ import { SA } from '@/errors/utils'
 import Anchor from '@/components/Anchor'
 import { AuthRequired } from '@/components/AuthRequired'
 import { RoleNameMap } from '@/constants'
+import Span from '@/components/Span'
 
 import {
   ButtonGroup,
@@ -24,7 +25,6 @@ import {
   TableHead,
   TableRow,
   Tooltip,
-  Typography,
 } from '@mui/material'
 
 import type { Blogs } from './SearchBar'
@@ -61,9 +61,9 @@ export function BlogEditorBlogList({
                 <TableCell component='th' scope='row'>
                   <Anchor href={`/blog/${blog.hash}`}>
                     <Tooltip title={blog.description}>
-                      <Typography component='span'>
+                      <Span>
                         {BlogTypeMap[blog.type].name} {blog.title}
-                      </Typography>
+                      </Span>
                     </Tooltip>
                   </Anchor>
                 </TableCell>

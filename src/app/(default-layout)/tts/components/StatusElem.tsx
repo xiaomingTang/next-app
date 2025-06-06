@@ -1,41 +1,20 @@
 import { assertNever } from '@/utils/function'
-
-import { Typography } from '@mui/material'
+import Span from '@/components/Span'
 
 import type { TtsStatus } from '@/generated-prisma-client'
 
 export function StatusElem({ status }: { status: TtsStatus }) {
   switch (status) {
     case 'SUCCESS':
-      return (
-        <Typography component='span' color='success.main'>
-          成功
-        </Typography>
-      )
+      return <Span color='success.main'>成功</Span>
     case 'FAILED':
-      return (
-        <Typography component='span' color='error.main'>
-          失败
-        </Typography>
-      )
+      return <Span color='error.main'>失败</Span>
     case 'PENDING':
-      return (
-        <Typography component='span' color='info.main'>
-          等待中...
-        </Typography>
-      )
+      return <Span color='info.main'>等待中...</Span>
     case 'PROCESSING':
-      return (
-        <Typography component='span' color='primary.main'>
-          处理中...
-        </Typography>
-      )
+      return <Span color='primary.main'>处理中...</Span>
     default:
       assertNever(status)
-      return (
-        <Typography component='span' color='text.secondary'>
-          未知状态
-        </Typography>
-      )
+      return <Span color='text.secondary'>未知状态</Span>
   }
 }

@@ -1,6 +1,7 @@
 import { CopyrightYear } from './components/CopyrightYear'
 
 import Anchor from '@/components/Anchor'
+import Span from '@/components/Span'
 import SvgGithub from '@/svg/assets/github.svg?icon'
 import { dark } from '@/utils/theme'
 
@@ -10,10 +11,7 @@ import { common, grey } from '@mui/material/colors'
 import Image from 'next/image'
 
 const V_LINE = (
-  <Typography
-    component='span'
-    sx={{ borderLeft: '1px solid currentColor', opacity: 0.25, mx: 1 }}
-  />
+  <Span sx={{ borderLeft: '1px solid currentColor', opacity: 0.25, mx: 1 }} />
 )
 
 export function DefaultFooter() {
@@ -89,13 +87,11 @@ export function DefaultFooter() {
           RSS
         </Anchor>
         {V_LINE}
-        <Typography component='span' className='text-green-600'>
-          ipv6
-        </Typography>
+        <Span className='text-green-600'>ipv6</Span>
         {V_LINE}
-        <Typography component='span'>
+        <Span>
           Powered by <Anchor href='https://nextjs.org/'>Next.js</Anchor>
-        </Typography>
+        </Span>
       </Typography>
     </Stack>
   )

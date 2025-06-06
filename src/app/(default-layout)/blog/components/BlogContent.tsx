@@ -14,6 +14,7 @@ import { BlogTypeMap } from '@ADMIN/blog/components/constants'
 import { editBlog } from '@ADMIN/blog/components/EditBlog'
 import { useLoading } from '@/hooks/useLoading'
 import SvgLoading from '@/svg/assets/loading.svg?icon'
+import Span from '@/components/Span'
 
 import { MDXRemote } from 'next-mdx-remote'
 import { Typography, NoSsr, IconButton, Skeleton, alpha } from '@mui/material'
@@ -59,15 +60,14 @@ export function BlogContent({ mode = 'production', ref, ...blog }: DraftProps) {
   ) : (
     <>
       {mode === 'preview' && (
-        <Typography
-          component='span'
+        <Span
           sx={{
             color: 'warning.main',
             fontWeight: 'bold',
           }}
         >
           [预览]{' '}
-        </Typography>
+        </Span>
       )}
       {blog.type === 'UNPUBLISHED' && <>{BlogTypeMap[blog.type].name} </>}
       {blog.title}

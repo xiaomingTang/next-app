@@ -5,6 +5,7 @@ import { dark } from '@/utils/theme'
 import { Link } from '@/components/CustomLink'
 import { obj } from '@/utils/tiny'
 import { useListen } from '@/hooks/useListen'
+import Span from '@/components/Span'
 
 import {
   ButtonBase,
@@ -45,8 +46,7 @@ function BlogTitle(blog: BlogItemProps) {
   return (
     <Typography component='h2' sx={{ fontWeight: 'bold' }}>
       {Number.isInteger(blog.index) && (
-        <Typography
-          component='span'
+        <Span
           sx={{
             fontWeight: 'normal',
             fontSize: '0.8em',
@@ -55,7 +55,7 @@ function BlogTitle(blog: BlogItemProps) {
           }}
         >
           {blog.index}：
-        </Typography>
+        </Span>
       )}
       {blog.title}
     </Typography>

@@ -1,4 +1,4 @@
-import Typography from '@mui/material/Typography'
+import Span from '@/components/Span'
 
 import type { FriendsLinkStatus } from '@/generated-prisma-client'
 
@@ -10,41 +10,38 @@ export const FriendsLinkStatusMap: Record<
 > = {
   ACCEPTED: {
     name: (
-      <Typography
-        component='span'
+      <Span
         sx={{
           color: 'success.main',
           fontWeight: 'bold',
         }}
       >
         [已通过]
-      </Typography>
+      </Span>
     ),
   },
   PENDING: {
     name: (
-      <Typography
-        component='span'
+      <Span
         sx={{
           color: 'warning.main',
           fontWeight: 'bold',
         }}
       >
         [待审核]
-      </Typography>
+      </Span>
     ),
   },
   REJECTED: {
     name: (
-      <Typography
-        component='span'
+      <Span
         sx={{
           color: 'error.main',
           fontWeight: 'bold',
         }}
       >
         [已拒绝]
-      </Typography>
+      </Span>
     ),
   },
 }

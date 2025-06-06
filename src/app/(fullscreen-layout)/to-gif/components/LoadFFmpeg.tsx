@@ -2,6 +2,7 @@ import { FFMPEG_SOURCES, loadFFmpeg } from '../getFFmpeg'
 
 import { useLoading } from '@/hooks/useLoading'
 import { cat } from '@/errors/catchAndToast'
+import Span from '@/components/Span'
 
 import {
   Box,
@@ -96,15 +97,14 @@ export function LoadFFmpeg({ exited, onExited }: ExitableProps) {
               }}
             >
               {s.name}
-              <Typography
-                component='span'
+              <Span
                 sx={{
                   ml: 1,
                   color: s.name === '本站' ? 'error.main' : undefined,
                 }}
               >
                 {s.name === '本站' && '先试试上面的呢？'}
-              </Typography>
+              </Span>
             </MenuItem>
           ))}
         </Menu>

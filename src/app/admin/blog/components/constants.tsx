@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import Span from '@/components/Span'
 
 import type { BlogType } from '@/generated-prisma-client'
 
@@ -10,28 +10,26 @@ export const BlogTypeMap: Record<
 > = {
   PUBLISHED: {
     name: (
-      <Typography
-        component='span'
+      <Span
         sx={{
           color: 'success.main',
           fontWeight: 'bold',
         }}
       >
         [已发布]
-      </Typography>
+      </Span>
     ),
   },
   UNPUBLISHED: {
     name: (
-      <Typography
-        component='span'
+      <Span
         sx={{
           color: 'warning.main',
           fontWeight: 'bold',
         }}
       >
         [未发布]
-      </Typography>
+      </Span>
     ),
   },
 }

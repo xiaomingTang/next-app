@@ -11,6 +11,7 @@ import { AuthRequired } from '@/components/AuthRequired'
 import { RoleNameMap } from '@/constants'
 import { resolvePath } from '@/utils/url'
 import { copyToClipboard } from '@/utils/copyToClipboard'
+import Span from '@/components/Span'
 
 import {
   ButtonGroup,
@@ -21,7 +22,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
 } from '@mui/material'
 
 import type { ShortUrlWithCreator } from '../server'
@@ -65,15 +65,14 @@ export function UrlEditUrlList({
                   }
                 >
                   {url.encrypt && (
-                    <Typography
-                      component='span'
+                    <Span
                       sx={{
                         color: 'success.main',
                         fontWeight: 'bold',
                       }}
                     >
                       [已加密]
-                    </Typography>
+                    </Span>
                   )}{' '}
                   {resolvePath(`/u/${url.hash}`).href}
                 </TableCell>

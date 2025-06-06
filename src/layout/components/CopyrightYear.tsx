@@ -1,5 +1,7 @@
 'use client'
 
+import Span from '@/components/Span'
+
 import Typography from '@mui/material/Typography'
 import { useLayoutEffect, useState } from 'react'
 
@@ -10,10 +12,7 @@ export function CopyrightYear() {
   }, [])
   return (
     <Typography>
-      <Typography component='span' className='sr-only'>
-        版权声明：
-      </Typography>
-      © {year}
+      <Span className='sr-only'>版权声明：</Span>© {year}
     </Typography>
   )
 }

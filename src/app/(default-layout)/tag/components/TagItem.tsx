@@ -1,4 +1,5 @@
 import { Link } from '@/components/CustomLink'
+import Span from '@/components/Span'
 
 import Button from '@mui/material/Button'
 import Skeleton from '@mui/material/Skeleton'
@@ -47,13 +48,13 @@ export function TagItem(tag: TagItemProps) {
       sx={{ borderRadius: 1, fontSize: `${REM}rem`, ...tag.sx }}
       role={tag.loading ? 'none' : undefined}
     >
-      <Typography component='span'>
+      <Span>
         {tag.loading ? (
           <Skeleton width={tag.size * REM * 16} height={REM * 24} />
         ) : (
           tag.name
         )}
-      </Typography>
+      </Span>
       {tag._count && (
         <Typography
           component='sup'
