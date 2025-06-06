@@ -37,12 +37,13 @@ export function HoverableClock({
 }: HoverableClockProps) {
   const clockHref = resolvePath(clockIframePath).href
   const text = `<iframe src="${clockHref}" style="border: 0; width: 300px; height: 300px;" />`
-  const [hover, setElem] = useHover()
+  const [hover, setHoverElem] = useHover()
   const [dialogOpen, setDialogOpen] = useState(false)
   const setClickElem = useSimulateClick({
     onClick: () => {
       setDialogOpen(true)
     },
+    shouldSuppressClickFromTouch: true,
   })
 
   useInjectHistory(dialogOpen, () => {
@@ -53,7 +54,7 @@ export function HoverableClock({
     <>
       <Box
         ref={(ref?: HTMLDivElement | null) => {
-          setElem(ref)
+          setHoverElem(ref)
           setClickElem(ref)
         }}
         sx={{
