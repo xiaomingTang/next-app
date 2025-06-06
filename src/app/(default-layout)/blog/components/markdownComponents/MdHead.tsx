@@ -63,7 +63,7 @@ export function geneHeading(tag: `h${number}`) {
         <Anchor
           id={id}
           href={elementHash}
-          aria-label='超链接, 指向页面内 heading'
+          aria-hidden
           className='user-anchor'
           onClick={onAnchorClick}
         >
@@ -90,7 +90,7 @@ export function geneHeading(tag: `h${number}`) {
                           p: 0,
                           ml: '4px',
                         }}
-                        aria-label='目录'
+                        aria-hidden
                         className='user-heading-menu-trigger'
                         onClick={(e) => {
                           setAnchorEl((prev) => {

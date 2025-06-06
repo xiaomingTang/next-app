@@ -47,6 +47,7 @@ type BlogContentProps = LoadingAble<
 
 export function BlogPage(blog: BlogContentProps) {
   const [wordCount, setWordCount] = useState(0)
+  const spendTimeStr = `约 ${wordCount} 字, 预计耗时 ${Math.max(1, Math.ceil(wordCount / 400))} 分钟`
 
   return (
     <ScrollToTop>
@@ -90,12 +91,12 @@ export function BlogPage(blog: BlogContentProps) {
         {wordCount > 0 && (
           <Typography
             component='span'
+            aria-label={spendTimeStr}
             sx={{
               display: 'inline-block',
             }}
           >
-            约 {wordCount} 字, 预计耗时{' '}
-            {Math.max(1, Math.ceil(wordCount / 400))} 分钟
+            {spendTimeStr}
           </Typography>
         )}
       </Stack>

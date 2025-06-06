@@ -61,12 +61,17 @@ export function DefaultFooter() {
             向站长留言
           </Anchor>
         </Stack>
-        <Anchor href='https://beian.miit.gov.cn/' className='block text-center'>
+        <Anchor
+          href='https://beian.miit.gov.cn/'
+          className='block text-center'
+          aria-label='ICP 备案号'
+        >
           赣ICP备2021003257号-2
         </Anchor>
         <Anchor
           href='https://beian.mps.gov.cn/#/query/webSearch?code=44030002002476'
           className='flex justify-center items-center'
+          aria-label='粤公网安备号'
         >
           <Image
             alt=''
@@ -74,7 +79,7 @@ export function DefaultFooter() {
             width={16}
             height={16}
             className='mr-1 select-none'
-            aria-hidden
+            role='presentation'
           />
           粤公网安备44030002002476号
         </Anchor>

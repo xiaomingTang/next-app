@@ -3,7 +3,7 @@ import Typography from '@mui/material/Typography'
 
 export function RecommendSep() {
   return (
-    <Divider sx={{ mt: 8, mb: 4 }}>
+    <Divider sx={{ mt: 8, mb: 4 }} role='presentation'>
       <Typography
         component='span'
         sx={{

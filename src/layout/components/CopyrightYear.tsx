@@ -8,5 +8,12 @@ export function CopyrightYear() {
   useLayoutEffect(() => {
     setYear(new Date().getFullYear())
   }, [])
-  return <Typography aria-label={`版权声明: ${year} 年`}>© {year}</Typography>
+  return (
+    <Typography>
+      <Typography component='span' className='sr-only'>
+        版权声明：
+      </Typography>
+      © {year}
+    </Typography>
+  )
 }

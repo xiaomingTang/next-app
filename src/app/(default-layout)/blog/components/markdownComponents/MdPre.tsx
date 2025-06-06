@@ -39,7 +39,6 @@ export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
         position: 'relative',
       }}
     >
-      <pre {...props} ref={preRef} />
       <Sticky
         sx={{
           height: '40px',
@@ -63,8 +62,11 @@ export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
             opacity: hovered ? 1 : 0,
             transition: 'opacity 0.3s ease',
             pointerEvents: 'auto',
+            ':focus-within': {
+              opacity: 1,
+            },
           }}
-          aria-label={copied ? '已复制' : '复制'}
+          aria-label={copied ? '已复制' : '复制后面的代码块内的内容'}
         >
           {copied ? (
             <CheckIcon fontSize='inherit' />
@@ -73,6 +75,13 @@ export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
           )}
         </IconButton>
       </Sticky>
+      <pre
+        {...props}
+        ref={preRef}
+        tabIndex={0}
+        role='region'
+        aria-label='代码块'
+      />
     </Box>
   )
 }
