@@ -48,6 +48,14 @@ export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
         style={{
           top: `${visualHeight}px`,
         }}
+        slogProps={{
+          root: {
+            sx: {
+              // pre > code 的 zIndex: 1
+              zIndex: 2,
+            },
+          },
+        }}
       >
         <IconButton
           size='medium'
