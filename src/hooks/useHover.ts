@@ -1,9 +1,10 @@
-import { touchable } from '@/utils/device'
+import { useTouchable } from '@/utils/device'
 
 import { noop } from 'lodash-es'
 import { useState, useEffect } from 'react'
 
 export function useHover() {
+  const touchable = useTouchable()
   const [hovered, setHovered] = useState(false)
   const [elem, setElem] = useState<HTMLElement | undefined | null>()
 
@@ -35,7 +36,7 @@ export function useHover() {
       elem.removeEventListener('mouseleave', onLeave)
       window.removeEventListener('pointercancel', onLeave)
     }
-  }, [elem])
+  }, [elem, touchable])
 
   return [hovered, setElem] as const
 }

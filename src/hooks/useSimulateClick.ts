@@ -1,4 +1,4 @@
-import { touchable } from '@/utils/device'
+import { useTouchable } from '@/utils/device'
 
 import { useEventCallback } from '@mui/material'
 import { noop } from 'lodash-es'
@@ -60,6 +60,7 @@ export function useSimulateClick({
   legalDelta,
   shouldSuppressClickFromTouch = false,
 }: UseSimulateClickParams) {
+  const touchable = useTouchable()
   const [elem, setElem] = useState<HTMLElement | undefined | null>()
   const onClick = useEventCallback(rawOnClick)
   const legalDeltaTime = legalDelta?.time ?? Infinity
@@ -127,7 +128,7 @@ export function useSimulateClick({
       },
       true
     )
-  }, [elem, shouldSuppressClickFromTouch])
+  }, [elem, shouldSuppressClickFromTouch, touchable])
 
   return setElem
 }
