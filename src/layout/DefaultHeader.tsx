@@ -19,11 +19,13 @@ import {
   Slide,
   Stack,
   alpha,
+  useMediaQuery,
   useScrollTrigger,
   useTheme,
 } from '@mui/material'
 import { grey } from '@mui/material/colors'
 import dynamic from 'next/dynamic'
+import { useEffect, useState } from 'react'
 
 const UploadTrigger = dynamic(() =>
   import('./CornerButtons/UploadTrigger').then((res) => res.UploadTrigger)
@@ -132,4 +134,22 @@ export function DefaultHeader() {
       <DefaultHeaderShim />
     </>
   )
+}
+
+export function useHeaderState() {
+  const [hasHeader, setHasHeader] = useState(true)
+  const visible = !useScrollTrigger() && hasHeader
+  const isXs = useMediaQuery(useTheme().breakpoints.down('sm'))
+  const physicalHeight = !hasHeader ? 0 : isXs ? 40 : 56
+
+  useEffect(() => {
+    setHasHeader(!!document.querySelector(`#${HEADER_ID}`))
+  }, [])
+
+  return {
+    physicalHeight,
+    visualHeight: visible ? physicalHeight : 0,
+    visible,
+    hasHeader,
+  }
 }
