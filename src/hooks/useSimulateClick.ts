@@ -1,3 +1,5 @@
+import { touchable } from '@/utils/device'
+
 import { useEventCallback } from '@mui/material'
 import { noop } from 'lodash-es'
 import { useState, useEffect } from 'react'
@@ -43,13 +45,21 @@ function isLegalClick({
   )
 }
 
+interface UseSimulateClickParams {
+  onClick: ClickHandler
+  legalDelta?: Partial<PointerParam>
+  /**
+   * 是否抑制 触摸设备上 在模拟点击事件后，短时间内的合成 click 事件。
+   * @WARNING 如果设为 true，会导致模拟点击事件触发后，300ms 内 **整个 document** 无法触发 click 事件。
+   */
+  shouldSuppressClickFromTouch?: boolean
+}
+
 export function useSimulateClick({
   onClick: rawOnClick,
   legalDelta,
-}: {
-  onClick: ClickHandler
-  legalDelta?: Partial<PointerParam>
-}) {
+  shouldSuppressClickFromTouch = false,
+}: UseSimulateClickParams) {
   const [elem, setElem] = useState<HTMLElement | undefined | null>()
   const onClick = useEventCallback(rawOnClick)
   const legalDeltaTime = legalDelta?.time ?? Infinity
@@ -80,7 +90,7 @@ export function useSimulateClick({
       }
       lastPointer = defaultPointer
     }
-    elem.addEventListener('pointerdown', onPointerDown)
+    elem.addEventListener('pointerdown', onPointerDown, { passive: true })
     elem.addEventListener('pointerup', onPointerUp)
 
     return () => {
@@ -88,6 +98,36 @@ export function useSimulateClick({
       elem.removeEventListener('pointerup', onPointerUp)
     }
   }, [elem, legalDeltaTime, legalDeltaX, legalDeltaY, onClick])
+
+  useEffect(() => {
+    if (!elem || !shouldSuppressClickFromTouch || !touchable) {
+      return noop
+    }
+    let suppressClick = false
+    let timer = -1
+
+    elem.addEventListener('pointerup', () => {
+      window.clearTimeout(timer)
+      suppressClick = true
+
+      // 清除抑制状态，300ms 可根据需要调整
+      timer = window.setTimeout(() => {
+        suppressClick = false
+      }, 300)
+    })
+
+    // 捕获阶段 阻止 click 事件
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (suppressClick) {
+          e.stopImmediatePropagation()
+          e.preventDefault()
+        }
+      },
+      true
+    )
+  }, [elem, shouldSuppressClickFromTouch])
 
   return setElem
 }
