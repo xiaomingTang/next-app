@@ -1,5 +1,6 @@
 import { TagDesc } from '../components/TagDesc'
 import { TagItem } from '../components/TagItem'
+import { TagsCollapse } from '../components/Collapse'
 
 import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
@@ -60,33 +61,40 @@ export default async function Index(props: Props) {
   return (
     <ScrollToTop>
       {/* tag list */}
-      <Suspense
-        fallback={
-          <>
-            {shuffledArray7.slice(0, 15).map((n, i) => (
-              <TagItem key={i} loading size={n} sx={{ mr: '4px', mb: '4px' }} />
-            ))}
-          </>
-        }
-      >
-        <ServerComponent
-          api={unstable_cache(() => getTags({}), ['getTags'], {
-            revalidate: 10,
-            tags: ['getTags'],
-          })}
-          render={(tags) =>
-            tags.map((tag) => (
-              <TagItem
-                {...tag}
-                key={tag.hash}
-                active={tag.hash === tagHash}
-                sx={{ mr: '4px', mb: '4px' }}
-              />
-            ))
+      <TagsCollapse height={['80px', '350px']} defaultOpen={false}>
+        <Suspense
+          fallback={
+            <>
+              {shuffledArray7.slice(0, 15).map((n, i) => (
+                <TagItem
+                  key={i}
+                  loading
+                  size={n}
+                  sx={{ mr: '4px', mb: '4px' }}
+                />
+              ))}
+            </>
           }
-          errorBoundary={(err) => <AlertError {...err} />}
-        />
-      </Suspense>
+        >
+          <ServerComponent
+            api={unstable_cache(() => getTags({}), ['getTags'], {
+              revalidate: 10,
+              tags: ['getTags'],
+            })}
+            render={(tags) =>
+              tags.map((tag) => (
+                <TagItem
+                  {...tag}
+                  key={tag.hash}
+                  active={tag.hash === tagHash}
+                  sx={{ mr: '4px', mb: '4px' }}
+                />
+              ))
+            }
+            errorBoundary={(err) => <AlertError {...err} />}
+          />
+        </Suspense>
+      </TagsCollapse>
 
       {/* tag desc */}
       <Suspense fallback={<TagDesc loading size={5} />}>

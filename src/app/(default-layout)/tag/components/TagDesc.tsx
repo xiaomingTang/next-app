@@ -9,7 +9,7 @@ type TagDescProps = LoadingAble<Tag>
 
 export function TagDesc(tag: TagDescProps) {
   return (
-    <Typography sx={{ pb: 2 }}>
+    <Typography sx={{ pt: 1, pb: 2 }}>
       <Typography
         component='b'
         sx={{ fontWeight: 'bold', color: 'primary.main' }}

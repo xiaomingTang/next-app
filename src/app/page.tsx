@@ -1,3 +1,5 @@
+import { TagsCollapse } from './(default-layout)/tag/components/Collapse'
+
 import { BlogList, BlogListLoading } from '@D/blog/components/BlogList'
 import { TagItem } from '@D/tag/components/TagItem'
 import { seo } from '@/utils/seo'
@@ -51,38 +53,40 @@ export default async function Index() {
         </DefaultAside>
         <ScrollToTop>
           {/* tag list */}
-          <Suspense
-            fallback={
-              <>
-                {shuffledArray7.slice(0, 15).map((n, i) => (
-                  <TagItem
-                    key={i}
-                    loading
-                    size={n}
-                    sx={{ mr: '4px', mb: '4px' }}
-                  />
-                ))}
-              </>
-            }
-          >
-            <ServerComponent
-              api={unstable_cache(() => getTags({}), ['getTags'], {
-                revalidate: 10,
-                tags: ['getTags'],
-              })}
-              render={(tags) =>
-                tags.map((tag) => (
-                  <TagItem
-                    {...tag}
-                    key={tag.hash}
-                    active
-                    sx={{ mr: '4px', mb: '4px' }}
-                  />
-                ))
+          <TagsCollapse height={['80px', '350px']} defaultOpen={false}>
+            <Suspense
+              fallback={
+                <>
+                  {shuffledArray7.slice(0, 15).map((n, i) => (
+                    <TagItem
+                      key={i}
+                      loading
+                      size={n}
+                      sx={{ mr: '4px', mb: '4px' }}
+                    />
+                  ))}
+                </>
               }
-              errorBoundary={(err) => <AlertError {...err} />}
-            />
-          </Suspense>
+            >
+              <ServerComponent
+                api={unstable_cache(() => getTags({}), ['getTags'], {
+                  revalidate: 10,
+                  tags: ['getTags'],
+                })}
+                render={(tags) =>
+                  tags.map((tag) => (
+                    <TagItem
+                      {...tag}
+                      key={tag.hash}
+                      active
+                      sx={{ mr: '4px', mb: '4px' }}
+                    />
+                  ))
+                }
+                errorBoundary={(err) => <AlertError {...err} />}
+              />
+            </Suspense>
+          </TagsCollapse>
           <div style={{ paddingBottom: '8px', pointerEvents: 'none' }} />
           {/* blog list */}
           <Suspense fallback={<BlogListLoading count={8} />}>
