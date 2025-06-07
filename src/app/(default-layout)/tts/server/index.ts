@@ -11,9 +11,9 @@ import { zf } from '@/request/validator'
 import { getSelf } from '@/user/server'
 import { prisma } from '@/request/prisma'
 import { OR } from '@/request/utils'
+import { randStr } from '@/utils/string'
 
 import { z } from 'zod'
-import { nanoid } from 'nanoid'
 import { noop } from 'lodash-es'
 import Boom from '@hapi/boom'
 
@@ -103,7 +103,7 @@ export const tts = SA.encode(
     /**
      * 任务的唯一标识
      */
-    const hash = nanoid(12)
+    const hash = randStr()
     const voice = props.voice.trim()
     const rate = props.rate.trim()
     const volume = props.volume.trim()
