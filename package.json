@@ -39,7 +39,6 @@
     "@emotion/styled": "^11.14.0",
     "@ffmpeg/ffmpeg": "^0.12.15",
     "@ffmpeg/util": "^0.12.2",
-    "@fingerprintjs/fingerprintjs": "^4.6.2",
     "@hapi/boom": "^10.0.1",
     "@monaco-editor/react": "^4.7.0",
     "@mui/icons-material": "^7.1.1",

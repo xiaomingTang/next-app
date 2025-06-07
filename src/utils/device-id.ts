@@ -1,14 +1,25 @@
 import 'client-only'
 
-import fingerPrint from '@fingerprintjs/fingerprintjs'
-import { genePromiseOnce } from '@zimi/utils'
+import { randStr } from './string'
 
-async function rawGetDeviceId(): Promise<string> {
-  const fp = await fingerPrint.load()
-  const result = await fp.get()
-  const deviceId = result.visitorId
+const STORAGE_KEY = 'deviceId-for-tts-task'
+let memoDeviceId: string | null = null
 
-  return deviceId
+export async function getDeviceId(): Promise<string> {
+  if (memoDeviceId) {
+    return memoDeviceId
+  }
+  const localId = localStorage.getItem(STORAGE_KEY)
+  if (localId) {
+    memoDeviceId = localId
+    return memoDeviceId
+  }
+  memoDeviceId = randStr(16)
+  try {
+    localStorage.setItem(STORAGE_KEY, memoDeviceId)
+  } catch (error) {
+    console.error('Failed to store deviceId in localStorage:', error)
+  }
+
+  return memoDeviceId
 }
-
-export const getDeviceId = genePromiseOnce(rawGetDeviceId)

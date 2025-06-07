@@ -1,3 +1,5 @@
+import { customAlphabet } from 'nanoid'
+
 export function validateFileName(name: string) {
   if (!name) {
     throw new Error('文件名不能为空')
@@ -30,3 +32,8 @@ export function formatText(text: string, headingLen: number, tailLen: number) {
   }
   return `${text.slice(0, headingLen)}...${text.slice(-tailLen)}`
 }
+
+const characters =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+
+export const randStr = customAlphabet(characters, 12)
