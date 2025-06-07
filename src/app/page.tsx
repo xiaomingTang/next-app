@@ -55,7 +55,12 @@ export default async function Index() {
             fallback={
               <>
                 {shuffledArray7.slice(0, 15).map((n, i) => (
-                  <TagItem key={i} loading size={n} sx={{ mr: 1, mb: 1 }} />
+                  <TagItem
+                    key={i}
+                    loading
+                    size={n}
+                    sx={{ mr: '4px', mb: '4px' }}
+                  />
                 ))}
               </>
             }
@@ -71,7 +76,7 @@ export default async function Index() {
                     {...tag}
                     key={tag.hash}
                     active
-                    sx={{ mr: 1, mb: 1 }}
+                    sx={{ mr: '4px', mb: '4px' }}
                   />
                 ))
               }

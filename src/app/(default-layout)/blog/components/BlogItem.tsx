@@ -167,7 +167,7 @@ export function BlogItem({ sx, selected, ...blog }: BlogItemProps) {
         <Stack
           direction='row'
           alignItems='center'
-          spacing={1}
+          spacing='4px'
           fontSize='0.8em'
           useFlexGap
           flexWrap='wrap'

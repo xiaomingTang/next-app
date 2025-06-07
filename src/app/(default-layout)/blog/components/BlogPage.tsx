@@ -104,12 +104,12 @@ export function BlogPage(blog: BlogContentProps) {
         {blog.loading ? (
           <>
             {shuffledArray7.slice(0, 2).map((n, i) => (
-              <TagItem key={i} loading size={n} sx={{ mr: 1, mb: 1 }} />
+              <TagItem key={i} loading size={n} sx={{ mr: '4px', mb: '4px' }} />
             ))}
           </>
         ) : (
           blog.tags.map((tag) => (
-            <TagItem {...tag} key={tag.hash} sx={{ mr: 1, mb: 1 }} />
+            <TagItem {...tag} key={tag.hash} sx={{ mr: '4px', mb: '4px' }} />
           ))
         )}
       </Box>

@@ -34,7 +34,7 @@ export function TagItem(tag: TagItemProps) {
     ? `标签${tag.name}, 共${tag._count.blogs}篇博客`
     : `标签${tag.name}`
 
-  const REM = SizeMap[tag.tagSize ?? 'medium']
+  const REM = SizeMap[tag.tagSize ?? 'small']
 
   const elem = (
     <Button
@@ -45,7 +45,12 @@ export function TagItem(tag: TagItemProps) {
       aria-labelledby={ariaLabel}
       LinkComponent={Link}
       href={`/tag/${tag.hash}`}
-      sx={{ borderRadius: 1, fontSize: `${REM}rem`, ...tag.sx }}
+      sx={{
+        borderRadius: 1,
+        fontSize: `${REM}rem`,
+        minWidth: 'unset',
+        ...tag.sx,
+      }}
       role={tag.loading ? 'none' : undefined}
     >
       <Span>
@@ -58,7 +63,7 @@ export function TagItem(tag: TagItemProps) {
       {tag._count && (
         <Typography
           component='sup'
-          sx={{ fontSize: '0.85em', pl: 1, opacity: 0.8 }}
+          sx={{ fontSize: '0.85em', pl: '2px', opacity: 0.8 }}
           aria-hidden
         >
           {tag._count.blogs}
