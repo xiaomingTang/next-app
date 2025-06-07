@@ -1,18 +1,14 @@
 import 'server-only'
 
+import { mergeSRT } from './mergeSRT'
+
+import Boom from '@hapi/boom'
+
 import { spawn } from 'child_process'
 import fs from 'fs/promises'
 import path from 'path'
 
 import type { ChildProcessWithoutNullStreams } from 'child_process'
-
-function noop() {}
-
-function random(n: number) {
-  return Math.random()
-    .toString(36)
-    .substring(2, n + 2)
-}
 
 export interface TtsOption {
   /**
@@ -23,7 +19,7 @@ export interface TtsOption {
    * 语音名
    */
   voice: string
-  output: string
+  basename: string
   /**
    * 语速
    */
@@ -40,6 +36,33 @@ export interface TtsOption {
   timeoutMs?: number
 }
 
+interface TtsOutput {
+  dirname: string
+  basename: string
+  audio: string
+  srt: string
+}
+
+function unlinkTtsOutput(paths: TtsOutput) {
+  return Promise.allSettled([fs.unlink(paths.audio), fs.unlink(paths.srt)])
+}
+
+async function ensureTtsTempPaths(basename: string): Promise<TtsOutput> {
+  const dirname = path.resolve('./tmp')
+  try {
+    await fs.mkdir(dirname, { recursive: true })
+  } catch (_err) {
+    throw Boom.badRequest(`Failed to create tmp directory: ${dirname}`)
+  }
+
+  return {
+    dirname,
+    basename,
+    audio: `${dirname}/${basename}.mp3`,
+    srt: `${dirname}/${basename}.srt`,
+  }
+}
+
 export async function rawTts(option: TtsOption) {
   // 调用系统 edge-tts
   const {
@@ -48,29 +71,33 @@ export async function rawTts(option: TtsOption) {
     rate,
     volume,
     pitch,
-    output,
+    basename,
     abortController,
     timeoutMs,
   } = option
-  const cmds = ['--voice', voice, '--text', text, '--write-media', output]
+
+  const paths = await ensureTtsTempPaths(basename)
+  const ttsParams = [
+    '--voice',
+    voice,
+    '--text',
+    text,
+    '--write-media',
+    paths.audio,
+    '--write-subtitles',
+    paths.srt,
+  ]
   if (rate) {
-    cmds.push(`--rate=${rate}`)
+    ttsParams.push(`--rate=${rate}`)
   }
   if (volume) {
-    cmds.push(`--volume=${volume}`)
+    ttsParams.push(`--volume=${volume}`)
   }
   if (pitch) {
-    cmds.push(`--pitch=${pitch}`)
+    ttsParams.push(`--pitch=${pitch}`)
   }
 
-  const dirname = path.dirname(output)
-  try {
-    await fs.mkdir(dirname, { recursive: true })
-  } catch (_err) {
-    throw new Error(`Failed to create output directory: ${dirname}`)
-  }
-
-  const res = spawn('edge-tts', cmds, {
+  const res = spawn('edge-tts', ttsParams, {
     signal: abortController?.signal,
   })
 
@@ -88,7 +115,7 @@ export async function rawTts(option: TtsOption) {
     timer = setTimeout(() => {
       if (abortController) {
         abortController.abort(
-          new Error(`edge-tts timeout after ${timeoutMs}ms`)
+          Boom.badRequest(`edge-tts timeout after ${timeoutMs}ms`)
         )
       } else {
         res.kill('SIGTERM')
@@ -96,21 +123,23 @@ export async function rawTts(option: TtsOption) {
     }, timeoutMs)
   }
 
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<TtsOutput>((resolve, reject) => {
     res.on('close', (code) => {
       if (code !== 0) {
-        return reject(new Error(`edge-tts exited with code ${code}`))
+        return reject(Boom.badRequest(`edge-tts exited with code ${code}`))
       }
-      resolve()
+      resolve(paths)
     })
 
-    res.on('error', reject)
+    res.on('error', (err) => {
+      reject(err.cause ?? err)
+    })
 
     res.on('exit', (code) => {
       if (code !== 0) {
-        return reject(new Error(`edge-tts exited with code ${code}`))
+        return reject(Boom.badRequest(`edge-tts exited with code ${code}`))
       }
-      resolve()
+      resolve(paths)
     })
   }).finally(() => {
     if (timer) {
@@ -122,20 +151,22 @@ export async function rawTts(option: TtsOption) {
 }
 
 export interface TtsMergeOption {
-  options: Omit<TtsOption, 'output' | 'abortController'>[]
-  output: string
+  options: Omit<TtsOption, 'abortController' | 'basename'>[]
+  basename: string
   timeoutMs: number
 }
 
 export async function rawTtsMerge(config: TtsMergeOption) {
-  const { options, output, timeoutMs } = config
+  const { options, basename, timeoutMs } = config
   const abortController = new AbortController()
   if (options.length === 0) {
-    throw new Error('No options provided for ttsMerge')
+    throw Boom.badRequest('No options provided for ttsMerge')
   }
 
   const timer = setTimeout(() => {
-    abortController.abort(new Error(`ttsMerge timeout after ${timeoutMs}ms`))
+    abortController.abort(
+      Boom.badRequest(`merge tts timeout after ${timeoutMs}ms`)
+    )
   }, timeoutMs)
 
   if (options.length === 1) {
@@ -143,7 +174,7 @@ export async function rawTtsMerge(config: TtsMergeOption) {
     const singleOption = options[0]
     return rawTts({
       ...singleOption,
-      output,
+      basename,
       abortController,
       timeoutMs,
     }).finally(() => {
@@ -151,56 +182,63 @@ export async function rawTtsMerge(config: TtsMergeOption) {
     })
   }
 
-  const optionsWithOutput = options.map((opt, i) => ({
-    ...opt,
-    output: `${output}.tmp-${random(8)}-${i}`,
-    abortController,
-  }))
-  const promises = optionsWithOutput.map((opt) => rawTts(opt))
-
   let ffmpegProcess: ChildProcessWithoutNullStreams | null = null
 
-  return Promise.all(promises)
-    .then(
-      () =>
-        new Promise<void>((resolve, reject) => {
-          const ffmpegCmd = optionsWithOutput
-            .map((opt) => ['-i', opt.output])
-            .flat()
-          ffmpegCmd.push(
-            '-filter_complex',
-            `concat=n=${optionsWithOutput.length}:v=0:a=1`,
-            '-y',
-            output
-          )
-          ffmpegProcess = spawn('ffmpeg', ffmpegCmd, {
-            signal: abortController.signal,
-          })
-          ffmpegProcess.on('close', (code) => {
-            if (code !== 0) {
-              return reject(new Error(`ffmpeg exited with code ${code}`))
-            }
-            resolve()
-          })
-          ffmpegProcess.on('error', reject)
-          ffmpegProcess.stdout.on('data', (data) => {
-            console.log(`[ffmpeg]: ${data}`)
-          })
-          ffmpegProcess.stderr.on('data', (data) => {
-            console.error(`[ffmpeg error]: ${data}`)
-          })
-        })
+  const paths = await ensureTtsTempPaths(basename)
+  const outputs = await Promise.all(
+    options.map((opt, i) =>
+      rawTts({
+        ...opt,
+        basename: `${basename}-${i}`,
+      })
     )
+  )
+
+  // merge srt 失败就失败了
+  await mergeSRT(
+    outputs.map(({ srt }) => srt),
+    paths.srt
+  ).catch(() => {
+    console.warn(`Failed to merge SRT files ${paths.srt}.`)
+    paths.srt = ''
+  })
+
+  return new Promise<TtsOutput>((resolve, reject) => {
+    const ffmpegParams = outputs.map(({ audio }) => ['-i', audio]).flat()
+    ffmpegParams.push(
+      '-filter_complex',
+      `concat=n=${outputs.length}:v=0:a=1`,
+      '-y',
+      paths.audio
+    )
+
+    ffmpegProcess = spawn('ffmpeg', ffmpegParams, {
+      signal: abortController.signal,
+    })
+    ffmpegProcess.on('close', (code) => {
+      if (code !== 0) {
+        return reject(Boom.badRequest(`ffmpeg exited with code ${code}`))
+      }
+      resolve(paths)
+    })
+    ffmpegProcess.on('error', (err) => {
+      reject(err.cause ?? err)
+    })
+    ffmpegProcess.stdout.on('data', (data) => {
+      console.log(`[ffmpeg]: ${data}`)
+    })
+    ffmpegProcess.stderr.on('data', (data) => {
+      console.error(`[ffmpeg error]: ${data}`)
+    })
+  })
     .catch(async (err) => {
-      await fs.unlink(output).catch(noop)
+      await unlinkTtsOutput(paths)
       throw err
     })
     .finally(() => {
       clearTimeout(timer)
       ffmpegProcess?.stdout.destroy()
       ffmpegProcess?.stderr.destroy()
-      return Promise.allSettled(
-        optionsWithOutput.map((opt) => fs.unlink(opt.output).catch(noop))
-      )
+      return Promise.allSettled(outputs.map((opt) => unlinkTtsOutput(opt)))
     })
 }

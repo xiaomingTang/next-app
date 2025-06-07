@@ -108,7 +108,6 @@ export const tts = SA.encode(
     const rate = props.rate.trim()
     const volume = props.volume.trim()
     const pitch = props.pitch.trim()
-    const filename = `${hash}.mp3`
 
     const texts = props.texts.map((text) => ({
       ...text,
@@ -126,7 +125,7 @@ export const tts = SA.encode(
         userId: user?.id || null,
         options: ttsOptionParser.encode({
           options: texts,
-          output: `./tmp/${filename}`,
+          basename: hash,
           timeoutMs: 1000 * 60 * 5,
         }),
       },

@@ -7,6 +7,7 @@ import { WeightedTaskQueue } from '@/utils/queue'
 import { toError } from '@/errors/utils'
 
 import { genePromiseOnce, withStatic } from '@zimi/utils'
+import { noop } from 'lodash-es'
 
 import type { Role } from '@/generated-prisma-client'
 
@@ -22,9 +23,12 @@ async function startTts(hash: string) {
         status: 'PROCESSING',
       },
     })
-    await rawTtsMerge(ttsOptionParser.decode(updateRes))
-    const filename = `${updateRes.hash}.mp3`
-    await uploadToCos(`./tmp/${filename}`, `/tmp/${filename}`)
+    const outputs = await rawTtsMerge(ttsOptionParser.decode(updateRes))
+    await Promise.all([
+      uploadToCos(outputs.audio, `/tmp/${hash}.mp3`),
+      // srt 文件失败就失败了吧
+      uploadToCos(outputs.srt, `/tmp/${hash}.srt`).catch(noop),
+    ])
     await prisma.ttsTask.update({
       where: { hash },
       data: {
@@ -90,5 +94,5 @@ async function rawInitTtsQueue() {
 
 export const ttsQueue = withStatic(rawTtsQueue, {
   init: genePromiseOnce(rawInitTtsQueue),
-  appendTtsQueue: appendTtsQueue,
+  appendTtsQueue,
 })

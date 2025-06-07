@@ -10,6 +10,10 @@ const SECRET_ID = process.env.TC_COS_SECRET_ID
 const SECRET_KEY = process.env.TC_COS_SECRET_KEY
 
 export async function uploadToCos(filePath: string, key: string) {
+  if (!filePath || !key) {
+    throw new Error('File path and key are required for upload to COS')
+  }
+
   const cos = new COS({
     SecretId: SECRET_ID,
     SecretKey: SECRET_KEY,
