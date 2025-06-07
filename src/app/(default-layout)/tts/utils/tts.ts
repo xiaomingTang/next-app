@@ -204,13 +204,24 @@ export async function rawTtsMerge(config: TtsMergeOption) {
   })
 
   return new Promise<TtsOutput>((resolve, reject) => {
-    const ffmpegParams = outputs.map(({ audio }) => ['-i', audio]).flat()
-    ffmpegParams.push(
+    const audios = outputs.map(({ audio }) => audio)
+    const inputArgs = audios.flatMap((file) => ['-i', file])
+    const concatInputs = audios.map((_, i) => `[${i}:a]`).join('')
+    const filterComplex = `${concatInputs}concat=n=${audios.length}:v=0:a=1[out]`
+
+    const ffmpegParams = [
+      ...inputArgs,
       '-filter_complex',
-      `concat=n=${outputs.length}:v=0:a=1`,
+      filterComplex,
+      '-map',
+      '[out]',
+      '-c:a',
+      'libmp3lame',
+      '-b:a',
+      '128k',
       '-y',
-      paths.audio
-    )
+      paths.audio,
+    ]
 
     ffmpegProcess = spawn('ffmpeg', ffmpegParams, {
       signal: abortController.signal,
