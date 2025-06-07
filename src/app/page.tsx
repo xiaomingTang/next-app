@@ -1,4 +1,4 @@
-import { TagsCollapse } from './(default-layout)/tag/components/Collapse'
+import { TagsCollapse } from './(default-layout)/tag/components/TagsCollapse'
 
 import { BlogList, BlogListLoading } from '@D/blog/components/BlogList'
 import { TagItem } from '@D/tag/components/TagItem'

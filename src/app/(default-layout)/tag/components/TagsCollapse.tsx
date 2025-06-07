@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, ButtonBase } from '@mui/material'
+import { Box, ButtonBase, useMediaQuery, useTheme } from '@mui/material'
 import { useEffect, useState } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import ExpandLessIcon from '@mui/icons-material/ExpandLess'
@@ -27,6 +27,7 @@ export function TagsCollapse({
   children,
 }: TagsCollapseProps) {
   const [open, setOpen] = useState(activeOpen ?? defaultOpen)
+  const isXs = useMediaQuery(useTheme().breakpoints.down('sm'))
 
   useEffect(() => {
     activeOpen = open
@@ -44,11 +45,12 @@ export function TagsCollapse({
         cursor: xs(open ? 'auto' : 'pointer'),
       }}
     >
-      <Box aria-hidden={open ? 'false' : 'true'} inert={!open}>
+      <Box aria-hidden={isXs && !open ? 'true' : 'false'} inert={isXs && !open}>
         {children}
       </Box>
       <ButtonBase
-        aria-label={open ? undefined : '展开标签列表'}
+        aria-hidden={isXs && !open ? 'false' : 'true'}
+        aria-label={isXs && !open ? '展开标签列表' : undefined}
         onClick={() => setOpen(!open)}
         sx={{
           position: 'absolute',
@@ -87,8 +89,8 @@ export function TagsCollapse({
         </Box>
       </ButtonBase>
       <ButtonBase
-        aria-hidden={open ? 'false' : 'true'}
-        aria-label={!open ? undefined : '收起标签列表'}
+        aria-hidden={isXs && open ? 'false' : 'true'}
+        aria-label={isXs && open ? '收起标签列表' : undefined}
         inert={!open}
         onClick={() => setOpen(!open)}
         sx={{

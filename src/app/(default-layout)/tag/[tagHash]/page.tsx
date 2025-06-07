@@ -1,6 +1,6 @@
 import { TagDesc } from '../components/TagDesc'
 import { TagItem } from '../components/TagItem'
-import { TagsCollapse } from '../components/Collapse'
+import { TagsCollapse } from '../components/TagsCollapse'
 
 import { seo } from '@/utils/seo'
 import { ScrollToTop } from '@/components/ScrollToTop'
