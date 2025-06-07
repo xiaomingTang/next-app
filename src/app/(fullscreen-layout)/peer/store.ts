@@ -34,12 +34,7 @@ export const usePeer = withStatic(useRawPeer, {
     if (!peerUtil.supports.audioVideo && !peerUtil.supports.data) {
       throw new Error('你的浏览器不支持 WebRTC')
     }
-    console.log('peer init')
     const res = await getStunCredentials().then(SA.decode)
-    console.log('stun: ', res)
-    console.log(
-      `turnutils_uclient -u ${res.username} -w ${res.password} -r 16px.cc 16px.cc`
-    )
     const peerUrl = new URL(process.env.NEXT_PUBLIC_PEER_SERVER)
     const secure = peerUrl.protocol === 'https:'
     const port = numberFormat(peerUrl.port) || (secure ? 443 : 80)
