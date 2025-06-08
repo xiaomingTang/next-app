@@ -18,12 +18,12 @@ export function TtsAudioArea({ task: initTask }: { task: TtsTaskItem }) {
   const basename = now.toISOString().replace(/[-:]/g, '').slice(0, -5)
 
   const audioUrl = useMemo(
-    () => getCdnUrl({ key: `/tmp/${task.hash}.mp3` }).href,
+    () => getCdnUrl({ key: `/public/tmp/${task.hash}.mp3` }).href,
     [task.hash]
   )
 
   const srtUrl = useMemo(
-    () => getCdnUrl({ key: `/tmp/${task.hash}.srt` }).href,
+    () => getCdnUrl({ key: `/public/tmp/${task.hash}.srt` }).href,
     [task.hash]
   )
 

@@ -25,9 +25,9 @@ async function startTts(hash: string) {
     })
     const outputs = await rawTtsMerge(ttsOptionParser.decode(updateRes))
     await Promise.all([
-      uploadToCos(outputs.audio, `/tmp/${hash}.mp3`),
+      uploadToCos(outputs.audio, `/public/tmp/${hash}.mp3`),
       // srt 文件失败就失败了吧
-      uploadToCos(outputs.srt, `/tmp/${hash}.srt`).catch(noop),
+      uploadToCos(outputs.srt, `/public/tmp/${hash}.srt`).catch(noop),
     ])
     await prisma.ttsTask.update({
       where: { hash },
