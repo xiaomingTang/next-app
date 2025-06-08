@@ -125,15 +125,17 @@ export const getBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
  * @deprecated ⚠️⚠️⚠️ 该方法仅供后台内部调用，前台不可调用 ⚠️⚠️⚠️
  */
 export const privateGetBlogs = SA.encode(async (props: Prisma.BlogWhereInput) =>
-  prisma.blog.findMany({
-    where: props,
-    select: blogSelect,
-    orderBy: [
-      {
-        createdAt: 'desc',
-      },
-    ],
-  })
+  prisma.blog
+    .findMany({
+      where: props,
+      select: blogSelect,
+      orderBy: [
+        {
+          createdAt: 'desc',
+        },
+      ],
+    })
+    .then((blogs) => blogs.map(mosaicBlogUser))
 )
 
 const saveBlogDto = z.object({
@@ -179,6 +181,7 @@ export const saveBlog = SA.encode(
           },
           select: blogSelect,
         })
+        .then(mosaicBlogUser)
         .then(
           withRevalidate({
             tags: ['getBlogs'],
