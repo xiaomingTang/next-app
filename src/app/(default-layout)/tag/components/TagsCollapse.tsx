@@ -51,6 +51,7 @@ export function TagsCollapse({
       <ButtonBase
         aria-hidden={isXs && !open ? 'false' : 'true'}
         aria-label={isXs && !open ? '展开标签列表' : undefined}
+        inert={open}
         onClick={() => setOpen(!open)}
         sx={{
           position: 'absolute',
@@ -76,18 +77,16 @@ export function TagsCollapse({
           },
         }}
       >
-        <Box
+        <ExpandMoreIcon
           sx={{
             position: 'absolute',
             bottom: 0,
-            left: 0,
-            right: 0,
-            textAlign: 'center',
+            left: '50%',
+            transform: 'translateX(-50%)',
           }}
-        >
-          <ExpandMoreIcon />
-        </Box>
+        />
       </ButtonBase>
+      {/* @WARNING: 需要保留这个按钮，避免容器高度跳变 */}
       <ButtonBase
         aria-hidden={isXs && open ? 'false' : 'true'}
         aria-label={isXs && open ? '收起标签列表' : undefined}
