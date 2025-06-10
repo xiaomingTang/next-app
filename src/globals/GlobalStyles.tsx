@@ -29,6 +29,13 @@ export function GlobalStyles() {
   --custom-bg: #29323d;
 }
 
+button,
+a,
+input,
+label {
+  touch-action: manipulation;
+}
+
 @font-face {
   font-family: SourceCodePro;
   font-style: normal;
