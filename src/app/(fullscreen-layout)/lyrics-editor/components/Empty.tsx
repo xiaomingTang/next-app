@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 
 export function NoLrc() {
   return (
-    <Box sx={{ color: 'GrayText', userSelect: 'none' }}>
+    <Box sx={{ color: 'grey.500', userSelect: 'none' }}>
       <Box>歌词为空，你可以</Box>
       <ul className='list-disc list-inside mt-1'>
         <li>双击手动添加歌词</li>
@@ -25,7 +25,7 @@ export function NoLrc() {
 
 export function NoAudio() {
   return (
-    <Box sx={{ color: 'GrayText', userSelect: 'none' }}>
+    <Box sx={{ color: 'grey.500', userSelect: 'none' }}>
       <Box>音乐为空，你可以</Box>
       <ul className='list-disc list-inside mt-1'>
         <li>拖拽音频文件到页面内</li>
