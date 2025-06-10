@@ -66,6 +66,8 @@ export function TagsCollapse({
           color: 'white',
           transition: 'opacity 0.3s ease-in-out',
           ':focus-visible': {
+            outline: '1px solid',
+            outlineColor: 'primary.main',
             outlineOffset: '-1px',
           },
           display: {
