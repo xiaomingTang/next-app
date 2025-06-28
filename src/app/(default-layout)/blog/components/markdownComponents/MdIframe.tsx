@@ -93,7 +93,7 @@ export function MdIframe({ src = '' }: { src?: string }) {
         allow='accelerometer; encrypted-media; gyroscope; picture-in-picture; web-share'
         style={{
           width: '100%',
-          maxHeight: '80vh',
+          maxHeight: 'calc(var(--vh,1vh)*80)',
         }}
       />
     </>

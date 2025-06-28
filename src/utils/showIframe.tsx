@@ -57,7 +57,10 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
       {...muiDialogV5ReplaceOnClose(modal)}
     >
       {header}
-      <iframe src={url.href} className='border-none m-0 p-0 h-[100vh]' />
+      <iframe
+        src={url.href}
+        className='border-none m-0 p-0 h-[calc(var(--vh,1vh)*100)]'
+      />
     </Dialog>
   )
 })

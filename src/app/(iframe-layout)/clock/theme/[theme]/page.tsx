@@ -36,7 +36,7 @@ export default async function Index(props: Props) {
   return (
     <Clock
       sx={{
-        height: '100vh',
+        height: 'calc(var(--vh,1vh)*100)',
       }}
     >
       <config.Dial width='100%' height='100%' />
