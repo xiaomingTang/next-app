@@ -1,9 +1,11 @@
 'use client'
 
+import { usePageTransitionEffect } from './usePageTransitionEffect'
+
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 import { LayoutRouterContext } from 'next/dist/shared/lib/app-router-context.shared-runtime'
-import { useContext, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 
 import type { MotionProps } from 'framer-motion'
 
@@ -28,16 +30,23 @@ export type PageTransitionEffectProps = PageTransitionEffectConfig & {
 }
 
 const defaultProps = {
-  initial: 'hidden',
-  animate: 'enter',
-  exit: 'exit',
-  variants: {
-    hidden: { opacity: 0, x: 10 },
-    enter: { opacity: 1, x: 0 },
-    exit: { opacity: 0, x: -10 },
-  },
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
   transition: { ease: 'easeInOut', duration: 0.5 },
 } satisfies PageTransitionEffectConfig
+
+const onEnter = () => {
+  usePageTransitionEffect.setState({
+    exited: false,
+  })
+}
+
+const onExitComplete = () => {
+  usePageTransitionEffect.setState({
+    exited: true,
+  })
+}
 
 export function PageTransitionEffect({
   children,
@@ -45,8 +54,12 @@ export function PageTransitionEffect({
 }: PageTransitionEffectProps) {
   const pathname = usePathname()
 
+  useEffect(() => {
+    onEnter()
+  }, [pathname])
+
   return (
-    <AnimatePresence mode='popLayout'>
+    <AnimatePresence mode='popLayout' onExitComplete={onExitComplete}>
       <motion.main {...defaultProps} {...props} key={pathname}>
         <FrozenRouter>{children}</FrozenRouter>
       </motion.main>
