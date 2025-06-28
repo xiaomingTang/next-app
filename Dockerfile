@@ -3,9 +3,9 @@
 
 FROM ubuntu_with_node_22 AS base
 ARG PORT=3000
-ENV PORT ${PORT}
-ENV PNPM_HOME "/pnpm"
-ENV PATH "$PNPM_HOME:$PATH"
+ENV PORT=${PORT}
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 COPY package.json /app
 RUN npm i -g pnpm@latest-10
 
@@ -18,7 +18,7 @@ ARG NEXT_PUBLIC_LAST_COMMIT_MESSAGE
 RUN echo \\nNEXT_PUBLIC_LAST_COMMIT_MESSAGE=${NEXT_PUBLIC_LAST_COMMIT_MESSAGE}\\n >> /app/.env.local
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 RUN pnpm run build
 
 FROM base AS runner
@@ -47,6 +47,6 @@ RUN chown -R nextjs:nodejs /app /pnpm
 USER nextjs
 
 EXPOSE ${PORT}
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 CMD pm2-runtime start launch.sh
