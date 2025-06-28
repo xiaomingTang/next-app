@@ -1,3 +1,4 @@
+import { PageTransitionEffect } from './components/PageTransitionEffect'
 import { DefaultRawHeader } from './DefaultHeader'
 
 import dynamic from 'next/dynamic'
@@ -19,11 +20,20 @@ export default function FullscreenLayout({
         body {
           width: 100%;
           height: 100%;
+          /* 防止 animate 的时候出现滚动条 */
+          overflow: hidden;
         }
       `}</style>
       <FileUploadCatcher />
       <DefaultRawHeader />
-      {children}
+      <PageTransitionEffect
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+      >
+        {children}
+      </PageTransitionEffect>
     </>
   )
 }
