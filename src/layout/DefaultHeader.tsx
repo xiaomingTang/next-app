@@ -34,6 +34,19 @@ const UploadTrigger = dynamic(() =>
 export function DefaultRawHeader() {
   const trigger = useScrollTrigger()
   const theme = useTheme()
+  const isXs = useMediaQuery(useTheme().breakpoints.down('sm'))
+  const physicalHeight = isXs ? 40 : 56
+  const visualHeight = !trigger ? physicalHeight : 0
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--header-height',
+      `${visualHeight}px`
+    )
+    return () => {
+      document.documentElement.style.removeProperty('--header-height')
+    }
+  }, [visualHeight])
 
   return (
     <Slide appear={false} direction='down' in={!trigger}>

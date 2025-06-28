@@ -2,7 +2,6 @@ import { copyToClipboard } from '@/utils/copyToClipboard'
 import { cat } from '@/errors/catchAndToast'
 import { useHover } from '@/hooks/useHover'
 import { Sticky } from '@/components/Sticky'
-import { useHeaderState } from '@/layout/DefaultHeader'
 
 import { useRef, useState } from 'react'
 import ContentCopyIcon from '@mui/icons-material/ContentCopy'
@@ -19,7 +18,6 @@ export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
   const [copied, setCopied] = useState(false)
   const lastTimerRef = useRef(-1)
   const [hovered, setHoverElem] = useHover()
-  const { visualHeight } = useHeaderState()
 
   const handleCopy = cat(async () => {
     const text = preRef.current?.textContent ?? ''
@@ -46,7 +44,7 @@ export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
           transition: 'top 0.3s ease',
         }}
         style={{
-          top: `${visualHeight}px`,
+          top: 'var(--header-height)',
         }}
         slogProps={{
           root: {

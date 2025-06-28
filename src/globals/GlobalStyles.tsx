@@ -12,6 +12,7 @@ export function GlobalStyles() {
 
 :root {
   --vh: 1vh;
+  --header-height: 0;
   font-size: 16px;
   line-height: 1.5;
   --custom-bg: #eeeeee;

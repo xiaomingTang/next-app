@@ -6,7 +6,6 @@ import {
   SCROLL_BAR_WIDTH,
   useAsideVisible,
 } from './utils'
-import { useHeaderState } from './DefaultHeader'
 
 import { STYLE } from '@/config'
 import { obj } from '@/utils/tiny'
@@ -28,7 +27,6 @@ export function DefaultAside({
   ...props
 }: DefaultAsideProps) {
   const visible = useAsideVisible()
-  const { visualHeight: top } = useHeaderState()
   const visibility =
     useDelayedValue(async () => {
       if (visible) {
@@ -66,13 +64,13 @@ export function DefaultAside({
         transition: 'opacity .3s, top .3s',
 
         pointerEvents: 'none',
-        top: `${top + 16}px`,
+        top: `calc(var(--header-height) + 16px)`,
         opacity: 0,
         visibility,
         ...obj(
           visible && {
             pointerEvents: 'auto',
-            top: `${top}px`,
+            top: 'var(--header-height)',
             opacity: 1,
           }
         ),
