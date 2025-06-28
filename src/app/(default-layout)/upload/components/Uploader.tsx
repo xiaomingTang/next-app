@@ -390,7 +390,7 @@ const Uploader = NiceModal.create(
         onClose={onClose}
       >
         {header}
-        <DialogContent sx={{ height: 'calc(var(--vh,1vh)*100)' }}>
+        <DialogContent sx={{ height: 'calc(var(--vh)*100)' }}>
           {filesDisplayElem}
         </DialogContent>
         <DialogActions>{actionsElem}</DialogActions>

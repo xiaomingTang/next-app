@@ -59,7 +59,7 @@ const IframeModal = NiceModal.create(({ title, url }: IframeModalProps) => {
       {header}
       <iframe
         src={url.href}
-        className='border-none m-0 p-0 h-[calc(var(--vh,1vh)*100)]'
+        className='border-none m-0 p-0 h-[calc(var(--vh)*100)]'
       />
     </Dialog>
   )

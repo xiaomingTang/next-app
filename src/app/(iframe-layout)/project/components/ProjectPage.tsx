@@ -48,7 +48,7 @@ export function ProjectPage(projectInfo: ProjectPageProps) {
       sx={{
         display: 'flex',
         flexDirection: 'row',
-        height: 'calc(var(--vh,1vh)*100)',
+        height: 'calc(var(--vh)*100)',
       }}
     >
       <ProjectMenu {...projectInfo} />

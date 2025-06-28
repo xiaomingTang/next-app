@@ -368,7 +368,7 @@ export const BlogEditor = NiceModal.create(({ blog }: EditBlogModalProps) => {
             </FormHelperText>
             <Editor
               {...omit(field, 'ref')}
-              height='calc(var(--vh,1vh)*70)'
+              height='calc(var(--vh)*70)'
               theme={mode === 'dark' ? 'vs-dark' : 'light'}
               defaultLanguage='markdown'
               defaultValue={field.value}
