@@ -34,8 +34,7 @@ COPY --from=builder /app/.bak ./.bak
 COPY --from=builder /app/ci ./ci
 
 # 为提取至宿主机做准备，如果不需要提取到宿主机，可以注释掉这一部分
-ARG ZIP_PATH=/app/app.zip
-RUN zip -r -q ${ZIP_PATH} .
+RUN cd / && tar -czf app.tar.gz -C /app . && cd /app
 # END: 为提取至宿主机做准备，如果不需要提取到宿主机，可以注释掉这一部分
 
 # MD 明明记得 peer 不能全局安装，否则会失败，不知道怎么在 docker 里面就好了，不管了，反正先这么写着了
@@ -49,4 +48,4 @@ USER nextjs
 EXPOSE ${PORT}
 ENV NODE_ENV=production
 
-CMD pm2-runtime start launch.sh
+CMD ["pm2-runtime", "start", "launch.sh"]

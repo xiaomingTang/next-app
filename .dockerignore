@@ -31,3 +31,4 @@ README.md
 .gitignore
 .git
 /tmp
+/deploy.sh

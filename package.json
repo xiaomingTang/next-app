@@ -17,8 +17,8 @@
     "db:push": "dotenv -e .env -c -- prisma db push",
     "db:seed": "dotenv -e .env -c -- prisma db seed",
     "docker:rm-none-image": "docker rmi $(docker images --filter \"dangling=true\" -q --no-trunc) 2>/dev/null",
-    "docker:build": "docker build -t 16px_cc --build-arg ZIP_PATH=/app/app.zip --build-arg PORT=3000 --build-arg NEXT_PUBLIC_LAST_COMMIT_MESSAGE=\"$(git log -1 --pretty=format:'%B' HEAD | tr '\n' ' ')\" --progress plain --platform=linux/amd64 .",
-    "docker:deploy": "dotenv -e .env.deploy -c -v DOCKER_IMAGE_NAME=16px_cc -v ZIP_PATH=/app/app.zip -- /bin/bash deploy.sh"
+    "docker:build": "docker build -t 16px_cc --build-arg NEXT_PUBLIC_LAST_COMMIT_MESSAGE=\"$(git log -1 --pretty=format:'%B' HEAD | tr '\n' ' ')\" --progress plain --platform=linux/amd64 .",
+    "docker:deploy": "dotenv -e .env.deploy -c -v DOCKER_IMAGE_NAME=16px_cc -- /bin/bash deploy.sh"
   },
   "lint-staged": {
     "*.{md,json,svg,js,jsx,css,less,sass,scss}": [
