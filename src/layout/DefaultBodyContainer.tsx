@@ -13,7 +13,7 @@ export function DefaultBodyContainer({
       style={{
         width: '100%',
         maxWidth: STYLE.width.desktop,
-        minHeight: 'calc(var(--vh) * 100 - var(--header-height))',
+        minHeight: 'calc(var(--vh) * 100)',
         margin: '0 auto',
         padding: 'calc(2 * var(--mui-spacing))',
       }}
