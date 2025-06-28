@@ -17,7 +17,7 @@ COPY .env.deploy.local /app/.env.local
 ARG NEXT_PUBLIC_LAST_COMMIT_MESSAGE
 RUN echo \\nNEXT_PUBLIC_LAST_COMMIT_MESSAGE=${NEXT_PUBLIC_LAST_COMMIT_MESSAGE}\\n >> /app/.env.local
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-
+# ENV 必须放在 install 之后，否则 install 不到 dev 相关包，build 会失败
 ENV NODE_ENV=production
 RUN pnpm run build
 
