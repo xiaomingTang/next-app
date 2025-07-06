@@ -46,9 +46,9 @@ export type PageTransitionEffectProps = LimitedAnimationOptions &
   >
 
 const defaultProps = {
-  initial: { opacity: 0, transition: { duration: 1.5 } },
-  animate: { opacity: 1, transition: { duration: 1.5 } },
-  exit: { opacity: 0, transition: { duration: 1.5 } },
+  initial: { opacity: 0, transition: { duration: 0.5 } },
+  animate: { opacity: 1, transition: { duration: 0.5 } },
+  exit: { opacity: 0, transition: { duration: 0.5 } },
 } satisfies LimitedAnimationOptions
 
 const hardReloadAddonProps: LimitedAnimationOptions = {
