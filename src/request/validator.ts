@@ -1,7 +1,7 @@
 import Boom from '@hapi/boom'
 import { fromZodError } from 'zod-validation-error'
 
-import type { ZodType, z } from 'zod'
+import type { ZodType, output, z } from 'zod'
 import type { ZodError } from 'zod-validation-error'
 
 /**
@@ -12,7 +12,7 @@ export function zf<T extends ZodType, Ret>(
   callback: (props: z.infer<T>) => Promise<Ret>
 ): typeof callback {
   return (props) => {
-    let parsedProps: T
+    let parsedProps: output<T>
     try {
       parsedProps = zodType.parse(props)
     } catch (error) {
