@@ -12,7 +12,7 @@ import { z } from 'zod'
 
 const saveCommentDto = z.object({
   name: optionalString(z.string().max(100)),
-  email: optionalString(z.string().email().max(200)),
+  email: optionalString(z.email().max(200)),
   content: z.string().min(2).max(10000),
 })
 

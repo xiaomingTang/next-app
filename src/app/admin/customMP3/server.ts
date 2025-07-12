@@ -45,8 +45,8 @@ export const getMP3s = SA.encode(async (props: Prisma.CustomMP3WhereInput) =>
 const saveMP3Dto = z.object({
   hash: optionalString(z.string().min(6).max(50)),
   name: z.string().min(1),
-  mp3: z.string().url(),
-  lrc: optionalString(z.string().url()),
+  mp3: z.url(),
+  lrc: optionalString(z.url()),
 })
 
 export const saveMP3 = SA.encode(

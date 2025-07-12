@@ -116,7 +116,7 @@ const saveDto = z.object({
   limit: z.number(),
   // jsonschema 包不支持 Date 类型的校验
   timeout: z.number(),
-  url: z.string().url(),
+  url: z.url(),
 })
 
 export const saveShortUrl = SA.encode(

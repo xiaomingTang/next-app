@@ -101,12 +101,12 @@ const saveFriendsLinkDto = z.object({
    * hash 为空则是新建
    */
   hash: optionalString(z.string()),
-  status: z.nativeEnum(FriendsLinkStatus).optional(),
+  status: z.enum(FriendsLinkStatus).optional(),
   name: z.string().min(2).max(100),
-  email: optionalString(z.string().email().max(200)),
-  url: z.string().max(200).url(),
+  email: optionalString(z.email().max(200)),
+  url: z.url().max(200),
   description: optionalString(z.string().max(200)),
-  image: optionalString(z.string().max(400).url()),
+  image: optionalString(z.url().max(400)),
 })
 
 export const saveFriendsLink = SA.encode(

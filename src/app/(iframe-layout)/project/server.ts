@@ -122,7 +122,7 @@ export const createRootProject = SA.encode(
 const createProjectDto = z.object({
   name: z.string().min(1).max(200),
   parentHash: z.string().min(1).max(100),
-  type: z.nativeEnum(ProjectType),
+  type: z.enum(ProjectType),
   content: optionalString(z.string()),
 })
 
@@ -236,7 +236,7 @@ const updateProjectDto = z.object({
   hash: z.string().min(1).max(100),
   name: optionalString(z.string().min(1).max(200)),
   content: optionalString(z.string()),
-  type: z.nativeEnum(ProjectType).optional(),
+  type: z.enum(ProjectType).optional(),
 })
 
 export type UpdateProjectProps = z.infer<typeof updateProjectDto>

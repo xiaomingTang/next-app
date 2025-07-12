@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod'
 
-export function optionalString(s: z.ZodString) {
+export function optionalString(s: z._ZodString) {
   return z.union([z.string().max(0), s]).optional()
 }
 

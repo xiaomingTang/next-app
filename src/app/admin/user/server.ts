@@ -68,10 +68,10 @@ const saveDto = z.object({
    * id 为空即为创建
    */
   id: z.number().optional(),
-  email: z.string().email(),
+  email: z.email(),
   password: optionalString(z.string().min(6).max(16)),
   name: z.string().min(3).max(24),
-  role: z.nativeEnum(Role),
+  role: z.enum(Role),
 })
 
 export const saveUser = SA.encode(

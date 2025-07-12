@@ -54,9 +54,9 @@ export const getAllHomepageLinks = SA.encode(async () => {
 const saveHomepageLinkDto = z.object({
   hash: optionalString(z.string().min(6).max(50)),
   name: z.string().min(1),
-  url: z.string().url(),
+  url: z.url(),
   description: optionalString(z.string().max(2000)),
-  image: optionalString(z.string().url()),
+  image: optionalString(z.url()),
   enabled: z.boolean().optional(),
 })
 

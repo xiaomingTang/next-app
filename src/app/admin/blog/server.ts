@@ -144,7 +144,7 @@ const saveBlogDto = z.object({
    */
   hash: z.string().optional(),
   title: z.string().min(2).max(100),
-  type: z.nativeEnum(BlogType),
+  type: z.enum(BlogType),
   /**
    * Array<tag hash>
    */
