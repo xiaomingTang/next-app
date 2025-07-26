@@ -28,6 +28,7 @@ declare namespace NodeJS {
     TC_COS_SECRET_KEY: string
     NEXT_PUBLIC_TC_COS_BUCKET: string
     NEXT_PUBLIC_TC_COS_REGION: string
+    NEXT_PUBLIC_CYBER_BEGGER_ADDRESS: string
 
     DINGTALK_ACCESS_TOKEN: string
     DINGTALK_SECRET: string

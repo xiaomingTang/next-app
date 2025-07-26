@@ -14,15 +14,25 @@ import { BlogTypeMap } from '@ADMIN/blog/components/constants'
 import { editBlog } from '@ADMIN/blog/components/EditBlog'
 import { useLoading } from '@/hooks/useLoading'
 import SvgLoading from '@/svg/assets/loading.svg?icon'
+import SvgSolana from '@/svg/assets/solana.svg?icon'
 import Span from '@/components/Span'
+import { CopyIcon, useCopy } from '@/components/CopyIcon'
 
 import { MDXRemote } from 'next-mdx-remote'
-import { Typography, NoSsr, IconButton, Skeleton, alpha } from '@mui/material'
+import {
+  Typography,
+  NoSsr,
+  IconButton,
+  Skeleton,
+  alpha,
+  Stack,
+  ButtonBase,
+} from '@mui/material'
 import { PhotoProvider } from 'react-photo-view'
 import BorderColorIcon from '@mui/icons-material/BorderColor'
 import OpenInNewIcon from '@mui/icons-material/OpenInNew'
 import { useRef, useState } from 'react'
-import { common } from '@mui/material/colors'
+import { blue, common } from '@mui/material/colors'
 import { noop } from 'lodash-es'
 
 import type { MDXRemoteSerializeResult } from 'next-mdx-remote'
@@ -41,11 +51,18 @@ type DraftProps = LoadingAble<
   ref?: React.ForwardedRef<HTMLDivElement>
 }
 
+const addr = process.env.NEXT_PUBLIC_CYBER_BEGGER_ADDRESS
+const beggerAddr = {
+  full: addr,
+  short: addr.slice(0, 6) + '...' + addr.slice(-4),
+}
+
 export function BlogContent({ mode = 'production', ref, ...blog }: DraftProps) {
   const user = useUser()
   const [previewVisible, setPreviewVisible] = useState(false)
   const closeRef = useRef(noop)
   const [loading, withLoading] = useLoading()
+  const [copied, copy] = useCopy()
 
   useInjectHistory(previewVisible, () => {
     closeRef.current()
@@ -178,11 +195,41 @@ export function BlogContent({ mode = 'production', ref, ...blog }: DraftProps) {
         </Typography>
         {contentElem}
       </Typography>
+      {/* cyberbegger */}
+      <Stack
+        direction='row'
+        alignItems='center'
+        sx={{ py: 1, fontSize: '0.9em' }}
+        useFlexGap
+        flexWrap='wrap'
+      >
+        <Span sx={{ whiteSpace: 'nowrap' }}>
+          感觉有帮到你，可以请我喝杯奶茶
+        </Span>
+        <ButtonBase
+          title='赛博乞讨这一块必须得跟上'
+          onClick={cat(() => copy(beggerAddr.full))}
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            p: 1,
+            cursor: 'copy',
+            borderRadius: 1,
+            ':focus-visible': {
+              outline: `1px solid ${blue[700]}`,
+            },
+          }}
+        >
+          <SvgSolana className='inline-block text-[length:1.1em] leading-none' />
+          <Span sx={{ mx: '4px' }}>{beggerAddr.short}</Span>
+          <CopyIcon copied={copied} sx={{ fontSize: 'inherit' }} />
+        </ButtonBase>
+      </Stack>
       {/* 版权声明 */}
       <Typography
         component='div'
         sx={{
-          mt: 2,
           p: 2,
           borderRadius: 1,
           boxShadow: 2,
