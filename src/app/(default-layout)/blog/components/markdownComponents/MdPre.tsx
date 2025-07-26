@@ -1,34 +1,18 @@
-import { copyToClipboard } from '@/utils/copyToClipboard'
 import { cat } from '@/errors/catchAndToast'
 import { useHover } from '@/hooks/useHover'
 import { Sticky } from '@/components/Sticky'
+import { CopyIcon, useCopy } from '@/components/CopyIcon'
 
-import { useRef, useState } from 'react'
-import ContentCopyIcon from '@mui/icons-material/ContentCopy'
-import CheckIcon from '@mui/icons-material/Check'
+import { useRef } from 'react'
 import IconButton from '@mui/material/IconButton'
 import Box from '@mui/material/Box'
 
 import type { HTMLAttributes } from 'react'
 
-const COPY_RESET_DELAY = 3000
-
 export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
   const preRef = useRef<HTMLPreElement>(null)
-  const [copied, setCopied] = useState(false)
-  const lastTimerRef = useRef(-1)
   const [hovered, setHoverElem] = useHover()
-
-  const handleCopy = cat(async () => {
-    const text = preRef.current?.textContent ?? ''
-    await copyToClipboard(text.trim(), 'silently')
-    setCopied(true)
-    window.clearTimeout(lastTimerRef.current)
-    lastTimerRef.current = window.setTimeout(
-      () => setCopied(false),
-      COPY_RESET_DELAY
-    )
-  })
+  const [copied, copy] = useCopy()
 
   return (
     <Box
@@ -57,7 +41,7 @@ export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
       >
         <IconButton
           size='medium'
-          onClick={handleCopy}
+          onClick={cat(() => copy((preRef.current?.innerText || '').trim()))}
           sx={{
             position: 'absolute',
             top: 0,
@@ -74,11 +58,7 @@ export function MdPre(props: HTMLAttributes<HTMLPreElement>) {
           }}
           aria-label={copied ? '已复制' : '复制后面的代码块内的内容'}
         >
-          {copied ? (
-            <CheckIcon fontSize='inherit' />
-          ) : (
-            <ContentCopyIcon fontSize='inherit' />
-          )}
+          <CopyIcon fontSize='inherit' copied={copied} />
         </IconButton>
       </Sticky>
       <pre
