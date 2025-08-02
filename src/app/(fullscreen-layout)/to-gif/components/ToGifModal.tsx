@@ -209,7 +209,7 @@ const ToGifModal = NiceModal.create(({ images }: ToGifModalProps) => {
         await ffmpeg.exec(cmds)
         const data = await ffmpeg.readFile(OUTPUT_NAME)
         const outputFile = new File(
-          [(data as Uint8Array).buffer],
+          [(data as Uint8Array<ArrayBuffer>).buffer],
           OUTPUT_NAME,
           {
             type: 'image/gif',

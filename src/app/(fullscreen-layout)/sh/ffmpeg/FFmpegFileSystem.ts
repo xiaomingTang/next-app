@@ -129,14 +129,16 @@ export class FFmpegFileSystem implements ShFileSystem {
       })
   }
 
-  getFileContent(
-    path: string,
-    encoding?: string
-  ): Promise<string | Uint8Array> {
-    return this.ffmpeg.readFile(path, encoding)
+  getFileContent(path: string, encoding?: string) {
+    return this.ffmpeg.readFile(path, encoding) as Promise<
+      string | Uint8Array<ArrayBuffer>
+    >
   }
 
-  async writeFile(path: string, content: Uint8Array | string): Promise<void> {
+  async writeFile(
+    path: string,
+    content: Uint8Array<ArrayBuffer> | string
+  ): Promise<void> {
     const ok = await this.ffmpeg.writeFile(path, content)
     if (!ok) {
       throw new Error(`FFmpeg failed to write file: ${path}`)

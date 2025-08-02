@@ -8,7 +8,7 @@ export interface FileLike {
   name: string
   size: number
   type: string
-  bytes: Uint8Array
+  bytes: BufferSource | Blob
 }
 
 export type MediumMessage =
