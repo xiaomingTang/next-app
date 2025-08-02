@@ -8,7 +8,6 @@ import { drawWallpaper } from '../utils/canvas'
 import { DefaultHeaderShim } from '@/layout/DefaultHeader'
 import { useFullScreen } from '@/utils/device'
 import { obj } from '@/utils/tiny'
-import { Link } from '@/components/CustomLink'
 
 import { Box, IconButton, Stack, TextField } from '@mui/material'
 import { startTransition, useEffect, useMemo, useRef, useState } from 'react'
@@ -277,7 +276,7 @@ export function WallpaperRoot() {
               aria-label='下载'
               title='下载'
               disabled={!canvasUrl}
-              LinkComponent={Link}
+              LinkComponent='a'
               href={canvasUrl || '/'}
               download='wallpaper.png'
               target='_blank'
