@@ -7,7 +7,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: ['/admin/', '/u/', '/project/new'],
+      disallow: ['/admin/', '/u/', '/project/new', '/qrcode/generate'],
     },
     sitemap: resolvePath('/sitemap.xml').href,
   }

@@ -12,7 +12,6 @@ import { DefaultAside } from '@/layout/DefaultAside'
 import { Delay } from '@/components/Delay'
 import { getBlog, getRecommendBlogs } from '@ADMIN/blog/server'
 import { resolvePath } from '@/utils/url'
-import { ABOUT_PAGE_BLOG_HASH } from '@D/about/constants'
 
 import { unstable_cache } from 'next/cache'
 import { Suspense } from 'react'
@@ -35,11 +34,6 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   const { blogHash } = params
 
-  const canonicalPath =
-    blogHash.toLowerCase() === ABOUT_PAGE_BLOG_HASH.toLowerCase()
-      ? '/about'
-      : `/blog/${blogHash}`
-
   // 由于可能涉及到未发布博客，因此不能缓存
   const { data: blog, error } = await getBlog({
     hash: blogHash,
@@ -61,7 +55,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     alternates: {
       // 不能使用 URL, 貌似会导致 canonical 路径不正确，
       // 可能是被其他的 [blogHash] 路径覆盖了
-      canonical: resolvePath(canonicalPath).href,
+      canonical: resolvePath(`/blog/${blogHash}`).href,
     },
   })
 }

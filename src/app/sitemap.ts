@@ -110,11 +110,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
-      url: resolvePath('/qrcode/generate').href,
-      changeFrequency: 'yearly',
-      priority: 0.2,
-    },
-    {
       url: resolvePath('/qrcode/scan').href,
       changeFrequency: 'yearly',
       priority: 0.2,

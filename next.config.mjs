@@ -82,6 +82,18 @@ const nextConfig = {
       },
     ]
   },
+  redirects: () => [
+    {
+      source: '/about',
+      destination: '/blog/3EpPJTM2LwB_',
+      permanent: false,
+    },
+    {
+      source: '/qrcode/generate',
+      destination: 'https://cli.im/',
+      permanent: false,
+    },
+  ],
   experimental: {
     serverActions: {
       // .host 带有端口

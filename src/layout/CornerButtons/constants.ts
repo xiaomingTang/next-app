@@ -20,7 +20,7 @@ export const toolList: PathItem[] = [
 
 export const menuList: (PathItem | 'divider')[] = [
   {
-    pathname: '/blog/3EpPJTM2LwB_',
+    pathname: '/about',
     title: '关于',
   },
   {
