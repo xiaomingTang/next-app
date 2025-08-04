@@ -2,8 +2,6 @@
 
 import { BLOG_MARKDOWN_ID } from './constants'
 
-import { usePageTransitionEffect } from '@/layout/components/usePageTransitionEffect'
-
 import { create } from 'zustand'
 import { Box, Divider, Link, Typography } from '@mui/material'
 import { useEffect } from 'react'
@@ -113,7 +111,6 @@ const useRawTocStore = create<{
 
 export function useTocList() {
   const tocList = useRawTocStore((s) => s.tocList)
-  const { exited } = usePageTransitionEffect()
 
   useEffect(() => {
     const headings = getHeadings()
@@ -127,7 +124,7 @@ export function useTocList() {
     useRawTocStore.setState({
       tocList: root.children,
     })
-  }, [exited])
+  }, [])
 
   return tocList
 }

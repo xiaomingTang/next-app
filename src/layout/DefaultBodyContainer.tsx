@@ -1,25 +1,26 @@
-import { PageTransitionEffect } from './components/PageTransitionEffect'
-
 import { STYLE } from '@/config'
 
-import type { PageTransitionEffectProps } from './components/PageTransitionEffect'
+import { Box } from '@mui/material'
+
+type DefaultBodyContainerProps = React.HTMLAttributes<HTMLDivElement>
 
 export function DefaultBodyContainer({
   children,
   ...restProps
-}: PageTransitionEffectProps) {
+}: DefaultBodyContainerProps) {
   return (
-    <PageTransitionEffect
-      style={{
+    <Box
+      component='main'
+      sx={{
         width: '100%',
         maxWidth: STYLE.width.desktop,
         minHeight: 'calc(var(--vh) * 100)',
-        margin: '0 auto',
-        padding: 'calc(2 * var(--mui-spacing))',
+        mx: 'auto',
+        p: 2,
       }}
       {...restProps}
     >
       {children}
-    </PageTransitionEffect>
+    </Box>
   )
 }
