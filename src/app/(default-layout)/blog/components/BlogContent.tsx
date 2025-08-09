@@ -203,10 +203,9 @@ export function BlogContent({ mode = 'production', ref, ...blog }: DraftProps) {
         useFlexGap
         flexWrap='wrap'
       >
-        <Span sx={{ whiteSpace: 'nowrap' }}>
-          感觉有帮到你，可以请我喝杯奶茶
-        </Span>
+        <Span sx={{ whiteSpace: 'nowrap' }}>如果有帮到你，可以请我喝杯水</Span>
         <ButtonBase
+          aria-label='赛博乞讨: solana 地址（点击复制）'
           title='赛博乞讨这一块必须得跟上'
           onClick={cat(() => copy(beggerAddr.full))}
           sx={{
@@ -221,7 +220,7 @@ export function BlogContent({ mode = 'production', ref, ...blog }: DraftProps) {
             },
           }}
         >
-          <SvgSolana className='inline-block text-[length:1.1em] leading-none' />
+          <SvgSolana className='inline-block text-sm leading-none' />
           <Span sx={{ mx: '4px' }}>{beggerAddr.short}</Span>
           <CopyIcon copied={copied} sx={{ fontSize: 'inherit' }} />
         </ButtonBase>
