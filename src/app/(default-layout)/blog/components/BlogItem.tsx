@@ -5,7 +5,6 @@ import { dark } from '@/utils/theme'
 import { Link } from '@/components/CustomLink'
 import { obj } from '@/utils/tiny'
 import { useListen } from '@/hooks/useListen'
-import Span from '@/components/Span'
 
 import {
   ButtonBase,
@@ -44,19 +43,20 @@ function BlogTitle(blog: BlogItemProps) {
     return <Skeleton width={`${blog.size * 10}%`} height={24} />
   }
   return (
-    <Typography component='h2' sx={{ fontWeight: 'bold' }}>
-      {Number.isInteger(blog.index) && (
-        <Span
-          sx={{
-            fontWeight: 'normal',
-            fontSize: '0.8em',
-            opacity: 0.6,
-            pointerEvents: 'none',
-          }}
-        >
-          {blog.index}：
-        </Span>
-      )}
+    <Typography
+      component='h2'
+      sx={{
+        fontWeight: 'bold',
+        '::before': {
+          content: `"${blog.index}："`,
+          display: Number.isInteger(blog.index) ? 'inline' : 'none',
+          fontWeight: 'normal',
+          fontSize: '0.8em',
+          opacity: 0.6,
+          pointerEvents: 'none',
+        },
+      }}
+    >
       {blog.title}
     </Typography>
   )
