@@ -50,4 +50,14 @@
       opacity: 1;
     }
   }
+
+  blockquote {
+    background-color: #f8f8f8;
+  }
+}
+
+[data-dark] .markdown-body {
+  blockquote {
+    background-color: #1d1d1d;
+  }
 }
