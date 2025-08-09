@@ -49,6 +49,12 @@ SSHPASS=$P1_SSH_PASSWORD sshpass -e ssh -t $P1_SSH_USER@$P1_SSH_HOST "zsh -s $P1
     echo "跳过：$remote_dir.bak.$now/tmp 不存在"
   fi
 
+  if [ -d "$remote_dir.bak.$now/.ssl" ]; then
+    rsync -a "$remote_dir.bak.$now/.ssl/" "$remote_dir/.ssl/"
+  else
+    echo "跳过：$remote_dir.bak.$now/.ssl 不存在"
+  fi
+
   cd "$remote_dir"
   pm2 delete $app_name || true
   log_file_name=".bak/.bak.log-$now.log"
