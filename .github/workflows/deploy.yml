@@ -112,21 +112,6 @@ jobs:
             cp launch.sh deploy-package/
           fi
           
-          if [ -d .ssl ]; then
-            echo "📁 Copying .ssl directory"
-            cp -r .ssl deploy-package/
-          fi
-          
-          if [ -d .bak ]; then
-            echo "📁 Copying .bak directory"
-            cp -r .bak deploy-package/
-          fi
-          
-          if [ -d ci ]; then
-            echo "📁 Copying ci directory"
-            cp -r ci deploy-package/
-          fi
-          
           # 创建压缩包
           echo "🗜️ Creating archive..."
           cd deploy-package
