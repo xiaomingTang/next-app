@@ -75,6 +75,28 @@ jobs:
 
         run: pnpm run build
 
+      - name: Verify build output
+        run: |
+          echo "🔍 Verifying build output..."
+          echo "Files in .next directory:"
+          ls -la .next/
+          echo ""
+          if [ -d ".next/standalone" ]; then
+            echo "✅ .next/standalone directory exists"
+            echo "Files in .next/standalone:"
+            ls -la .next/standalone/
+          else
+            echo "❌ .next/standalone directory not found!"
+            echo "Available directories in .next:"
+            find .next -type d -maxdepth 2
+          fi
+          echo ""
+          if [ -d ".next/static" ]; then
+            echo "✅ .next/static directory exists"
+          else
+            echo "❌ .next/static directory not found!"
+          fi
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -87,6 +109,7 @@ jobs:
             .bak/
             ci/
           retention-days: 1
+          include-hidden-files: true
 
   package:
     name: Create Deployment Package
@@ -101,6 +124,23 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: build-artifacts
+
+      - name: Debug downloaded artifacts
+        run: |
+          echo "🔍 Debugging downloaded artifacts..."
+          echo "Current directory: $(pwd)"
+          echo "Files in current directory:"
+          ls -la
+          echo ""
+          echo "Files in .next directory (if exists):"
+          if [ -d ".next" ]; then
+            ls -la .next/
+            echo ""
+            echo "Subdirectories in .next:"
+            find .next -type d -maxdepth 2
+          else
+            echo ".next directory not found!"
+          fi
 
       - name: Create deployment archive
         run: |
