@@ -8,13 +8,13 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-22.04
-    
+
     env:
-      STORE_PATH: ""
-      COS_OBJECT_KEY: ""
-      TAG_NAME: ""
-      TIMESTAMP: ""
-    
+      STORE_PATH: ''
+      COS_OBJECT_KEY: ''
+      TAG_NAME: ''
+      TIMESTAMP: ''
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -80,48 +80,48 @@ jobs:
       - name: Create deployment archive
         run: |
           echo "🔨 Creating deployment archive..."
-          
+
           # 创建部署目录结构，参考 Dockerfile
           mkdir -p deploy-package
-          
+
           # 检查必需的构建产物
           if [ ! -d ".next/standalone" ]; then
             echo "❌ Error: .next/standalone directory not found"
             exit 1
           fi
-          
+
           if [ ! -d ".next/static" ]; then
             echo "❌ Error: .next/static directory not found"
             exit 1
           fi
-          
+
           # 复制必要的文件和目录 (参考 Dockerfile 的 runner 阶段)
           echo "📁 Copying .next/standalone/*"
           cp -r .next/standalone/* deploy-package/
-          
+
           echo "📁 Creating .next/static directory"
           mkdir -p deploy-package/.next/static
           cp -r .next/static/* deploy-package/.next/static/
-          
+
           echo "📁 Copying public directory"
           cp -r public deploy-package/
-          
+
           # 如果存在这些文件/目录则复制 (可选)
           if [ -f launch.sh ]; then
             echo "📁 Copying launch.sh"
             cp launch.sh deploy-package/
           fi
-          
+
           # 创建压缩包
           echo "🗜️ Creating archive..."
           cd deploy-package
           tar -czf ../app.tar.gz .
           cd ..
-          
+
           # 显示压缩包信息
           FILE_SIZE=$(ls -lh app.tar.gz | awk '{print $5}')
           echo "✅ Deploy package created: app.tar.gz (Size: $FILE_SIZE)"
-          
+
           # 显示压缩包内容概览
           echo "📦 Archive contents:"
           tar -tzf app.tar.gz | head -20
@@ -135,7 +135,7 @@ jobs:
           TAG_NAME=${GITHUB_REF#refs/tags/}
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           OBJECT_KEY="releases/${TAG_NAME}_${TIMESTAMP}/app.tar.gz"
-          
+
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
           echo "COS_OBJECT_KEY=$OBJECT_KEY" >> $GITHUB_ENV
           echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
@@ -169,7 +169,7 @@ jobs:
           TAG_NAME: ${{ env.TAG_NAME }}
         run: |
           echo "🔗 Calling deployment webhook..."
-          
+
           # 准备 webhook 载荷
           PAYLOAD=$(cat << EOF
           {
@@ -183,10 +183,10 @@ jobs:
           }
           EOF
           )
-          
+
           echo "📋 Webhook payload:"
           echo "$PAYLOAD" | jq '.'
-          
+
           # 调用部署 webhook
           HTTP_CODE=$(curl -w "%{http_code}" -o webhook_response.txt -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
@@ -197,14 +197,14 @@ jobs:
             -d "$PAYLOAD" \
             --connect-timeout 30 \
             --max-time 120)
-          
+
           echo "🌐 HTTP Response Code: $HTTP_CODE"
-          
+
           if [ -f webhook_response.txt ]; then
             echo "📄 Webhook Response:"
             cat webhook_response.txt
           fi
-          
+
           # 检查响应状态
           if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
             echo "✅ Webhook called successfully"
