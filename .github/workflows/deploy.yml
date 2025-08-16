@@ -1,0 +1,205 @@
+name: Build and Deploy to Tencent COS
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build application
+        env:
+          NODE_ENV: production
+          NEXT_PUBLIC_LAST_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: pnpm run build
+
+      - name: Create deployment archive
+        run: |
+          echo "🔨 Creating deployment archive..."
+          
+          # 创建部署目录结构，参考 Dockerfile
+          mkdir -p deploy-package
+          
+          # 检查必需的构建产物
+          if [ ! -d ".next/standalone" ]; then
+            echo "❌ Error: .next/standalone directory not found"
+            exit 1
+          fi
+          
+          if [ ! -d ".next/static" ]; then
+            echo "❌ Error: .next/static directory not found"
+            exit 1
+          fi
+          
+          # 复制必要的文件和目录 (参考 Dockerfile 的 runner 阶段)
+          echo "📁 Copying .next/standalone/*"
+          cp -r .next/standalone/* deploy-package/
+          
+          echo "📁 Creating .next/static directory"
+          mkdir -p deploy-package/.next/static
+          cp -r .next/static/* deploy-package/.next/static/
+          
+          echo "📁 Copying public directory"
+          cp -r public deploy-package/
+          
+          # 如果存在这些文件/目录则复制 (可选)
+          if [ -f launch.sh ]; then
+            echo "📁 Copying launch.sh"
+            cp launch.sh deploy-package/
+          fi
+          
+          if [ -d .ssl ]; then
+            echo "📁 Copying .ssl directory"
+            cp -r .ssl deploy-package/
+          fi
+          
+          if [ -d .bak ]; then
+            echo "📁 Copying .bak directory"
+            cp -r .bak deploy-package/
+          fi
+          
+          if [ -d ci ]; then
+            echo "📁 Copying ci directory"
+            cp -r ci deploy-package/
+          fi
+          
+          # 创建压缩包
+          echo "🗜️ Creating archive..."
+          cd deploy-package
+          tar -czf ../app.tar.gz .
+          cd ..
+          
+          # 显示压缩包信息
+          FILE_SIZE=$(ls -lh app.tar.gz | awk '{print $5}')
+          echo "✅ Deploy package created: app.tar.gz (Size: $FILE_SIZE)"
+          
+          # 显示压缩包内容概览
+          echo "📦 Archive contents:"
+          tar -tzf app.tar.gz | head -20
+          if [ $(tar -tzf app.tar.gz | wc -l) -gt 20 ]; then
+            echo "... and $(expr $(tar -tzf app.tar.gz | wc -l) - 20) more files"
+          fi
+
+      - name: Setup deployment variables
+        run: |
+          # 获取当前 tag 名称
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          OBJECT_KEY="releases/${TAG_NAME}_${TIMESTAMP}/app.tar.gz"
+          
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          echo "COS_OBJECT_KEY=$OBJECT_KEY" >> $GITHUB_ENV
+          echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+
+      - name: Upload to Tencent COS
+        uses: TencentCloud/cos-action@v1
+        with:
+          secret_id: ${{ secrets.COS_SECRET_ID }}
+          secret_key: ${{ secrets.COS_SECRET_KEY }}
+          cos_bucket: ${{ secrets.COS_BUCKET }}
+          cos_region: ${{ secrets.COS_REGION }}
+          local_path: ./app.tar.gz
+          remote_path: ${{ env.COS_OBJECT_KEY }}
+          clean: false
+
+      - name: Log deployment info
+        run: |
+          echo "📊 Deployment Summary"
+          echo "===================="
+          echo "🏷️  Tag: $TAG_NAME"
+          echo "📦 COS Object: $COS_OBJECT_KEY"
+          echo "🕐 Timestamp: $TIMESTAMP"
+          echo "📁 Repository: $GITHUB_REPOSITORY"
+          echo "🔗 Commit: $GITHUB_SHA"
+          echo "✅ Build and upload completed successfully!"
+
+      - name: Call deployment webhook
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          COS_OBJECT_KEY: ${{ env.COS_OBJECT_KEY }}
+          TAG_NAME: ${{ env.TAG_NAME }}
+        run: |
+          echo "🔗 Calling deployment webhook..."
+          
+          # 准备 webhook 载荷
+          PAYLOAD=$(cat << EOF
+          {
+            "event": "deploy",
+            "tag": "$TAG_NAME",
+            "cos_object_key": "$COS_OBJECT_KEY",
+            "repository": "$GITHUB_REPOSITORY",
+            "commit_sha": "$GITHUB_SHA",
+            "commit_message": "${{ github.event.head_commit.message }}",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
+          )
+          
+          echo "📋 Webhook payload:"
+          echo "$PAYLOAD" | jq '.'
+          
+          # 调用部署 webhook
+          HTTP_CODE=$(curl -w "%{http_code}" -o webhook_response.txt -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -H "User-Agent: GitHub-Actions/$GITHUB_RUN_ID" \
+            -H "X-GitHub-Event: deployment" \
+            -H "X-GitHub-Repository: $GITHUB_REPOSITORY" \
+            -H "X-GitHub-Ref: $GITHUB_REF" \
+            -d "$PAYLOAD" \
+            --connect-timeout 30 \
+            --max-time 120)
+          
+          echo "🌐 HTTP Response Code: $HTTP_CODE"
+          
+          if [ -f webhook_response.txt ]; then
+            echo "📄 Webhook Response:"
+            cat webhook_response.txt
+          fi
+          
+          # 检查响应状态
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Webhook called successfully"
+          else
+            echo "⚠️  Webhook call returned HTTP $HTTP_CODE, but continuing..."
+            echo "This might indicate an issue with the webhook endpoint."
+          fi
+
+      - name: Cleanup
+        if: always()
+        run: |
+          # 清理敏感文件
+          rm -f app.tar.gz
+          rm -rf deploy-package
+          echo "Cleanup completed"
