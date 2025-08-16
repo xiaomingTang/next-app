@@ -9,6 +9,12 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-22.04
     
+    env:
+      STORE_PATH: ""
+      COS_OBJECT_KEY: ""
+      TAG_NAME: ""
+      TIMESTAMP: ""
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
