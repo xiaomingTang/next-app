@@ -6,14 +6,12 @@ on:
       - '*'
 
 jobs:
-  build-and-deploy:
+  build:
+    name: Build Application
     runs-on: ubuntu-22.04
     
     env:
       STORE_PATH: ""
-      COS_OBJECT_KEY: ""
-      TAG_NAME: ""
-      TIMESTAMP: ""
     
     steps:
       - name: Checkout code
@@ -76,6 +74,33 @@ jobs:
           NEXT_PUBLIC_CYBER_BEGGER_ADDRESS: ${{ secrets.NEXT_PUBLIC_CYBER_BEGGER_ADDRESS }}
 
         run: pnpm run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            .next/
+            public/
+            launch.sh
+            .ssl/
+            .bak/
+            ci/
+          retention-days: 1
+
+  package:
+    name: Create Deployment Package
+    runs-on: ubuntu-22.04
+    needs: build
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
 
       - name: Create deployment archive
         run: |
@@ -144,6 +169,24 @@ jobs:
             echo "... and $(expr $(tar -tzf app.tar.gz | wc -l) - 20) more files"
           fi
 
+      - name: Upload deployment package
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-package
+          path: app.tar.gz
+          retention-days: 1
+
+  upload:
+    name: Upload to Tencent COS
+    runs-on: ubuntu-22.04
+    needs: package
+    
+    env:
+      COS_OBJECT_KEY: ""
+      TAG_NAME: ""
+      TIMESTAMP: ""
+    
+    steps:
       - name: Setup deployment variables
         run: |
           # 获取当前 tag 名称
@@ -154,6 +197,11 @@ jobs:
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
           echo "COS_OBJECT_KEY=$OBJECT_KEY" >> $GITHUB_ENV
           echo "TIMESTAMP=$TIMESTAMP" >> $GITHUB_ENV
+
+      - name: Download deployment package
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-package
 
       - name: Upload to Tencent COS
         uses: TencentCloud/cos-action@v1
@@ -176,6 +224,26 @@ jobs:
           echo "📁 Repository: $GITHUB_REPOSITORY"
           echo "🔗 Commit: $GITHUB_SHA"
           echo "✅ Build and upload completed successfully!"
+
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-22.04
+    needs: upload
+    
+    env:
+      COS_OBJECT_KEY: ""
+      TAG_NAME: ""
+    
+    steps:
+      - name: Setup deployment variables
+        run: |
+          # 获取当前 tag 名称
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          OBJECT_KEY="releases/${TAG_NAME}_${TIMESTAMP}/app.tar.gz"
+          
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+          echo "COS_OBJECT_KEY=$OBJECT_KEY" >> $GITHUB_ENV
 
       - name: Call deployment webhook
         env:
@@ -228,10 +296,17 @@ jobs:
             echo "This might indicate an issue with the webhook endpoint."
           fi
 
-      - name: Cleanup
-        if: always()
-        run: |
-          # 清理敏感文件
-          rm -f app.tar.gz
-          rm -rf deploy-package
-          echo "Cleanup completed"
+  cleanup:
+    name: Cleanup Artifacts
+    runs-on: ubuntu-22.04
+    needs: [build, package, upload, deploy]
+    if: always()
+    
+    steps:
+      - name: Delete artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: |
+            build-artifacts
+            deployment-package
+        continue-on-error: true
