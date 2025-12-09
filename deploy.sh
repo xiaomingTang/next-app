@@ -16,10 +16,20 @@ now=$(date +%Y-%m-%d-%H-%M-%S)
 
 zip_file_name=".bak.code-$now.tar.gz"
 
-# 从 docker 取出代码并上传到服务器
-docker_temp_container_name="temp-$now"
-docker cp $(docker create --name $docker_temp_container_name $DOCKER_IMAGE_NAME):/app.tar.gz $zip_file_name
-docker rm $docker_temp_container_name
+out="./.local/out"
+rm -rf "$out"
+mkdir -p "$out"
+cp .env.deploy.local "$out/.env.local"
+cp -r ./public "$out/public"
+cp -a ./.next/standalone/. "$out/"
+cp -r ./.next/static "$out/.next/static"
+cp ./launch.sh "$out/launch.sh"
+cp ./package.json "$out/package.json"
+cp -r ./.bak "$out/.bak"
+
+tar -czf ./.local/app.tar.gz -C ./.local/out .
+cp ./.local/app.tar.gz $zip_file_name
+
 SSHPASS=$P1_SSH_PASSWORD sshpass -e scp -r $zip_file_name $P1_SSH_USER@$P1_SSH_HOST:$(dirname $P1_REMOTE_DIR_WITHOUT_TAIL_SLASH)
 rm -rf $zip_file_name
 
