@@ -9,14 +9,13 @@
     "postinstall": "npx prisma generate",
     "prepare": "husky || true",
     "dev": "concurrently -n next.js,peerjs-server \"next dev\" \"peerjs --port 4000 --key peerjs --path /peer-server\"",
-    "build": "next build",
     "server": "concurrently -n next.js,peerjs-server \"node server.js\" \"peerjs --port 4000 --key peerjs --path /peer-server\"",
     "test": "eslint && tsc --noEmit",
     "lint:commit-message": "commitlint -e",
     "lint:commit-content": "lint-staged --quiet",
     "db:push": "dotenv -e .env -c -- prisma db push",
     "db:seed": "dotenv -e .env -c -- prisma db seed",
-    "predeploy": "dotenv -e .env.deploy -c -v NEXT_PUBLIC_LAST_COMMIT_MESSAGE=\"$(git log -1 --pretty=format:'%B' HEAD | tr '\n' ' ')\" -- pnpm run build",
+    "build": "dotenv -e .env.deploy -c -v NEXT_PUBLIC_LAST_COMMIT_MESSAGE=\"$(git log -1 --pretty=format:'%B' HEAD | tr '\n' ' ')\" -- next build",
     "deploy": "dotenv -e .env.deploy -c -- /bin/bash deploy.sh"
   },
   "lint-staged": {
